@@ -1,0 +1,9 @@
+{
+    "envId": "ENV_ID",
+    "customLoginJson": "CUSTOM_LOGIN_JSON",
+    "administratorName": "ADMINISTRATOR_NAME",
+    "administratorPassword": "ADMINISTRATOR_PASSWORD",
+    "operatorName": "OPERATOR_NAME",
+    "operatorPassword": "OPERATOR_PASSWORD",
+    "deployPath": "/tcb-cms"
+}

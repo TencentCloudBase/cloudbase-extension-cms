@@ -1,0 +1,26 @@
+{
+  "name": "cloudbase-ext-cms",
+  "version": "1.2.0",
+  "description": "CloudBase content manager system",
+  "author": "cwuyiqing@gmail.com",
+  "private": true,
+  "scripts": {
+    "doctor": "node scripts/doctor.js",
+    "bootstrap": "lerna bootstrap",
+    "setup": "npm run bootstrap && npm run doctor && tcb framework:deploy db",
+    "build": "lerna run build",
+    "predeploy": "npm run build",
+    "deploy": "npm run deploy:admin && npm run deploy:service && npm run deploy:init",
+    "postdeploy": "tcb functions:invoke tcb-ext-cms-init",
+    "deploy:admin": "lerna run predeploy:admin && tcb framework:deploy admin",
+    "deploy:service": "lerna run predeploy:service && tcb framework:deploy service",
+    "deploy:init": "tcb framework:deploy init",
+    "preext:zip": "rm -rf build && mkdir build && npm run build",
+    "ext:zip": "./scripts/zip.sh service && ./scripts/zip.sh init",
+    "ext:upload": "tcb storage:upload  build ext-build -e $BUILD_ENVID",
+    "ext:publish": "npm run ext:zip && npm run ext:upload"
+  },
+  "devDependencies": {
+    "lerna": "^3.22.1"
+  }
+}

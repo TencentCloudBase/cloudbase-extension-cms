@@ -1,0 +1,9 @@
+{
+  "cSpell.words": ["envid", "notistack", "vditor"],
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bower_components": true,
+    "**/*.code-search": true,
+    "**/build": true
+  }
+}

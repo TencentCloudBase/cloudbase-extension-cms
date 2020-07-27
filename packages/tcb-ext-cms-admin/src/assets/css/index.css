@@ -1,0 +1,114 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+.ql-editor {
+  min-height: 300px;
+}
+
+.MuiFormControl-marginDense {
+  width: 100%;
+}
+
+.tcb-cms-app-logo {
+  margin: 0px;
+}
+
+@media (min-width: 500px) {
+  .MuiToolbar-root.MuiToolbar-dense
+    > button.MuiButtonBase-root.MuiIconButton-root:first-child {
+    display: none;
+  }
+
+  .tcb-cms-app-logo {
+    margin: 0 16px;
+  }
+}
+
+#root .MuiFilledInput-root {
+  background-color: #fff;
+}
+
+#root .MuiInputBase-root.MuiFilledInput-root {
+  border: 1px solid #aaa;
+  border-radius: 5px;
+}
+
+#root .MuiFilledInput-underline:before {
+  display: none;
+}
+#root .MuiFilledInput-underline:after {
+  display: none;
+}
+
+#root .MuiFilledInput-underline.Mui-focused .MuiFilledInput-inputMarginDense {
+  border-color: #3f51b5;
+}
+
+#root .MuiFilledInput-underline.Mui-error .MuiFilledInput-inputMarginDense {
+  border-color: #f44336;
+}
+
+#fields section > .ra-input {
+  display: inline-block;
+  margin-right: 32px;
+  width: 300px;
+}
+
+#fields section > .ra-input:empty {
+  display: none;
+}
+
+.tcb-cms-expand {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-height: 500px;
+}
+
+#root > div {
+  min-height: 100vh;
+}
+
+.tcb-cms-form .MuiFormControl-root {
+  min-width: 33%;
+}
+
+.tcb-cms-desc {
+  margin: 0 20px 0;
+  padding: 10px 20px;
+  color: #555;
+}
+
+#react-admin-title {
+  word-break: break-all;
+  margin: 20px 20px 10px;
+}
+
+.MuiTableCell-body {
+  word-break: break-all;
+}
+
+.tcb-cms-icon-input button {
+  background-color: #3f51b5 !important;
+}
+
+@font-face {
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../fonts/material-icon.woff2) format("woff2");
+}

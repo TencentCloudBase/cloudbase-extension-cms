@@ -1,0 +1,51 @@
+{
+  "name": "tcb-ext-cms-admin",
+  "version": "1.2.0",
+  "description": "CloudBase content manager system admin panel",
+  "private": true,
+  "scripts": {
+    "dev": "react-scripts start",
+    "build": "react-scripts build",
+    "postbuild": "rm -rf ../tcb-ext-cms-init/build && cp -r build ../tcb-ext-cms-init",
+    "predeploy:admin": "npm run build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "analysis": "npx source-map-explorer 'build/static/js/*.js'",
+    "format": "prettier --write 'cloudfunctions/**/*.js' 'src/**/*.js'"
+  },
+  "dependencies": {
+    "axios": "^0.19.2",
+    "date-fns": "^2.13.0",
+    "notistack": "^0.9.11",
+    "ra-i18n-polyglot": "^3.2.3",
+    "ra-input-rich-text": "^3.2.2",
+    "ra-language-chinese": "^2.0.5",
+    "ra-resource-aggregator": "^0.0.7",
+    "react": "^16.12.0",
+    "react-admin": "^3.4.1",
+    "react-dom": "^16.12.0",
+    "react-material-ui-icon-picker": "0.0.1",
+    "showdown": "^1.9.1",
+    "typescript": "^3.8.3",
+    "vditor": "^3.1.21"
+  },
+  "devDependencies": {
+    "prettier": "^2.0.5",
+    "react-scripts": "^3.4.1"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
