@@ -2,6 +2,8 @@
 
 # 云开发扩展 - CMS 内容管理系统
 
+[使用 VS Code 编辑](vscode://vscode.git/clone?url=https%3A%2F%2Fgithub.com%2FTencentCloudBase%2Fcloudbase-extension-cms.git)
+
 ## 功能特性
 
 | 特性         | 介绍                                                                                                    |
