@@ -26,36 +26,33 @@
 
 前置依赖
 
-- 安装最新版本 CloudBase CLI `npm install -g @cloudbase/cli`
+- 安装最新版本 CloudBase CLI（0.9.1+）`npm install -g @cloudbase/cli`
 - 开通一个按量计费的环境，或使用已有的按量计费环境
 - 开通自定义登录，并复制自定义登录密钥 (https://console.cloud.tencent.com/tcb/env/setting?tab=loginConfig)
 
 #### 配置
 
-复制一份 `config/config.example.json`，重新保存为 `config/config.json`
+复制一份 `.env.example`，重新保存为 `.env.local`
 
 填写配置
 
-```js
-{
-    // 填写环境 ID
-    "envId": "ENV_ID",
-    // 填入上面前置依赖第二步的自定义登录密钥
-    "customLoginJson": {
-        "private_key_id": "xxx",
-        "private_key": "xxxx",
-        "env_id": "xxx"
-    },
-    // 账号名长度需要大于 4 位
-    // 管理员账号密码，密码仅支持大小写字母
-    "administratorName": "ADMINISTRATOR_NAME",
-    "administratorPassword": "ADMINISTRATOR_PASSWORD",
-    // 运营账号密码，密码仅支持大小写字母
-    "operatorName": "OPERATOR_NAME",
-    "operatorPassword": "OPERATOR_PASSWORD",
-    // 部署静态网站路径
-    "deployPath": "/tcb-cms"
-}
+```bash
+# 填写环境 ID
+envId=YOUR_ENVID
+# 填入上面前置依赖第二步的自定义登录密钥信息
+customLoginJson.private_key_id=SECRET_KEY_ID
+customLoginJson.private_key=SECRET_KEY
+customLoginJson.env_id=YOUR_ENVID
+# 账号名长度需要大于 4 位
+administratorName=NAME
+# 管理员账号密码，密码仅支持大小写字母
+administratorPassword=PASSWORD
+# 运营账号密码，密码仅支持大小写字母
+operatorName=NAME_OPER
+operatorPassword=PASSWORD_OPER
+# 部署静态网站路径
+deployPath=/deploy-path
+
 ```
 
 #### 构建部署
@@ -110,7 +107,6 @@ CMS 的安装路径是是静态托管默认域名/tcb-cms, 可以看下地址是
 用户打开了云函数的 HTTP 触发的访问鉴权功能，开启鉴权后，客户端需要在登录的情况下才能触发云函数
 
 CMS 负责登录的 auth 云函数需要关闭访问鉴权才可以使用
-
 
 ## 开发
 
