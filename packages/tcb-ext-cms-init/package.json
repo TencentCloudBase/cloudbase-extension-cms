@@ -9,8 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "lodash": "4.17.15",
-    "tcb-admin-node": "1.22.0",
-    "@cloudbase/manager-node": "^3.2.3"
+    "@cloudbase/manager-node": "^3.2.3",
+    "lodash": "^4.17.19",
+    "tcb-admin-node": "1.22.0"
   }
 }
