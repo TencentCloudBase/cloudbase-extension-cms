@@ -26,7 +26,7 @@
 
 前置依赖
 
-- 安装最新版本 CloudBase CLI（0.9.1+）`npm install -g @cloudbase/cli`
+- 安装最新版本**CloudBase CLI（0.9.1+）** `npm install -g @cloudbase/cli`
 - 开通一个按量计费的环境，或使用已有的按量计费环境
 - 开通自定义登录，并复制自定义登录密钥 (https://console.cloud.tencent.com/tcb/env/setting?tab=loginConfig)
 
