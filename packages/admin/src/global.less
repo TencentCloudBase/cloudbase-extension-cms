@@ -1,0 +1,90 @@
+@import '~antd/es/style/themes/default.less';
+@import '~css.gg/icons/all.css';
+
+html,
+body,
+#root {
+    height: 100%;
+}
+
+.colorWeak {
+    filter: invert(80%);
+}
+
+.full-height {
+    display: flex;
+    height: 100%;
+    align-items: center;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.ant-layout {
+    // min-height: 100vh;
+    .ant-pro-basicLayout-has-header {
+        margin: 0;
+        height: 100%;
+    }
+}
+
+.page-container {
+    height: 100%;
+    padding: 24px;
+
+    .ant-layout-header {
+        background-color: inherit;
+    }
+
+    // .ant-card-body {
+    //     height: 100%;
+
+    //     .ant-layout-content {
+    //         padding: 50px 24px;
+    //         //   background-color: #fff;
+    //     }
+    // }
+}
+
+canvas {
+    display: block;
+}
+
+body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+    list-style: none;
+}
+
+@media (max-width: @screen-xs) {
+    .ant-table {
+        width: 100%;
+        overflow-x: auto;
+
+        &-thead > tr,
+        &-tbody > tr {
+            > th,
+            > td {
+                white-space: pre;
+
+                > span {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+// 兼容IE11
+@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
+    body .ant-design-pro > .ant-layout {
+        min-height: 100vh;
+    }
+}
