@@ -1,26 +1,41 @@
 {
-  "name": "cloudbase-ext-cms",
-  "version": "1.2.0",
-  "description": "CloudBase content manager system",
-  "author": "cwuyiqing@gmail.com",
-  "private": true,
-  "scripts": {
-    "doctor": "node scripts/doctor.js",
-    "bootstrap": "lerna bootstrap",
-    "setup": "npm run bootstrap && npm run doctor && tcb framework:deploy db",
-    "build": "lerna run build",
-    "predeploy": "npm run build",
-    "deploy": "npm run deploy:admin && npm run deploy:service && npm run deploy:init",
-    "postdeploy": "tcb functions:invoke tcb-ext-cms-init",
-    "deploy:admin": "lerna run predeploy:admin && tcb framework:deploy admin",
-    "deploy:service": "lerna run predeploy:service && tcb framework:deploy service",
-    "deploy:init": "tcb framework:deploy init",
-    "preext:zip": "rm -rf build && mkdir build && npm run build",
-    "ext:zip": "./scripts/zip.sh service && ./scripts/zip.sh init",
-    "ext:upload": "tcb storage:upload  build ext-build -e $BUILD_ENVID",
-    "ext:publish": "npm run ext:zip && npm run ext:upload"
-  },
-  "devDependencies": {
-    "lerna": "^3.22.1"
-  }
+    "name": "cloudbase-cms",
+    "version": "2.0.0",
+    "private": true,
+    "scripts": {
+        "setup": "lerna bootstrap",
+        "dev": "lerna run dev",
+        "prettier": "prettier -c --write \"**/*.{ts,tsx,js,jsx,json}\"",
+        "lint-staged": "lint-staged",
+        "lint-staged:ts": "eslint --ext .ts,.tsx ",
+        "lint:fix": "eslint --fix --cache --ext .ts,.tsx --format=pretty ./packages",
+        "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run lint-staged"
+        }
+    },
+    "lint-staged": {
+        "**/*.{ts,tsx}": "npm run lint-staged:ts",
+        "**/*.{tsx,ts,less,md,json}": [
+            "prettier --write"
+        ]
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^3.7.0",
+        "@typescript-eslint/parser": "^3.7.0",
+        "eslint": "^7.5.0",
+        "eslint-config-alloy": "^3.7.4",
+        "eslint-formatter-pretty": "^4.0.0",
+        "eslint-plugin-react": "^7.20.3",
+        "husky": "^4.2.5",
+        "lerna": "^3.22.1",
+        "lint-staged": "^10.2.11",
+        "prettier": "^2.0.5",
+        "typescript": "^3.9.7"
+    },
+    "engines": {
+        "node": ">=10.0.0"
+    }
 }
