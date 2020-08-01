@@ -1,4 +1,4 @@
-import { IFnCtx, IActionCtx } from 'concent'
+import { IActionCtx } from 'concent'
 import { getSchemas } from '@/services/schema'
 
 export default {
@@ -14,12 +14,11 @@ export default {
                 loading: true
             })
             const { data } = await getSchemas(projectId)
-
             const { currentSchema } = state
 
             // 重新获取时，如果存在选择的 schema，则也同时更新
             if (currentSchema) {
-                const schema = data.find((_: any) => _._id === currentSchema._id)
+                const schema = data.find((_: any) => _._id === currentSchema._id) || {}
                 return {
                     projectId,
                     schemas: data,

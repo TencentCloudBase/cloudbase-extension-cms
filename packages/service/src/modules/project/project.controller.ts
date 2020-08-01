@@ -16,14 +16,9 @@ export class Project {
 
 const Default_Projects = [
     {
-        _id: 'v1',
-        name: 'CMS V1 项目',
-        description: '包含 CMS V1 版本所有的内容'
-    },
-    {
         _id: 'default',
         name: '默认项目',
-        description: 'CMS V2 默认项目'
+        description: 'CMS 默认项目'
     }
 ]
 
@@ -32,8 +27,12 @@ export class ProjectController {
     constructor(private readonly cloudbaseService: CloudBaseService) {}
 
     @Get()
-    async getProjects(@Query() query: { page?: number; pageSize?: number } = {}) {
-        const { page = 1, pageSize = 10 } = query
+    async getProjects(
+        @Query()
+        query: { page?: number; pageSize?: number } = {}
+    ) {
+        const { page = 1, pageSize = 100 } = query
+
         const res = await this.cloudbaseService
             .collection(CollectionV2.Projects)
             .where({})
@@ -65,7 +64,7 @@ export class ProjectController {
 
         const project = {
             ...body,
-            _create_time: new Date()
+            _createTime: new Date()
         }
         return this.cloudbaseService.collection(CollectionV2.Projects).add(project)
     }

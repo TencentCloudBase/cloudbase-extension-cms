@@ -36,7 +36,7 @@ interface SchemaFieldV2 {
     type: string
 
     // 展示标题
-    display_name: string
+    displayName: string
 
     // 在数据库中的字段名
     name: string
@@ -45,25 +45,25 @@ interface SchemaFieldV2 {
     description: string
 
     // 默认排序字段
-    order_by: string
+    orderBy: string
 
     // 是否隐藏
-    is_hidden: boolean
+    isHidden: boolean
 
     // 是否必需字段
-    is_required: boolean
+    isRequired: boolean
 
     // 是否唯一
-    is_unique: boolean
+    isUnique: boolean
 
     // 在 API 返回结果中隐藏
-    is_hidden_in_api: boolean
+    isHiddenInApi: boolean
 
     // 是否加密
-    is_encrypted: boolean
+    isEncrypted: boolean
 
     // 默认值
-    default_value: any
+    defaultValue: any
 
     // 最小长度/值
     min: number
@@ -107,11 +107,11 @@ interface SchemaV1 {
 interface SchemaV2 {
     _id: string
 
-    display_name: string
+    displayName: string
 
-    collection_name: string
+    collectionName: string
 
-    project_id: string
+    projectId: string
 
     fields: SchemaFieldV2[]
 
@@ -125,12 +125,11 @@ interface SchemaV2 {
     _version: '2.0'
 }
 
-type CompatibleSchema = SchemaV1 & SchemaV2
 type CompatibleField = SchemaFieldV1 & SchemaFieldV2
 
 interface SchemaState {
     projectId: string
-    currentSchema: CompatibleSchema
+    currentSchema: SchemaV2
     loading: boolean
-    schemas: CompatibleSchema[]
+    schemas: SchemaV2[]
 }

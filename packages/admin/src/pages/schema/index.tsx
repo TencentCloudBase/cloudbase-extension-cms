@@ -1,15 +1,15 @@
 import { t } from '@/locales'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
+import ProCard from '@ant-design/pro-card'
 import React, { useState, useEffect } from 'react'
 import { PlusCircleTwoTone } from '@ant-design/icons'
 import { Card, Layout, Menu, List, Typography, Row, Col, Spin, Button, message, Empty } from 'antd'
-import ProCard from '@ant-design/pro-card'
+import { FieldTypes } from '@/common'
 
-import { SchemaV1FieldRender, SchemaV2FieldRender } from './FieldRender'
+import { SchemaFieldRender } from './FieldRender'
 import { FieldModal } from './FieldModal'
 import { SchemaModal } from './SchemaModal'
-import { FieldTypes } from '@/common'
 import './index.less'
 
 const { Sider, Content } = Layout
@@ -48,6 +48,7 @@ export default (): React.ReactNode => {
                 <ProCard
                     colSpan="240px"
                     className="card-left"
+                    style={{ marginBottom: 0 }}
                     title={<h2 className="full-height">{t('schema.name')}</h2>}
                     extra={
                         <h2 className="full-height">
@@ -59,11 +60,11 @@ export default (): React.ReactNode => {
                     }
                 >
                     {loading ? (
-                        <Menu>
-                            <Menu.Item>
+                        <Row justify="center">
+                            <Col>
                                 <Spin />
-                            </Menu.Item>
-                        </Menu>
+                            </Col>
+                        </Row>
                     ) : schemas?.length ? (
                         <Menu
                             mode="inline"
@@ -76,85 +77,74 @@ export default (): React.ReactNode => {
                                 })
                             }}
                         >
-                            {schemas.map((item: any) => (
-                                <Menu.Item key={item._id}>
-                                    {item.display_name || item.label}
-                                </Menu.Item>
+                            {schemas.map((item: SchemaV2) => (
+                                <Menu.Item key={item._id}>{item.displayName}</Menu.Item>
                             ))}
                         </Menu>
                     ) : (
-                        '原型为空'
+                        <Row justify="center">
+                            <Col>原型为空</Col>
+                        </Row>
                     )}
                 </ProCard>
-                <ProCard>
-                    <Layout>
-                        <Content className="schema-content">
-                            {currentSchema ? (
-                                <Row>
-                                    <Col flex="auto" />
-                                    <Col flex="600px">
-                                        <div className="schema-content-header">
-                                            <Typography.Title level={3}>
-                                                {currentSchema?.display_name ||
-                                                    currentSchema?.label}
-                                            </Typography.Title>
-                                        </div>
-                                        <Content>
-                                            {currentSchema?.fields?.length ? (
-                                                // <FieldRender schema={currentSchema} />
-                                                projectId === 'v1' ? (
-                                                    <SchemaV1FieldRender schema={currentSchema} />
-                                                ) : (
-                                                    <SchemaV2FieldRender schema={currentSchema} />
-                                                )
-                                            ) : (
-                                                <div className="schema-empty">
-                                                    <Empty description="点击右侧字段类型，添加一个字段" />
-                                                </div>
-                                            )}
-                                        </Content>
-                                    </Col>
-                                    <Col flex="auto" />
-                                </Row>
-                            ) : (
-                                <div className="schema-empty">
-                                    <Empty description="创建你的原型，开始使用 CMS">
-                                        <Button
-                                            type="primary"
-                                            onClick={() => setSchemaVisible(true)}
-                                        >
-                                            创建原型
-                                        </Button>
-                                    </Empty>
-                                </div>
+                <Layout className="schema-layout">
+                    <Content className="full-height schema-layout-content">
+                        {currentSchema ? (
+                            <Row>
+                                <Col flex="auto" />
+                                <Col flex="600px">
+                                    <div className="schema-layout-header">
+                                        <Typography.Title level={3}>
+                                            {currentSchema.displayName}
+                                        </Typography.Title>
+                                    </div>
+                                    <Content>
+                                        {currentSchema?.fields?.length ? (
+                                            <SchemaFieldRender schema={currentSchema} />
+                                        ) : (
+                                            <div className="schema-empty">
+                                                <Empty description="点击右侧字段类型，添加一个字段" />
+                                            </div>
+                                        )}
+                                    </Content>
+                                </Col>
+                                <Col flex="auto" />
+                            </Row>
+                        ) : (
+                            <div className="schema-empty">
+                                <Empty description="创建你的原型，开始使用 CMS">
+                                    <Button type="primary" onClick={() => setSchemaVisible(true)}>
+                                        创建原型
+                                    </Button>
+                                </Empty>
+                            </div>
+                        )}
+                    </Content>
+                    <Sider className="schema-sider">
+                        <List
+                            bordered={false}
+                            dataSource={FieldTypes}
+                            renderItem={(item) => (
+                                <Card
+                                    className="field-card"
+                                    onClick={() => {
+                                        if (!currentSchema) {
+                                            message.info('请选择原型')
+                                            return
+                                        }
+                                        setSelectField(item)
+                                        setFieldVisible(true)
+                                    }}
+                                >
+                                    <List.Item className="item">
+                                        <span>{item.icon}</span>
+                                        <span>{item.name}</span>
+                                    </List.Item>
+                                </Card>
                             )}
-                        </Content>
-                        <Sider width={200} className="schema-type-sider">
-                            <List
-                                bordered={false}
-                                dataSource={FieldTypes.filter((_) => !_.hidden)}
-                                renderItem={(item) => (
-                                    <Card
-                                        className="card"
-                                        onClick={() => {
-                                            if (!currentSchema) {
-                                                message.info('请选择原型')
-                                                return
-                                            }
-                                            setSelectField(item)
-                                            setFieldVisible(true)
-                                        }}
-                                    >
-                                        <List.Item className="item">
-                                            <span>{item.icon}</span>
-                                            <span>{item.name}</span>
-                                        </List.Item>
-                                    </Card>
-                                )}
-                            />
-                        </Sider>
-                    </Layout>
-                </ProCard>
+                        />
+                    </Sider>
+                </Layout>
             </ProCard>
 
             <SchemaModal visible={schemaVisible} onClose={() => setSchemaVisible(false)} />
