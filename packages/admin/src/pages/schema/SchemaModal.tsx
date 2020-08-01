@@ -1,8 +1,8 @@
 import React from 'react'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import { Modal, Form, message, Input, Space, Button } from 'antd'
 import { createSchema } from '@/services/schema'
+import { Modal, Form, message, Input, Space, Button } from 'antd'
 
 const { TextArea } = Input
 
@@ -30,13 +30,18 @@ export const SchemaModal: React.FC<{
                 onFinish={(v = {}) => {
                     const { displayName, collectionName } = v
                     createSchema({
-                        project_id: projectId,
-                        display_name: displayName,
-                        collection_name: collectionName
-                    }).then((v) => {
-                        message.success('创建原型成功')
-                        ctx.dispatch('getSchemas', projectId)
+                        projectId,
+                        displayName,
+                        collectionName
                     })
+                        .then(() => {
+                            onClose()
+                            message.success('创建原型成功')
+                            ctx.dispatch('getSchemas', projectId)
+                        })
+                        .catch(() => {
+                            message.error('创建原型失败')
+                        })
                 }}
             >
                 <Form.Item
@@ -50,7 +55,13 @@ export const SchemaModal: React.FC<{
                 <Form.Item
                     label="数据库名"
                     name="collectionName"
-                    rules={[{ required: true, message: '请输入数据库名称！' }]}
+                    rules={[
+                        { required: true, message: '请输入数据库名称！' },
+                        {
+                            message: '字段名只能使用英文字母、数字、-、_ 等符号',
+                            pattern: /^[a-z0-9A-Z_-]+$/
+                        }
+                    ]}
                 >
                     <Input placeholder="数据库名，如 article" />
                 </Form.Item>

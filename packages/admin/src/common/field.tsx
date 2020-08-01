@@ -28,12 +28,6 @@ export const FieldTypes = [
     // **枚举类型**
     // 时间
     {
-        type: 'Date',
-        name: '日期 V1',
-        hidden: true,
-        icon: <i className="gg-calendar-dates" />
-    },
-    {
         type: 'DateTime',
         name: '日期',
         icon: <i className="gg-calendar-dates" />

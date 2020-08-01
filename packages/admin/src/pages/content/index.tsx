@@ -1,18 +1,20 @@
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import React, { useEffect, useRef } from 'react'
-import { Menu, Button, Spin, Empty } from 'antd'
+import React, { useEffect, useRef, useState } from 'react'
 import ProCard from '@ant-design/pro-card'
 import ProTable from '@ant-design/pro-table'
 import { PlusOutlined } from '@ant-design/icons'
-import { createColumns } from './columns'
-import './index.less'
 import { getContents } from '@/services/content'
+import { Menu, Button, Spin, Empty, Row, Col } from 'antd'
+import { createColumns } from './columns'
+import { ContentDrawer } from './ContentDrawer'
+import './index.less'
 
 export default (): React.ReactNode => {
     // 加载 schemas 数据
     const { projectId } = useParams()
     const ctx = useConcent('schema')
+    const [contentModalVisible, setContentModalVisible] = useState(false)
 
     useEffect(() => {
         ctx.dispatch('getSchemas', projectId)
@@ -29,7 +31,7 @@ export default (): React.ReactNode => {
         state: { currentSchema, schemas, loading }
     }: { state: SchemaState } = ctx
 
-    const columns = createColumns(currentSchema)
+    const columns = createColumns(currentSchema?.fields)
 
     return (
         <div className="page-container">
@@ -38,6 +40,7 @@ export default (): React.ReactNode => {
                     colSpan="240px"
                     className="card-left"
                     title={<h2 className="full-height">内容</h2>}
+                    style={{ marginBottom: 0 }}
                 >
                     {loading ? (
                         <Menu>
@@ -47,8 +50,9 @@ export default (): React.ReactNode => {
                         </Menu>
                     ) : schemas?.length ? (
                         <Menu
+                            mode="inline"
                             onClick={({ key }) => {
-                                const schema = schemas.find((item: any) => item._id === key)
+                                const schema = schemas.find((item: SchemaV2) => item._id === key)
                                 ctx.setState({
                                     currentSchema: schema
                                 })
@@ -57,23 +61,21 @@ export default (): React.ReactNode => {
                                 }
                             }}
                         >
-                            {schemas.map((item: any) => (
-                                <Menu.Item key={item._id}>
-                                    {item.display_name || item.label}
-                                </Menu.Item>
+                            {schemas.map((item: SchemaV2) => (
+                                <Menu.Item key={item._id}>{item.displayName}</Menu.Item>
                             ))}
                         </Menu>
                     ) : (
-                        '内容数据为空'
+                        <Row justify="center">
+                            <Col>内容数据为空</Col>
+                        </Row>
                     )}
                 </ProCard>
-                <ProCard>
+                <ProCard style={{ marginBottom: 0 }}>
                     {currentSchema ? (
                         <ProTable
                             headerTitle={
-                                <span className="table-title">
-                                    {currentSchema?.label || currentSchema?.display_name}
-                                </span>
+                                <span className="table-title">{currentSchema.displayName}</span>
                             }
                             actionRef={tableRef}
                             columns={columns}
@@ -83,16 +85,13 @@ export default (): React.ReactNode => {
                                 filter
                             ) => {
                                 const { pageSize, current } = params
-                                const resource =
-                                    currentSchema.collectionName || currentSchema.collection_name
+                                const resource = currentSchema.collectionName
                                 const { data = [], total } = await getContents(resource, {
                                     page: current,
                                     pageSize,
                                     sort,
                                     filter
                                 })
-
-                                console.log(data, total)
 
                                 return {
                                     data,
@@ -112,7 +111,12 @@ export default (): React.ReactNode => {
                             size="middle"
                             search={false}
                             toolBarRender={() => [
-                                <Button type="primary" key="button" icon={<PlusOutlined />}>
+                                <Button
+                                    type="primary"
+                                    key="button"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => setContentModalVisible(true)}
+                                >
                                     新建
                                 </Button>
                             ]}
@@ -125,6 +129,11 @@ export default (): React.ReactNode => {
                     )}
                 </ProCard>
             </ProCard>
+            <ContentDrawer
+                schema={currentSchema}
+                visible={contentModalVisible}
+                onClose={() => setContentModalVisible(false)}
+            />
         </div>
     )
 }

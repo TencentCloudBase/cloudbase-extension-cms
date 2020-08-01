@@ -3,34 +3,9 @@ import { ProColumns } from '@ant-design/pro-table'
 
 type DateTime = 'dateTime' | 'textarea'
 
-const createColumnsV1 = (fields: SchemaFieldV1[]): ProColumns[] => {
+export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
     const columns = fields.map((field) => {
-        const { fieldLabel, fieldName, fieldType } = field
-
-        const valueType: DateTime = fieldType === 'DateTime' ? 'dateTime' : 'textarea'
-
-        const render = getFieldRender({
-            name: field.fieldName,
-            type: field.fieldType
-        })
-
-        return {
-            render,
-            valueType,
-            sorter: true,
-            title: fieldLabel,
-            dataIndex: fieldName,
-            hidden: field.hidden,
-            hideInSearch: field.hidden
-        }
-    })
-
-    return columns
-}
-
-const createColumnsV2 = (fields: SchemaFieldV2[]): ProColumns[] => {
-    const columns = fields.map((field) => {
-        const { name, type, display_name } = field
+        const { name, type, displayName } = field
 
         const valueType: DateTime = type === 'DateTime' ? 'dateTime' : 'textarea'
 
@@ -41,16 +16,11 @@ const createColumnsV2 = (fields: SchemaFieldV2[]): ProColumns[] => {
             valueType,
             sorter: true,
             dataIndex: name,
-            title: display_name,
-            hideInTable: field.is_hidden,
-            hideInSearch: field.is_hidden
+            title: displayName,
+            hideInTable: field.isHidden,
+            hideInSearch: field.isHidden
         }
     })
 
     return columns
-}
-
-export const createColumns = (schema: CompatibleSchema) => {
-    if (!schema) return []
-    return schema._version ? createColumnsV2(schema.fields) : createColumnsV1(schema.fields)
 }

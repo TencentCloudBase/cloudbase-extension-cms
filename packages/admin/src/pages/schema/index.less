@@ -11,6 +11,43 @@
             padding: 0;
         }
     }
+
+    .schema-layout {
+        height: calc(100vh - 96px);
+        padding: 0 30px;
+        overflow: auto;
+
+        .ant-pro-card-body {
+            height: 100%;
+        }
+
+        &-header {
+            padding: 24px 0 12px 0;
+        }
+
+        &-content {
+            margin-right: 10px;
+        }
+    }
+
+    .schema-sider {
+        overflow: auto;
+        padding-right: 10px;
+        height: calc(100vh - 96px);
+
+        .field-card {
+            font-size: 14px;
+            margin: 10px 0 10px 0;
+            cursor: pointer;
+            box-shadow: 0px 2px 4px #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 5px;
+
+            .ant-list-item {
+                padding: 0;
+            }
+        }
+    }
 }
 
 .schema-loading {
@@ -25,75 +62,42 @@
     justify-content: center;
 }
 
-.schema-content {
-    padding: 0 30px;
+.schema-field-card {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    border-radius: 5px;
 
-    &-header {
-        padding: 24px 0 12px 0;
+    &:nth-child(odd) {
+        .icon {
+            color: #5f19dd;
+        }
     }
 
-    .field-card {
+    &:nth-child(even) {
+        .icon {
+            color: #01a4fd;
+        }
+    }
+
+    .flex-column {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .ant-card-body {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .icon {
         display: flex;
         align-items: center;
-        margin-bottom: 20px;
-
-        &:nth-child(odd) {
-            .icon {
-                color: #5f19dd;
-            }
-        }
-
-        &:nth-child(even) {
-            .icon {
-                color: #01a4fd;
-            }
-        }
-
-        .ant-card-body {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .field {
-            display: flex;
-            align-items: center;
-        }
-
-        .icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 60px;
-            height: 60px;
-            --ggs: 1.8;
-        }
-    }
-}
-
-.form-item {
-    display: flex;
-
-    span {
-        margin-left: 20px;
-    }
-}
-
-// sider
-.schema {
-    &-type-sider {
-        background-color: #fff;
-        border-left: 1px solid #f0f0f0;
-
-        .card {
-            cursor: pointer;
-            margin: 10px 0 10px 24px;
-            box-shadow: 0px 2px 4px #f0f0f0;
-
-            .item {
-                // display: flex;
-                padding: 0;
-            }
-        }
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        --ggs: 1.8;
     }
 }
