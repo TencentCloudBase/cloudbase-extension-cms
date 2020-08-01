@@ -14,6 +14,6 @@ SECRETKEY=xxx
 
 ```bash
 yarn
-npm run bootstrap
+npm run setup
 npm run dev
 ```

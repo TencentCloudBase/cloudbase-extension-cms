@@ -1,7 +1,7 @@
 import React from 'react'
 import { run } from 'concent'
 import { notification } from 'antd'
-import { history, RequestConfig } from 'umi'
+import { history, RequestConfig, Link } from 'umi'
 import { ResponseError } from 'umi-request'
 import Footer from '@/components/Footer'
 import HeaderTitle from '@/components/HeaderTitle'
@@ -9,7 +9,6 @@ import RightContent from '@/components/RightContent'
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
-import { getMenuData } from './routes'
 import * as models from './models'
 
 run(models)
@@ -46,11 +45,24 @@ export const layout = ({
 
     if (projectId) {
         return {
-            rightContentRender: () => <RightContent />,
             disableContentMargin: false,
-            // footerRender: () => <Footer />,
+            rightContentRender: () => <RightContent />,
+            menuItemRender: (menuItemProps, defaultDom) => {
+                if (menuItemProps.isUrl || menuItemProps.children) {
+                    return defaultDom
+                }
+
+                if (menuItemProps.path) {
+                    return (
+                        <Link to={menuItemProps.path.replace(':projectId', projectId)}>
+                            {defaultDom}
+                        </Link>
+                    )
+                }
+
+                return defaultDom
+            },
             headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-            menuDataRender: () => getMenuData(projectId),
             ...initialState?.settings
         }
     }
@@ -98,18 +110,27 @@ const errorHandler = (error: ResponseError) => {
         })
     }
 
-    if (!response) {
-        notification.error({
-            description: '您的网络发生异常，无法连接服务器',
-            message: '网络异常'
-        })
-    }
+    // if (!response) {
+    //     notification.error({
+    //         description: '您的网络发生异常，无法连接服务器',
+    //         message: '网络异常'
+    //     })
+    // }
 
     throw error
 }
 
 export const request: RequestConfig = {
     errorHandler,
+    errorConfig: {
+        adaptor: (resData) => {
+            return {
+                ...resData,
+                success: !resData.code,
+                errorMessage: resData.message
+            }
+        }
+    },
     responseInterceptors: [
         async (response, options) => {
             const data = await response.clone().json()

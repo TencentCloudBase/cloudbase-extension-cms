@@ -12,7 +12,7 @@ export const FieldModal: React.FC<{
     onClose: () => void
 }> = ({ visible, onClose, field }) => {
     const { projectId } = useParams()
-    const ctx = useConcent()
+    const ctx = useConcent('schema')
     const {
         state: { currentSchema }
     } = ctx
@@ -31,26 +31,32 @@ export const FieldModal: React.FC<{
                 layout="vertical"
                 labelCol={{ span: 6 }}
                 onFinish={(v = {}) => {
-                    const { displayName, fieldName, description, isRequired, isHidden } = v
+                    const { displayName, name, description, isRequired, isHidden } = v
 
                     const addField = {
+                        name,
+                        isHidden,
+                        isRequired,
+                        displayName,
                         description,
-                        type: field.type,
-                        is_hidden: isHidden,
-                        field_name: fieldName,
-                        is_required: isRequired,
-                        display_name: displayName
+                        type: field.type
                     }
 
-                    updateSchema({
-                        id: currentSchema?._id,
+                    console.log(currentSchema)
+
+                    updateSchema(currentSchema?._id, {
                         fields: currentSchema?.fields
                             ? [...currentSchema.fields, addField]
                             : [addField]
-                    }).then(() => {
-                        message.success('添加字段成功')
-                        ctx.dispatch('getSchemas', projectId)
                     })
+                        .then(() => {
+                            onClose()
+                            message.success('添加字段成功')
+                            ctx.dispatch('getSchemas', projectId)
+                        })
+                        .catch(() => {
+                            message.error('添加字段失败')
+                        })
                 }}
             >
                 <Form.Item
@@ -63,14 +69,24 @@ export const FieldModal: React.FC<{
 
                 <Form.Item
                     label="数据库字段名"
-                    name="fieldName"
-                    rules={[{ required: true, message: '请输入数据库名称！' }]}
+                    name="name"
+                    rules={[
+                        { required: true, message: '请输入数据库名称！' },
+                        {
+                            message: '字段名只能使用英文字母、数字、-、_ 等符号',
+                            pattern: /^[a-z0-9A-Z_-]+$/
+                        }
+                    ]}
                 >
                     <Input placeholder="数据库字段名，如 title" />
                 </Form.Item>
 
-                <Form.Item label="TextArea" name="description">
+                <Form.Item label="描述" name="description">
                     <TextArea placeholder="原型描述，如博客文章标题" />
+                </Form.Item>
+
+                <Form.Item label="默认值" name="defaultValue">
+                    <Input placeholder="此值的默认值" />
                 </Form.Item>
 
                 <Form.Item>

@@ -11,41 +11,15 @@ body,
     filter: invert(80%);
 }
 
-.full-height {
-    display: flex;
-    height: 100%;
-    align-items: center;
-}
-
-.flex-center {
-    display: flex;
-    align-items: center;
-}
-
 .ant-layout {
-    // min-height: 100vh;
+    .ant-layout-sider {
+        background: inherit;
+    }
+
     .ant-pro-basicLayout-has-header {
         margin: 0;
         height: 100%;
     }
-}
-
-.page-container {
-    height: 100%;
-    padding: 24px;
-
-    .ant-layout-header {
-        background-color: inherit;
-    }
-
-    // .ant-card-body {
-    //     height: 100%;
-
-    //     .ant-layout-content {
-    //         padding: 50px 24px;
-    //         //   background-color: #fff;
-    //     }
-    // }
 }
 
 canvas {
@@ -87,4 +61,28 @@ ol {
     body .ant-design-pro > .ant-layout {
         min-height: 100vh;
     }
+}
+
+.page-container {
+    height: 100%;
+    padding: 24px;
+    position: relative;
+
+    .ant-layout-header {
+        background-color: inherit;
+    }
+}
+
+.full-height {
+    height: 100%;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.marin-b-s {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
