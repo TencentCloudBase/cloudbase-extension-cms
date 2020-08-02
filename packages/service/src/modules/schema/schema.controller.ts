@@ -4,6 +4,8 @@ import {
     Put,
     Body,
     Query,
+    Param,
+    Delete,
     Controller,
     UseInterceptors,
     ClassSerializerInterceptor
@@ -65,15 +67,38 @@ export class SchemaController {
         return res
     }
 
-    @Put()
-    async updateSchema(@Body() body: { schemaId: string; payload: SchemaV2 }) {
-        const { schemaId, payload } = body
-
+    @Put(':id')
+    async updateSchema(@Param('id') schemaId, @Body() payload: SchemaV2) {
         return this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
                 _id: schemaId
             })
             .update(payload)
+    }
+
+    @Delete(':id')
+    async deleteSchema(@Param('id') schemaId, @Body() body: { deleteCollection: boolean }) {
+        const { deleteCollection } = body
+
+        const { data } = await this.cloudbaseService
+            .collection(CollectionV2.Schemas)
+            .doc(schemaId)
+            .get()
+
+        const schema = data?.[0]
+
+        const res = await this.cloudbaseService
+            .collection(CollectionV2.Schemas)
+            .where({
+                _id: schemaId
+            })
+            .remove()
+
+        if (deleteCollection) {
+            await this.schemaService.deleteCollection(schema.collectionName)
+        }
+
+        return res
     }
 }

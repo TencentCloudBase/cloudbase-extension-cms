@@ -3,13 +3,27 @@ import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import React, { useState, useEffect } from 'react'
-import { PlusCircleTwoTone } from '@ant-design/icons'
-import { Card, Layout, Menu, List, Typography, Row, Col, Spin, Button, message, Empty } from 'antd'
+import { PlusCircleTwoTone, EditOutlined } from '@ant-design/icons'
+import {
+    Card,
+    Layout,
+    Menu,
+    List,
+    Row,
+    Col,
+    Spin,
+    Button,
+    message,
+    Empty,
+    Space,
+    Popover,
+    Typography
+} from 'antd'
 import { FieldTypes } from '@/common'
 
 import { SchemaFieldRender } from './FieldRender'
-import { FieldModal } from './FieldModal'
-import { SchemaModal } from './SchemaModal'
+import { CreateFieldModal, DeleteFieldModal } from './FieldModal'
+import { CreateSchemaModal, DeleteSchemaModal } from './SchemaModal'
 import './index.less'
 
 const { Sider, Content } = Layout
@@ -32,9 +46,10 @@ export default (): React.ReactNode => {
         state: { currentSchema, schemas, loading }
     }: { state: SchemaState } = ctx
 
-    const [schemaVisible, setSchemaVisible] = useState(false)
+    const [createSchemaVisible, setCreateSchemaVisible] = useState(false)
+    const [deleteSchemaVisible, setDeleteSchmeaVisible] = useState(false)
     const [fieldVisible, setFieldVisible] = useState(false)
-    const [selectField, setSelectField] = useState<any>(null)
+    const [deleteFieldVisible, setDeleteFieldVisible] = useState(false)
 
     useEffect(() => {
         ctx.dispatch('getSchemas', projectId)
@@ -54,7 +69,7 @@ export default (): React.ReactNode => {
                         <h2 className="full-height">
                             <PlusCircleTwoTone
                                 style={{ fontSize: '20px' }}
-                                onClick={() => setSchemaVisible(true)}
+                                onClick={() => setCreateSchemaVisible(true)}
                             />
                         </h2>
                     }
@@ -71,7 +86,7 @@ export default (): React.ReactNode => {
                             defaultSelectedKeys={defaultSelectedMenu}
                             onClick={({ key }) => {
                                 const schema = schemas.find((item: any) => item._id === key)
-                                console.log('set')
+
                                 ctx.setState({
                                     currentSchema: schema
                                 })
@@ -93,14 +108,66 @@ export default (): React.ReactNode => {
                             <Row>
                                 <Col flex="auto" />
                                 <Col flex="600px">
-                                    <div className="schema-layout-header">
+                                    <Space className="schema-layout-header">
                                         <Typography.Title level={3}>
                                             {currentSchema.displayName}
                                         </Typography.Title>
-                                    </div>
+                                        <Popover
+                                            placement="bottom"
+                                            content={
+                                                <Space>
+                                                    <Button
+                                                        danger
+                                                        size="small"
+                                                        onClick={() => setDeleteSchmeaVisible(true)}
+                                                    >
+                                                        删除
+                                                    </Button>
+                                                </Space>
+                                            }
+                                        >
+                                            <EditOutlined
+                                                style={{
+                                                    fontSize: '18px'
+                                                }}
+                                                onClick={() => {}}
+                                            />
+                                        </Popover>
+                                    </Space>
                                     <Content>
                                         {currentSchema?.fields?.length ? (
-                                            <SchemaFieldRender schema={currentSchema} />
+                                            <SchemaFieldRender
+                                                schema={currentSchema}
+                                                actionRender={(field) => (
+                                                    <>
+                                                        <Button
+                                                            size="small"
+                                                            type="primary"
+                                                            onClick={() => {
+                                                                ctx.setState({
+                                                                    fieldAction: 'edit',
+                                                                    selectField: field
+                                                                })
+                                                                setFieldVisible(true)
+                                                            }}
+                                                        >
+                                                            编辑
+                                                        </Button>
+                                                        <Button
+                                                            size="small"
+                                                            danger
+                                                            onClick={() => {
+                                                                ctx.setState({
+                                                                    selectField: field
+                                                                })
+                                                                setDeleteFieldVisible(true)
+                                                            }}
+                                                        >
+                                                            删除
+                                                        </Button>
+                                                    </>
+                                                )}
+                                            />
                                         ) : (
                                             <div className="schema-empty">
                                                 <Empty description="点击右侧字段类型，添加一个字段" />
@@ -113,7 +180,10 @@ export default (): React.ReactNode => {
                         ) : (
                             <div className="schema-empty">
                                 <Empty description="创建你的原型，开始使用 CMS">
-                                    <Button type="primary" onClick={() => setSchemaVisible(true)}>
+                                    <Button
+                                        type="primary"
+                                        onClick={() => setCreateSchemaVisible(true)}
+                                    >
                                         创建原型
                                     </Button>
                                 </Empty>
@@ -132,7 +202,10 @@ export default (): React.ReactNode => {
                                             message.info('请选择原型')
                                             return
                                         }
-                                        setSelectField(item)
+                                        ctx.setState({
+                                            fieldAction: 'create',
+                                            selectField: item
+                                        })
                                         setFieldVisible(true)
                                     }}
                                 >
@@ -147,11 +220,18 @@ export default (): React.ReactNode => {
                 </Layout>
             </ProCard>
 
-            <SchemaModal visible={schemaVisible} onClose={() => setSchemaVisible(false)} />
-            <FieldModal
-                field={selectField}
-                visible={fieldVisible}
-                onClose={() => setFieldVisible(false)}
+            <CreateSchemaModal
+                visible={createSchemaVisible}
+                onClose={() => setCreateSchemaVisible(false)}
+            />
+            <DeleteSchemaModal
+                visible={deleteSchemaVisible}
+                onClose={() => setDeleteSchmeaVisible(false)}
+            />
+            <CreateFieldModal visible={fieldVisible} onClose={() => setFieldVisible(false)} />
+            <DeleteFieldModal
+                visible={deleteFieldVisible}
+                onClose={() => setDeleteFieldVisible(false)}
             />
         </div>
     )

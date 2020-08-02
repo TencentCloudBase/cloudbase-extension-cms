@@ -17,11 +17,17 @@ export async function createSchema(schema: Partial<SchemaV2>) {
 }
 
 export async function updateSchema(schemaId: string, schema: Partial<SchemaV2>) {
-    return request('/api/schema', {
+    return request(`/api/schema/${schemaId}`, {
         method: 'PUT',
+        data: schema
+    })
+}
+
+export async function deleteSchema(schemaId: string, deleteCollection: boolean) {
+    return request(`/api/schema/${schemaId}`, {
+        method: 'DELETE',
         data: {
-            schemaId,
-            payload: schema
+            deleteCollection
         }
     })
 }

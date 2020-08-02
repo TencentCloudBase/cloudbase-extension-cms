@@ -18,4 +18,19 @@ export class SchemaService {
             return e.code
         }
     }
+
+    async deleteCollection(name: string) {
+        const envId = getEnvIdString()
+        const manager = CloudBase.init({
+            envId,
+            secretId: process.env.SECRETID,
+            secretKey: process.env.SECRETKEY
+        })
+
+        try {
+            await manager.database.deleteCollection(name)
+        } catch (e) {
+            return e.code
+        }
+    }
 }

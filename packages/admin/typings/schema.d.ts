@@ -32,6 +32,8 @@ interface SchemaFieldV1 {
 }
 
 interface SchemaFieldV2 {
+    id: string
+
     // 字段类型
     type: string
 
