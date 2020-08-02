@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import { createSchema } from '@/services/schema'
-import { Modal, Form, message, Input, Space, Button } from 'antd'
+import { createSchema, deleteSchema } from '@/services/schema'
+import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from 'antd'
 
 const { TextArea } = Input
 
-export const SchemaModal: React.FC<{
+export const CreateSchemaModal: React.FC<{
     visible: boolean
     onClose: () => void
 }> = ({ visible, onClose }) => {
@@ -78,6 +78,49 @@ export const SchemaModal: React.FC<{
                     </Space>
                 </Form.Item>
             </Form>
+        </Modal>
+    )
+}
+
+export const DeleteSchemaModal: React.FC<{
+    visible: boolean
+    onClose: () => void
+}> = ({ visible, onClose }) => {
+    const { projectId } = useParams()
+    const ctx = useConcent('schema')
+    const { currentSchema = {} } = ctx.state
+    const [deleteCollection, setDeleteCollection] = useState(false)
+
+    return (
+        <Modal
+            centered
+            destroyOnClose
+            title="删除内容原型"
+            visible={visible}
+            onCancel={() => onClose()}
+            onOk={() => {
+                deleteSchema(currentSchema._id, deleteCollection)
+                    .then(() => {
+                        message.success('删除内容原型成功！')
+                        ctx.dispatch('getSchemas', projectId)
+                    })
+                    .catch(() => {
+                        message.error('删除内容原型失败！')
+                    })
+                    .finally(() => {
+                        onClose()
+                    })
+            }}
+        >
+            <Space direction="vertical">
+                <Typography.Text>确认删【{currentSchema?.displayName}】内容原型？</Typography.Text>
+                <Checkbox
+                    checked={deleteCollection}
+                    onChange={(e) => setDeleteCollection(e.target.checked)}
+                >
+                    同时删除数据表（警告：删除后数据无法找回）
+                </Checkbox>
+            </Space>
         </Modal>
     )
 }

@@ -38,6 +38,8 @@ export class SchemaFieldV1 {
 }
 
 export class SchemaFieldV2 {
+    id: string
+
     // 字段类型
     @IsNotEmpty()
     type: string
@@ -114,13 +116,10 @@ export class SchemaV1 {
 export class SchemaV2 {
     _id: string
 
-    @IsNotEmpty()
     displayName: string
 
-    @IsNotEmpty()
     collectionName: string
 
-    @IsNotEmpty()
     projectId: string
 
     fields: SchemaFieldV2[]
