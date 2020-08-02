@@ -12,11 +12,10 @@ import {
     DatePicker,
     Upload,
     message,
-    Button,
-    Select
+    Button
 } from 'antd'
 
-import { getTempFileURL } from '@/utils'
+import { getTempFileURL, uploadFile } from '@/utils'
 import { Rule } from 'antd/es/form'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 
@@ -159,6 +158,35 @@ export function getFieldRender(field: { name: string; type: string }) {
     }
 }
 
+/**
+ * 根据类型获取验证规则
+ */
+function getValidateRule(type: string) {
+    let rule: Rule
+
+    switch (type) {
+        case 'Url':
+            rule = { pattern: /^https?:\/\/[^\s$.?#].[^\s]*$/, message: '请输入正确的网址' }
+            break
+        case 'Email':
+            rule = { pattern: /^https?:\/\/[^\s$.?#].[^\s]*$/, message: '请输入正确的网址' }
+            break
+        case 'Number':
+            rule = { pattern: /^\d+$/, message: '请输入正确的数字' }
+            break
+        case 'Tel':
+            rule = {
+                pattern: /^\d+$/,
+                message: '请输入正确的电话号码'
+            }
+            break
+        default:
+            rule = {}
+    }
+
+    return rule
+}
+
 const getRules = (field: SchemaFieldV2): Rule[] => {
     const { isRequired, displayName } = field
 
@@ -168,7 +196,32 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
         rules.push({ required: isRequired, message: `${displayName} 字段是必须要的` })
     }
 
+    rules.push(getValidateRule(field.type))
+
     return rules
+}
+
+// custom file/image uploader
+const CustomUploader: React.FC<{
+    value: string
+    onChange: (v: string) => void
+}> = (props) => {
+    return (
+        <Dragger
+            beforeUpload={async (file) => {
+                const fileId: string = await uploadFile(file)
+                return Promise.reject()
+            }}
+            customRequest={() => {
+                console.log('object')
+            }}
+        >
+            <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">点击或拖拽图片上传</p>
+        </Dragger>
+    )
 }
 
 export function getFieldFormItem(field: SchemaFieldV2, key: number) {
@@ -217,6 +270,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     rules={rules}
                     label={displayName}
                     extra={description}
+                    valuePropName="checked"
                 >
                     <Switch
                         checkedChildren="true"
@@ -311,29 +365,8 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     rules={rules}
                     label={displayName}
                     extra={description}
-                    valuePropName="fileList"
                 >
-                    <Dragger
-                        key={key}
-                        name={name}
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-                        onChange={(info) => {
-                            const { status } = info.file
-                            if (status !== 'uploading') {
-                                console.log(info.file, info.fileList)
-                            }
-                            if (status === 'done') {
-                                message.success(`${info.file.name} 图片上传成功！`)
-                            } else if (status === 'error') {
-                                message.error(`${info.file.name} 图片上传失败！`)
-                            }
-                        }}
-                    >
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">点击或拖拽图片上传</p>
-                    </Dragger>
+                    <CustomUploader />
                 </Form.Item>
             )
             break
@@ -348,25 +381,19 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     valuePropName="fileList"
                 >
                     <Dragger
-                        key={key}
-                        name={name}
-                        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+                        beforeUpload={async (file) => {
+                            const fileId: string = await uploadFile(file)
+                            console.log(fileId)
+                            return Promise.reject()
+                        }}
                         onChange={(info) => {
-                            const { status } = info.file
-                            if (status !== 'uploading') {
-                                console.log(info.file, info.fileList)
-                            }
-                            if (status === 'done') {
-                                message.success(`${info.file.name} 图片上传成功！`)
-                            } else if (status === 'error') {
-                                message.error(`${info.file.name} 图片上传失败！`)
-                            }
+                            console.log(info)
                         }}
                     >
                         <p className="ant-upload-drag-icon">
                             <InboxOutlined />
                         </p>
-                        <p className="ant-upload-text">点击或拖拽图片上传</p>
+                        <p className="ant-upload-text">点击或拖拽文件上传</p>
                     </Dragger>
                 </Form.Item>
             )
@@ -384,7 +411,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                         {(fields, { add, remove }) => {
                             return (
                                 <div>
-                                    {fields.map((field, index) => (
+                                    {fields?.map((field, index) => (
                                         <Form.Item key={field.key}>
                                             <Form.Item
                                                 {...field}

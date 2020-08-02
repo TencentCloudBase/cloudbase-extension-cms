@@ -6,7 +6,9 @@ export default {
         projectId: '',
         currentSchema: null,
         loading: false,
-        schemas: []
+        schemas: [],
+        fieldAction: 'create',
+        selectField: {}
     },
     reducer: {
         async getSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {

@@ -57,27 +57,21 @@ export default defineConfig({
             icon: 'gold',
             component: './content/index'
         },
-        {
-            path: '/:projectId/admin',
-            name: 'admin',
-            icon: 'crown',
-            access: 'canAdmin',
-            component: './Admin',
-            routes: [
-                {
-                    path: '/sub-page',
-                    name: 'sub-page',
-                    icon: 'smile',
-                    component: './Admin'
-                }
-            ]
-        },
-        {
-            path: '/:projectId/list',
-            icon: 'table',
-            name: 'list.table-list',
-            component: './ListTableList'
-        },
+        // {
+        //     path: '/:projectId/admin',
+        //     name: 'admin',
+        //     icon: 'crown',
+        //     access: 'canAdmin',
+        //     component: './Admin',
+        //     routes: [
+        //         {
+        //             path: '/sub-page',
+        //             name: 'sub-page',
+        //             icon: 'smile',
+        //             component: './Admin'
+        //         }
+        //     ]
+        // },
         {
             path: '/user',
             layout: false,

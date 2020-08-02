@@ -3,13 +3,13 @@ import { run } from 'concent'
 import { notification } from 'antd'
 import { history, RequestConfig, Link } from 'umi'
 import { ResponseError } from 'umi-request'
-import Footer from '@/components/Footer'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
 import * as models from './models'
+import { getCloudBaseApp } from './utils'
 
 run(models)
 
@@ -17,6 +17,10 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser
     settings?: LayoutSettings
 }> {
+    const app = await getCloudBaseApp()
+
+    // console.log(app.auth())
+
     // 如果是登录页面，不执行
     if (history.location.pathname !== '/user/login') {
         try {
@@ -39,38 +43,27 @@ export const layout = ({
 }: {
     initialState: { settings?: LayoutSettings }
 }): BasicLayoutProps => {
-    const paths = history.location.pathname.split('/').filter((_: string) => _)
-
-    const projectId = paths[0]
-
-    if (projectId) {
-        return {
-            disableContentMargin: false,
-            rightContentRender: () => <RightContent />,
-            menuItemRender: (menuItemProps, defaultDom) => {
-                if (menuItemProps.isUrl || menuItemProps.children) {
-                    return defaultDom
-                }
-
-                if (menuItemProps.path) {
-                    return (
-                        <Link to={menuItemProps.path.replace(':projectId', projectId)}>
-                            {defaultDom}
-                        </Link>
-                    )
-                }
-
-                return defaultDom
-            },
-            headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-            ...initialState?.settings
-        }
-    }
-
     return {
-        rightContentRender: () => <RightContent />,
         disableContentMargin: false,
-        footerRender: () => <Footer />,
+        rightContentRender: () => <RightContent />,
+        menuItemRender: (menuItemProps, defaultDom) => {
+            const paths = history.location.pathname.split('/').filter((_: string) => _)
+            const projectId = paths[0]
+
+            if (menuItemProps.isUrl || menuItemProps.children) {
+                return defaultDom
+            }
+
+            if (menuItemProps.path) {
+                return (
+                    <Link to={menuItemProps.path.replace(':projectId', projectId)}>
+                        {defaultDom}
+                    </Link>
+                )
+            }
+
+            return defaultDom
+        },
         headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
         ...initialState?.settings
     }

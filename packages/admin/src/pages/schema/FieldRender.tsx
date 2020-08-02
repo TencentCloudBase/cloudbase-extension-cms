@@ -12,8 +12,9 @@ export interface FieldType {
 
 export const SchemaFieldRender: React.SFC<{
     schema: SchemaV2
+    actionRender: (field: SchemaFieldV2) => React.ReactNode
 }> = (props) => {
-    const { schema } = props
+    const { schema, actionRender } = props
 
     return (
         <div>
@@ -43,15 +44,7 @@ export const SchemaFieldRender: React.SFC<{
                                     </Space>
                                 </div>
                             </Space>
-
-                            <Space>
-                                <Button size="small" type="primary">
-                                    编辑
-                                </Button>
-                                <Button size="small" danger>
-                                    删除
-                                </Button>
-                            </Space>
+                            <Space>{actionRender(field)}</Space>
                         </Card>
                     )
                 })}

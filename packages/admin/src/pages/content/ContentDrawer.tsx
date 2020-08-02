@@ -1,9 +1,9 @@
 import React from 'react'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import { updateSchema } from '@/services/schema'
-import { Form, message, Input, Switch, Space, Button, Drawer, Row, Col } from 'antd'
+import { Form, message, Input, Space, Button, Drawer, Row, Col } from 'antd'
 import { getFieldFormItem } from './Components'
+import { getCloudBaseApp } from '@/utils'
 
 const { TextArea } = Input
 
@@ -33,6 +33,9 @@ export const ContentDrawer: React.FC<{
                 name="basic"
                 layout="vertical"
                 labelCol={{ span: 6 }}
+                onValuesChange={(v) => {
+                    console.log(v)
+                }}
                 onFinish={(v = {}) => {
                     console.log(v)
 
