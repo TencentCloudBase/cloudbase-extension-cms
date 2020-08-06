@@ -31,7 +31,7 @@ interface Window {
     tcb: any
     TcbCmsConfig: {
         envId: string
-        cloudAccessUrl: string
+        cloudAccessDomain: string
     }
     tinymce: any
 }

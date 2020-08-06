@@ -42,9 +42,9 @@ const RichText: React.FC<{ value?: any; key: string; onChange?: (...args: any) =
             })
         })
         return () => {
-            const tinymce = window.tinymce.get(`${key}-richtext-editor`)
-            console.log(tinymce)
             try {
+                const tinymce = window.tinymce.get(`${key}-richtext-editor`)
+                console.log(tinymce)
                 tinymce?.destroy()
             } catch (e) {
                 // ignore error
