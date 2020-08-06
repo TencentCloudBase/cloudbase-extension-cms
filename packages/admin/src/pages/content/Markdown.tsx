@@ -15,7 +15,7 @@ const MarkdownEditor: React.FC<{ value?: any; key: string; onChange?: (...args: 
                 onChange(text)
             },
             upload: {
-                url: `https://${window.TcbCmsConfig.cloudAccessUrl}/tcb-ext-cms-service/upload`
+                url: `https://${window.TcbCmsConfig.cloudAccessDomain}/tcb-ext-cms-service/upload`
             },
             theme: 'classic',
             placeholder: '欢迎使用云开发 CMS Markdown编辑器',

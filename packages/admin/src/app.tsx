@@ -17,7 +17,11 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser
     settings?: LayoutSettings
 }> {
-    const app = await getCloudBaseApp()
+    try {
+        const app = await getCloudBaseApp()
+    } catch (error) {
+        console.log(error)
+    }
 
     // console.log(app.auth())
 
