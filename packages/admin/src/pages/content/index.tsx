@@ -4,8 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import ProCard from '@ant-design/pro-card'
 import ProTable from '@ant-design/pro-table'
 import { PlusOutlined } from '@ant-design/icons'
-import { getContents } from '@/services/content'
-import { Menu, Button, Spin, Empty, Row, Col } from 'antd'
+import { getContents, deleteContent } from '@/services/content'
+import { Menu, Button, Spin, Empty, Row, Col, Modal, message } from 'antd'
 import { createColumns } from './columns'
 import { ContentDrawer } from './ContentDrawer'
 import './index.less'
@@ -13,12 +13,13 @@ import './index.less'
 export default (): React.ReactNode => {
     // 加载 schemas 数据
     const { projectId } = useParams()
-    const ctx = useConcent('schema')
+    const ctx = useConcent('content')
     const [contentModalVisible, setContentModalVisible] = useState(false)
 
     useEffect(() => {
         ctx.dispatch('getSchemas', projectId)
     }, [])
+
     const tableRef = useRef<{
         reload: (resetPageIndex?: boolean) => void
         reloadAndRest: () => void
@@ -30,8 +31,8 @@ export default (): React.ReactNode => {
     const {
         state: { currentSchema, schemas, loading }
     }: { state: SchemaState } = ctx
-
     const columns = createColumns(currentSchema?.fields)
+    const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
 
     return (
         <div className="page-container">
@@ -39,11 +40,11 @@ export default (): React.ReactNode => {
                 <ProCard
                     colSpan="240px"
                     className="card-left"
-                    title={<h2 className="full-height">内容</h2>}
+                    title={<h2 className="full-height">内容集合</h2>}
                     style={{ marginBottom: 0 }}
                 >
                     {loading ? (
-                        <Menu>
+                        <Menu defaultSelectedKeys={defaultSelectedMenu}>
                             <Menu.Item>
                                 <Spin />
                             </Menu.Item>
@@ -51,6 +52,7 @@ export default (): React.ReactNode => {
                     ) : schemas?.length ? (
                         <Menu
                             mode="inline"
+                            defaultSelectedKeys={defaultSelectedMenu}
                             onClick={({ key }) => {
                                 const schema = schemas.find((item: SchemaV2) => item._id === key)
                                 ctx.setState({
@@ -71,14 +73,72 @@ export default (): React.ReactNode => {
                         </Row>
                     )}
                 </ProCard>
-                <ProCard style={{ marginBottom: 0 }}>
+                <ProCard style={{ marginBottom: 0, width: 'calc(100% - 256px)' }}>
                     {currentSchema ? (
                         <ProTable
+                            rowKey="_id"
+                            search={false}
+                            defaultData={[]}
+                            actionRef={tableRef}
+                            dateFormatter="string"
+                            scroll={{ x: 1000 }}
                             headerTitle={
                                 <span className="table-title">{currentSchema.displayName}</span>
                             }
-                            actionRef={tableRef}
-                            columns={columns}
+                            columns={[
+                                ...columns,
+                                {
+                                    title: '操作',
+                                    width: 150,
+                                    align: 'center',
+                                    fixed: 'right',
+                                    dataIndex: 'id',
+                                    valueType: 'option',
+                                    render: (text, row: any) => [
+                                        <Button
+                                            size="small"
+                                            type="primary"
+                                            key="edit"
+                                            onClick={() => {
+                                                ctx.setState({
+                                                    contentAction: 'edit',
+                                                    selectedContent: row
+                                                })
+                                                setContentModalVisible(true)
+                                            }}
+                                        >
+                                            编辑
+                                        </Button>,
+                                        <Button
+                                            danger
+                                            size="small"
+                                            key="delete"
+                                            onClick={() => {
+                                                const modal = Modal.confirm({
+                                                    title: '确认删除此内容？',
+                                                    onCancel: () => {
+                                                        modal.destroy()
+                                                    },
+                                                    onOk: async () => {
+                                                        try {
+                                                            await deleteContent(
+                                                                currentSchema.collectionName,
+                                                                row._id
+                                                            )
+                                                            tableRef?.current?.reloadAndRest()
+                                                            message.success('删除内容成功')
+                                                        } catch (error) {
+                                                            message.error('删除内容失败')
+                                                        }
+                                                    }
+                                                })
+                                            }}
+                                        >
+                                            删除
+                                        </Button>
+                                    ]
+                                }
+                            ]}
                             request={async (
                                 params: { pageSize: number; current: number; [key: string]: any },
                                 sort,
@@ -87,10 +147,10 @@ export default (): React.ReactNode => {
                                 const { pageSize, current } = params
                                 const resource = currentSchema.collectionName
                                 const { data = [], total } = await getContents(resource, {
-                                    page: current,
-                                    pageSize,
                                     sort,
-                                    filter
+                                    filter,
+                                    pageSize,
+                                    page: current
                                 })
 
                                 return {
@@ -99,28 +159,25 @@ export default (): React.ReactNode => {
                                     success: true
                                 }
                             }}
-                            options={{
-                                search: {
-                                    name: 'keyWord'
-                                }
-                            }}
-                            rowKey="key"
                             pagination={{
                                 showSizeChanger: true
                             }}
-                            size="middle"
-                            search={false}
                             toolBarRender={() => [
                                 <Button
                                     type="primary"
                                     key="button"
                                     icon={<PlusOutlined />}
-                                    onClick={() => setContentModalVisible(true)}
+                                    onClick={() => {
+                                        ctx.setState({
+                                            contentAction: 'create',
+                                            selectedContent: null
+                                        })
+                                        setContentModalVisible(true)
+                                    }}
                                 >
                                     新建
                                 </Button>
                             ]}
-                            dateFormatter="string"
                         />
                     ) : (
                         <div className="content-empty">
@@ -133,6 +190,10 @@ export default (): React.ReactNode => {
                 schema={currentSchema}
                 visible={contentModalVisible}
                 onClose={() => setContentModalVisible(false)}
+                onOk={() => {
+                    setContentModalVisible(false)
+                    tableRef?.current?.reload()
+                }}
             />
         </div>
     )

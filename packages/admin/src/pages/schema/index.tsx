@@ -146,7 +146,7 @@ export default (): React.ReactNode => {
                                                             onClick={() => {
                                                                 ctx.setState({
                                                                     fieldAction: 'edit',
-                                                                    selectField: field
+                                                                    selectedField: field
                                                                 })
                                                                 setFieldVisible(true)
                                                             }}
@@ -158,7 +158,7 @@ export default (): React.ReactNode => {
                                                             danger
                                                             onClick={() => {
                                                                 ctx.setState({
-                                                                    selectField: field
+                                                                    selectedField: field
                                                                 })
                                                                 setDeleteFieldVisible(true)
                                                             }}
@@ -191,6 +191,9 @@ export default (): React.ReactNode => {
                         )}
                     </Content>
                     <Sider className="schema-sider">
+                        <Typography.Title level={3} className="schema-sider-header">
+                            原型类型
+                        </Typography.Title>
                         <List
                             bordered={false}
                             dataSource={FieldTypes}
@@ -204,7 +207,7 @@ export default (): React.ReactNode => {
                                         }
                                         ctx.setState({
                                             fieldAction: 'create',
-                                            selectField: item
+                                            selectedField: item
                                         })
                                         setFieldVisible(true)
                                     }}

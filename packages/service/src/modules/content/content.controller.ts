@@ -6,7 +6,7 @@ import { IsNotEmpty, IsIn } from 'class-validator'
 const validActions = [
     'getOne',
     'getMany',
-    'create',
+    'createOne',
     'updateOne',
     'updateMany',
     'deleteOne',
@@ -21,7 +21,7 @@ class ActionBody {
     action:
         | 'getOne'
         | 'getMany'
-        | 'create'
+        | 'createOne'
         | 'updateOne'
         | 'updateMany'
         | 'deleteOne'
@@ -50,8 +50,15 @@ export class ContentController {
 
     @Post()
     async handleAction(@Body() body: ActionBody) {
-        const { action, resource, options } = body
+        const {
+            action,
+            resource,
+            options = {
+                page: 1,
+                pageSize: 10
+            }
+        } = body
 
-        return this.contentService[action](resource, options)
+        return this.contentService[action](resource, options as any)
     }
 }

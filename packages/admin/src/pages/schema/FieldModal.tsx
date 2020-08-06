@@ -18,7 +18,7 @@ export const CreateFieldModal: React.FC<{
     const { projectId } = useParams()
     const [connectSchema, setConnectSchema] = useState<SchemaV2>()
     const {
-        state: { currentSchema, schemas, fieldAction, selectField }
+        state: { currentSchema, schemas, fieldAction, selectedField }
     } = ctx
 
     return (
@@ -29,8 +29,8 @@ export const CreateFieldModal: React.FC<{
             visible={visible}
             title={
                 fieldAction === 'create'
-                    ? `新建【${selectField?.name}】字段`
-                    : `编辑【${selectField?.displayName}】`
+                    ? `新建【${selectedField?.name}】字段`
+                    : `编辑【${selectedField?.displayName}】`
             }
             onOk={() => onClose()}
             onCancel={() => onClose()}
@@ -39,7 +39,7 @@ export const CreateFieldModal: React.FC<{
                 name="basic"
                 layout="vertical"
                 labelCol={{ span: 6 }}
-                initialValues={fieldAction === 'edit' ? selectField : {}}
+                initialValues={fieldAction === 'edit' ? selectedField : {}}
                 onValuesChange={(v) => {
                     if (v.connectResource) {
                         const schema = schemas.find((_: SchemaV2) => _._id === v.connectResource)
@@ -47,6 +47,15 @@ export const CreateFieldModal: React.FC<{
                     }
                 }}
                 onFinish={(v = {}) => {
+                    const existSameName = currentSchema?.fields.find(
+                        (field: SchemaFieldV2) => field.name === v.name
+                    )
+
+                    if (existSameName && fieldAction === 'create') {
+                        message.error(`已存在同名字段 ${v.name}，请勿重复创建`)
+                        return
+                    }
+
                     // 过滤掉值为 undefined 的数据
                     const field = Object.keys(v)
                         .filter((key) => typeof v[key] !== 'undefined')
@@ -64,17 +73,20 @@ export const CreateFieldModal: React.FC<{
                     if (fieldAction === 'create') {
                         fields.push({
                             ...field,
-                            type: selectField.type
+                            type: selectedField.type
                         })
                     }
 
                     // 编辑字段
                     if (fieldAction === 'edit') {
-                        const index = fields.findIndex((_: any) => _.id === selectField.id)
+                        const index = fields.findIndex(
+                            (_: any) => _.id === selectedField.id || _.name === selectedField.name
+                        )
+
                         if (index > -1) {
                             fields.splice(index, 1, {
-                                ...selectField,
-                                field
+                                ...selectedField,
+                                ...field
                             })
                         }
                     }
@@ -121,7 +133,7 @@ export const CreateFieldModal: React.FC<{
                     <TextArea placeholder="原型描述，如博客文章标题" />
                 </Form.Item>
 
-                {selectField?.type === 'Connect' && (
+                {selectedField?.type === 'Connect' && (
                     <Form.Item label="关联">
                         <Space>
                             <Form.Item
@@ -150,7 +162,7 @@ export const CreateFieldModal: React.FC<{
                                             </Option>
                                         ))
                                     ) : (
-                                        <Option value="" key={selectField.name}>
+                                        <Option value="" key={selectedField.name}>
                                             空
                                         </Option>
                                     )}
@@ -160,7 +172,7 @@ export const CreateFieldModal: React.FC<{
                     </Form.Item>
                 )}
 
-                {negativeTypes.includes(selectField?.type) ? null : (
+                {negativeTypes.includes(selectedField?.type) ? null : (
                     <Form.Item label="默认值" name="defaultValue">
                         <Input placeholder="此值的默认值" />
                     </Form.Item>
@@ -216,7 +228,7 @@ export const DeleteFieldModal: React.FC<{
     const ctx = useConcent('schema')
 
     const {
-        state: { currentSchema, selectField }
+        state: { currentSchema, selectedField }
     } = ctx
 
     return (
@@ -224,10 +236,12 @@ export const DeleteFieldModal: React.FC<{
             centered
             destroyOnClose
             visible={visible}
-            title={`删除【${selectField?.displayName}】字段`}
+            title={`删除【${selectedField?.displayName}】字段`}
             onOk={() => {
                 const fields = currentSchema.fields || []
-                const index = fields.find((_: any) => _.id === selectField.id)
+                const index = fields.findIndex(
+                    (_: any) => _.id === selectedField.id || _.name === selectedField.name
+                )
 
                 if (index > -1) {
                     fields.splice(index, 1)
@@ -249,7 +263,7 @@ export const DeleteFieldModal: React.FC<{
             }}
             onCancel={() => onClose()}
         >
-            确认删除【{selectField.displayName}（{selectField?.name}）】字段吗？
+            确认删除【{selectedField.displayName}（{selectedField?.name}）】字段吗？
         </Modal>
     )
 }

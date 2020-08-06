@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, Suspense } from 'react'
 import {
     Typography,
     Space,
@@ -11,21 +11,43 @@ import {
     InputNumber,
     DatePicker,
     Upload,
+    Button,
+    Col,
+    Select,
     message,
-    Button
+    Progress
 } from 'antd'
-
-import { getTempFileURL, uploadFile } from '@/utils'
+import moment from 'moment'
 import { Rule } from 'antd/es/form'
+import { getSchema } from '@/services/schema'
+import { getContents } from '@/services/content'
+import { getTempFileURL, uploadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import RichTextEditor from './RichText'
+
+const MarkdownEditor = React.lazy(() => import('./Markdown'))
 
 const { Dragger } = Upload
 const { TextArea } = Input
+const { Option } = Select
+
+const LazyMarkdownEditor: React.FC = (props: any) => (
+    <Suspense fallback={<Spin />}>
+        <MarkdownEditor {...props} />
+    </Suspense>
+)
 
 const LazyImage: React.FC<{ src: string }> = ({ src }) => {
-    if (!src) return <Empty image="/img/empty.svg" imageStyle={{ height: '60px' }} />
+    if (!src)
+        return (
+            <Empty
+                image="/img/empty.svg"
+                imageStyle={{ height: '60px' }}
+                description="未设定图片"
+            />
+        )
     if (!/^cloud:\/\/\S+/.test(src)) {
-        return <img src={src} />
+        return <img style={{ height: '100px' }} src={src} />
     }
 
     const [imgUrl, setImgUrl] = useState('')
@@ -42,7 +64,126 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
             })
     }, [])
 
-    return loading ? <Spin /> : <img src={imgUrl} />
+    return loading ? <Spin /> : <img style={{ height: '120px' }} src={imgUrl} />
+}
+
+// custom file/image uploader
+const CustomUploader: React.FC<{
+    type?: 'file' | 'image'
+    value?: string
+    onChange?: (v: string) => void
+}> = (props) => {
+    let { value: fileId, type, onChange = () => {} } = props
+    const [fileList, setFileList] = useState<any[]>()
+    const [percent, setPercent] = useState(0)
+    const [uploading, setUploading] = useState(false)
+
+    // 加载图片预览
+    useEffect(() => {
+        if (!fileId || type === 'file') return
+        getTempFileURL(fileId)
+            .then((url: string) => {
+                setFileList([
+                    {
+                        url,
+                        uid: fileId,
+                        name: `已上传${type === 'file' ? '文件' : '图片'}`,
+                        status: 'done'
+                    }
+                ])
+            })
+            .catch(() => {
+                message.error('加载图片失败')
+            })
+    }, [fileId])
+
+    return (
+        <>
+            <Dragger
+                fileList={fileList}
+                listType={type === 'image' ? 'picture' : 'text'}
+                beforeUpload={async (file) => {
+                    setUploading(true)
+                    setPercent(0)
+                    fileId = await uploadFile(file, (percent) => {
+                        console.log(percent)
+                        setPercent(percent)
+                    })
+                    onChange(fileId)
+                    setFileList([
+                        {
+                            uid: fileId,
+                            name: file.name,
+                            status: 'done'
+                        }
+                    ])
+                    message.success(`上传${type === 'file' ? '文件' : '图片'}成功`)
+                    return Promise.reject()
+                }}
+            >
+                <p className="ant-upload-drag-icon">
+                    <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">点击或拖拽{type === 'file' ? '文件' : '图片'}上传</p>
+            </Dragger>
+            {uploading && <Progress style={{ paddingTop: '10px' }} percent={percent} />}
+        </>
+    )
+}
+
+const CustomDatePicker: React.FC<{
+    value?: string
+    onChange?: (v: string) => void
+}> = (props) => {
+    let { value, onChange = () => {} } = props
+
+    return (
+        <DatePicker
+            showTime
+            value={moment(value)}
+            format="YYYY-MM-DD HH:mm:ss"
+            onChange={(_, v) => onChange(v)}
+        />
+    )
+}
+
+const Connector: React.FC<{
+    value?: string
+    field: SchemaFieldV2
+    onChange?: (v: string) => void
+}> = (props) => {
+    const { value, onChange, field } = props
+    const { connectField, connectResource } = field
+    const [records, setRecords] = useState<Record<string, any>>([])
+
+    useEffect(() => {
+        const loadData = async () => {
+            const { data: schema } = await getSchema(connectResource)
+            const { data } = await getContents(schema.collectionName, {
+                page: 1,
+                pageSize: 1000
+            })
+            setRecords(data)
+        }
+
+        loadData().catch((e) => {
+            message.error(e.message || '获取数据错误')
+        })
+    }, [])
+
+    return (
+        <Select style={{ width: 200 }} placeholder="关联字段" value={value} onChange={onChange}>
+            {records?.length ? (
+                records?.map((record: Record<string, any>) => (
+                    <Option value={record[connectField]} key={record._id}>
+                        {record[connectField]}
+                    </Option>
+                ))
+            ) : (
+                <Option value="">空</Option>
+            )}
+        </Select>
+    )
 }
 
 /**
@@ -58,14 +199,27 @@ export function getFieldRender(field: { name: string; type: string }) {
                 record: any,
                 index: number,
                 action: any
-            ): React.ReactNode | React.ReactNode[] => <Typography.Text>{text}</Typography.Text>
+            ): React.ReactNode | React.ReactNode[] => text
+        case 'MultiLineString':
+            return (
+                text: React.ReactNode,
+                record: any,
+                index: number,
+                action: any
+            ): React.ReactNode | React.ReactNode[] => (
+                <Typography.Text ellipsis style={{ width: '120px' }}>
+                    {text}
+                </Typography.Text>
+            )
         case 'Boolean':
             return (
                 text: React.ReactNode,
                 record: any,
                 index: number,
                 action: any
-            ): React.ReactNode | React.ReactNode[] => <Typography.Text>{text}</Typography.Text>
+            ): React.ReactNode | React.ReactNode[] => {
+                return <Typography.Text>{text ? 'True' : 'False'}</Typography.Text>
+            }
         case 'Number':
             return (
                 text: React.ReactNode,
@@ -127,7 +281,7 @@ export function getFieldRender(field: { name: string; type: string }) {
                 }
 
                 return (
-                    <Space>
+                    <Space direction="vertical">
                         {record[name]?.map((val: string, index: number) => (
                             <Tag key={index}>{val}</Tag>
                         ))}
@@ -140,14 +294,24 @@ export function getFieldRender(field: { name: string; type: string }) {
                 record: any,
                 index: number,
                 action: any
-            ): React.ReactNode | React.ReactNode[] => text
+            ): React.ReactNode | React.ReactNode[] => (
+                <Typography.Text ellipsis style={{ width: '200px' }}>
+                    {text}
+                </Typography.Text>
+            )
+
         case 'RichText':
             return (
                 text: React.ReactNode,
                 record: any,
                 index: number,
                 action: any
-            ): React.ReactNode | React.ReactNode[] => text
+            ): React.ReactNode | React.ReactNode[] => (
+                <Typography.Text ellipsis style={{ width: '200px' }}>
+                    {text}
+                </Typography.Text>
+            )
+
         default:
             return (
                 text: React.ReactNode,
@@ -162,14 +326,17 @@ export function getFieldRender(field: { name: string; type: string }) {
  * 根据类型获取验证规则
  */
 function getValidateRule(type: string) {
-    let rule: Rule
+    let rule: Rule | null
 
     switch (type) {
         case 'Url':
             rule = { pattern: /^https?:\/\/[^\s$.?#].[^\s]*$/, message: '请输入正确的网址' }
             break
         case 'Email':
-            rule = { pattern: /^https?:\/\/[^\s$.?#].[^\s]*$/, message: '请输入正确的网址' }
+            rule = {
+                pattern: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
+                message: '请输入正确的邮箱'
+            }
             break
         case 'Number':
             rule = { pattern: /^\d+$/, message: '请输入正确的数字' }
@@ -181,7 +348,7 @@ function getValidateRule(type: string) {
             }
             break
         default:
-            rule = {}
+            rule = null
     }
 
     return rule
@@ -196,34 +363,16 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
         rules.push({ required: isRequired, message: `${displayName} 字段是必须要的` })
     }
 
-    rules.push(getValidateRule(field.type))
+    const rule = getValidateRule(field.type)
+
+    rule && rules.push(rule)
 
     return rules
 }
 
-// custom file/image uploader
-const CustomUploader: React.FC<{
-    value: string
-    onChange: (v: string) => void
-}> = (props) => {
-    return (
-        <Dragger
-            beforeUpload={async (file) => {
-                const fileId: string = await uploadFile(file)
-                return Promise.reject()
-            }}
-            customRequest={() => {
-                console.log('object')
-            }}
-        >
-            <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-            </p>
-            <p className="ant-upload-text">点击或拖拽图片上传</p>
-        </Dragger>
-    )
-}
-
+/**
+ * 字段编辑
+ */
 export function getFieldFormItem(field: SchemaFieldV2, key: number) {
     const rules = getRules(field)
     const { name, type, min, max, description, displayName, defaultValue } = field
@@ -272,11 +421,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     extra={description}
                     valuePropName="checked"
                 >
-                    <Switch
-                        checkedChildren="true"
-                        unCheckedChildren="false"
-                        defaultChecked={defaultValue}
-                    />
+                    <Switch checkedChildren="True" unCheckedChildren="False" />
                 </Form.Item>
             )
             break
@@ -340,7 +485,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                    <CustomDatePicker />
                 </Form.Item>
             )
             break
@@ -353,7 +498,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+                    <CustomDatePicker />
                 </Form.Item>
             )
             break
@@ -366,7 +511,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <CustomUploader />
+                    <CustomUploader type="image" />
                 </Form.Item>
             )
             break
@@ -380,55 +525,38 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     extra={description}
                     valuePropName="fileList"
                 >
-                    <Dragger
-                        beforeUpload={async (file) => {
-                            const fileId: string = await uploadFile(file)
-                            console.log(fileId)
-                            return Promise.reject()
-                        }}
-                        onChange={(info) => {
-                            console.log(info)
-                        }}
-                    >
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">点击或拖拽文件上传</p>
-                    </Dragger>
+                    <CustomUploader type="file" />
                 </Form.Item>
             )
             break
         case 'Array':
             FormItem = (
-                <Form.Item
-                    key={key}
-                    name={name}
-                    rules={rules}
-                    label={displayName}
-                    extra={description}
-                >
+                <Form.Item key={key} rules={rules} label={displayName} extra={description}>
                     <Form.List name={name}>
                         {(fields, { add, remove }) => {
                             return (
                                 <div>
-                                    {fields?.map((field, index) => (
-                                        <Form.Item key={field.key}>
-                                            <Form.Item
-                                                {...field}
-                                                noStyle
-                                                validateTrigger={['onChange', 'onBlur']}
-                                            >
-                                                <Input style={{ width: '60%' }} />
+                                    {fields?.map((field, index) => {
+                                        console.log(field)
+                                        return (
+                                            <Form.Item key={field.key}>
+                                                <Form.Item
+                                                    {...field}
+                                                    noStyle
+                                                    validateTrigger={['onChange', 'onBlur']}
+                                                >
+                                                    <Input style={{ width: '60%' }} />
+                                                </Form.Item>
+                                                <MinusCircleOutlined
+                                                    className="dynamic-delete-button"
+                                                    style={{ margin: '0 8px' }}
+                                                    onClick={() => {
+                                                        remove(field.name)
+                                                    }}
+                                                />
                                             </Form.Item>
-                                            <MinusCircleOutlined
-                                                className="dynamic-delete-button"
-                                                style={{ margin: '0 8px' }}
-                                                onClick={() => {
-                                                    remove(field.name)
-                                                }}
-                                            />
-                                        </Form.Item>
-                                    ))}
+                                        )
+                                    })}
                                     <Form.Item>
                                         <Button
                                             type="dashed"
@@ -456,7 +584,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input defaultValue={defaultValue} />
+                    <LazyMarkdownEditor key={key} />
                 </Form.Item>
             )
             break
@@ -469,7 +597,20 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input defaultValue={defaultValue} />
+                    <RichTextEditor key={String(key)} />
+                </Form.Item>
+            )
+            break
+        case 'Connect':
+            FormItem = (
+                <Form.Item
+                    key={key}
+                    name={name}
+                    rules={rules}
+                    label={displayName}
+                    extra={description}
+                >
+                    <Connector field={field} />
                 </Form.Item>
             )
             break
@@ -487,5 +628,17 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
             )
     }
 
-    return FormItem
+    if (type === 'Markdown' || type === 'RichText') {
+        return (
+            <Col xs={24} sm={24} md={24} lg={24} xl={24} key={key}>
+                {FormItem}
+            </Col>
+        )
+    }
+
+    return (
+        <Col xs={24} sm={24} md={12} lg={12} xl={12} key={key}>
+            {FormItem}
+        </Col>
+    )
 }

@@ -1,8 +1,7 @@
 export default {
     'menu.overview': '概览',
     'menu.schema': '内容原型',
-    'menu.content': '内容',
-
+    'menu.content': '内容集合',
     'menu.more-blocks': '更多区块',
     'menu.home': '首页',
     'menu.admin': '管理页',

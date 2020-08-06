@@ -16,12 +16,16 @@ export async function getCloudBaseApp() {
     return app
 }
 
-export async function uploadFile(file: File): Promise<string> {
+export async function uploadFile(file: File, onProgress: (v: number) => void): Promise<string> {
     const app = await getCloudBaseApp()
 
     const result = await app.uploadFile({
         cloudPath: `tcb-cms-upload/${Date.now()}.${file.name.split('.').slice(-1)[0]}`,
-        filePath: file
+        filePath: file,
+        onUploadProgress: (progressEvent: ProgressEvent) => {
+            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            onProgress(percentCompleted)
+        }
     })
 
     return result.fileID

@@ -43,12 +43,26 @@ export class SchemaController {
         }
     }
 
+    @Get(':id')
+    async getSchema(@Param('id') schemaId) {
+        const { data, requestId } = await this.cloudbaseService
+            .collection(CollectionV2.Schemas)
+            .doc(schemaId)
+            .get()
+
+        return {
+            data: data?.[0],
+            requestId
+        }
+    }
+
     @Post()
     async createSchema(@Body(new SchemaTransfromPipe('create')) body: SchemaV2) {
         // 检查集合是否存在
         const { data } = await this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
+                projectId: body.projectId,
                 collectionName: body.collectionName
             })
             .get()
@@ -68,7 +82,10 @@ export class SchemaController {
     }
 
     @Put(':id')
-    async updateSchema(@Param('id') schemaId, @Body() payload: SchemaV2) {
+    async updateSchema(
+        @Param('id') schemaId,
+        @Body(new SchemaTransfromPipe('update')) payload: SchemaV2
+    ) {
         return this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
