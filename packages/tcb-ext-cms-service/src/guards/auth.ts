@@ -9,28 +9,20 @@ import {
   HttpException,
   HttpStatus
 } from '@nestjs/common'
-import { CloudBase } from '@cloudbase/node-sdk/lib/cloudbase'
+import { getCloudBaseApp } from '@/utils'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private readonly reflector?: Reflector,
-    @Inject('CloudBase') private readonly app?: any
-  ) {}
+  constructor(private readonly reflector?: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest()
     const roles = this.reflector.get<string[]>('roles', context.getHandler())
-
-    console.log(this.app)
-
     return true
   }
 }
 
 export class GlobalAuthGuard implements CanActivate {
-  constructor(private readonly app?: CloudBase) {}
-
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request: Request = context.switchToHttp().getRequest()
 
@@ -41,7 +33,8 @@ export class GlobalAuthGuard implements CanActivate {
     const { resource, operate, params } = request.body
 
     // 登录的用户
-    const userInfo = this.app.auth().getUserInfo()
+    const app = getCloudBaseApp()
+    const userInfo = app.auth().getUserInfo()
     const customUserId = userInfo?.customUserId
 
     console.log('用户信息', userInfo)

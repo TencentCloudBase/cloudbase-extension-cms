@@ -1,13 +1,10 @@
-import { Controller, Post, Body, Inject, HttpException, HttpStatus } from '@nestjs/common'
-import { CloudBase } from '@cloudbase/node-sdk/lib/cloudbase'
+import { Controller, Post, Body } from '@nestjs/common'
 
-import { genPassword, getEnvIdString } from '@/utils'
+import { genPassword, getEnvIdString, getCloudBaseApp } from '@/utils'
 import config from '@/config'
 
 @Controller('login')
 export class AuthController {
-  constructor(@Inject('CloudBase') private readonly app: CloudBase) {}
-
   @Post()
   async login(@Body() body) {
     const { userName, password } = body
@@ -20,7 +17,8 @@ export class AuthController {
     }
 
     // 查询用户信息
-    const collection = this.app.database().collection(config.collection.users)
+    const app = getCloudBaseApp()
+    const collection = app.database().collection(config.collection.users)
     const query = collection.where({
       userName
     })
@@ -67,7 +65,7 @@ export class AuthController {
       }
     }
 
-    const ticket = this.app.auth().createTicket(userName, {
+    const ticket = app.auth().createTicket(userName, {
       refresh: 60 * 60 * 1000
     })
 

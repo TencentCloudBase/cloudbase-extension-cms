@@ -19,7 +19,9 @@ export const getCloudBaseApp = () => {
   try {
     credentials = JSON.parse(customLoginJson)
   } catch (e) {
-    throw new Error('登录异常')
+    throw new Error(
+      '自定义秘钥解析异常，请填写下载的自定义秘钥全部内容。FAQ 文档：https://cloud.tencent.com/document/product/1220/47065#.E5.B8.B8.E8.A7.81.E9.97.AE.E9.A2.98'
+    )
   }
 
   let options: ICloudBaseConfig = {

@@ -1,5 +1,4 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { CloudBase } from '@cloudbase/node-sdk/lib/cloudbase'
 import { Db } from '@cloudbase/database'
 import config from '@/config'
 
@@ -25,8 +24,6 @@ export interface ICallContext {
 
 @Injectable()
 export class ModelService {
-  constructor(@Inject('CloudBase') private readonly app: CloudBase) {}
-
   async callModel(modelParams: ICallParams, context: any) {
     const { resource, operate, params } = modelParams
     const { db, envId, dbUser } = context

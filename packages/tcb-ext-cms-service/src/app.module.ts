@@ -6,11 +6,9 @@ import { BodyConverter } from '@/middlewares'
 import { ModelModule } from './modules/model/model.module'
 import { FileModule } from './modules/file/file.module'
 import { AuthModule } from './modules/auth/auth.module'
-import { GlobalLibModule } from './lib'
 
 @Module({
   imports: [
-    GlobalLibModule,
     ModelModule,
     FileModule,
     AuthModule,

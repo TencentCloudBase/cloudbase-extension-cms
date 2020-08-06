@@ -5,6 +5,7 @@ import { Injectable, Inject } from '@nestjs/common'
 import { CloudBase } from '@cloudbase/node-sdk/lib/cloudbase'
 import { IFile } from './types'
 import 'dayjs/locale/zh-cn'
+import { getCloudBaseApp } from '@/utils'
 
 // 本地时间
 dayjs.locale('zh-cn')
@@ -23,14 +24,13 @@ const dataFormat = (data) => {
 
 @Injectable()
 export class FileService {
-  constructor(@Inject('CloudBase') private readonly app: CloudBase) {}
-
   // 上传文件
   async upload(file: IFile) {
     // 按照日期分类
     const day = dayjs().format('YYYY-MM-DD')
     // 上传文件
-    const { fileID } = await this.app.uploadFile({
+    const app = getCloudBaseApp()
+    const { fileID } = await app.uploadFile({
       cloudPath: `tcb-cms/${day}/${nanoid(32)}${path.extname(file.originalname)}`,
       fileContent: file.buffer
     })
@@ -46,8 +46,8 @@ export class FileService {
     const ids = files.map((file) => {
       return file.fileID
     })
-
-    const { fileList } = await this.app.getTempFileURL({
+    const app = getCloudBaseApp()
+    const { fileList } = await app.getTempFileURL({
       fileList: ids
     })
 

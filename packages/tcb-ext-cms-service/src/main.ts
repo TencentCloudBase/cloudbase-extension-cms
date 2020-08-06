@@ -4,7 +4,6 @@ import bodyParser from 'body-parser'
 import { NestFactory } from '@nestjs/core'
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express'
 
-import { getCloudBaseApp } from './utils'
 import { AppModule } from './app.module'
 import { GlobalAuthGuard } from './guards/auth'
 import { TimeoutInterceptor } from './interceptors/timeout'
@@ -19,13 +18,10 @@ export async function bootstrap() {
     logger: ['log', 'error', 'warn', 'debug', 'verbose']
   })
 
-  // 云开发服务
-  const cloudbaseApp = getCloudBaseApp()
-
   // 安全
   app.use(helmet())
   // 登录校验
-  app.useGlobalGuards(new GlobalAuthGuard(cloudbaseApp))
+  app.useGlobalGuards(new GlobalAuthGuard())
 
   // 请求 body 大小限制
   app.use(bodyParser.raw({ limit: '50mb' }))

@@ -198,7 +198,7 @@ export const ResourceComponentsFactory = (collectionConfig) => {
  */
 function getFieldShowComponent(fieldConfig) {
   const { fieldName, fieldType, fieldLabel, hidden = false } = fieldConfig
-  if (hidden) return TextField
+  if (hidden) return <TextField key={fieldName} />
   if (fieldType === 'Connect') {
     return getShowConnectComponent(fieldConfig)
   }
@@ -376,13 +376,16 @@ function getShowComponentByType(type, fieldConfig) {
     case 'SelectArray':
       Component = ({ record, source }) => {
         if (record.role !== 'other') {
-          return '全部'
+          return <span>全部</span>
         }
+
         return (
           <>
-            {record[source]
-              ? record[source].map((item) => <Chip style={{ margin: 2 }} label={item} key={item} />)
-              : '无'}
+            {record[source] ? (
+              record[source].map((item) => <Chip style={{ margin: 2 }} label={item} key={item} />)
+            ) : (
+              <span>无</span>
+            )}
           </>
         )
       }
