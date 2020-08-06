@@ -5939,6 +5939,11 @@ dicer@0.2.5:
     readable-stream "1.1.x"
     streamsearch "0.1.2"
 
+diff-match-patch@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/diff-match-patch/-/diff-match-patch-1.0.5.tgz#abb584d5f10cd1196dfc55aa03701592ae3f7b37"
+  integrity sha512-IayShXAgj/QMXgB0IWmKx+rOPuGMhqm5w6jvFxmVenXKIzRqTAAsbBPT3kWQeGANj3jGgvcvv4yK6SxqYmikgw==
+
 diff-sequences@^25.2.6:
   version "25.2.6"
   resolved "https://registry.npm.taobao.org/diff-sequences/download/diff-sequences-25.2.6.tgz#5f467c00edd35352b7bca46d7927d60e687a76dd"
@@ -16424,6 +16429,13 @@ vary@~1.1.2:
   resolved "https://registry.npm.taobao.org/vary/download/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
+vditor@^3.4.3:
+  version "3.4.3"
+  resolved "https://registry.yarnpkg.com/vditor/-/vditor-3.4.3.tgz#f475566a35be8d3b73fee23b80b8b3246fdce495"
+  integrity sha512-BxiynI3K/s5gPHaILgvCxAsrQ5mg/6VITO3ykv/KIBw939wNEFovsQREIZ9UgsERfAxU+1vY0PsV+gX8XKMi0Q==
+  dependencies:
+    diff-match-patch "^1.0.5"
+
 vendors@^1.0.0:
   version "1.0.4"
   resolved "https://registry.npm.taobao.org/vendors/download/vendors-1.0.4.tgz#e2b800a53e7a29b93506c3cf41100d16c4c4ad8e"
@@ -16544,6 +16556,11 @@ walker@^1.0.7, walker@~1.0.5:
   integrity sha1-L3+bj9ENZ3JisYqITijRlhjgKPs=
   dependencies:
     makeerror "1.0.x"
+
+wangeditor@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/wangeditor/-/wangeditor-3.1.1.tgz#fbd3c1d4976923c9edebb85b29d30b35512ad039"
+  integrity sha1-+9PB1JdpI8nt67hbKdMLNVEq0Dk=
 
 warning@^3.0.0:
   version "3.0.0"

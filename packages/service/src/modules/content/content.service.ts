@@ -10,7 +10,7 @@ export class ContentService {
         resource: string,
         options: {
             filter?: {
-                ids: string[]
+                ids?: string[]
                 [key: string]: any
             }
             pageSize?: number
@@ -20,14 +20,14 @@ export class ContentService {
             }
         }
     ) {
-        const { filter, page, pageSize, sort } = options
+        const { filter = {}, page, pageSize, sort } = options
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 
         // 删除 ids 字段
         const where = _.omit(filter, 'ids')
         // 支持批量查询
-        if (filter.ids?.length) {
+        if (filter?.ids?.length) {
             where._id = db.command.in(filter.ids)
         }
 
@@ -49,8 +49,8 @@ export class ContentService {
         return { ...res, total: countRes.total }
     }
 
-    async getOne(resource: string, options: { filter: { _id: string } }) {
-        const { filter } = options
+    async getOne(resource: string, options: { filter: { _id?: string } }) {
+        const { filter = {} } = options
         const collection = this.cloudbaseService.collection(resource)
 
         let query = collection.where(filter)
@@ -60,9 +60,9 @@ export class ContentService {
 
     async updateOne(
         resource: string,
-        options: { filter: { _id: string }; payload: Record<string, any> }
+        options: { filter: { _id?: string }; payload: Record<string, any> }
     ) {
-        const { filter, payload } = options
+        const { filter = {}, payload } = options
         const collection = this.cloudbaseService.collection(resource)
 
         // 查询一个
@@ -79,11 +79,11 @@ export class ContentService {
     async updateMany(
         resource: string,
         options: {
-            filter: { ids: string[] }
+            filter: { ids?: string[] }
             payload: Record<string, any>
         }
     ) {
-        const { filter, payload } = options
+        const { filter = {}, payload } = options
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 
@@ -99,7 +99,7 @@ export class ContentService {
     async createOne(
         resource: string,
         options: {
-            payload: Record<string, any>
+            payload?: Record<string, any>
         }
     ) {
         const { payload } = options
@@ -107,15 +107,15 @@ export class ContentService {
 
         const data = {
             ...payload,
-            createTime: payload.createTime ? new Date(payload.createTime) : new Date(),
+            createTime: payload?.createTime ? new Date(payload?.createTime) : new Date(),
             updateTime: new Date()
         }
 
         return collection.add(data)
     }
 
-    async deleteOne(resource: string, options: { filter: { _id: string } }) {
-        const { filter } = options
+    async deleteOne(resource: string, options: { filter: { _id?: string } }) {
+        const { filter = {} } = options
         const collection = this.cloudbaseService.collection(resource)
 
         const { data } = await collection
@@ -134,8 +134,8 @@ export class ContentService {
         return collection.doc(data[0]?._id).remove()
     }
 
-    async deleteMany(resource: string, options: { filter: { ids: string[] } }) {
-        const { filter } = options
+    async deleteMany(resource: string, options: { filter: { ids?: string[] } }) {
+        const { filter = {} } = options
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 

@@ -26,13 +26,57 @@ export interface Options {
     payload?: Record<string, any>
 }
 
-export async function getContents(resource: string, options: Options) {
+export async function getContents(resource: string, options?: Options) {
     return request('/api/content', {
         method: 'POST',
         data: {
             resource,
             options,
             action: 'getMany'
+        }
+    })
+}
+
+export async function createContent(resource: string, payload: Record<string, any>) {
+    return request('/api/content', {
+        method: 'POST',
+        data: {
+            resource,
+            action: 'createOne',
+            options: {
+                payload
+            }
+        }
+    })
+}
+
+export async function deleteContent(resource: string, id: string) {
+    return request('/api/content', {
+        method: 'POST',
+        data: {
+            resource,
+            options: {
+                filter: {
+                    _id: id
+                }
+            },
+            action: 'deleteOne'
+        }
+    })
+}
+
+export async function updateContent(resource: string, id: string, payload: Record<string, any>) {
+    return request('/api/content', {
+        method: 'POST',
+        data: {
+            resource,
+            options: {
+                payload,
+                filter: {
+                    _id: id
+                }
+            },
+            action: 'updateOne'
         }
     })
 }

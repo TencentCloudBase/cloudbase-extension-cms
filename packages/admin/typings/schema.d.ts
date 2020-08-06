@@ -85,6 +85,12 @@ interface SchemaFieldV2 {
     // 枚举类型
     enum: {}
 
+    // 连接字段
+    connectField: string
+
+    // 连接资源 Id
+    connectResource: string
+
     _order: number
 }
 
