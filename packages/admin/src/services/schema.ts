@@ -1,11 +1,17 @@
 import { request } from 'umi'
 
-export async function getSchemas(projectId: string) {
+export async function getSchemas(projectId: string, schemaId?: string) {
     return request('/api/schema', {
         method: 'GET',
         params: {
             projectId
         }
+    })
+}
+
+export async function getSchema(schemaId?: string) {
+    return request(`/api/schema/${schemaId}`, {
+        method: 'GET'
     })
 }
 
