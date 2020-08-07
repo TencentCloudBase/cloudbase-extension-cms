@@ -9,11 +9,13 @@ import { FileModule } from './modules/file/file.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { ProjectModule } from './modules/project/project.module'
 import { ContentModule } from './modules/content/content.module'
+import { UserModule } from './modules/user/user.module'
 
 @Module({
     imports: [
         AuthModule,
         FileModule,
+        UserModule,
         SchemaModule,
         ProjectModule,
         ContentModule,

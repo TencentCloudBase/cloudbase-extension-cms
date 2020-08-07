@@ -1,4 +1,3 @@
-// https://umijs.org/config/
 import { defineConfig } from 'umi'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
@@ -40,6 +39,12 @@ export default defineConfig({
             component: './index'
         },
         {
+            path: '/settings',
+            layout: false,
+            access: 'canAdmin',
+            component: './system-settings'
+        },
+        {
             path: '/:projectId/home',
             name: 'overview',
             icon: 'eye',
@@ -57,6 +62,7 @@ export default defineConfig({
             icon: 'gold',
             component: './content/index'
         },
+
         // {
         //     path: '/:projectId/admin',
         //     name: 'admin',

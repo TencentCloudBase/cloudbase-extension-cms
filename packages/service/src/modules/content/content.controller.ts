@@ -36,7 +36,9 @@ class ActionBody {
             ids?: string[]
             [key: string]: any
         }
-
+        fuzzyFilter?: {
+            [key: string]: string
+        }
         sort?: {
             [key: string]: 'ascend' | 'descend'
         }

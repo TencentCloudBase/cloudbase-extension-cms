@@ -1,5 +1,5 @@
-import { getFieldRender } from './Components'
 import { ProColumns } from '@ant-design/pro-table'
+import { getFieldRender } from './Components'
 
 type DateTime = 'dateTime' | 'textarea'
 
@@ -15,19 +15,20 @@ const TypeWidthMap = {
     Markdown: 200
 }
 
+const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
+
 export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
     const columns: ProColumns[] = fields
         ?.filter((_) => _)
         .map((field) => {
-            const { name, type, displayName } = field
+            const { name, type, displayName, isHidden } = field
 
             const valueType: DateTime = type === 'DateTime' ? 'dateTime' : 'textarea'
 
             const render = getFieldRender(field)
 
-            const nameWidth = displayName.length * 25
-
             // 计算列宽度
+            const nameWidth = displayName.length * 25
             let width
             if (TypeWidthMap[type]) {
                 width = nameWidth > TypeWidthMap[type] ? nameWidth : TypeWidthMap[type]
@@ -35,16 +36,20 @@ export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
                 width = nameWidth > 150 ? nameWidth : 150
             }
 
+            // 不支持搜索的字段类型
+            const hideInSearch = hideInSearchType.includes(type) || isHidden
+
             return {
                 render,
                 width,
                 valueType,
+                hideInSearch,
                 sorter: true,
+                filters: true,
                 align: 'center',
                 dataIndex: name,
                 title: displayName,
-                hideInTable: field.isHidden,
-                hideInSearch: field.isHidden
+                hideInTable: isHidden
             }
         })
     return columns

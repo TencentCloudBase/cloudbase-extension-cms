@@ -75,7 +75,7 @@ export class AuthController {
     async getCurrentUser() {
         return {
             avatar: '',
-            name: '',
+            name: '管理员',
             title: '',
             group: '',
             signature: '',

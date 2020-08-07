@@ -27,8 +27,16 @@ export const CollectionV1 = {
 
 // V2 集合名
 export const CollectionV2 = {
-    Projects: 'tcb_cms_projects',
-    Schemas: 'tcb_cms_schemas',
-    Users: 'tcb_cms_users',
-    Webhooks: 'tcb_cms_webhooks'
+    // 项目集合
+    Projects: 'tcb-cms-projects',
+    // 内容原型集合
+    Schemas: 'tcb-cms-schemas',
+    // 用户集合
+    Users: 'tcb-cms-users',
+    // Webhooks 集合
+    Webhooks: 'tcb-cms-webhooks',
+    // 系统设置
+    Settings: 'tcb-cms-settings'
+    // 角色配置
+    //
 }
