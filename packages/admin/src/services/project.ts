@@ -18,3 +18,12 @@ export async function getProjects() {
         method: 'GET'
     })
 }
+
+export async function createProject(payload: { name: string; description: string }) {
+    return request<{
+        data: Project[]
+    }>('/api/project', {
+        method: 'POST',
+        data: payload
+    })
+}

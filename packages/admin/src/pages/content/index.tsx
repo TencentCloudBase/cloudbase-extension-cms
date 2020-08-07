@@ -76,8 +76,8 @@ export default (): React.ReactNode => {
                 <ProCard style={{ marginBottom: 0, width: 'calc(100% - 256px)' }}>
                     {currentSchema ? (
                         <ProTable
+                            search
                             rowKey="_id"
-                            search={false}
                             defaultData={[]}
                             actionRef={tableRef}
                             dateFormatter="string"
@@ -146,10 +146,24 @@ export default (): React.ReactNode => {
                             ) => {
                                 const { pageSize, current } = params
                                 const resource = currentSchema.collectionName
+                                // 从 params 中过滤出搜索字段
+                                const fuzzyFilter = Object.keys(params)
+                                    .filter((key) =>
+                                        currentSchema.fields.find((field) => field.name === key)
+                                    )
+                                    .reduce(
+                                        (prev, key) => ({
+                                            ...prev,
+                                            [key]: params[key]
+                                        }),
+                                        {}
+                                    )
+
                                 const { data = [], total } = await getContents(resource, {
                                     sort,
                                     filter,
                                     pageSize,
+                                    fuzzyFilter,
                                     page: current
                                 })
 

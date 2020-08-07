@@ -37,6 +37,18 @@ export class SchemaController {
             .limit(Number(pageSize))
             .get()
 
+        // if (projectId === 'default') {
+        //     const { data: defaultSchems, requestId } = await this.cloudbaseService
+        //         .collection(CollectionV2.Schemas)
+        //         .where({
+        //             projectId: null
+        //         })
+        //         .skip(Number(page - 1) * Number(pageSize))
+        //         .limit(Number(pageSize))
+        //         .get()
+        //     data.push(...defaultSchems)
+        // }
+
         return {
             data,
             requestId

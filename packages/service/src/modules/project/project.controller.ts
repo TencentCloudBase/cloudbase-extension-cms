@@ -50,6 +50,7 @@ export class ProjectController {
     async createProject(@Body() body: Project) {
         const { name } = body
 
+        // 检查同名项目是否已经存在
         const { data } = await this.cloudbaseService
             .collection(CollectionV2.Projects)
             .where({
@@ -58,7 +59,7 @@ export class ProjectController {
             .limit(1)
             .get()
 
-        if (data) {
+        if (data?.length) {
             throw new RecordExistException()
         }
 

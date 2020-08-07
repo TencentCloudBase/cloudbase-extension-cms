@@ -200,6 +200,7 @@ export function getFieldRender(field: { name: string; type: string }) {
                 index: number,
                 action: any
             ): React.ReactNode | React.ReactNode[] => text
+        case 'Text':
         case 'MultiLineString':
             return (
                 text: React.ReactNode,

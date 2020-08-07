@@ -1,6 +1,8 @@
 export default {
     'menu.overview': 'Overview',
     'menu.more-blocks': 'More Blocks',
+    'menu.system-settings': 'System Settings',
+
     'menu.home': 'Home',
     'menu.admin': 'Admin',
     'menu.admin.sub-page': 'Sub-Page',

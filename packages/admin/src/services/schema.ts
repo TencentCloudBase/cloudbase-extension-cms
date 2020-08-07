@@ -1,6 +1,7 @@
 import { request } from 'umi'
 
 export async function getSchemas(projectId: string, schemaId?: string) {
+    console.log(projectId)
     return request('/api/schema', {
         method: 'GET',
         params: {

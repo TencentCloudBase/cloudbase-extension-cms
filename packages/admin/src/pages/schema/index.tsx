@@ -190,7 +190,7 @@ export default (): React.ReactNode => {
                             </div>
                         )}
                     </Content>
-                    <Sider className="schema-sider">
+                    <Sider className="schema-sider" width="240">
                         <Typography.Title level={3} className="schema-sider-header">
                             原型类型
                         </Typography.Title>
@@ -199,6 +199,7 @@ export default (): React.ReactNode => {
                             dataSource={FieldTypes}
                             renderItem={(item) => (
                                 <Card
+                                    hoverable
                                     className="field-card"
                                     onClick={() => {
                                         if (!currentSchema) {

@@ -1,8 +1,7 @@
 import React from 'react'
-import { useModel, SelectLang } from 'umi'
+import { useModel } from 'umi'
 import { Tooltip, Tag, Space } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import Avatar from './AvatarDropdown'
 import styles from './index.less'
 
 export type SiderTheme = 'light' | 'dark'
@@ -26,6 +25,7 @@ const GlobalHeaderRight: React.FC<{}> = () => {
     if ((navTheme === 'dark' && layout === 'top') || layout === 'mix') {
         className = `${styles.right}  ${styles.dark}`
     }
+
     return (
         <Space className={className}>
             <Tooltip title="使用文档">
@@ -33,13 +33,11 @@ const GlobalHeaderRight: React.FC<{}> = () => {
                     <QuestionCircleOutlined />
                 </a>
             </Tooltip>
-            <Avatar />
             {REACT_APP_ENV && (
                 <span>
                     <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
                 </span>
             )}
-            <SelectLang className={styles.action} />
         </Space>
     )
 }

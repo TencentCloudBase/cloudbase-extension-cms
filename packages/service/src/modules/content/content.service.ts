@@ -13,6 +13,9 @@ export class ContentService {
                 ids?: string[]
                 [key: string]: any
             }
+            fuzzyFilter?: {
+                [key: string]: string
+            }
             pageSize?: number
             page?: number
             sort?: {
@@ -20,7 +23,7 @@ export class ContentService {
             }
         }
     ) {
-        const { filter = {}, page, pageSize, sort } = options
+        const { filter = {}, fuzzyFilter, page, pageSize, sort } = options
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 
@@ -30,6 +33,17 @@ export class ContentService {
         if (filter?.ids?.length) {
             where._id = db.command.in(filter.ids)
         }
+
+        if (fuzzyFilter) {
+            Object.keys(fuzzyFilter).forEach((key) => {
+                where[key] = db.RegExp({
+                    options: 'ig',
+                    regexp: fuzzyFilter[key]
+                })
+            })
+        }
+
+        console.log(where)
 
         let query = collection.where(where)
         // 获取总数

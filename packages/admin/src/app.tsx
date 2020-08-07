@@ -10,6 +10,7 @@ import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
 import * as models from './models'
 import { getCloudBaseApp } from './utils'
+import { setTwoToneColor } from '@ant-design/icons'
 
 run(models)
 
@@ -17,6 +18,7 @@ export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser
     settings?: LayoutSettings
 }> {
+    setTwoToneColor('#0052d9')
     try {
         const app = await getCloudBaseApp()
     } catch (error) {
@@ -48,6 +50,9 @@ export const layout = ({
     initialState: { settings?: LayoutSettings }
 }): BasicLayoutProps => {
     return {
+        theme: 'light',
+        navTheme: 'light',
+        headerHeight: 64,
         disableContentMargin: false,
         rightContentRender: () => <RightContent />,
         menuItemRender: (menuItemProps, defaultDom) => {

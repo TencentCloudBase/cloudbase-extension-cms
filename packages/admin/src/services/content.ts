@@ -19,6 +19,10 @@ export interface Options {
         [key: string]: any
     }
 
+    fuzzyFilter?: {
+        [key: string]: string
+    }
+
     sort?: {
         [key: string]: 'ascend' | 'descend'
     }
