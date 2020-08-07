@@ -3,6 +3,7 @@ export default {
     'menu.schema': '内容原型',
     'menu.content': '内容集合',
     'menu.system-settings': '系统设置',
+    'menu.webbook': 'Webbook',
 
     'menu.more-blocks': '更多区块',
     'menu.home': '首页',

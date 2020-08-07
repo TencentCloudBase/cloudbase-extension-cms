@@ -2,6 +2,7 @@ export default {
     'menu.overview': 'Overview',
     'menu.more-blocks': 'More Blocks',
     'menu.system-settings': 'System Settings',
+    'menu.webbook': 'Webbook',
 
     'menu.home': 'Home',
     'menu.admin': 'Admin',

@@ -10,6 +10,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { ProjectModule } from './modules/project/project.module'
 import { ContentModule } from './modules/content/content.module'
 import { UserModule } from './modules/user/user.module'
+import { WebhookModule } from './modules/webhook/webhook.module'
 
 @Module({
     imports: [
@@ -27,7 +28,8 @@ import { UserModule } from './modules/user/user.module'
             envId: process.env.TCB_ENVID,
             secretId: process.env.SECRETID,
             secretKey: process.env.SECRETKEY
-        })
+        }),
+        WebhookModule
     ],
     controllers: [AppController],
     providers: [AppService]
