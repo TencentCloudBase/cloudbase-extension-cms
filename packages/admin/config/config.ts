@@ -59,8 +59,15 @@ export default defineConfig({
         {
             path: '/:projectId/content',
             name: 'content',
-            icon: 'gold',
+            icon: 'database',
             component: './content/index'
+        },
+
+        {
+            path: '/:projectId/webhook',
+            name: 'webbook',
+            icon: 'deployment-unit',
+            component: './webhook/index'
         },
 
         // {

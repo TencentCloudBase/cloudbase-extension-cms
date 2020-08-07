@@ -28,15 +28,15 @@ export const CollectionV1 = {
 // V2 集合名
 export const CollectionV2 = {
     // 项目集合
-    Projects: 'tcb-cms-projects',
+    Projects: 'tcb-ext-cms-projects',
     // 内容原型集合
-    Schemas: 'tcb-cms-schemas',
+    Schemas: 'tcb-ext-cms-schemas',
     // 用户集合
-    Users: 'tcb-cms-users',
+    Users: 'tcb-ext-cms-users',
     // Webhooks 集合
-    Webhooks: 'tcb-cms-webhooks',
+    Webhooks: 'tcb-ext-cms-webhooks',
     // 系统设置
-    Settings: 'tcb-cms-settings'
+    Settings: 'tcb-ext-cms-settings'
     // 角色配置
     //
 }

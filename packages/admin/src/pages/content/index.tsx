@@ -9,6 +9,7 @@ import { Menu, Button, Spin, Empty, Row, Col, Modal, message } from 'antd'
 import { createColumns } from './columns'
 import { ContentDrawer } from './ContentDrawer'
 import './index.less'
+import { PageContainer } from '@ant-design/pro-layout'
 
 export default (): React.ReactNode => {
     // 加载 schemas 数据
@@ -35,14 +36,9 @@ export default (): React.ReactNode => {
     const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
 
     return (
-        <div className="page-container">
+        <PageContainer className="page-container">
             <ProCard split="vertical" gutter={[16, 16]}>
-                <ProCard
-                    colSpan="240px"
-                    className="card-left"
-                    title={<h2 className="full-height">内容集合</h2>}
-                    style={{ marginBottom: 0 }}
-                >
+                <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Menu defaultSelectedKeys={defaultSelectedMenu}>
                             <Menu.Item>
@@ -92,7 +88,6 @@ export default (): React.ReactNode => {
                                     width: 150,
                                     align: 'center',
                                     fixed: 'right',
-                                    dataIndex: 'id',
                                     valueType: 'option',
                                     render: (text, row: any) => [
                                         <Button
@@ -209,6 +204,6 @@ export default (): React.ReactNode => {
                     tableRef?.current?.reload()
                 }}
             />
-        </div>
+        </PageContainer>
     )
 }

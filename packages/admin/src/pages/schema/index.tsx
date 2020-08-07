@@ -25,6 +25,7 @@ import { SchemaFieldRender } from './FieldRender'
 import { CreateFieldModal, DeleteFieldModal } from './FieldModal'
 import { CreateSchemaModal, DeleteSchemaModal } from './SchemaModal'
 import './index.less'
+import { PageContainer } from '@ant-design/pro-layout'
 
 const { Sider, Content } = Layout
 
@@ -58,22 +59,19 @@ export default (): React.ReactNode => {
     const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
 
     return (
-        <div className="page-container">
+        <PageContainer
+            className="page-container"
+            extra={
+                <h2 className="full-height">
+                    <PlusCircleTwoTone
+                        style={{ fontSize: '20px' }}
+                        onClick={() => setCreateSchemaVisible(true)}
+                    />
+                </h2>
+            }
+        >
             <ProCard split="vertical" gutter={[16, 16]}>
-                <ProCard
-                    colSpan="240px"
-                    className="card-left"
-                    style={{ marginBottom: 0 }}
-                    title={<h2 className="full-height">{t('schema.name')}</h2>}
-                    extra={
-                        <h2 className="full-height">
-                            <PlusCircleTwoTone
-                                style={{ fontSize: '20px' }}
-                                onClick={() => setCreateSchemaVisible(true)}
-                            />
-                        </h2>
-                    }
-                >
+                <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Row justify="center">
                             <Col>
@@ -237,6 +235,6 @@ export default (): React.ReactNode => {
                 visible={deleteFieldVisible}
                 onClose={() => setDeleteFieldVisible(false)}
             />
-        </div>
+        </PageContainer>
     )
 }
