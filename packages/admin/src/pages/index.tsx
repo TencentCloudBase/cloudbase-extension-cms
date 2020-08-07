@@ -2,17 +2,17 @@ import React, { useState } from 'react'
 import { PlusSquareTwoTone } from '@ant-design/icons'
 import {
     Card,
-    Typography,
-    Layout,
     Row,
     Col,
-    Skeleton,
+    Layout,
     Modal,
     Form,
     Input,
     Space,
     Button,
-    message
+    message,
+    Skeleton,
+    Typography
 } from 'antd'
 import { history, useRequest } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
@@ -44,7 +44,13 @@ export default (): React.ReactNode => {
                 </Header>
                 <Content className={styles.content}>
                     <Row>
-                        <Col xs={{ offset: 2 }} md={{ offset: 4 }} lg={{ offset: 6 }} />
+                        <Col
+                            xs={{ offset: 2 }}
+                            md={{ offset: 4 }}
+                            lg={{ offset: 6 }}
+                            xl={{ offset: 6 }}
+                            xxl={{ offset: 8 }}
+                        />
                         <Col flex="1 1 auto">
                             <Row gutter={[24, 40]}>
                                 <Col>
@@ -106,7 +112,13 @@ export default (): React.ReactNode => {
                                 </Col>
                             </Row>
                         </Col>
-                        <Col xs={{ offset: 2 }} md={{ offset: 4 }} lg={{ offset: 6 }} />
+                        <Col
+                            xs={{ offset: 2 }}
+                            md={{ offset: 4 }}
+                            lg={{ offset: 6 }}
+                            xl={{ offset: 6 }}
+                            xxl={{ offset: 8 }}
+                        />
                     </Row>
                 </Content>
             </Layout>
@@ -142,7 +154,7 @@ export const CreateProjectModal: React.FC<{
     return (
         <Modal
             centered
-            title="创建原型"
+            title="创建项目"
             footer={null}
             visible={visible}
             onOk={() => onClose()}
