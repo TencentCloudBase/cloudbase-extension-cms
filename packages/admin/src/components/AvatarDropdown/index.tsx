@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Menu, Spin } from 'antd'
-import { ClickParam } from 'antd/es/menu'
 import { history, useModel } from 'umi'
 import { getPageQuery } from '@/utils/utils'
 import { outLogin } from '@/services/login'
@@ -31,17 +30,19 @@ const loginOut = async () => {
     }
 }
 
-const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
+const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     const { initialState, setInitialState } = useModel('@@initialState')
 
-    const onMenuClick = useCallback((event: ClickParam) => {
+    const onMenuClick = useCallback((event: any) => {
         const { key } = event
+
         if (key === 'logout') {
             setInitialState({ ...initialState, currentUser: undefined })
             loginOut()
             return
         }
-        history.push(`/account/${key}`)
+
+        history.push(`/${key}`)
     }, [])
 
     const loading = (
@@ -68,20 +69,19 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
 
     const menuHeaderDropdown = (
         <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-            {menu && (
-                <Menu.Item key="center">
-                    <UserOutlined />
-                    个人中心
-                </Menu.Item>
-            )}
-            {menu && (
+            {currentUser.access === 'admin' && (
                 <Menu.Item key="settings">
                     <SettingOutlined />
-                    个人设置
+                    系统设置
                 </Menu.Item>
             )}
-            {menu && <Menu.Divider />}
 
+            {/* <Menu.Item key="personal">
+                <UserOutlined />
+                个人设置
+            </Menu.Item> */}
+
+            <Menu.Divider />
             <Menu.Item key="logout">
                 <LogoutOutlined />
                 退出登录
@@ -91,13 +91,22 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = ({ menu }) => {
     return (
         <HeaderDropdown overlay={menuHeaderDropdown}>
             <span className={`${styles.action} ${styles.account}`}>
-                <Avatar
-                    size="small"
-                    className={styles.avatar}
-                    src={currentUser.avatar}
-                    alt="avatar"
-                />
-                <span className={`${styles.name} anticon`}>{currentUser.name}</span>
+                {currentUser.avatar ? (
+                    <Avatar
+                        alt="avatar"
+                        size="large"
+                        className={styles.avatar}
+                        src={currentUser.avatar}
+                    />
+                ) : (
+                    <Avatar
+                        alt="avatar"
+                        size="large"
+                        className={styles.avatar}
+                        style={{ backgroundColor: '#0052d9' }}
+                        icon={<UserOutlined />}
+                    />
+                )}
             </span>
         </HeaderDropdown>
     )

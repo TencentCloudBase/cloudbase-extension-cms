@@ -24,7 +24,7 @@ export const SchemaFieldRender: React.SFC<{
                     const type = FieldTypes.find((_) => _.type === field.type)
 
                     return (
-                        <Card key={index} className="schema-field-card">
+                        <Card hoverable key={index} className="schema-field-card">
                             <Space style={{ flex: '1 1 auto' }}>
                                 <div className="icon">{type?.icon}</div>
                                 <div className="flex-column">

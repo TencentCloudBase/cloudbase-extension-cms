@@ -1,73 +1,72 @@
-import { Controller, Post, Body, Inject, HttpException, HttpStatus } from '@nestjs/common'
-import { CloudBase } from '@cloudbase/node-sdk/lib/cloudbase'
+import { Controller, Post, Body, Get, Query, Delete, Param } from '@nestjs/common'
 
-import { genPassword, getEnvIdString } from '@/utils'
-import config from '@/config'
+import { CloudBaseService } from '@/dynamic_modules'
+import { CollectionV2 } from '@/constants'
+import { IsNotEmpty } from 'class-validator'
+import { RecordExistException } from '@/common'
+import { genPassword, getEnvIdString, dateToNumber } from '@/utils'
+
+class User {
+    @IsNotEmpty()
+    username: string
+
+    @IsNotEmpty()
+    password: string
+
+    @IsNotEmpty()
+    role: string
+
+    projectId: string
+
+    collections: string[]
+
+    actions: string[]
+}
 
 @Controller('user')
 export class UserController {
-    // login by username and password
-    @Post('account')
-    async login(@Body() body) {
-        const { userName, password } = body
+    constructor(private readonly cloudbaseService: CloudBaseService) {}
 
-        // if (!userName || !password) {
-        //   return {
-        //     message: '用户名或者密码不能为空',
-        //     code: 'LOGIN_WRONG_INPUT'
-        //   }
-        // }
+    // TODO: auth
+    @Get()
+    async getUsers(@Query() query: { page?: number; pageSize?: number } = {}) {
+        const { page = 1, pageSize = 10 } = query
+
+        const { data, requestId } = await this.cloudbaseService
+            .collection(CollectionV2.Users)
+            .where({})
+            .skip(Number(page - 1) * Number(pageSize))
+            .limit(Number(pageSize))
+            .get()
 
         return {
-            code: 'ok'
+            data,
+            requestId
         }
+    }
 
-        // // 查询用户信息
-        // const collection = this.app.database().collection(config.collection.users)
-        // const query = collection.where({
-        //   userName
-        // })
-        // const getRes = await query.get()
-        // const dbRecord = getRes.data[0]
+    @Post()
+    async createSchema(@Body() body: User) {
+        // 检查集合是否存在
+        const { data } = await this.cloudbaseService
+            .collection(CollectionV2.Users)
+            .where({
+                username: body.username
+            })
+            .get()
 
-        // if (!dbRecord) {
-        //   return {
-        //     message: '用户名或者密码错误',
-        //     code: 'LOGIN_WRONG_INPUT'
-        //   }
-        // }
+        if (data?.length) {
+            throw new RecordExistException()
+        }
+        const envId = getEnvIdString()
 
-        // const { password: dbPassword, createTime, role, failedLogins } = dbRecord
-        // const now = new Date()
-        // const todayDate = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`
+        body.password = await genPassword(body.password, `${dateToNumber()}${envId}`)
 
-        // if (failedLogins?.[todayDate] >= 5) {
-        //   return {
-        //     message: '登录失败次数过多，请明日再试',
-        //     code: 'LOGIN_RETRY_TOO_MANY'
-        //   }
-        // }
+        return this.cloudbaseService.collection(CollectionV2.Users).add(body)
+    }
 
-        // // 对密码加密
-        // const envId = getEnvIdString()
-        // console.log('环境 Id', envId)
-        // const salt = createTime + envId
-        // console.log(salt)
-        // const genPasswordResult = await genPassword(password, salt)
-
-        // console.log(genPasswordResult, dbPassword)
-
-        // if (genPasswordResult !== dbPassword) {
-        //   await collection.doc(dbRecord._id).update({
-        //     failedLogins: {
-        //       [todayDate]: failedLogins ? failedLogins[todayDate] + 1 : 1
-        //     }
-        //   })
-
-        //   return {
-        //     message: '用户名或者密码错误',
-        //     code: 'LOGIN_WRONG_INPUT'
-        //   }
-        // }
+    @Delete(':id')
+    async deleteSchema(@Param('id') userId) {
+        return this.cloudbaseService.collection(CollectionV2.Users).doc(userId).remove()
     }
 }
