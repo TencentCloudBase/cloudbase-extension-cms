@@ -13,7 +13,7 @@ export class CloudBaseService {
         this.app = cloudbase.init({
             secretId,
             secretKey,
-            env: envId
+            env: envId,
         })
     }
 

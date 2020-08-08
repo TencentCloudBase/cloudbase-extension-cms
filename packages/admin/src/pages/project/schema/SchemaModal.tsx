@@ -32,7 +32,7 @@ export const CreateSchemaModal: React.FC<{
                     createSchema({
                         projectId,
                         displayName,
-                        collectionName
+                        collectionName,
                     })
                         .then(() => {
                             onClose()
@@ -59,8 +59,8 @@ export const CreateSchemaModal: React.FC<{
                         { required: true, message: '请输入数据库名称！' },
                         {
                             message: '字段名只能使用英文字母、数字、-、_ 等符号',
-                            pattern: /^[a-z0-9A-Z_-]+$/
-                        }
+                            pattern: /^[a-z0-9A-Z_-]+$/,
+                        },
                     ]}
                 >
                     <Input placeholder="数据库名，如 article" />

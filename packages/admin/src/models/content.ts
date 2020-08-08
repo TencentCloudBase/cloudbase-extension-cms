@@ -9,12 +9,12 @@ export default {
         currentSchema: null,
         // create 或 edit
         contentAction: 'create',
-        selectedContent: {}
+        selectedContent: {},
     },
     reducer: {
         async getSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
             ctx.setState({
-                loading: true
+                loading: true,
             })
             const { data } = await getSchemas(projectId)
             const { currentSchema } = state
@@ -26,15 +26,15 @@ export default {
                     projectId,
                     schemas: data,
                     currentSchema: schema,
-                    loading: false
+                    loading: false,
                 }
             }
 
             return {
                 projectId,
                 schemas: data,
-                loading: false
+                loading: false,
             }
-        }
-    }
+        },
+    },
 }

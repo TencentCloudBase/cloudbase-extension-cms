@@ -5,7 +5,7 @@ export class CmsException extends HttpException {
         super(
             {
                 code,
-                message
+                message,
             },
             200
         )
@@ -17,7 +17,19 @@ export class RecordExistException extends HttpException {
         super(
             {
                 code: 'RECORD_EXIST',
-                message: '记录已存在'
+                message: '记录已存在',
+            },
+            200
+        )
+    }
+}
+
+export class RecordNotExistException extends HttpException {
+    constructor() {
+        super(
+            {
+                code: 'RECORD_EXIST',
+                message: '记录不存在',
             },
             200
         )

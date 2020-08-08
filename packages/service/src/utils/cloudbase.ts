@@ -22,14 +22,14 @@ export const getCloudBaseApp = () => {
 
     let options: ICloudBaseConfig = {
         credentials,
-        env: envId
+        env: envId,
     }
 
     if (isDev()) {
         options = {
             ...options,
             secretId: process.env.TENCENTCLOUD_SECRETID,
-            secretKey: process.env.TENCENTCLOUD_SECRETKEY
+            secretKey: process.env.TENCENTCLOUD_SECRETKEY,
         }
     }
 

@@ -11,11 +11,11 @@ export class CloudBaseModule {
             providers: [
                 {
                     provide: 'CLOUDBASE_CONFIG',
-                    useValue: config
+                    useValue: config,
                 },
-                CloudBaseService
+                CloudBaseService,
             ],
-            exports: [CloudBaseService]
+            exports: [CloudBaseService],
         }
     }
 }

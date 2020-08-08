@@ -1,4 +1,3 @@
-import { t } from '@/locales'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
@@ -17,7 +16,7 @@ import {
     Empty,
     Space,
     Popover,
-    Typography
+    Typography,
 } from 'antd'
 import { FieldTypes } from '@/common'
 
@@ -44,7 +43,7 @@ export default (): React.ReactNode => {
     const { projectId } = useParams()
     const ctx = useConcent('schema')
     const {
-        state: { currentSchema, schemas, loading }
+        state: { currentSchema, schemas, loading },
     }: { state: SchemaState } = ctx
 
     const [createSchemaVisible, setCreateSchemaVisible] = useState(false)
@@ -60,7 +59,7 @@ export default (): React.ReactNode => {
 
     return (
         <PageContainer
-            className="page-container"
+            className="schema-page-container"
             extra={
                 <h2 className="full-height">
                     <PlusCircleTwoTone
@@ -86,7 +85,7 @@ export default (): React.ReactNode => {
                                 const schema = schemas.find((item: any) => item._id === key)
 
                                 ctx.setState({
-                                    currentSchema: schema
+                                    currentSchema: schema,
                                 })
                             }}
                         >
@@ -116,6 +115,7 @@ export default (): React.ReactNode => {
                                                 <Space>
                                                     <Button
                                                         danger
+                                                        type="primary"
                                                         size="small"
                                                         onClick={() => setDeleteSchmeaVisible(true)}
                                                     >
@@ -126,7 +126,7 @@ export default (): React.ReactNode => {
                                         >
                                             <EditOutlined
                                                 style={{
-                                                    fontSize: '18px'
+                                                    fontSize: '18px',
                                                 }}
                                                 onClick={() => {}}
                                             />
@@ -144,7 +144,7 @@ export default (): React.ReactNode => {
                                                             onClick={() => {
                                                                 ctx.setState({
                                                                     fieldAction: 'edit',
-                                                                    selectedField: field
+                                                                    selectedField: field,
                                                                 })
                                                                 setFieldVisible(true)
                                                             }}
@@ -152,11 +152,12 @@ export default (): React.ReactNode => {
                                                             编辑
                                                         </Button>
                                                         <Button
-                                                            size="small"
                                                             danger
+                                                            size="small"
+                                                            type="primary"
                                                             onClick={() => {
                                                                 ctx.setState({
-                                                                    selectedField: field
+                                                                    selectedField: field,
                                                                 })
                                                                 setDeleteFieldVisible(true)
                                                             }}
@@ -201,12 +202,12 @@ export default (): React.ReactNode => {
                                     className="field-card"
                                     onClick={() => {
                                         if (!currentSchema) {
-                                            message.info('请选择原型')
+                                            message.info('请选择需要编辑的原型')
                                             return
                                         }
                                         ctx.setState({
                                             fieldAction: 'create',
-                                            selectedField: item
+                                            selectedField: item,
                                         })
                                         setFieldVisible(true)
                                     }}

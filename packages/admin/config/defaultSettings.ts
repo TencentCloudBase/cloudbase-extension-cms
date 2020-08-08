@@ -11,11 +11,11 @@ export default {
     fixSiderbar: true,
     colorWeak: false,
     menu: {
-        locale: true
+        locale: true,
     },
     title: 'CloudBase CMS',
     pwa: false,
-    iconfontUrl: ''
+    iconfontUrl: '',
 } as LayoutSettings & {
     pwa: boolean
 }

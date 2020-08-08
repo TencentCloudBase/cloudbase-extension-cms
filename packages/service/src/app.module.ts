@@ -22,17 +22,17 @@ import { WebhookModule } from './modules/webhook/webhook.module'
         ContentModule,
         ConfigModule.forRoot({
             isGlobal: true,
-            envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env'
+            envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
         }),
         CloudBaseModule.forRoot({
             envId: process.env.TCB_ENVID,
             secretId: process.env.SECRETID,
-            secretKey: process.env.SECRETKEY
+            secretKey: process.env.SECRETKEY,
         }),
-        WebhookModule
+        WebhookModule,
     ],
     controllers: [AppController],
-    providers: [AppService]
+    providers: [AppService],
 })
 export class AppModule implements NestModule {
     configure(consumer: MiddlewareConsumer) {

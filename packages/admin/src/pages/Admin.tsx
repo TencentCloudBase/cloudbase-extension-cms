@@ -13,7 +13,7 @@ export default (): React.ReactNode => (
                 banner
                 style={{
                     margin: -12,
-                    marginBottom: 48
+                    marginBottom: 48,
                 }}
             />
             <Typography.Title level={2} style={{ textAlign: 'center' }}>

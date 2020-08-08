@@ -33,11 +33,13 @@ export const SchemaFieldRender: React.SFC<{
                                             {field.displayName}
                                         </Typography.Title>
                                         <Typography.Text strong># {field.name}</Typography.Text>
-                                        <Tooltip title={field.description}>
-                                            <ExclamationCircleTwoTone
-                                                style={{ fontSize: '16px' }}
-                                            />
-                                        </Tooltip>
+                                        {field.description && (
+                                            <Tooltip title={field.description}>
+                                                <ExclamationCircleTwoTone
+                                                    style={{ fontSize: '16px' }}
+                                                />
+                                            </Tooltip>
+                                        )}
                                     </Space>
                                     <Space>
                                         <Button size="small">{type?.name}</Button>

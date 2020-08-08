@@ -15,14 +15,14 @@ export enum ErrorCode {
     // 资源
     ResourceNotFound = 'ResourceNotFound',
     UnsupportedOperation = 'UnsupportedOperation',
-    UnauthorizedOperation = 'UnauthorizedOperation'
+    UnauthorizedOperation = 'UnauthorizedOperation',
 }
 
 // V1 集合名
 export const CollectionV1 = {
     Schemas: 'tcb-ext-cms-contents',
     Users: 'tcb-ext-cms-users',
-    Webhooks: 'tcb-ext-cms-webhooks'
+    Webhooks: 'tcb-ext-cms-webhooks',
 }
 
 // V2 集合名
@@ -36,7 +36,7 @@ export const CollectionV2 = {
     // Webhooks 集合
     Webhooks: 'tcb-ext-cms-webhooks',
     // 系统设置
-    Settings: 'tcb-ext-cms-settings'
+    Settings: 'tcb-ext-cms-settings',
     // 角色配置
     //
 }

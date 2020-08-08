@@ -1,5 +1,4 @@
 import { IsNotEmpty } from 'class-validator'
-import { Expose, Type } from 'class-transformer'
 
 export class SchemaFieldV1 {
     // 字段类型
@@ -132,90 +131,4 @@ export class SchemaV2 {
 
     // Schema 协议版本 v2
     _version: '2.0'
-}
-
-export type CompatibleSchema = SchemaV1 & SchemaV2
-
-/**
- * 响应数据转换
- */
-export class TransformField {
-    // 字段类型
-    @Expose({ name: 'type' })
-    fieldType: string
-
-    // 展示标题
-    @Expose({ name: 'label' })
-    fieldLabel: string
-
-    // 在数据库中的字段名
-    @Expose({ name: 'name' })
-    fieldName: string
-
-    // 字段描述
-    @Expose({ name: 'description' })
-    helpText: string
-
-    // 是否隐藏
-    @Expose({ name: 'isHidden' })
-    hidden: boolean
-
-    // 是否必需字段
-    isRequired: boolean
-
-    // 默认值
-    defaultValue: any
-
-    @Expose({ name: 'min' })
-    stringMinLength: number
-
-    @Expose({ name: 'max' })
-    stringMaxLength: number
-
-    // 连接字段
-    connectField: String
-
-    // 连接资源 Id
-    connectResource: string
-}
-
-export class TransformSchema {
-    _id: string
-
-    // 展示名称
-    @Expose({ name: 'displayName' })
-    label: string
-
-    @Type(() => TransformField)
-    fields: TransformField[]
-
-    @Expose({ name: '_createTime' })
-    createTime: string
-
-    @Expose({ name: '_updateTime' })
-    updateTime: string
-
-    id: string
-
-    displayName: string
-
-    collectionName: string
-
-    projectId: string
-
-    description: string
-
-    _creatTime: number
-
-    _updateTime: number
-
-    // Schema 协议版本 v2
-    _version: '2.0'
-}
-
-export class TransformSchemaRes {
-    requestId: string
-
-    @Type(() => TransformSchema)
-    data: TransformSchema[]
 }

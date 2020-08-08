@@ -33,13 +33,13 @@ const getNoticeData = (
                 todo: '',
                 processing: 'blue',
                 urgent: 'red',
-                doing: 'gold'
+                doing: 'gold',
             }[newNotice.status]
             newNotice.extra = (
                 <Tag
                     color={color}
                     style={{
-                        marginRight: 0
+                        marginRight: 0,
                     }}
                 >
                     {newNotice.extra}

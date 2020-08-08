@@ -3,7 +3,7 @@
 /* globals workbox */
 workbox.core.setCacheNameDetails({
     prefix: 'antd-pro',
-    suffix: 'v1'
+    suffix: 'v1',
 })
 // Control all opened tabs ASAP
 workbox.clientsClaim()
@@ -57,11 +57,11 @@ addEventListener('message', (event) => {
             self.skipWaiting().then(
                 () =>
                     replyPort.postMessage({
-                        error: null
+                        error: null,
                     }),
                 (error) =>
                     replyPort.postMessage({
-                        error
+                        error,
                     })
             )
         )

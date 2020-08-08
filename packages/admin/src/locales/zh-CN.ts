@@ -26,5 +26,5 @@ export default {
     ...component,
     ...project,
     ...schema,
-    ...content
+    ...content,
 }

@@ -10,7 +10,7 @@ const validActions = [
     'updateOne',
     'updateMany',
     'deleteOne',
-    'deleteMany'
+    'deleteMany',
 ]
 
 class ActionBody {
@@ -57,8 +57,8 @@ export class ContentController {
             resource,
             options = {
                 page: 1,
-                pageSize: 10
-            }
+                pageSize: 10,
+            },
         } = body
 
         return this.contentService[action](resource, options as any)

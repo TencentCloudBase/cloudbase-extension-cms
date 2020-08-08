@@ -7,6 +7,6 @@ import { CloudBaseProvider } from './cloudbase'
 @Global()
 @Module({
     exports: [CloudBaseProvider],
-    providers: [CloudBaseProvider]
+    providers: [CloudBaseProvider],
 })
 export class GlobalLibModule {}
