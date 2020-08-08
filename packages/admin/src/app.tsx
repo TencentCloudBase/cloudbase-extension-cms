@@ -13,32 +13,37 @@ import { getCloudBaseApp } from './utils'
 import { setTwoToneColor } from '@ant-design/icons'
 
 run(models)
+setTwoToneColor('#0052d9')
 
 export async function getInitialState(): Promise<{
     currentUser?: API.CurrentUser
     settings?: LayoutSettings
 }> {
-    setTwoToneColor('#0052d9')
-    try {
-        const app = await getCloudBaseApp()
-    } catch (error) {
-        console.log(error)
-    }
+    const app = await getCloudBaseApp()
 
-    // console.log(app.auth())
+    console.log('xxx')
 
     // 如果是登录页面，不执行
-    if (history.location.pathname !== '/user/login') {
+    if (history.location.pathname !== '/login') {
         try {
+            // 获取登录态
+            const loginState = await app.auth().getLoginState()
+            if (!loginState) {
+                history.push('/login')
+                return {}
+            }
+
             const currentUser = await queryCurrent()
+
             return {
                 currentUser,
                 settings: defaultSettings,
             }
         } catch (error) {
-            history.push('/user/login')
+            history.push('/login')
         }
     }
+
     return {
         settings: defaultSettings,
     }

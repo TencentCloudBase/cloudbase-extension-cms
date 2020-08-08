@@ -6,12 +6,14 @@ export async function getCloudBaseApp() {
         app = window.tcb.init({
             env: envId,
         })
-        await app
-            .auth({
-                persistence: 'local',
-            })
-            .anonymousAuthProvider()
-            .signIn()
+
+        // 登陆
+        // await app
+        //     .auth({
+        //         persistence: 'local',
+        //     })
+        //     .anonymousAuthProvider()
+        //     .signIn()
     }
     return app
 }
