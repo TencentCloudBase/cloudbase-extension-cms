@@ -4,11 +4,11 @@ export async function getCloudBaseApp() {
     if (!app) {
         const { envId } = window.TcbCmsConfig || {}
         app = window.tcb.init({
-            env: envId
+            env: envId,
         })
         await app
             .auth({
-                persistence: 'local'
+                persistence: 'local',
             })
             .anonymousAuthProvider()
             .signIn()
@@ -20,12 +20,12 @@ export async function uploadFile(file: File, onProgress: (v: number) => void): P
     const app = await getCloudBaseApp()
 
     const result = await app.uploadFile({
-        cloudPath: `tcb-cms-upload/${Date.now()}.${file.name.split('.').slice(-1)[0]}`,
+        cloudPath: `upload/${Date.now()}.${file.name.split('.').slice(-1)[0]}`,
         filePath: file,
         onUploadProgress: (progressEvent: ProgressEvent) => {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
             onProgress(percentCompleted)
-        }
+        },
     })
 
     return result.fileID
@@ -34,7 +34,7 @@ export async function uploadFile(file: File, onProgress: (v: number) => void): P
 export async function getTempFileURL(cloudId: string): Promise<string> {
     const app = await getCloudBaseApp()
     const result = await app.getTempFileURL({
-        fileList: [cloudId]
+        fileList: [cloudId],
     })
     return result.fileList[0].tempFileURL
 }

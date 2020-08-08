@@ -33,19 +33,19 @@ export async function getInitialState(): Promise<{
             const currentUser = await queryCurrent()
             return {
                 currentUser,
-                settings: defaultSettings
+                settings: defaultSettings,
             }
         } catch (error) {
             history.push('/user/login')
         }
     }
     return {
-        settings: defaultSettings
+        settings: defaultSettings,
     }
 }
 
 export const layout = ({
-    initialState
+    initialState,
 }: {
     initialState: { settings?: LayoutSettings }
 }): BasicLayoutProps => {
@@ -74,7 +74,7 @@ export const layout = ({
             return defaultDom
         },
         headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-        ...initialState?.settings
+        ...initialState?.settings,
     }
 }
 
@@ -94,7 +94,7 @@ const codeMessage = {
     500: '服务器发生错误，请检查服务器。',
     502: '网关错误。',
     503: '服务不可用，服务器暂时过载或维护。',
-    504: '网关超时。'
+    504: '网关超时。',
 }
 
 /**
@@ -108,7 +108,7 @@ const errorHandler = (error: ResponseError) => {
 
         notification.error({
             message: `请求错误 ${status}: ${url}`,
-            description: errorText
+            description: errorText,
         })
     }
 
@@ -129,9 +129,9 @@ export const request: RequestConfig = {
             return {
                 ...resData,
                 success: !resData.code,
-                errorMessage: resData.message
+                errorMessage: resData.message,
             }
-        }
+        },
     },
     responseInterceptors: [
         async (response, options) => {
@@ -141,11 +141,11 @@ export const request: RequestConfig = {
                     message: data.message || data.code,
                     description: data.requestId
                         ? `${data.code}\n[requestId]${data.requestId}`
-                        : data.code
+                        : data.code,
                 })
             }
 
             return response
-        }
-    ]
+        },
+    ],
 }

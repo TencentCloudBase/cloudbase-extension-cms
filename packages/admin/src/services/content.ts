@@ -36,8 +36,8 @@ export async function getContents(resource: string, options?: Options) {
         data: {
             resource,
             options,
-            action: 'getMany'
-        }
+            action: 'getMany',
+        },
     })
 }
 
@@ -48,9 +48,9 @@ export async function createContent(resource: string, payload: Record<string, an
             resource,
             action: 'createOne',
             options: {
-                payload
-            }
-        }
+                payload,
+            },
+        },
     })
 }
 
@@ -61,11 +61,11 @@ export async function deleteContent(resource: string, id: string) {
             resource,
             options: {
                 filter: {
-                    _id: id
-                }
+                    _id: id,
+                },
             },
-            action: 'deleteOne'
-        }
+            action: 'deleteOne',
+        },
     })
 }
 
@@ -77,10 +77,10 @@ export async function updateContent(resource: string, id: string, payload: Recor
             options: {
                 payload,
                 filter: {
-                    _id: id
-                }
+                    _id: id,
+                },
             },
-            action: 'updateOne'
-        }
+            action: 'updateOne',
+        },
     })
 }

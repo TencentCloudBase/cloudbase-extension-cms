@@ -30,7 +30,7 @@ const NoticeList: React.FC<NoticeIconTabProps> = ({
     showClear = true,
     clearText,
     viewMoreText,
-    showViewMore = false
+    showViewMore = false,
 }) => {
     if (!list || list.length === 0) {
         return (
@@ -50,7 +50,7 @@ const NoticeList: React.FC<NoticeIconTabProps> = ({
                 dataSource={list}
                 renderItem={(item, i) => {
                     const itemCls = classNames(styles.item, {
-                        [styles.read]: item.read
+                        [styles.read]: item.read,
                     })
                     // eslint-disable-next-line no-nested-ternary
                     const leftIcon = item.avatar ? (

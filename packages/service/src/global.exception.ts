@@ -26,7 +26,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
                     : {
                           message,
                           path: request.url,
-                          code: 'SYS_ERR'
+                          code: 'SYS_ERR',
                       }
 
                 response.status(status).json(resData)
@@ -37,7 +37,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
             console.log(e)
             response.status(500).json({
                 code: 'SYS_ERR',
-                message: '服务异常'
+                message: '服务异常',
             })
         }
     }

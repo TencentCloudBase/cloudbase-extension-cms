@@ -10,7 +10,7 @@ const validActions = [
     'updateOne',
     'updateMany',
     'deleteOne',
-    'deleteMany'
+    'deleteMany',
 ]
 
 class ActionBody {
@@ -52,8 +52,8 @@ export class WebhookController {
             action,
             options = {
                 page: 1,
-                pageSize: 10
-            }
+                pageSize: 10,
+            },
         } = body
 
         return this.contentService[action](CollectionV2.Webhooks, options as any)

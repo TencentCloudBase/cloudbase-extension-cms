@@ -19,7 +19,7 @@ export class AuthController {
         // }
 
         return {
-            code: 'ok'
+            code: 'ok',
         }
 
         // // 查询用户信息
@@ -81,7 +81,7 @@ export class AuthController {
             signature: '',
             userid: '1111',
             access: 'admin',
-            unreadCount: 1
+            unreadCount: 1,
         }
     }
 }

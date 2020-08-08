@@ -24,8 +24,8 @@ const loginOut = async () => {
         history.replace({
             pathname: '/user/login',
             search: stringify({
-                redirect: window.location.href
-            })
+                redirect: window.location.href,
+            }),
         })
     }
 }
@@ -51,7 +51,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
                 size="small"
                 style={{
                     marginLeft: 8,
-                    marginRight: 8
+                    marginRight: 8,
                 }}
             />
         </span>

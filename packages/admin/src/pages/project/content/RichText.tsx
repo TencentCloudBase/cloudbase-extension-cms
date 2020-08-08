@@ -8,7 +8,7 @@ const RichText: React.FC<{ value?: any; key: string; onChange?: (...args: any) =
     const {
         key = 'default',
         value = '欢迎使用富文本编辑器',
-        onChange = (...args: any) => {}
+        onChange = (...args: any) => {},
     } = props
 
     const [loading, setLoading] = useState(false)
@@ -38,7 +38,7 @@ const RichText: React.FC<{ value?: any; key: string; onChange?: (...args: any) =
                         const content = editor.getContent()
                         onChange(content)
                     })
-                }
+                },
             })
         })
         return () => {

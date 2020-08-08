@@ -8,7 +8,7 @@ import {
     Delete,
     Controller,
     UseInterceptors,
-    ClassSerializerInterceptor
+    ClassSerializerInterceptor,
 } from '@nestjs/common'
 import { CollectionV2 } from '@/constants'
 import { CloudBaseService } from '@/dynamic_modules'
@@ -31,7 +31,7 @@ export class SchemaController {
         const { data, requestId } = await this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
-                projectId
+                projectId,
             })
             .skip(Number(page - 1) * Number(pageSize))
             .limit(Number(pageSize))
@@ -51,7 +51,7 @@ export class SchemaController {
 
         return {
             data,
-            requestId
+            requestId,
         }
     }
 
@@ -64,7 +64,7 @@ export class SchemaController {
 
         return {
             data: data?.[0],
-            requestId
+            requestId,
         }
     }
 
@@ -75,7 +75,7 @@ export class SchemaController {
             .collection(CollectionV2.Schemas)
             .where({
                 projectId: body.projectId,
-                collectionName: body.collectionName
+                collectionName: body.collectionName,
             })
             .get()
 
@@ -101,7 +101,7 @@ export class SchemaController {
         return this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
-                _id: schemaId
+                _id: schemaId,
             })
             .update(payload)
     }
@@ -120,7 +120,7 @@ export class SchemaController {
         const res = await this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
-                _id: schemaId
+                _id: schemaId,
             })
             .remove()
 

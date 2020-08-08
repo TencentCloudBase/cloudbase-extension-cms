@@ -9,7 +9,7 @@ export class SchemaService {
         const manager = CloudBase.init({
             envId,
             secretId: process.env.SECRETID,
-            secretKey: process.env.SECRETKEY
+            secretKey: process.env.SECRETKEY,
         })
 
         try {
@@ -24,7 +24,7 @@ export class SchemaService {
         const manager = CloudBase.init({
             envId,
             secretId: process.env.SECRETID,
-            secretKey: process.env.SECRETKEY
+            secretKey: process.env.SECRETKEY,
         })
 
         try {

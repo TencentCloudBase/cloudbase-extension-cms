@@ -10,21 +10,21 @@ export default {
         '/api': {
             target: 'http://localhost:5000',
             changeOrigin: true,
-            pathRewrite: { '^': '' }
-        }
+            pathRewrite: { '^': '' },
+        },
     },
     test: {
         '/api/': {
             target: 'http://localhost:5000',
             changeOrigin: true,
-            pathRewrite: { '^': '' }
-        }
+            pathRewrite: { '^': '' },
+        },
     },
     pre: {
         '/api/': {
             target: 'your pre url',
             changeOrigin: true,
-            pathRewrite: { '^': '' }
-        }
-    }
+            pathRewrite: { '^': '' },
+        },
+    },
 }

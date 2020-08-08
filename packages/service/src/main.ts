@@ -16,7 +16,7 @@ const port = process.env.PORT || 5000
 
 export async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, adapter, {
-        logger: ['log', 'error', 'warn', 'debug', 'verbose']
+        logger: ['log', 'error', 'warn', 'debug', 'verbose'],
     })
 
     // Security
@@ -42,7 +42,7 @@ export async function bootstrap() {
             callback(null, true)
         },
         maxAge: 600,
-        credentials: true
+        credentials: true,
     })
 
     // hide x-powered-by: express header

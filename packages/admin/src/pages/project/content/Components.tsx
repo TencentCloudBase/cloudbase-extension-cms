@@ -15,7 +15,7 @@ import {
     Col,
     Select,
     message,
-    Progress
+    Progress,
 } from 'antd'
 import moment from 'moment'
 import { Rule } from 'antd/es/form'
@@ -46,6 +46,7 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
                 description="未设定图片"
             />
         )
+
     if (!/^cloud:\/\/\S+/.test(src)) {
         return <img style={{ height: '100px' }} src={src} />
     }
@@ -88,8 +89,8 @@ const CustomUploader: React.FC<{
                         url,
                         uid: fileId,
                         name: `已上传${type === 'file' ? '文件' : '图片'}`,
-                        status: 'done'
-                    }
+                        status: 'done',
+                    },
                 ])
             })
             .catch(() => {
@@ -105,8 +106,8 @@ const CustomUploader: React.FC<{
                 beforeUpload={async (file) => {
                     setUploading(true)
                     setPercent(0)
+                    // 上传文件
                     fileId = await uploadFile(file, (percent) => {
-                        console.log(percent)
                         setPercent(percent)
                     })
                     onChange(fileId)
@@ -114,8 +115,8 @@ const CustomUploader: React.FC<{
                         {
                             uid: fileId,
                             name: file.name,
-                            status: 'done'
-                        }
+                            status: 'done',
+                        },
                     ])
                     message.success(`上传${type === 'file' ? '文件' : '图片'}成功`)
                     return Promise.reject()
@@ -161,7 +162,7 @@ const Connector: React.FC<{
             const { data: schema } = await getSchema(connectResource)
             const { data } = await getContents(schema.collectionName, {
                 page: 1,
-                pageSize: 1000
+                pageSize: 1000,
             })
             setRecords(data)
         }
@@ -336,7 +337,7 @@ function getValidateRule(type: string) {
         case 'Email':
             rule = {
                 pattern: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
-                message: '请输入正确的邮箱'
+                message: '请输入正确的邮箱',
             }
             break
         case 'Number':
@@ -345,7 +346,7 @@ function getValidateRule(type: string) {
         case 'Tel':
             rule = {
                 pattern: /^\d+$/,
-                message: '请输入正确的电话号码'
+                message: '请输入正确的电话号码',
             }
             break
         default:
@@ -538,9 +539,8 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                             return (
                                 <div>
                                     {fields?.map((field, index) => {
-                                        console.log(field)
                                         return (
-                                            <Form.Item key={field.key}>
+                                            <Form.Item key={index}>
                                                 <Form.Item
                                                     {...field}
                                                     noStyle

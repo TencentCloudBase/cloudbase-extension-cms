@@ -12,7 +12,7 @@ const TypeWidthMap = {
     File: 150,
     Image: 150,
     RichText: 200,
-    Markdown: 200
+    Markdown: 200,
 }
 
 const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
@@ -49,7 +49,7 @@ export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
                 align: 'center',
                 dataIndex: name,
                 title: displayName,
-                hideInTable: isHidden
+                hideInTable: isHidden,
             }
         })
     return columns

@@ -1,5 +1,7 @@
 export default {
     'menu.overview': 'Overview',
+    'menu.schema': 'Schema',
+    'menu.content': 'Content',
     'menu.more-blocks': 'More Blocks',
     'menu.system-settings': 'System Settings',
     'menu.webbook': 'Webbook',
@@ -51,5 +53,5 @@ export default {
     'menu.editor': 'Graphic Editor',
     'menu.editor.flow': 'Flow Editor',
     'menu.editor.mind': 'Mind Editor',
-    'menu.editor.koni': 'Koni Editor'
+    'menu.editor.koni': 'Koni Editor',
 }

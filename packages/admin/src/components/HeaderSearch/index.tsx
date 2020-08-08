@@ -35,16 +35,16 @@ const HeaderSearch: React.FC<HeaderSearchProps> = (props) => {
 
     const [value, setValue] = useMergeValue<string | undefined>(defaultValue, {
         value: props.value,
-        onChange: props.onChange
+        onChange: props.onChange,
     })
 
     const [searchMode, setSearchMode] = useMergeValue(defaultOpen || false, {
         value: props.open,
-        onChange: onVisibleChange
+        onChange: onVisibleChange,
     })
 
     const inputClass = classNames(styles.input, {
-        [styles.show]: searchMode
+        [styles.show]: searchMode,
     })
 
     return (
@@ -67,7 +67,7 @@ const HeaderSearch: React.FC<HeaderSearchProps> = (props) => {
             <SearchOutlined
                 key="Icon"
                 style={{
-                    cursor: 'pointer'
+                    cursor: 'pointer',
                 }}
             />
             <AutoComplete

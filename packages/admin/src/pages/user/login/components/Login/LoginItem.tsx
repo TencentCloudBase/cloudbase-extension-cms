@@ -39,14 +39,14 @@ const getFormItemOptions = ({
     onChange,
     defaultValue,
     customProps = {},
-    rules
+    rules,
 }: LoginItemProps) => {
     const options: {
         rules?: LoginItemProps['rules']
         onChange?: LoginItemProps['onChange']
         initialValue?: LoginItemProps['defaultValue']
     } = {
-        rules: rules || (customProps.rules as LoginItemProps['rules'])
+        rules: rules || (customProps.rules as LoginItemProps['rules']),
     }
     if (onChange) {
         options.onChange = onChange

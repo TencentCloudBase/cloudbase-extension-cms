@@ -1,6 +1,6 @@
 import { Alert, Checkbox, message } from 'antd'
 import React, { useState } from 'react'
-import { Link, SelectLang, useModel } from 'umi'
+import { Link, useModel } from 'umi'
 import { getPageQuery } from '@/utils/utils'
 import { LoginParamsType, accountLogin } from '@/services/login'
 import Footer from '@/components/Footer'
@@ -14,7 +14,7 @@ const LoginMessage: React.FC<{
 }> = ({ content }) => (
     <Alert
         style={{
-            marginBottom: 24
+            marginBottom: 24,
         }}
         message={content}
         type="error"
@@ -79,9 +79,6 @@ const Login: React.FC<{}> = () => {
 
     return (
         <div className={styles.container}>
-            <div className={styles.lang}>
-                <SelectLang />
-            </div>
             <div className={styles.content}>
                 <div className={styles.top}>
                     <div className={styles.header}>
@@ -106,8 +103,8 @@ const Login: React.FC<{}> = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: '请输入用户名!'
-                                    }
+                                        message: '请输入用户名!',
+                                    },
                                 ]}
                             />
                             <Password
@@ -116,8 +113,8 @@ const Login: React.FC<{}> = () => {
                                 rules={[
                                     {
                                         required: true,
-                                        message: '请输入密码！'
-                                    }
+                                        message: '请输入密码！',
+                                    },
                                 ]}
                             />
                         </Tab>
@@ -130,7 +127,7 @@ const Login: React.FC<{}> = () => {
                             </Checkbox>
                             <a
                                 style={{
-                                    float: 'right'
+                                    float: 'right',
                                 }}
                             >
                                 忘记密码

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
-import { Modal, Form, message, Input, Switch, Space, Button, Select } from 'antd'
+import { Modal, Form, message, Input, Switch, Space, Button, Select, InputNumber } from 'antd'
 
 const { TextArea } = Input
 const { Option } = Select
@@ -18,7 +18,7 @@ export const CreateFieldModal: React.FC<{
     const { projectId } = useParams()
     const [connectSchema, setConnectSchema] = useState<SchemaV2>()
     const {
-        state: { currentSchema, schemas, fieldAction, selectedField }
+        state: { currentSchema, schemas, fieldAction, selectedField },
     } = ctx
 
     return (
@@ -62,7 +62,7 @@ export const CreateFieldModal: React.FC<{
                         .reduce(
                             (val, key) => ({
                                 ...val,
-                                [key]: v[key]
+                                [key]: v[key],
                             }),
                             {}
                         )
@@ -73,7 +73,7 @@ export const CreateFieldModal: React.FC<{
                     if (fieldAction === 'create') {
                         fields.push({
                             ...field,
-                            type: selectedField.type
+                            type: selectedField.type,
                         })
                     }
 
@@ -86,14 +86,14 @@ export const CreateFieldModal: React.FC<{
                         if (index > -1) {
                             fields.splice(index, 1, {
                                 ...selectedField,
-                                ...field
+                                ...field,
                             })
                         }
                     }
 
                     // 更新 schema fields
                     updateSchema(currentSchema?._id, {
-                        fields
+                        fields,
                     })
                         .then(() => {
                             message.success('添加字段成功')
@@ -122,8 +122,8 @@ export const CreateFieldModal: React.FC<{
                         { required: true, message: '请输入数据库名称！' },
                         {
                             message: '字段名只能使用英文字母、数字、-、_ 等符号',
-                            pattern: /^[a-z0-9A-Z_-]+$/
-                        }
+                            pattern: /^[a-z0-9A-Z_-]+$/,
+                        },
                     ]}
                 >
                     <Input placeholder="数据库字段名，如 title" />
@@ -178,6 +178,42 @@ export const CreateFieldModal: React.FC<{
                     </Form.Item>
                 )}
 
+                {['String', 'MultiLineString'].includes(selectedField.type) && (
+                    <Form.Item style={{ marginBottom: 0 }}>
+                        <Space size="large">
+                            <Form.Item label="最小长度" name="min">
+                                <InputNumber
+                                    style={{ width: '224px' }}
+                                    placeholder="最小长度，如 1"
+                                />
+                            </Form.Item>
+                            <Form.Item label="最大长度" name="max">
+                                <InputNumber
+                                    style={{ width: '224px' }}
+                                    placeholder="最大长度，如 1000"
+                                />
+                            </Form.Item>
+                        </Space>
+                    </Form.Item>
+                )}
+                {selectedField.type === 'Number' && (
+                    <Form.Item style={{ marginBottom: 0 }}>
+                        <Space size="large">
+                            <Form.Item label="最小值" name="max">
+                                <InputNumber
+                                    style={{ width: '224px' }}
+                                    placeholder="最大值，如 1000"
+                                />
+                            </Form.Item>
+                            <Form.Item label="最大值" name="min">
+                                <InputNumber
+                                    style={{ width: '224px' }}
+                                    placeholder="最小值，如 1"
+                                />
+                            </Form.Item>
+                        </Space>
+                    </Form.Item>
+                )}
                 <Form.Item>
                     <div className="form-item">
                         <Form.Item
@@ -192,6 +228,7 @@ export const CreateFieldModal: React.FC<{
                         </Form.Item>
                     </div>
                 </Form.Item>
+
                 <Form.Item>
                     <div className="form-item">
                         <Form.Item
@@ -228,7 +265,7 @@ export const DeleteFieldModal: React.FC<{
     const ctx = useConcent('schema')
 
     const {
-        state: { currentSchema, selectedField }
+        state: { currentSchema, selectedField },
     } = ctx
 
     return (
@@ -248,7 +285,7 @@ export const DeleteFieldModal: React.FC<{
                 }
 
                 updateSchema(currentSchema?._id, {
-                    fields
+                    fields,
                 })
                     .then(() => {
                         message.success('删除字段成功')

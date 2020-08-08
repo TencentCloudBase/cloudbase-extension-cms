@@ -16,8 +16,8 @@ const dataFormat = (data) => {
         code: 0,
         data: {
             errFiles: [],
-            succMap: data
-        }
+            succMap: data,
+        },
     }
 }
 

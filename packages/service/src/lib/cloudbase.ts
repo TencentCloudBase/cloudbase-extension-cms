@@ -6,5 +6,5 @@ export const CloudBaseProvider: Provider = {
     useFactory: () => {
         const app = getCloudBaseApp()
         return app
-    }
+    },
 }

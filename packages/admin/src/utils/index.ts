@@ -17,10 +17,3 @@ export function humpDataToLineData(rawData: Record<string, any>) {
 
     return newData
 }
-
-console.log(
-    humpDataToLineData({
-        displayName: 'xxx',
-        collectionName: 'xxx'
-    })
-)

@@ -31,7 +31,7 @@ const DefaultFallbackComponent = ({ componentStack, error }: Error) => (
 
 class ErrorBoundary extends React.Component<IProps, IState> {
     static defaultProps = {
-        onError: null
+        onError: null,
     }
 
     static getDerivedStateFromError() {
@@ -42,14 +42,14 @@ class ErrorBoundary extends React.Component<IProps, IState> {
         super(props)
         this.state = {
             hasError: false,
-            error: ''
+            error: '',
         }
     }
 
     componentDidCatch(error: any, info: any) {
         this.setState({
             error,
-            info
+            info,
         })
         const { onError } = this.props
         if (onError && typeof onError === 'function') {

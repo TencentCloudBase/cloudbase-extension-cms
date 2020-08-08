@@ -26,8 +26,8 @@ export const getWebhooks = async (options?: Partial<Options>) => {
         method: 'POST',
         data: {
             action: 'getMany',
-            options
-        }
+            options,
+        },
     })
 }
 
@@ -36,7 +36,27 @@ export const createWebhook = async (options?: Partial<Options>) => {
         method: 'POST',
         data: {
             action: 'createOne',
-            options
-        }
+            options,
+        },
+    })
+}
+
+export const updateWebhook = async (options?: Partial<Options>) => {
+    return request('/api/webhook', {
+        method: 'POST',
+        data: {
+            action: 'updateOne',
+            options,
+        },
+    })
+}
+
+export const deleteWebhook = async (options?: Partial<Options>) => {
+    return request('/api/webhook', {
+        method: 'POST',
+        data: {
+            action: 'deleteOne',
+            options,
+        },
     })
 }
