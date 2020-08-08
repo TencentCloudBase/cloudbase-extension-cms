@@ -24,4 +24,8 @@ export class CloudBaseService {
     collection(collection: string): CollectionReference {
         return this.app.database().collection(collection)
     }
+
+    auth() {
+        return this.app.auth()
+    }
 }
