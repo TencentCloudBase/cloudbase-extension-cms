@@ -38,7 +38,7 @@ export class ContentService {
             Object.keys(fuzzyFilter).forEach((key) => {
                 where[key] = db.RegExp({
                     options: 'ig',
-                    regexp: fuzzyFilter[key]
+                    regexp: fuzzyFilter[key],
                 })
             })
         }
@@ -105,7 +105,7 @@ export class ContentService {
 
         return collection
             .where({
-                _id: db.command.in(filter.ids)
+                _id: db.command.in(filter.ids),
             })
             .update(data)
     }
@@ -122,7 +122,7 @@ export class ContentService {
         const data = {
             ...payload,
             createTime: payload?.createTime ? new Date(payload?.createTime) : new Date(),
-            updateTime: new Date()
+            updateTime: new Date(),
         }
 
         return collection.add(data)
@@ -134,14 +134,14 @@ export class ContentService {
 
         const { data } = await collection
             .where({
-                _id: filter._id
+                _id: filter._id,
             })
             .limit(1)
             .get()
 
         if (!data?.length) {
             return {
-                deleted: 0
+                deleted: 0,
             }
         }
 
@@ -155,7 +155,7 @@ export class ContentService {
 
         return collection
             .where({
-                _id: db.command.in(filter.ids)
+                _id: db.command.in(filter.ids),
             })
             .remove()
     }

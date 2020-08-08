@@ -10,20 +10,20 @@ export default () => (
                 key: 'CloudBase CMS',
                 title: 'CloudBase CMS',
                 href: 'https://cloudbase.net',
-                blankTarget: true
+                blankTarget: true,
             },
             {
                 key: 'github',
                 title: <GithubOutlined />,
                 href: 'https://github.com/TencentCloudBase',
-                blankTarget: true
+                blankTarget: true,
             },
             {
                 key: 'CloudBase',
                 title: 'CloudBase',
                 href: 'https://cloudbase.net',
-                blankTarget: true
-            }
+                blankTarget: true,
+            },
         ]}
     />
 )

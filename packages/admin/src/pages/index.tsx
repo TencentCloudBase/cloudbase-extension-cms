@@ -12,20 +12,22 @@ import {
     Button,
     message,
     Skeleton,
-    Typography
+    Typography,
 } from 'antd'
 import { history, useRequest } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import styles from './index.less'
+import { useConcent } from 'concent'
 
 const { Header, Content } = Layout
 
 export default (): React.ReactNode => {
-    const [modalVisible, setModalVisible] = useState(false)
+    const ctx = useConcent('$$global')
     const [reload, setReload] = useState(0)
+    const [modalVisible, setModalVisible] = useState(false)
     const { data = [], loading } = useRequest(() => getProjects(), {
-        refreshDeps: [reload]
+        refreshDeps: [reload],
     })
 
     if (loading) {
@@ -63,6 +65,9 @@ export default (): React.ReactNode => {
                                         <Card
                                             hoverable
                                             onClick={() => {
+                                                ctx.setState({
+                                                    currentProject: project,
+                                                })
                                                 history.push(`/${project._id}/home`)
                                             }}
                                         >
@@ -147,7 +152,7 @@ export const CreateProjectModal: React.FC<{
         {
             manual: true,
             onError: () => message.error('创建项目失败'),
-            onSuccess: () => message.success('创建项目成功')
+            onSuccess: () => message.success('创建项目成功'),
         }
     )
 
@@ -170,19 +175,15 @@ export const CreateProjectModal: React.FC<{
                 }}
             >
                 <Form.Item
-                    label="项目名称"
+                    label="项目名"
                     name="name"
-                    rules={[{ required: true, message: '请输入项目名称！' }]}
+                    rules={[{ required: true, message: '请输入项目名！' }]}
                 >
-                    <Input placeholder="项目名称，如个人博客" />
+                    <Input placeholder="项目名，如个人博客" />
                 </Form.Item>
 
-                <Form.Item
-                    label="项目描述"
-                    name="description"
-                    rules={[{ required: true, message: '请输入项目描述！' }]}
-                >
-                    <Input placeholder="项目描述，如我的个人博客" />
+                <Form.Item label="项目介绍" name="description">
+                    <Input placeholder="项目介绍，如我的个人博客" />
                 </Form.Item>
 
                 <Form.Item>

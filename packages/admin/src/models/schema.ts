@@ -8,12 +8,12 @@ export default {
         loading: false,
         schemas: [],
         fieldAction: 'create',
-        selectedField: {}
+        selectedField: {},
     },
     reducer: {
         async getSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
             ctx.setState({
-                loading: true
+                loading: true,
             })
             const { data } = await getSchemas(projectId)
             const { currentSchema } = state
@@ -25,20 +25,20 @@ export default {
                     projectId,
                     schemas: data,
                     currentSchema: schema,
-                    loading: false
+                    loading: false,
                 }
             }
 
             return {
                 projectId,
                 schemas: data,
-                loading: false
+                loading: false,
             }
-        }
+        },
     },
     watch: {
         // currentSchema: async (newSate: any, state: any, ctx: IFnCtx) => {
         //     // ctx
         // }
-    }
+    },
 }

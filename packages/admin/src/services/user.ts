@@ -6,7 +6,7 @@ export async function query() {
 
 export async function queryCurrent() {
     return request<API.CurrentUser>('/api/auth/currentUser', {
-        method: 'POST'
+        method: 'POST',
     })
 }
 
@@ -14,21 +14,31 @@ export async function queryNotices(): Promise<any> {
     return request<{ data: API.NoticeIconData[] }>('/api/notices')
 }
 
-export const getUsers = async () => {
+export const getUsers = async (projectId?: string) => {
     return request('/api/user', {
-        method: 'GET'
+        method: 'GET',
+        params: {
+            projectId,
+        },
     })
 }
 
 export const createUser = async (user: Record<string, string>) => {
     return request('/api/user', {
         method: 'POST',
-        data: user
+        data: user,
+    })
+}
+
+export const updateUser = async (id: string, payload: Record<string, string>) => {
+    return request(`/api/user/${id}`, {
+        method: 'PUT',
+        data: payload,
     })
 }
 
 export const deleteUser = async (userId: string) => {
     return request(`/api/user/${userId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
     })
 }

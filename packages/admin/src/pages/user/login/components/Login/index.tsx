@@ -37,7 +37,7 @@ const Login: LoginType = (props) => {
     const [active, setActive] = useState({})
     const [tabActiveType, setType] = useMergeValue('', {
         value: props.activeKey,
-        onChange: props.onTabChange
+        onChange: props.onTabChange,
     })
     const TabChildren: React.ReactComponentElement<typeof LoginTab>[] = []
     const otherChildren: React.ReactElement<unknown>[] = []
@@ -63,7 +63,7 @@ const Login: LoginType = (props) => {
                     },
                     removeTab: (id) => {
                         setTabs(tabs.filter((currentId) => currentId !== id))
-                    }
+                    },
                 },
                 updateActive: (activeItem) => {
                     if (!active) return
@@ -73,7 +73,7 @@ const Login: LoginType = (props) => {
                         active[tabActiveType] = [activeItem]
                     }
                     setActive(active)
-                }
+                },
             }}
         >
             <div className={classNames(className, styles.login)}>

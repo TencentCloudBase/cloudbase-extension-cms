@@ -4,6 +4,6 @@ import { ContentService } from '../content/content.service'
 
 @Module({
     controllers: [WebhookController],
-    providers: [ContentService]
+    providers: [ContentService],
 })
 export class WebhookModule {}

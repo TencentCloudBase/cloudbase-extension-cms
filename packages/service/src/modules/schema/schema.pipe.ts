@@ -14,14 +14,14 @@ export class SchemaTransfromPipe implements PipeTransform {
                 const id = v.id || nanoid()
                 return {
                     ...v,
-                    id
+                    id,
                 }
             })
 
             return {
                 ...value,
                 _createTime,
-                _updateTime
+                _updateTime,
             }
         }
 
@@ -31,13 +31,13 @@ export class SchemaTransfromPipe implements PipeTransform {
                 const id = v.id || nanoid()
                 return {
                     ...v,
-                    id
+                    id,
                 }
             })
 
             return {
                 ...value,
-                _updateTime
+                _updateTime,
             }
         }
 

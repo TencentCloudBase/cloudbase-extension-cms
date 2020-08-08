@@ -30,7 +30,7 @@ export default (): React.ReactNode => {
     }>()
 
     const {
-        state: { currentSchema, schemas, loading }
+        state: { currentSchema, schemas, loading },
     }: { state: SchemaState } = ctx
     const columns = createColumns(currentSchema?.fields)
     const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
@@ -52,7 +52,7 @@ export default (): React.ReactNode => {
                             onClick={({ key }) => {
                                 const schema = schemas.find((item: SchemaV2) => item._id === key)
                                 ctx.setState({
-                                    currentSchema: schema
+                                    currentSchema: schema,
                                 })
                                 if (tableRef?.current) {
                                     tableRef.current?.reloadAndRest()
@@ -97,7 +97,7 @@ export default (): React.ReactNode => {
                                             onClick={() => {
                                                 ctx.setState({
                                                     contentAction: 'edit',
-                                                    selectedContent: row
+                                                    selectedContent: row,
                                                 })
                                                 setContentModalVisible(true)
                                             }}
@@ -108,8 +108,11 @@ export default (): React.ReactNode => {
                                             danger
                                             size="small"
                                             key="delete"
+                                            type="primary"
                                             onClick={() => {
                                                 const modal = Modal.confirm({
+                                                    okText: '确认',
+                                                    cancelText: '取消',
                                                     title: '确认删除此内容？',
                                                     onCancel: () => {
                                                         modal.destroy()
@@ -125,14 +128,14 @@ export default (): React.ReactNode => {
                                                         } catch (error) {
                                                             message.error('删除内容失败')
                                                         }
-                                                    }
+                                                    },
                                                 })
                                             }}
                                         >
                                             删除
-                                        </Button>
-                                    ]
-                                }
+                                        </Button>,
+                                    ],
+                                },
                             ]}
                             request={async (
                                 params: { pageSize: number; current: number; [key: string]: any },
@@ -149,7 +152,7 @@ export default (): React.ReactNode => {
                                     .reduce(
                                         (prev, key) => ({
                                             ...prev,
-                                            [key]: params[key]
+                                            [key]: params[key],
                                         }),
                                         {}
                                     )
@@ -159,17 +162,17 @@ export default (): React.ReactNode => {
                                     filter,
                                     pageSize,
                                     fuzzyFilter,
-                                    page: current
+                                    page: current,
                                 })
 
                                 return {
                                     data,
                                     total,
-                                    success: true
+                                    success: true,
                                 }
                             }}
                             pagination={{
-                                showSizeChanger: true
+                                showSizeChanger: true,
                             }}
                             toolBarRender={() => [
                                 <Button
@@ -179,13 +182,13 @@ export default (): React.ReactNode => {
                                     onClick={() => {
                                         ctx.setState({
                                             contentAction: 'create',
-                                            selectedContent: null
+                                            selectedContent: null,
                                         })
                                         setContentModalVisible(true)
                                     }}
                                 >
                                     新建
-                                </Button>
+                                </Button>,
                             ]}
                         />
                     ) : (

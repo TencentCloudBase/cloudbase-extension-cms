@@ -11,11 +11,19 @@ export interface Project {
     cover?: string
 }
 
+export async function getProject(id: string) {
+    return request<{
+        data: Project[]
+    }>(`/api/project/${id}`, {
+        method: 'GET',
+    })
+}
+
 export async function getProjects() {
     return request<{
         data: Project[]
     }>('/api/project', {
-        method: 'GET'
+        method: 'GET',
     })
 }
 
@@ -24,6 +32,23 @@ export async function createProject(payload: { name: string; description: string
         data: Project[]
     }>('/api/project', {
         method: 'POST',
-        data: payload
+        data: payload,
+    })
+}
+
+export async function updateProject(id: string, payload: Partial<Project>) {
+    return request<{
+        data: Project[]
+    }>(`/api/project/${id}`, {
+        method: 'PUT',
+        data: payload,
+    })
+}
+
+export async function deleteProject(id: string) {
+    return request<{
+        data: Project[]
+    }>(`/api/project/${id}`, {
+        method: 'DELETE',
     })
 }

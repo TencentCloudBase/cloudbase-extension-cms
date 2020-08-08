@@ -40,7 +40,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
             onItemClick,
             onViewMore,
             clearText,
-            viewMoreText
+            viewMoreText,
         } = props
         if (!children) {
             return null
@@ -84,7 +84,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
 
     const [visible, setVisible] = useMergeValue<boolean>(false, {
         value: props.popupVisible,
-        onChange: props.onPopupVisibleChange
+        onChange: props.onPopupVisibleChange,
     })
     const noticeButtonClass = classNames(className, styles.noticeButton)
     const notificationBox = getNotificationBox()
@@ -115,7 +115,7 @@ const NoticeIcon: React.FC<NoticeIconProps> & {
 }
 
 NoticeIcon.defaultProps = {
-    emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg'
+    emptyImage: 'https://gw.alipayobjects.com/zos/rmsportal/wAhyIChODzsoKIOBHcBk.svg',
 }
 
 NoticeIcon.Tab = NoticeList

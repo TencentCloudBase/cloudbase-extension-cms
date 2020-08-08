@@ -1,32 +1,31 @@
 import { request } from 'umi'
 
 export async function getSchemas(projectId: string, schemaId?: string) {
-    console.log(projectId)
     return request('/api/schema', {
         method: 'GET',
         params: {
-            projectId
-        }
+            projectId,
+        },
     })
 }
 
 export async function getSchema(schemaId?: string) {
     return request(`/api/schema/${schemaId}`, {
-        method: 'GET'
+        method: 'GET',
     })
 }
 
 export async function createSchema(schema: Partial<SchemaV2>) {
     return request('/api/schema', {
         method: 'POST',
-        data: schema
+        data: schema,
     })
 }
 
 export async function updateSchema(schemaId: string, schema: Partial<SchemaV2>) {
     return request(`/api/schema/${schemaId}`, {
         method: 'PUT',
-        data: schema
+        data: schema,
     })
 }
 
@@ -34,7 +33,7 @@ export async function deleteSchema(schemaId: string, deleteCollection: boolean) 
     return request(`/api/schema/${schemaId}`, {
         method: 'DELETE',
         data: {
-            deleteCollection
-        }
+            deleteCollection,
+        },
     })
 }

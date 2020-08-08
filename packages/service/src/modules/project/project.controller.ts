@@ -1,10 +1,13 @@
 import { IsNotEmpty } from 'class-validator'
-import { Controller, Post, Body, Get, Query } from '@nestjs/common'
+import { Controller, Post, Body, Get, Query, Param, Put, Delete } from '@nestjs/common'
 import { CollectionV2 } from '@/constants'
 import { RecordExistException } from '@/common'
 import { CloudBaseService } from '@/dynamic_modules/cloudbase'
+import { dateToNumber } from '@/utils'
 
 export class Project {
+    _id: string
+
     @IsNotEmpty()
     name: string
 
@@ -18,13 +21,32 @@ const Default_Projects = [
     {
         _id: 'default',
         name: '默认项目',
-        description: 'CMS 默认项目'
-    }
+        description: 'CMS 默认项目',
+    },
 ]
 
 @Controller('project')
 export class ProjectController {
     constructor(private readonly cloudbaseService: CloudBaseService) {}
+
+    @Get(':id')
+    async getProject(@Param('id') id: string) {
+        if (id === 'default') {
+            return {
+                data: {
+                    _id: 'default',
+                    name: '默认项目',
+                    description: 'CMS 默认项目',
+                },
+            }
+        }
+
+        const { data } = await this.cloudbaseService.collection(CollectionV2.Projects).doc(id).get()
+
+        return {
+            data: data?.[0],
+        }
+    }
 
     @Get()
     async getProjects(
@@ -41,7 +63,7 @@ export class ProjectController {
             .get()
 
         return {
-            data: [...Default_Projects, ...res.data]
+            data: [...Default_Projects, ...res.data],
         }
     }
 
@@ -54,7 +76,7 @@ export class ProjectController {
         const { data } = await this.cloudbaseService
             .collection(CollectionV2.Projects)
             .where({
-                name
+                name,
             })
             .limit(1)
             .get()
@@ -65,8 +87,18 @@ export class ProjectController {
 
         const project = {
             ...body,
-            _createTime: new Date()
+            _createTime: dateToNumber(),
         }
         return this.cloudbaseService.collection(CollectionV2.Projects).add(project)
+    }
+
+    @Put(':id')
+    async updateProject(@Param('id') id: string, @Body() payload: Partial<Project>) {
+        return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).update(payload)
+    }
+
+    @Delete(':id')
+    async deleteProject(@Param('id') id: string) {
+        return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).remove()
     }
 }

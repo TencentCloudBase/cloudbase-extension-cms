@@ -25,7 +25,7 @@ export const ContentDrawer: React.FC<{
             ? schema?.fields.reduce(
                   (prev, field) => ({
                       ...prev,
-                      [field.name]: field.defaultValue
+                      [field.name]: field.defaultValue,
                   }),
                   {}
               )
@@ -44,9 +44,7 @@ export const ContentDrawer: React.FC<{
                 name="basic"
                 layout="vertical"
                 labelCol={{ span: 6 }}
-                onValuesChange={(v) => {
-                    console.log(v)
-                }}
+                // onValuesChange={(v) => {}}
                 initialValues={initialValues}
                 onFinish={(v = {}) => {
                     if (contentAction === 'create') {
