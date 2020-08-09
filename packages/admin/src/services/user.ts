@@ -1,21 +1,21 @@
-import { request } from 'umi'
+import { tcbRequest } from '@/utils'
 
 export async function query() {
-    return request<API.CurrentUser[]>('/api/users')
+    return tcbRequest<API.CurrentUser[]>('/api/users')
 }
 
 export async function queryCurrent() {
-    return request<API.CurrentUser>('/api/auth/currentUser', {
+    return tcbRequest<API.CurrentUser>('/api/auth/currentUser', {
         method: 'POST',
     })
 }
 
 export async function queryNotices(): Promise<any> {
-    return request<{ data: API.NoticeIconData[] }>('/api/notices')
+    return tcbRequest<{ data: API.NoticeIconData[] }>('/api/notices')
 }
 
 export const getUsers = async (projectId?: string) => {
-    return request('/api/user', {
+    return tcbRequest('/api/user', {
         method: 'GET',
         params: {
             projectId,
@@ -24,21 +24,21 @@ export const getUsers = async (projectId?: string) => {
 }
 
 export const createUser = async (user: Record<string, string>) => {
-    return request('/api/user', {
+    return tcbRequest('/api/user', {
         method: 'POST',
         data: user,
     })
 }
 
 export const updateUser = async (id: string, payload: Record<string, string>) => {
-    return request(`/api/user/${id}`, {
+    return tcbRequest(`/api/user/${id}`, {
         method: 'PUT',
         data: payload,
     })
 }
 
 export const deleteUser = async (userId: string) => {
-    return request(`/api/user/${userId}`, {
+    return tcbRequest(`/api/user/${userId}`, {
         method: 'DELETE',
     })
 }

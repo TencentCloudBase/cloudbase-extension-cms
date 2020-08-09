@@ -1,4 +1,4 @@
-export * from './tcb'
+export * from './cloudbase'
 
 // 驼峰转换下划线
 function humpToLine(name: string) {

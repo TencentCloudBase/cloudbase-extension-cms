@@ -140,6 +140,15 @@ const LoginItem: React.FC<LoginItemProps> = (props) => {
             </FormItem>
         )
     }
+
+    if (type === 'Password') {
+        return (
+            <FormItem name={name} {...options}>
+                <Input.Password {...customProps} {...otherProps} />
+            </FormItem>
+        )
+    }
+
     return (
         <FormItem name={name} {...options}>
             <Input {...customProps} {...otherProps} />

@@ -8,7 +8,7 @@ import {
     HttpException,
     ExecutionContext,
 } from '@nestjs/common'
-import { getCloudBaseApp } from '@/utils'
+import { getCloudBaseApp, isDev } from '@/utils'
 import { CollectionV2 } from '@/constants'
 
 // 校验用户是否登录
@@ -16,11 +16,13 @@ export class GlobalAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: Request = context.switchToHttp().getRequest()
 
-        if (request.path === '/login') {
+        // skip login
+        if (request.path === '/api/auth/login' || isDev()) {
             return true
         }
 
         // 登录的用户
+        // 目前只在云函数中能自动获取用户身份信息
         const app = getCloudBaseApp()
         const userInfo = app.auth().getUserInfo()
         const customUserId = userInfo?.customUserId
@@ -37,12 +39,13 @@ export class GlobalAuthGuard implements CanActivate {
 
         const { data } = await app.database().collection(CollectionV2.Users).doc(customUserId).get()
         const userRecord = data?.[0]
+
         // 用户信息不存在
-        if (userRecord) {
+        if (!userRecord) {
             throw new HttpException(
                 {
                     code: 'AUTH_EXPIRED',
-                    message: '登录态失效，请重新登录',
+                    message: '用户不存在，请重新登录',
                 },
                 HttpStatus.FORBIDDEN
             )

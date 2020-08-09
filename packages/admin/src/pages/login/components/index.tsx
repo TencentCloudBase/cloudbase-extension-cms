@@ -7,7 +7,6 @@ import { LoginParamsType } from '@/services/login'
 
 import LoginContext from './LoginContext'
 import LoginItem, { LoginItemProps } from './LoginItem'
-import LoginSubmit from './LoginSubmit'
 import LoginTab from './LoginTab'
 import styles from './index.less'
 
@@ -23,7 +22,6 @@ export interface LoginProps {
 
 interface LoginType extends React.FC<LoginProps> {
     Tab: typeof LoginTab
-    Submit: typeof LoginSubmit
     Username: React.FunctionComponent<LoginItemProps>
     Password: React.FunctionComponent<LoginItemProps>
     Mobile: React.FunctionComponent<LoginItemProps>
@@ -110,7 +108,6 @@ const Login: LoginType = (props) => {
 }
 
 Login.Tab = LoginTab
-Login.Submit = LoginSubmit
 
 Login.Username = LoginItem.Username
 Login.Password = LoginItem.Password

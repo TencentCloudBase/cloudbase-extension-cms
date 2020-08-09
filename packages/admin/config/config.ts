@@ -35,60 +35,56 @@ export default defineConfig({
     // umi routes: https://umijs.org/docs/routing
     routes: [
         {
-            path: '/',
+            path: '/home',
             layout: false,
             access: 'isLogin',
             component: './index',
         },
         {
-            path: '/settings',
             layout: false,
+            path: '/settings',
             access: 'canAdmin',
             component: './system-setting',
+        },
+        {
+            path: '/:projectId/home',
+            name: '概览',
+            icon: 'eye',
+            access: 'canAdmin',
+            component: './project/overview',
+        },
+        {
+            path: '/:projectId/schema',
+            name: '内容原型',
+            icon: 'gold',
+            access: 'canAdmin',
+            component: './project/schema/index',
+        },
+        {
+            path: '/:projectId/content',
+            name: '内容集合',
+            icon: 'database',
+            access: 'canAdmin',
+            component: './project/content/index',
+        },
+        {
+            path: '/:projectId/webhook',
+            name: 'Webbook',
+            icon: 'deployment-unit',
+            access: 'canAdmin',
+            component: './project/webhook/index',
+        },
+        {
+            path: '/:projectId/setting',
+            name: '项目设置',
+            icon: 'setting',
+            access: 'canAdmin',
+            component: './project/setting/index',
         },
         {
             path: '/login',
             layout: false,
             component: './login',
-        },
-        {
-            path: '/:projectId',
-            access: 'isLogin',
-            routes: [
-                {
-                    path: '/:projectId/home',
-                    name: '概览',
-                    icon: 'eye',
-                    access: 'isLogin',
-                    component: './project/overview',
-                },
-                {
-                    path: '/:projectId/schema',
-                    name: '内容原型',
-                    icon: 'gold',
-                    component: './project/schema/index',
-                },
-                {
-                    path: '/:projectId/content',
-                    name: '内容集合',
-                    icon: 'database',
-                    component: './project/content/index',
-                },
-                {
-                    path: '/:projectId/webhook',
-                    name: 'Webbook',
-                    icon: 'deployment-unit',
-                    access: 'canAdmin',
-                    component: './project/webhook/index',
-                },
-                {
-                    path: '/:projectId/setting',
-                    name: '项目设置',
-                    icon: 'setting',
-                    access: 'canAdmin',
-                    component: './project/setting/index',
-                },
-            ],
         },
         {
             component: './404',

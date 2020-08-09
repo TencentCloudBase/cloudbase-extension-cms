@@ -33,7 +33,7 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
             setModalVisible(false)
             message.success('删除项目成功')
             setTimeout(() => {
-                history.push('/')
+                history.push('/home')
             }, 2000)
         },
         {

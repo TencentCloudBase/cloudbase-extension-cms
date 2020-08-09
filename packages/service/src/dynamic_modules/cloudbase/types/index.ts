@@ -1,5 +1,6 @@
 export interface CloudBaseConfig {
-    envId: string
+    envId?: string
+    env?: string
     debug?: boolean
     timeout?: number
     secretId?: string

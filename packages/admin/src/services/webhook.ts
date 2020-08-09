@@ -1,4 +1,4 @@
-import { request } from 'umi'
+import { tcbRequest } from '@/utils'
 
 export interface Options {
     page?: number
@@ -22,7 +22,7 @@ export interface Options {
 }
 
 export const getWebhooks = async (options?: Partial<Options>) => {
-    return request('/api/webhook', {
+    return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
             action: 'getMany',
@@ -32,7 +32,7 @@ export const getWebhooks = async (options?: Partial<Options>) => {
 }
 
 export const createWebhook = async (options?: Partial<Options>) => {
-    return request('/api/webhook', {
+    return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
             action: 'createOne',
@@ -42,7 +42,7 @@ export const createWebhook = async (options?: Partial<Options>) => {
 }
 
 export const updateWebhook = async (options?: Partial<Options>) => {
-    return request('/api/webhook', {
+    return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
             action: 'updateOne',
@@ -52,7 +52,7 @@ export const updateWebhook = async (options?: Partial<Options>) => {
 }
 
 export const deleteWebhook = async (options?: Partial<Options>) => {
-    return request('/api/webhook', {
+    return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
             action: 'deleteOne',
