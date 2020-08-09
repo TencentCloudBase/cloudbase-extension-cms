@@ -1,10 +1,11 @@
 import cloudbase from '@cloudbase/node-sdk'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
-import { isDev } from './env'
+import { isDev } from './tools'
 
 // 从环境变量中读取
 export const getEnvIdString = (): string => {
-    return process.env.TCB_ENVID
+    const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
+    return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
 }
 
 export const getCloudBaseApp = () => {
@@ -28,8 +29,8 @@ export const getCloudBaseApp = () => {
     if (isDev()) {
         options = {
             ...options,
-            secretId: process.env.TENCENTCLOUD_SECRETID,
-            secretKey: process.env.TENCENTCLOUD_SECRETKEY,
+            secretId: process.env.SECRETID,
+            secretKey: process.env.SECRETKEY,
         }
     }
 

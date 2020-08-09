@@ -38,7 +38,7 @@ export default (): React.ReactNode => {
         <>
             <Layout className={styles.home}>
                 <Header className={styles.header}>
-                    <img className={styles.logo} src="/img/logo.png" alt="logo" />
+                    <img className={styles.logo} src="/icon.svg" alt="logo" />
                     <span className={styles.title}>CloudBase CMS</span>
                     <div className={styles.account}>
                         <AvatarDropdown />
@@ -74,7 +74,7 @@ export default (): React.ReactNode => {
                                             <div
                                                 className={styles.project}
                                                 onClick={() => {
-                                                    history.push('/')
+                                                    history.push('/home')
                                                 }}
                                             >
                                                 <div className={styles['project-logo']}>

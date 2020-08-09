@@ -50,11 +50,18 @@ export async function bootstrap() {
 
     app.setGlobalPrefix('/api')
 
-    await app.listen(port)
+    // 兼容云函数与本地开发
+    if (process.env.NODE_ENV === 'development') {
+        await app.listen(port)
+    } else {
+        await app.init()
+    }
 
     return expressApp
 }
 
-bootstrap().then(() => {
-    console.log(`App listen on http://localhost:${port}`)
-})
+if (process.env.NODE_ENV === 'development') {
+    bootstrap().then(() => {
+        console.log(`App listen on http://localhost:${port}`)
+    })
+}

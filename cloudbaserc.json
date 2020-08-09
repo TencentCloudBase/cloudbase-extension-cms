@@ -36,16 +36,15 @@
             "service": {
                 "use": "@cloudbase/framework-plugin-node",
                 "inputs": {
-                    "name": "tcb-ext-cms-service",
+                    "name": "service",
                     "entry": "app.js",
                     "projectPath": "./packages/service",
                     "path": "/tcb-cms-service",
-                    "buildCommand": "npm run build",
                     "functionOptions": {
                         "timeout": 5,
                         "envVariables": {
                             "NODE_ENV": "production",
-                            "CMS_CUSTOM_LOGIN_JSON": "{{env.customLoginJson}}"
+                            "CMS_CUSTOM_LOGIN_JSON": "{{env.CMS_CUSTOM_LOGIN_JSON}}"
                         }
                     }
                 }

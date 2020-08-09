@@ -10,7 +10,7 @@ export default (): React.ReactNode => {
         <Row className={styles.settings}>
             <Col flex="1 1 auto" />
             <Col flex="0 0 800px">
-                <div className={styles.back} onClick={() => history.push('/')}>
+                <div className={styles.back} onClick={() => history.push('/home')}>
                     <Space align="center" style={{ marginBottom: '10px' }}>
                         <LeftCircleTwoTone style={{ fontSize: '20px' }} />
                         <h3 style={{ marginBottom: '0.2rem' }}>返回主页</h3>

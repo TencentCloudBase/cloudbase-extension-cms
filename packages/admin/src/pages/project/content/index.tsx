@@ -40,11 +40,11 @@ export default (): React.ReactNode => {
             <ProCard split="vertical" gutter={[16, 16]}>
                 <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
                     {loading ? (
-                        <Menu defaultSelectedKeys={defaultSelectedMenu}>
-                            <Menu.Item>
+                        <Row justify="center">
+                            <Col>
                                 <Spin />
-                            </Menu.Item>
-                        </Menu>
+                            </Col>
+                        </Row>
                     ) : schemas?.length ? (
                         <Menu
                             mode="inline"
