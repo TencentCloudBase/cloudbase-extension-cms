@@ -20,7 +20,8 @@ interface ExceptionProps {
 }
 
 function backToHome() {
-    history.push('/')
+    console.log('home')
+    history.push('/home')
 }
 
 const Exception404 = () => (
@@ -49,18 +50,21 @@ const Exception500 = () => (
     />
 )
 
-const Exception403 = () => (
-    <Result
-        status="403"
-        title="403"
-        subTitle="抱歉，你无权访问该页面"
-        extra={
-            <Button type="primary" onClick={backToHome}>
-                返回首页
-            </Button>
-        }
-    />
-)
+const Exception403 = (...args: any[]) => {
+    console.log(args)
+    return (
+        <Result
+            status="403"
+            title="403"
+            subTitle="抱歉，你无权访问该页面"
+            extra={
+                <Button type="primary" onClick={backToHome}>
+                    返回首页
+                </Button>
+            }
+        />
+    )
+}
 
 /**
  * 异常路由处理组件

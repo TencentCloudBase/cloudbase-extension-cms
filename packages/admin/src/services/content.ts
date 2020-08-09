@@ -1,4 +1,4 @@
-import { request } from 'umi'
+import { tcbRequest } from '@/utils'
 
 type Actions =
     | 'getOne'
@@ -31,7 +31,7 @@ export interface Options {
 }
 
 export async function getContents(resource: string, options?: Options) {
-    return request('/api/content', {
+    return tcbRequest('/api/content', {
         method: 'POST',
         data: {
             resource,
@@ -42,7 +42,7 @@ export async function getContents(resource: string, options?: Options) {
 }
 
 export async function createContent(resource: string, payload: Record<string, any>) {
-    return request('/api/content', {
+    return tcbRequest('/api/content', {
         method: 'POST',
         data: {
             resource,
@@ -55,7 +55,7 @@ export async function createContent(resource: string, payload: Record<string, an
 }
 
 export async function deleteContent(resource: string, id: string) {
-    return request('/api/content', {
+    return tcbRequest('/api/content', {
         method: 'POST',
         data: {
             resource,
@@ -70,7 +70,7 @@ export async function deleteContent(resource: string, id: string) {
 }
 
 export async function updateContent(resource: string, id: string, payload: Record<string, any>) {
-    return request('/api/content', {
+    return tcbRequest('/api/content', {
         method: 'POST',
         data: {
             resource,

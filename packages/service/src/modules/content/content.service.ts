@@ -43,8 +43,6 @@ export class ContentService {
             })
         }
 
-        console.log(where)
-
         let query = collection.where(where)
         // 获取总数
         const countRes = await query.count()

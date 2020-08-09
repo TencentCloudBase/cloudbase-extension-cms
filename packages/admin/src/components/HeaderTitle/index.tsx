@@ -6,10 +6,10 @@ const HeaderTitle: React.SFC<{ collapsed: boolean }> = (props) => (
         onClick={(e) => {
             e.stopPropagation()
             e.preventDefault()
-            history.push('/')
+            history.push('/home')
         }}
     >
-        <img src="/img/logo.png" alt="logo" />
+        <img src="/icon.svg" alt="logo" />
         <h1>{props.collapsed ? null : 'CloudBase CMS'}</h1>
     </a>
 )

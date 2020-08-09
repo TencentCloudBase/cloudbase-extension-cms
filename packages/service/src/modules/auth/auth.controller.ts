@@ -1,29 +1,50 @@
-import { Controller, Post, Body } from '@nestjs/common'
+import { Controller, Post, Body, Request } from '@nestjs/common'
 import { genPassword, getFullDate } from '@/utils'
 import { CloudBaseService } from '@/dynamic_modules'
 import { CollectionV2 } from '@/constants'
+import { IsNotEmpty } from 'class-validator'
+
+class AuthBody {
+    @IsNotEmpty({
+        message: '用户名不能为空',
+    })
+    username: string
+
+    @IsNotEmpty({
+        message: '密码不能为空',
+    })
+    password: string
+}
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly cloudbaseService: CloudBaseService) {}
 
     @Post('login')
-    async login(@Body() body) {
+    async login(@Body() body: AuthBody) {
         const { username, password } = body
 
         if (!username || !password) {
             return {
                 message: '用户名或者密码不能为空',
-                code: 'LOGIN_WRONG_INPUT',
+                code: 'EMPTY_INPUT',
             }
         }
 
         // 查询用户信息
         const collection = this.cloudbaseService.collection(CollectionV2.Users)
+        const $ = this.cloudbaseService.db.command
 
-        const query = collection.where({
-            username,
-        })
+        const query = collection.where(
+            $.or([
+                {
+                    username,
+                },
+                {
+                    userName: username,
+                },
+            ])
+        )
 
         const getRes = await query.get()
         const dbRecord = getRes.data[0]
@@ -73,7 +94,9 @@ export class AuthController {
     }
 
     @Post('currentUser')
-    async getCurrentUser() {
+    async getCurrentUser(@Request() req) {
+        console.log(req.user)
+
         return {
             avatar: '',
             name: '管理员',

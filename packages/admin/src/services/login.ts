@@ -1,4 +1,4 @@
-import { request } from 'umi'
+import { tcbRequest } from '@/utils'
 
 export interface LoginParamsType {
     username: string
@@ -9,16 +9,17 @@ export interface LoginParamsType {
 }
 
 export async function accountLogin(params: LoginParamsType) {
-    return request<API.LoginStateType>('/api/auth/login', {
+    return tcbRequest<API.LoginStateType>('/api/auth/login', {
         method: 'POST',
         data: params,
+        skipErrorHandler: true,
     })
 }
 
 export async function outLogin() {
-    return request('/api/auth/login')
+    return tcbRequest('/api/auth/login')
 }
 
 export async function getFakeCaptcha(mobile: string) {
-    return request(`/api/login/captcha?mobile=${mobile}`)
+    return tcbRequest(`/api/login/captcha?mobile=${mobile}`)
 }

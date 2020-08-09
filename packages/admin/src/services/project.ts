@@ -1,4 +1,4 @@
-import { request } from 'umi'
+import { tcbRequest } from '@/utils'
 
 export interface Project {
     _id: string
@@ -12,7 +12,7 @@ export interface Project {
 }
 
 export async function getProject(id: string) {
-    return request<{
+    return tcbRequest<{
         data: Project[]
     }>(`/api/project/${id}`, {
         method: 'GET',
@@ -20,7 +20,7 @@ export async function getProject(id: string) {
 }
 
 export async function getProjects() {
-    return request<{
+    return tcbRequest<{
         data: Project[]
     }>('/api/project', {
         method: 'GET',
@@ -28,7 +28,7 @@ export async function getProjects() {
 }
 
 export async function createProject(payload: { name: string; description: string }) {
-    return request<{
+    return tcbRequest<{
         data: Project[]
     }>('/api/project', {
         method: 'POST',
@@ -37,7 +37,7 @@ export async function createProject(payload: { name: string; description: string
 }
 
 export async function updateProject(id: string, payload: Partial<Project>) {
-    return request<{
+    return tcbRequest<{
         data: Project[]
     }>(`/api/project/${id}`, {
         method: 'PUT',
@@ -46,7 +46,7 @@ export async function updateProject(id: string, payload: Partial<Project>) {
 }
 
 export async function deleteProject(id: string) {
-    return request<{
+    return tcbRequest<{
         data: Project[]
     }>(`/api/project/${id}`, {
         method: 'DELETE',

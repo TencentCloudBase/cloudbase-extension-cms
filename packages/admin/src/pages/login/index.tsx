@@ -1,13 +1,14 @@
-import { Alert, Checkbox, message } from 'antd'
+import { Alert, message, Button } from 'antd'
 import React, { useState } from 'react'
-import { Link, useModel } from 'umi'
+import { useModel } from 'umi'
 import { getPageQuery } from '@/utils/utils'
 import { LoginParamsType, accountLogin } from '@/services/login'
 import Footer from '@/components/Footer'
-import LoginFrom from './components/Login'
-import styles from './style.less'
+import LoginFrom from './components'
+import styles from './index.less'
+import { customLogin } from '@/utils'
 
-const { Tab, Username, Password, Submit } = LoginFrom
+const { Tab, Username, Password } = LoginFrom
 
 const LoginMessage: React.FC<{
     content: string
@@ -41,40 +42,42 @@ const replaceGoto = () => {
             return
         }
     }
-    window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/')
+
+    window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/home')
 }
 
 const Login: React.FC<{}> = () => {
-    const [userLoginState, setUserLoginState] = useState<API.LoginStateType>({})
     const [submitting, setSubmitting] = useState(false)
-
     const { refresh } = useModel('@@initialState')
-    const [autoLogin, setAutoLogin] = useState(true)
     const [type, setType] = useState<string>('account')
+    const [loginErrorMessage, setLoginErrorMessage] = useState<string>('')
 
     const handleSubmit = async (values: LoginParamsType) => {
         setSubmitting(true)
+        setLoginErrorMessage('')
+
         try {
             // 登录
-            const msg = await accountLogin({ ...values, type })
+            const res = await accountLogin({ ...values, type })
 
-            if (msg.code === 'ok') {
+            // 登录成功
+            if (res.ticket) {
+                await customLogin(res.ticket)
+                message.success('登录成功')
                 replaceGoto()
                 setTimeout(() => {
                     refresh()
-                }, 0)
+                }, 1000)
                 return
+            } else {
+                setLoginErrorMessage(res.message || '登录失败，请重试！')
             }
-            // 如果失败去设置用户错误信息
-            setUserLoginState(msg)
-        } catch (error) {
-            console.log(error)
-            message.error('登录失败，请重试！')
+        } catch (e) {
+            message.error(e.message || '登录失败，请重试！')
         }
+
         setSubmitting(false)
     }
-
-    const { code, type: loginType } = userLoginState
 
     return (
         <div className={styles.container}>
@@ -82,10 +85,10 @@ const Login: React.FC<{}> = () => {
                 <div>
                     <div className={styles.top}>
                         <div className={styles.header}>
-                            <Link to="/">
-                                <img alt="logo" className={styles.logo} src="/img/logo.png" />
+                            <a href="https://cloudbase.net" target="_blank">
+                                <img alt="logo" className={styles.logo} src="/icon.svg" />
                                 <span className={styles.title}>CloudBase CMS</span>
-                            </Link>
+                            </a>
                         </div>
                         <div className={styles.desc}>打造云端一体化运营平台</div>
                     </div>
@@ -93,13 +96,13 @@ const Login: React.FC<{}> = () => {
                     <div className={styles.main}>
                         <LoginFrom activeKey={type} onTabChange={setType} onSubmit={handleSubmit}>
                             <Tab key="account" tab="账户密码登录">
-                                {status === 'error' && loginType === 'account' && !submitting && (
+                                {loginErrorMessage && !submitting && (
                                     <LoginMessage content="账户或密码错误" />
                                 )}
 
                                 <Username
                                     name="username"
-                                    placeholder="用户名: admin or user"
+                                    placeholder="用户名"
                                     rules={[
                                         {
                                             required: true,
@@ -118,22 +121,15 @@ const Login: React.FC<{}> = () => {
                                     ]}
                                 />
                             </Tab>
-                            <div>
-                                <Checkbox
-                                    checked={autoLogin}
-                                    onChange={(e) => setAutoLogin(e.target.checked)}
-                                >
-                                    自动登录
-                                </Checkbox>
-                                <a
-                                    style={{
-                                        float: 'right',
-                                    }}
-                                >
-                                    忘记密码
-                                </a>
-                            </div>
-                            <Submit loading={submitting}>登录</Submit>
+                            <Button
+                                size="large"
+                                className={styles.submit}
+                                type="primary"
+                                htmlType="submit"
+                                loading={submitting}
+                            >
+                                登录
+                            </Button>
                         </LoginFrom>
                     </div>
                 </div>
