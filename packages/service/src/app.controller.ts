@@ -1,7 +1,9 @@
-import { Controller, Get, Post } from '@nestjs/common'
+import { Controller, Get, Post, UseGuards } from '@nestjs/common'
 import { AppService } from './app.service'
+import { CamGuard } from './guards/cam.guard'
 
 @Controller()
+@UseGuards(CamGuard)
 export class AppController {
     constructor(private readonly appService: AppService) {}
 

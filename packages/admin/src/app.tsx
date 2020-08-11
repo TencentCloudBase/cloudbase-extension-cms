@@ -11,6 +11,7 @@ import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
 import * as models from './models'
 import { getCloudBaseApp } from './utils'
+import { isDevEnv } from './utils/utils'
 
 run(models)
 setTwoToneColor('#0052d9')
@@ -25,16 +26,18 @@ export async function getInitialState(): Promise<{
     // 如果是登录页面，不执行
     if (history.location.pathname !== '/login') {
         try {
-            // 获取登录态
-            const loginState = await app
-                .auth({
-                    persistence: 'local',
-                })
-                .getLoginState()
+            if (!isDevEnv()) {
+                // 获取登录态
+                const loginState = await app
+                    .auth({
+                        persistence: 'local',
+                    })
+                    .getLoginState()
 
-            if (!loginState) {
-                history.push('/login')
-                return {}
+                if (!loginState) {
+                    history.push('/login')
+                    return {}
+                }
             }
 
             const currentUser = await queryCurrent()
@@ -45,6 +48,17 @@ export async function getInitialState(): Promise<{
             }
         } catch (error) {
             history.push('/login')
+        }
+    } else {
+        let currentUser = {}
+        try {
+            currentUser = await queryCurrent()
+        } catch (e) {
+            console.log(e)
+        }
+        return {
+            currentUser,
+            settings: defaultSettings,
         }
     }
 

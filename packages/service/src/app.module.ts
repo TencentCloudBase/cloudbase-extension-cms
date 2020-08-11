@@ -11,15 +11,18 @@ import { ProjectModule } from './modules/project/project.module'
 import { ContentModule } from './modules/content/content.module'
 import { UserModule } from './modules/user/user.module'
 import { WebhookModule } from './modules/webhook/webhook.module'
+import { CamModule } from './modules/cam/cam.module'
 
 @Module({
     imports: [
         AuthModule,
         FileModule,
         UserModule,
+        CamModule,
         SchemaModule,
         ProjectModule,
         ContentModule,
+        WebhookModule,
         ConfigModule.forRoot({
             isGlobal: true,
             envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
@@ -29,7 +32,6 @@ import { WebhookModule } from './modules/webhook/webhook.module'
             secretId: process.env.SECRETID,
             secretKey: process.env.SECRETKEY,
         }),
-        WebhookModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -35,14 +35,19 @@ export default defineConfig({
     // umi routes: https://umijs.org/docs/routing
     routes: [
         {
+            path: '/login',
+            layout: false,
+            component: './login',
+        },
+        {
             path: '/home',
             layout: false,
             access: 'isLogin',
             component: './index',
         },
         {
-            layout: false,
             path: '/settings',
+            layout: false,
             access: 'canAdmin',
             component: './system-setting',
         },
@@ -82,12 +87,12 @@ export default defineConfig({
             component: './project/setting/index',
         },
         {
-            path: '/login',
-            layout: false,
-            component: './login',
+            path: '/',
+            redirect: '/home',
         },
         {
             component: './404',
+            layout: false,
         },
     ],
     // Theme for antd: https://ant.design/docs/react/customize-theme-cn

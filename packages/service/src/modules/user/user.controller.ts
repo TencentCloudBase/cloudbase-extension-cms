@@ -13,9 +13,9 @@ import {
 import _ from 'lodash'
 import { CloudBaseService } from '@/dynamic_modules'
 import { CollectionV2 } from '@/constants'
-import { IsNotEmpty, IsArray, ValidateIf } from 'class-validator'
-import { RecordExistException, RecordNotExistException } from '@/common'
+import { IsNotEmpty } from 'class-validator'
 import { genPassword, dateToNumber } from '@/utils'
+import { RecordExistException, RecordNotExistException } from '@/common'
 
 class User {
     @IsNotEmpty()
@@ -30,7 +30,7 @@ class User {
     // 归属项目 Id
     projectId: string
 
-    //  collection 数组或 ['*']
+    // collection 数组或 ['*']
     collections: string[] | ['*']
 
     actions: string[] | ['*']
@@ -122,5 +122,22 @@ export class UserController {
     @Delete(':id')
     async deleteUser(@Param('id') userId) {
         return this.cloudbaseService.collection(CollectionV2.Users).doc(userId).remove()
+    }
+
+    @Get('/group')
+    async getUserGroups(@Query() query: { page?: number; pageSize?: number } = {}) {
+        const { page = 1, pageSize = 10 } = query
+
+        const { data, requestId } = await this.cloudbaseService
+            .collection(CollectionV2.UserGroup)
+            .where({})
+            .skip(Number(page - 1) * Number(pageSize))
+            .limit(Number(pageSize))
+            .get()
+
+        return {
+            data,
+            requestId,
+        }
     }
 }

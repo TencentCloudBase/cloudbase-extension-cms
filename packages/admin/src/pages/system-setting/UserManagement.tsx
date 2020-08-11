@@ -13,8 +13,8 @@ import {
     Modal,
     Form,
     Input,
-    Typography,
     Select,
+    Typography,
 } from 'antd'
 import { useRequest } from 'umi'
 import { getUsers, createUser, deleteUser, updateUser } from '@/services/user'
@@ -222,16 +222,16 @@ const CreateUserModal: React.FC<{
                     />
                 </Form.Item>
                 <Form.Item
-                    label="用户角色"
+                    label="用户组"
                     name="role"
                     rules={[{ required: true, message: '请选择用户角色！' }]}
                 >
                     <Select>
                         <Select.Option value="administrator">
-                            系统管理员 - 系统全部权限【系统】
+                            系统管理员 - 系统全部权限
                         </Select.Option>
                         <Select.Option value="operator">
-                            内容管理员 - 全部内容管理权限【系统】
+                            系统内容管理员 - 全部【内容】操作权限
                         </Select.Option>
                     </Select>
                 </Form.Item>

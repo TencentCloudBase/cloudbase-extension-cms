@@ -19,12 +19,7 @@ import { useRequest, useParams } from 'umi'
 import { getUsers, createUser, deleteUser, updateUser } from '@/services/user'
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons'
 import { getSchemas } from '@/services/schema'
-
-const RoleMap = {
-    administrator: '管理员',
-    operator: '内容管理员',
-    other: '自定义',
-}
+import { CmsRole, CmsRoleMap } from '@/constants'
 
 const ActionMap = {
     get: '查询',
@@ -70,7 +65,7 @@ export default (): React.ReactElement => {
                             <Col flex="1 1 auto">
                                 <Space direction="vertical">
                                     <Typography.Title level={4}>{item.username}</Typography.Title>
-                                    <Tag color="#006eff">{RoleMap[item.role]}</Tag>
+                                    <Tag color="#006eff">{CmsRoleMap[item.role]}</Tag>
                                 </Space>
                                 {item.collections?.length && (
                                     <div style={{ marginTop: '15px' }}>
@@ -275,11 +270,14 @@ const AddMemberModal: React.FC<{
                     rules={[{ required: true, message: '请选择用户角色！' }]}
                 >
                     <Select>
-                        <Select.Option value="operator">
-                            内容管理员 - 全部内容管理权限【系统】
+                        <Select.Option value={CmsRole.ProjectAdmin}>
+                            项目管理员 - 此项目全部权限
                         </Select.Option>
-                        <Select.Option value="other">
-                            自定义 - 自定义内容管理权限【系统】
+                        <Select.Option value={CmsRole.ProjectContentManger}>
+                            项目内容管理员 - 此项目全部【内容】操作权限
+                        </Select.Option>
+                        <Select.Option value={CmsRole.ProjectCustom}>
+                            项目自定义 - 此项目自定义【内容】操作权限
                         </Select.Option>
                     </Select>
                 </Form.Item>
