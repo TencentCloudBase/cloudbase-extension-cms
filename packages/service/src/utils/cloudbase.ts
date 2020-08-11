@@ -1,6 +1,6 @@
 import cloudbase from '@cloudbase/node-sdk'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
-import { isDev } from './tools'
+import { isDevEnv } from './tools'
 
 // 从环境变量中读取
 export const getEnvIdString = (): string => {
@@ -26,7 +26,7 @@ export const getCloudBaseApp = () => {
         env: envId,
     }
 
-    if (isDev()) {
+    if (isDevEnv()) {
         options = {
             ...options,
             secretId: process.env.SECRETID,

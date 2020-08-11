@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, Row, Col, Divider, List, Button, Tag, Space, Typography } from 'antd'
+import { Row, Col, Divider, Space, Typography } from 'antd'
 import { history } from 'umi'
 import { LeftCircleTwoTone } from '@ant-design/icons'
 import UserManagement from './UserManagement'
