@@ -1,6 +1,6 @@
-import { Alert, message, Button } from 'antd'
+import { Alert, message, Button, Spin } from 'antd'
 import React, { useState } from 'react'
-import { useModel } from 'umi'
+import { useModel, history } from 'umi'
 import { getPageQuery } from '@/utils/utils'
 import { LoginParamsType, accountLogin } from '@/services/login'
 import Footer from '@/components/Footer'
@@ -48,9 +48,14 @@ const replaceGoto = () => {
 
 const Login: React.FC<{}> = () => {
     const [submitting, setSubmitting] = useState(false)
-    const { refresh } = useModel('@@initialState')
+    const { refresh, initialState } = useModel('@@initialState')
     const [type, setType] = useState<string>('account')
     const [loginErrorMessage, setLoginErrorMessage] = useState<string>('')
+
+    if (initialState?.currentUser?.access) {
+        history.push('/home')
+        return <Spin />
+    }
 
     const handleSubmit = async (values: LoginParamsType) => {
         setSubmitting(true)

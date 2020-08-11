@@ -15,7 +15,7 @@ export async function getCloudBaseApp() {
 
     const loginState = await app.auth({ persistence: 'local' }).getLoginState()
 
-    if (!loginState) {
+    if (!loginState && !isDevEnv()) {
         message.error('登录态失效，请重新登录！')
         history.push('/login')
     }
@@ -28,9 +28,9 @@ export async function tcbRequest<T = any>(
     url: string,
     options: RequestOptionsInit & { skipErrorHandler?: boolean } = {}
 ) {
-    // if (isDevEnv()) {
-    //     return request<T>(url, options)
-    // }
+    if (isDevEnv()) {
+        return request<T>(url, options)
+    }
 
     const { method, params, data } = options
     const app = await getCloudBaseApp()

@@ -1,5 +1,3 @@
-import { Observable } from 'rxjs'
-import { Reflector } from '@nestjs/core'
 import { Request } from 'express'
 import {
     Injectable,
@@ -8,16 +6,21 @@ import {
     HttpException,
     ExecutionContext,
 } from '@nestjs/common'
-import { getCloudBaseApp, isDev } from '@/utils'
+import { getCloudBaseApp, isDevEnv } from '@/utils'
 import { CollectionV2 } from '@/constants'
 
-// 校验用户是否登录
+// 校验用户是否登录，是否存在
+@Injectable()
 export class GlobalAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request: Request = context.switchToHttp().getRequest()
+        const request = context.switchToHttp().getRequest<Request & { user: any }>()
 
         // skip login
-        if (request.path === '/api/auth/login' || isDev()) {
+        if (request.path === '/api/auth/login' || isDevEnv()) {
+            request.user = {
+                role: 'admin',
+                username: 'admin',
+            }
             return true
         }
 
@@ -51,17 +54,7 @@ export class GlobalAuthGuard implements CanActivate {
             )
         }
 
-        return true
-    }
-}
-
-@Injectable()
-export class ModuleGuard implements CanActivate {
-    constructor(private readonly reflector?: Reflector) {}
-
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-        const request = context.switchToHttp().getRequest()
-        const roles = this.reflector.get<string[]>('roles', context.getHandler())
+        request.user = userRecord
 
         return true
     }
