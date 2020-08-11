@@ -49,7 +49,7 @@ export default defineConfig({
             path: '/settings',
             layout: false,
             access: 'canAdmin',
-            component: './system-setting',
+            component: './system/setting',
         },
         {
             path: '/:projectId/home',

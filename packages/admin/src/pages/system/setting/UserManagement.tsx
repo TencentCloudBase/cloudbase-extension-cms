@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import {
-    Card,
     Row,
     Col,
     Divider,
@@ -17,8 +16,9 @@ import {
     Typography,
 } from 'antd'
 import { useRequest } from 'umi'
-import { getUsers, createUser, deleteUser, updateUser } from '@/services/user'
+import ProList from '@ant-design/pro-list'
 import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons'
+import { getUsers, createUser, deleteUser, updateUser } from '@/services/user'
 
 const RoleMap = {
     administrator: '管理员',
@@ -48,84 +48,76 @@ export default (): React.ReactElement => {
 
     return (
         <>
-            <Typography.Title level={4}>用户管理</Typography.Title>
-            <Card>
-                <List
-                    itemLayout="horizontal"
-                    dataSource={data}
-                    renderItem={(item: any) => (
-                        <>
-                            <Row align="middle">
-                                <Col flex="1 1 auto">
-                                    <Space direction="vertical">
-                                        <Typography.Title level={4}>
-                                            {item.username}
-                                        </Typography.Title>
-                                        <Tag color="#006eff">{RoleMap[item.role]}</Tag>
-                                    </Space>
-                                    {item.collections?.length && (
-                                        <div style={{ marginTop: '10px' }}>
-                                            数据集合：
-                                            {item.collections?.map((_: string) => (
-                                                <Tag key={_}>{_} </Tag>
-                                            ))}
-                                            | 操作权限：
-                                            {item.actions?.map((_: string) => (
-                                                <Tag key={_}>{ActionMap[_]} </Tag>
-                                            ))}
-                                        </div>
-                                    )}
-                                </Col>
-                                <Col span={4}>
-                                    <Space>
-                                        <Button
-                                            size="small"
-                                            type="primary"
-                                            onClick={() => {
-                                                setUserAction('edit')
-                                                console.log(item)
-                                                setSelectedUser(item)
-                                                setModalVisible(true)
-                                            }}
-                                        >
-                                            编辑
-                                        </Button>
-                                        <Button
-                                            danger
-                                            size="small"
-                                            type="primary"
-                                            onClick={() => {
-                                                Modal.confirm({
-                                                    okText: '确认',
-                                                    cancelText: '取消',
-                                                    title: `确认删除 ${item.username} ？`,
-                                                    onOk: async () => {
-                                                        await deleteUser(item._id)
-                                                        setReload(reload + 1)
-                                                    },
-                                                })
-                                            }}
-                                        >
-                                            删除
-                                        </Button>
-                                    </Space>
-                                </Col>
-                            </Row>
-                            <Divider style={{ margin: '15px 0' }} />
-                        </>
-                    )}
-                />
-                <Button
-                    type="primary"
-                    onClick={() => {
-                        setUserAction('create')
-                        setSelectedUser(undefined)
-                        setModalVisible(true)
-                    }}
-                >
-                    添加
-                </Button>
-            </Card>
+            <ProList
+                rowKey="_id"
+                dataSource={data}
+                style={{ padding: '-20px' }}
+                actions={[
+                    <Button
+                        key="new"
+                        size="small"
+                        type="primary"
+                        onClick={() => {
+                            setUserAction('create')
+                            setSelectedUser(undefined)
+                            setModalVisible(true)
+                        }}
+                    >
+                        添加
+                    </Button>,
+                ]}
+                renderItem={(item) => ({
+                    title: <div style={{ fontSize: '18px' }}>{item.username}</div>,
+                    subTitle: <Tag color="#006eff">{RoleMap[item.role]}</Tag>,
+                    description: item.collections?.length && (
+                        <div style={{ marginTop: '10px' }}>
+                            数据集合：
+                            {item.collections?.map((_: string) => (
+                                <Tag key={_}>{_} </Tag>
+                            ))}
+                            | 操作权限：
+                            {item.actions?.map((_: string) => (
+                                <Tag key={_}>{ActionMap[_]} </Tag>
+                            ))}
+                        </div>
+                    ),
+                    actions: [
+                        <Button
+                            key="edit"
+                            size="small"
+                            type="primary"
+                            onClick={() => {
+                                setUserAction('edit')
+                                console.log(item)
+                                setSelectedUser(item)
+                                setModalVisible(true)
+                            }}
+                        >
+                            编辑
+                        </Button>,
+                        <Button
+                            danger
+                            key="delete"
+                            size="small"
+                            type="primary"
+                            onClick={() => {
+                                Modal.confirm({
+                                    okText: '确认',
+                                    cancelText: '取消',
+                                    title: `确认删除 ${item.username} ？`,
+                                    onOk: async () => {
+                                        await deleteUser(item._id)
+                                        setReload(reload + 1)
+                                    },
+                                })
+                            }}
+                        >
+                            删除
+                        </Button>,
+                    ],
+                })}
+            />
+
             <CreateUserModal
                 visible={modalVisible}
                 action={userAction}
@@ -180,6 +172,7 @@ const CreateUserModal: React.FC<{
         <Modal
             centered
             destroyOnClose
+            width={800}
             footer={null}
             visible={visible}
             onOk={() => onClose()}
