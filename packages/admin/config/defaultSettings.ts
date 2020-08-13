@@ -11,7 +11,7 @@ export default {
     fixSiderbar: true,
     colorWeak: false,
     menu: {
-        locale: true,
+        locale: false,
     },
     title: 'CloudBase CMS',
     pwa: false,

@@ -13,11 +13,11 @@ export class CmsException extends HttpException {
 }
 
 export class RecordExistException extends HttpException {
-    constructor() {
+    constructor(msg?: string) {
         super(
             {
                 code: 'RECORD_EXIST',
-                message: '记录已存在',
+                message: msg || '记录已存在',
             },
             200
         )
@@ -30,6 +30,18 @@ export class RecordNotExistException extends HttpException {
             {
                 code: 'RECORD_EXIST',
                 message: '记录不存在',
+            },
+            200
+        )
+    }
+}
+
+export class UnauthorizedOperation extends HttpException {
+    constructor(msg?: string) {
+        super(
+            {
+                code: 'UnauthorizedOperation',
+                message: msg || '未授权的操作',
             },
             200
         )

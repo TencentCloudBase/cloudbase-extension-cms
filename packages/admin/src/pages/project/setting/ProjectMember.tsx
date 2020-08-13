@@ -273,7 +273,7 @@ const AddMemberModal: React.FC<{
                         <Select.Option value={CmsRole.ProjectAdmin}>
                             项目管理员 - 此项目全部权限
                         </Select.Option>
-                        <Select.Option value={CmsRole.ProjectContentManger}>
+                        <Select.Option value="">
                             项目内容管理员 - 此项目全部【内容】操作权限
                         </Select.Option>
                         <Select.Option value={CmsRole.ProjectCustom}>

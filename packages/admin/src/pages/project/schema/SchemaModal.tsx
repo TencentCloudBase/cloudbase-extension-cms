@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'umi'
+import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { createSchema, deleteSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from 'antd'
@@ -12,6 +12,26 @@ export const CreateSchemaModal: React.FC<{
 }> = ({ visible, onClose }) => {
     const { projectId } = useParams()
     const ctx = useConcent('schema')
+
+    // 创建原型
+    const { run, loading } = useRequest(
+        async (data: SchemaV2) => {
+            const { displayName, collectionName } = data
+
+            await createSchema({
+                projectId,
+                displayName,
+                collectionName,
+            })
+            onClose()
+            ctx.dispatch('getSchemas', projectId)
+        },
+        {
+            manual: true,
+            onError: () => message.error('创建原型失败'),
+            onSuccess: () => message.success('创建原型成功'),
+        }
+    )
 
     return (
         <Modal
@@ -27,21 +47,8 @@ export const CreateSchemaModal: React.FC<{
                 layout="vertical"
                 labelCol={{ span: 6 }}
                 labelAlign="left"
-                onFinish={(v = {}) => {
-                    const { displayName, collectionName } = v
-                    createSchema({
-                        projectId,
-                        displayName,
-                        collectionName,
-                    })
-                        .then(() => {
-                            onClose()
-                            message.success('创建原型成功')
-                            ctx.dispatch('getSchemas', projectId)
-                        })
-                        .catch(() => {
-                            message.error('创建原型失败')
-                        })
+                onFinish={(v: any) => {
+                    run(v)
                 }}
             >
                 <Form.Item
@@ -72,7 +79,7 @@ export const CreateSchemaModal: React.FC<{
                 <Form.Item>
                     <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
                         <Button onClick={() => onClose()}>取消</Button>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" loading={loading}>
                             创建
                         </Button>
                     </Space>
@@ -98,18 +105,16 @@ export const DeleteSchemaModal: React.FC<{
             title="删除内容原型"
             visible={visible}
             onCancel={() => onClose()}
-            onOk={() => {
-                deleteSchema(currentSchema._id, deleteCollection)
-                    .then(() => {
-                        message.success('删除内容原型成功！')
-                        ctx.dispatch('getSchemas', projectId)
-                    })
-                    .catch(() => {
-                        message.error('删除内容原型失败！')
-                    })
-                    .finally(() => {
-                        onClose()
-                    })
+            onOk={async () => {
+                try {
+                    await deleteSchema(currentSchema._id, deleteCollection)
+                    message.success('删除内容原型成功！')
+                    ctx.dispatch('getSchemas', projectId)
+                } catch (error) {
+                    message.error('删除内容原型失败！')
+                } finally {
+                    onClose()
+                }
             }}
         >
             <Space direction="vertical">

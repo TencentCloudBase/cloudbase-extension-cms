@@ -1,9 +1,21 @@
 import { IsNotEmpty } from 'class-validator'
-import { Controller, Post, Body, Get, Query, Param, Put, Delete } from '@nestjs/common'
+import {
+    Controller,
+    Post,
+    Body,
+    Get,
+    Query,
+    Param,
+    Put,
+    Delete,
+    Request,
+    UseGuards,
+} from '@nestjs/common'
+import { dateToNumber, checkAccessAndGetResource } from '@/utils'
 import { CollectionV2 } from '@/constants'
+import { PermissionGuard } from '@/guards'
 import { RecordExistException } from '@/common'
 import { CloudBaseService } from '@/dynamic_modules/cloudbase'
-import { dateToNumber } from '@/utils'
 
 export class Project {
     _id: string
@@ -25,21 +37,14 @@ const Default_Projects = [
     },
 ]
 
+@UseGuards(PermissionGuard('project'))
 @Controller('project')
 export class ProjectController {
     constructor(private readonly cloudbaseService: CloudBaseService) {}
 
     @Get(':id')
-    async getProject(@Param('id') id: string) {
-        if (id === 'default') {
-            return {
-                data: {
-                    _id: 'default',
-                    name: '默认项目',
-                    description: 'CMS 默认项目',
-                },
-            }
-        }
+    async getProject(@Param('id') id: string, @Request() req: AuthRequest) {
+        checkAccessAndGetResource(id, req, id)
 
         const { data } = await this.cloudbaseService.collection(CollectionV2.Projects).doc(id).get()
 
@@ -50,20 +55,30 @@ export class ProjectController {
 
     @Get()
     async getProjects(
-        @Query()
-        query: { page?: number; pageSize?: number } = {}
+        @Query() query: { page?: number; pageSize?: number } = {},
+        @Request() req: AuthRequest
     ) {
         const { page = 1, pageSize = 100 } = query
 
-        const res = await this.cloudbaseService
+        const filter: any = {}
+
+        const allProjects = Object.keys(req.cmsUser.projectResource)
+
+        // 可获取的所有项目列表
+        if (!allProjects.some((_) => _ === '*')) {
+            const $ = this.cloudbaseService.db.command
+            filter._id = $.in(allProjects)
+        }
+
+        const { data } = await this.cloudbaseService
             .collection(CollectionV2.Projects)
-            .where({})
+            .where(filter)
             .skip(Number(page - 1) * Number(pageSize))
             .limit(Number(pageSize))
             .get()
 
         return {
-            data: [...Default_Projects, ...res.data],
+            data,
         }
     }
 
@@ -93,12 +108,20 @@ export class ProjectController {
     }
 
     @Put(':id')
-    async updateProject(@Param('id') id: string, @Body() payload: Partial<Project>) {
+    async updateProject(
+        @Param('id') id: string,
+        @Body() payload: Partial<Project>,
+        @Request() req: AuthRequest
+    ) {
+        checkAccessAndGetResource(id, req, id)
+
         return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).update(payload)
     }
 
     @Delete(':id')
-    async deleteProject(@Param('id') id: string) {
+    async deleteProject(@Param('id') id: string, @Request() req: AuthRequest) {
+        checkAccessAndGetResource(id, req, id)
+
         return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).remove()
     }
 }

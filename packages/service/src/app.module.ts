@@ -11,14 +11,13 @@ import { ProjectModule } from './modules/project/project.module'
 import { ContentModule } from './modules/content/content.module'
 import { UserModule } from './modules/user/user.module'
 import { WebhookModule } from './modules/webhook/webhook.module'
-import { CamModule } from './modules/cam/cam.module'
+import { RoleModule } from './modules/role/role.module'
 
 @Module({
     imports: [
         AuthModule,
         FileModule,
         UserModule,
-        CamModule,
         SchemaModule,
         ProjectModule,
         ContentModule,
@@ -32,6 +31,7 @@ import { CamModule } from './modules/cam/cam.module'
             secretId: process.env.SECRETID,
             secretKey: process.env.SECRETKEY,
         }),
+        RoleModule,
     ],
     controllers: [AppController],
     providers: [AppService],

@@ -9,6 +9,7 @@ import {
     Controller,
     UseInterceptors,
     ClassSerializerInterceptor,
+    UseGuards,
 } from '@nestjs/common'
 import _ from 'lodash'
 import { CloudBaseService } from '@/dynamic_modules'
@@ -16,6 +17,8 @@ import { CollectionV2 } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
 import { genPassword, dateToNumber } from '@/utils'
 import { RecordExistException, RecordNotExistException } from '@/common'
+import { Roles } from '@/common/decorators'
+import { PermissionGuard } from '@/guards'
 
 class User {
     @IsNotEmpty()
@@ -25,15 +28,7 @@ class User {
     password: string
 
     @IsNotEmpty()
-    role: string
-
-    // 归属项目 Id
-    projectId: string
-
-    // collection 数组或 ['*']
-    collections: string[] | ['*']
-
-    actions: string[] | ['*']
+    roles: string[]
 
     // 兼容老版本，将 userName 转换成 username
     userName?: string
@@ -45,26 +40,19 @@ class User {
     failedLogins?: Record<string, number>[]
 }
 
+@UseGuards(PermissionGuard('user', ['administrator']))
 @Controller('user')
 export class UserController {
     constructor(private readonly cloudbaseService: CloudBaseService) {}
 
     @UseInterceptors(ClassSerializerInterceptor)
     @Get()
-    async getUsers(@Query() query: { page?: number; pageSize?: number; projectId?: string } = {}) {
-        const { page = 1, pageSize = 10, projectId } = query
+    async getUsers(@Query() query: { page?: number; pageSize?: number } = {}) {
+        const { page = 1, pageSize = 20 } = query
 
         let { data, requestId } = await this.cloudbaseService
             .collection(CollectionV2.Users)
-            .where(
-                projectId
-                    ? {
-                          projectId,
-                      }
-                    : {
-                          projectId: null,
-                      }
-            )
+            .where({})
             .skip(Number(page - 1) * Number(pageSize))
             .limit(Number(pageSize))
             .get()
@@ -122,22 +110,5 @@ export class UserController {
     @Delete(':id')
     async deleteUser(@Param('id') userId) {
         return this.cloudbaseService.collection(CollectionV2.Users).doc(userId).remove()
-    }
-
-    @Get('/group')
-    async getUserGroups(@Query() query: { page?: number; pageSize?: number } = {}) {
-        const { page = 1, pageSize = 10 } = query
-
-        const { data, requestId } = await this.cloudbaseService
-            .collection(CollectionV2.UserGroup)
-            .where({})
-            .skip(Number(page - 1) * Number(pageSize))
-            .limit(Number(pageSize))
-            .get()
-
-        return {
-            data,
-            requestId,
-        }
     }
 }

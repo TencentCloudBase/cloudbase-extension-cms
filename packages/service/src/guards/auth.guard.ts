@@ -13,13 +13,16 @@ import { CollectionV2 } from '@/constants'
 @Injectable()
 export class GlobalAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const request = context.switchToHttp().getRequest<Request & { user: any }>()
+        const request = context.switchToHttp().getRequest<AuthRequest & Request>()
 
-        // skip login
+        // 跳过登录
         if (request.path === '/api/auth/login' || isDevEnv()) {
-            request.user = {
-                role: 'admin',
+            request.cmsUser = {
+                roles: ['administrator'],
                 username: 'admin',
+                createTime: 2020,
+                password: 'cloudbase',
+                isAdmin: true,
             }
             return true
         }
@@ -54,7 +57,7 @@ export class GlobalAuthGuard implements CanActivate {
             )
         }
 
-        request.user = userRecord
+        request.cmsUser = userRecord
 
         return true
     }
