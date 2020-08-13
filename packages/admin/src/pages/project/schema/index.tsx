@@ -101,7 +101,7 @@ export default (): React.ReactNode => {
                 </ProCard>
                 <Layout className="schema-layout">
                     <Content className="full-height schema-layout-content">
-                        {currentSchema ? (
+                        {currentSchema?._id ? (
                             <Row>
                                 <Col flex="auto" />
                                 <Col flex="600px">

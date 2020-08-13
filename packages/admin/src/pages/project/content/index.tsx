@@ -120,6 +120,7 @@ export default (): React.ReactNode => {
                                                     onOk: async () => {
                                                         try {
                                                             await deleteContent(
+                                                                projectId,
                                                                 currentSchema.collectionName,
                                                                 row._id
                                                             )
@@ -147,7 +148,7 @@ export default (): React.ReactNode => {
                                 // 从 params 中过滤出搜索字段
                                 const fuzzyFilter = Object.keys(params)
                                     .filter((key) =>
-                                        currentSchema.fields.find((field) => field.name === key)
+                                        currentSchema.fields?.find((field) => field.name === key)
                                     )
                                     .reduce(
                                         (prev, key) => ({
@@ -157,13 +158,17 @@ export default (): React.ReactNode => {
                                         {}
                                     )
 
-                                const { data = [], total } = await getContents(resource, {
-                                    sort,
-                                    filter,
-                                    pageSize,
-                                    fuzzyFilter,
-                                    page: current,
-                                })
+                                const { data = [], total } = await getContents(
+                                    projectId,
+                                    resource,
+                                    {
+                                        sort,
+                                        filter,
+                                        pageSize,
+                                        fuzzyFilter,
+                                        page: current,
+                                    }
+                                )
 
                                 return {
                                     data,

@@ -1,90 +1,52 @@
 import React, { useState } from 'react'
-import {
-    Row,
-    Col,
-    Divider,
-    List,
-    Skeleton,
-    Button,
-    Tag,
-    Space,
-    message,
-    Modal,
-    Form,
-    Input,
-    Select,
-    Typography,
-} from 'antd'
 import { useRequest } from 'umi'
 import ProList from '@ant-design/pro-list'
-import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons'
+import { Skeleton, Button, Tag, Space, Typography, message, Modal, Form, Input, Select } from 'antd'
+
 import { getUsers, createUser, deleteUser, updateUser } from '@/services/user'
-
-const RoleMap = {
-    administrator: '管理员',
-    operator: '内容管理员',
-    other: '自定义',
-}
-
-const ActionMap = {
-    get: '查询',
-    update: '更新',
-    delete: '删除',
-    create: '创建',
-}
+import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons'
+import { getUserRoles } from '@/services/role'
 
 export default (): React.ReactElement => {
     const [reload, setReload] = useState(0)
     const [selectedUser, setSelectedUser] = useState()
     const [userAction, setUserAction] = useState<'create' | 'edit'>('create')
     const [modalVisible, setModalVisible] = useState(false)
+
     const { data, loading } = useRequest(() => getUsers(), {
         refreshDeps: [reload],
     })
 
-    if (loading) {
+    const { data: roles, loading: roleLoading } = useRequest(() => getUserRoles(), {
+        refreshDeps: [reload],
+    })
+
+    if (loading || roleLoading) {
         return <Skeleton active />
     }
 
     return (
         <>
-            <ProList
-                rowKey="_id"
-                dataSource={data}
-                style={{ padding: '-20px' }}
+            <ProList<string>
                 actions={[
                     <Button
                         key="new"
                         size="small"
                         type="primary"
-                        onClick={() => {
-                            setUserAction('create')
-                            setSelectedUser(undefined)
-                            setModalVisible(true)
-                        }}
+                        onClick={() => setModalVisible(true)}
                     >
-                        添加
+                        新建
                     </Button>,
                 ]}
-                renderItem={(item) => ({
-                    title: <div style={{ fontSize: '18px' }}>{item.username}</div>,
-                    subTitle: <Tag color="#006eff">{RoleMap[item.role]}</Tag>,
-                    description: item.collections?.length && (
-                        <div style={{ marginTop: '10px' }}>
-                            数据集合：
-                            {item.collections?.map((_: string) => (
-                                <Tag key={_}>{_} </Tag>
-                            ))}
-                            | 操作权限：
-                            {item.actions?.map((_: string) => (
-                                <Tag key={_}>{ActionMap[_]} </Tag>
-                            ))}
-                        </div>
-                    ),
+                rowKey="id"
+                dataSource={data}
+                renderItem={(item: any) => ({
+                    title: <Typography.Title level={4}>{item.username}</Typography.Title>,
+                    // subTitle: <Tag color="#5BD8A6">语雀专栏</Tag>,
                     actions: [
                         <Button
-                            key="edit"
                             size="small"
+                            key="edit"
                             type="primary"
                             onClick={() => {
                                 setUserAction('edit')
@@ -97,14 +59,14 @@ export default (): React.ReactElement => {
                         </Button>,
                         <Button
                             danger
-                            key="delete"
                             size="small"
+                            key="delete"
                             type="primary"
                             onClick={() => {
                                 Modal.confirm({
                                     okText: '确认',
                                     cancelText: '取消',
-                                    title: `确认删除 ${item.username} ？`,
+                                    title: `确认删除用户 ${item.username} ？`,
                                     onOk: async () => {
                                         await deleteUser(item._id)
                                         setReload(reload + 1)
@@ -115,9 +77,20 @@ export default (): React.ReactElement => {
                             删除
                         </Button>,
                     ],
+                    description: (
+                        <div>
+                            {item.roles?.map((roleId: any, index: number) => {
+                                const role = roles.find((_: any) => _._id === roleId)
+                                return (
+                                    <Tag key={index} color="#006eff">
+                                        {role.roleName}
+                                    </Tag>
+                                )
+                            })}
+                        </div>
+                    ),
                 })}
             />
-
             <CreateUserModal
                 visible={modalVisible}
                 action={userAction}
@@ -131,6 +104,53 @@ export default (): React.ReactElement => {
         </>
     )
 }
+
+export const SystemUserRoles = [
+    {
+        _id: 'administrator',
+        roleName: '系统管理员',
+        description: '允许管理系统内所有用户及其权限、所有内容、所有系统设置等',
+        polices: [
+            {
+                action: ['*'],
+                effect: 'allow',
+                resource: ['*'],
+                service: ['*'],
+            },
+        ],
+        type: 'system',
+    },
+    {
+        _id: 'project:administrator',
+        roleName: '项目管理员',
+        description: '允许管理系统内的所有项目及项目内的资源',
+        polices: [
+            {
+                action: ['*'],
+                project: ['*'],
+                effect: 'allow',
+                service: ['*'],
+                resource: ['*'],
+            },
+        ],
+        type: 'system',
+    },
+    {
+        _id: 'content:administrator',
+        roleName: '系统内容管理员',
+        description: '允许管理系统内的所有内容',
+        polices: [
+            {
+                action: ['*'],
+                project: ['*'],
+                effect: 'allow',
+                service: ['content'],
+                resource: ['*'],
+            },
+        ],
+        type: 'system',
+    },
+]
 
 const CreateUserModal: React.FC<{
     visible: boolean
@@ -156,7 +176,7 @@ const CreateUserModal: React.FC<{
                         }),
                         {}
                     )
-                console.log(diffData)
+
                 await updateUser(selectedUser._id, diffData)
             }
             onSuccess()
@@ -167,6 +187,8 @@ const CreateUserModal: React.FC<{
             onSuccess: () => message.success(`${action === 'create' ? '添加' : '更新'}用户成功`),
         }
     )
+
+    const userRoles = SystemUserRoles
 
     return (
         <Modal
@@ -215,17 +237,17 @@ const CreateUserModal: React.FC<{
                     />
                 </Form.Item>
                 <Form.Item
-                    label="用户组"
-                    name="role"
+                    label="用户角色"
+                    name="roles"
                     rules={[{ required: true, message: '请选择用户角色！' }]}
                 >
-                    <Select>
-                        <Select.Option value="administrator">
-                            系统管理员 - 系统全部权限
-                        </Select.Option>
-                        <Select.Option value="operator">
-                            系统内容管理员 - 全部【内容】操作权限
-                        </Select.Option>
+                    <Select mode="multiple">
+                        {userRoles.map((role, index) => (
+                            <Select.Option key={index} value={role._id}>
+                                <h4>{role.roleName}</h4>
+                                <div>{role.description}</div>
+                            </Select.Option>
+                        ))}
                     </Select>
                 </Form.Item>
                 <Form.Item>

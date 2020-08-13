@@ -11,6 +11,7 @@ export const ContentDrawer: React.FC<{
     onClose: () => void
     onOk: () => void
 }> = ({ visible, onClose, onOk, schema }) => {
+    const { projectId } = useParams()
     const ctx = useConcent('content')
     const { currentSchema, selectedContent, contentAction } = ctx.state
 
@@ -22,7 +23,7 @@ export const ContentDrawer: React.FC<{
 
     const initialValues =
         contentAction === 'create'
-            ? schema?.fields.reduce(
+            ? schema?.fields?.reduce(
                   (prev, field) => ({
                       ...prev,
                       [field.name]: field.defaultValue,
@@ -43,12 +44,10 @@ export const ContentDrawer: React.FC<{
             <Form
                 name="basic"
                 layout="vertical"
-                labelCol={{ span: 6 }}
-                // onValuesChange={(v) => {}}
                 initialValues={initialValues}
                 onFinish={(v = {}) => {
                     if (contentAction === 'create') {
-                        createContent(currentSchema?.collectionName, v)
+                        createContent(projectId, currentSchema?.collectionName, v)
                             .then(() => {
                                 onOk()
                                 message.success('创建内容成功')
@@ -59,7 +58,7 @@ export const ContentDrawer: React.FC<{
                     }
 
                     if (contentAction === 'edit') {
-                        updateContent(currentSchema?.collectionName, v._id, v)
+                        updateContent(projectId, currentSchema?.collectionName, v._id, v)
                             .then(() => {
                                 onOk()
                                 message.success('创建内容成功')

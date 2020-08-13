@@ -105,7 +105,6 @@ export class AuthController {
             signature: '',
             userid: '1111',
             access: 'admin',
-            unreadCount: 1,
         }
     }
 }

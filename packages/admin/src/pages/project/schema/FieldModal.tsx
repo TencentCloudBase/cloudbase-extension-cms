@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'umi'
+import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Switch, Space, Button, Select, InputNumber } from 'antd'
@@ -21,17 +21,78 @@ export const CreateFieldModal: React.FC<{
         state: { currentSchema, schemas, fieldAction, selectedField },
     } = ctx
 
+    const { run: createField, loading } = useRequest(
+        async (fieldAttr: SchemaFieldV2) => {
+            const existSameName = currentSchema?.fields?.find(
+                (_: SchemaFieldV2) => _.name === fieldAttr.name
+            )
+
+            if (existSameName && fieldAction === 'create') {
+                message.error(`已存在同名字段 ${fieldAttr.name}，请勿重复创建`)
+                return
+            }
+
+            // 过滤掉值为 undefined 的数据
+            const field = Object.keys(fieldAttr)
+                .filter((key) => typeof fieldAttr[key] !== 'undefined')
+                .reduce(
+                    (val, key) => ({
+                        ...val,
+                        [key]: fieldAttr[key],
+                    }),
+                    {}
+                )
+
+            let fields = currentSchema?.fields || []
+
+            // 创建新的字段
+            if (fieldAction === 'create') {
+                fields.push({
+                    ...field,
+                    type: selectedField.type,
+                })
+            }
+
+            // 编辑字段
+            if (fieldAction === 'edit') {
+                const index = fields.findIndex(
+                    (_: any) => _.id === selectedField.id || _.name === selectedField.name
+                )
+
+                if (index > -1) {
+                    fields.splice(index, 1, {
+                        ...selectedField,
+                        ...field,
+                    })
+                }
+            }
+
+            // 更新 schema fields
+            await updateSchema(currentSchema?._id, {
+                fields,
+            })
+            ctx.dispatch('getSchemas', projectId)
+            onClose()
+        },
+        {
+            manual: true,
+            onError: () => message.error('添加字段失败'),
+            onSuccess: () => message.success('添加字段成功'),
+        }
+    )
+
+    const modalTitle =
+        fieldAction === 'create'
+            ? `新建【${selectedField?.name}】字段`
+            : `编辑【${selectedField?.displayName}】`
+
     return (
         <Modal
             centered
             destroyOnClose
             footer={null}
             visible={visible}
-            title={
-                fieldAction === 'create'
-                    ? `新建【${selectedField?.name}】字段`
-                    : `编辑【${selectedField?.displayName}】`
-            }
+            title={modalTitle}
             onOk={() => onClose()}
             onCancel={() => onClose()}
         >
@@ -46,65 +107,8 @@ export const CreateFieldModal: React.FC<{
                         setConnectSchema(schema)
                     }
                 }}
-                onFinish={(v = {}) => {
-                    const existSameName = currentSchema?.fields.find(
-                        (field: SchemaFieldV2) => field.name === v.name
-                    )
-
-                    if (existSameName && fieldAction === 'create') {
-                        message.error(`已存在同名字段 ${v.name}，请勿重复创建`)
-                        return
-                    }
-
-                    // 过滤掉值为 undefined 的数据
-                    const field = Object.keys(v)
-                        .filter((key) => typeof v[key] !== 'undefined')
-                        .reduce(
-                            (val, key) => ({
-                                ...val,
-                                [key]: v[key],
-                            }),
-                            {}
-                        )
-
-                    let fields = currentSchema?.fields || []
-
-                    // 创建新的字段
-                    if (fieldAction === 'create') {
-                        fields.push({
-                            ...field,
-                            type: selectedField.type,
-                        })
-                    }
-
-                    // 编辑字段
-                    if (fieldAction === 'edit') {
-                        const index = fields.findIndex(
-                            (_: any) => _.id === selectedField.id || _.name === selectedField.name
-                        )
-
-                        if (index > -1) {
-                            fields.splice(index, 1, {
-                                ...selectedField,
-                                ...field,
-                            })
-                        }
-                    }
-
-                    // 更新 schema fields
-                    updateSchema(currentSchema?._id, {
-                        fields,
-                    })
-                        .then(() => {
-                            message.success('添加字段成功')
-                            ctx.dispatch('getSchemas', projectId)
-                        })
-                        .catch(() => {
-                            message.error('添加字段失败')
-                        })
-                        .finally(() => {
-                            onClose()
-                        })
+                onFinish={(v: any) => {
+                    createField(v)
                 }}
             >
                 <Form.Item
@@ -202,18 +206,19 @@ export const CreateFieldModal: React.FC<{
                             <Form.Item label="最小值" name="max">
                                 <InputNumber
                                     style={{ width: '224px' }}
-                                    placeholder="最大值，如 1000"
+                                    placeholder="最小值，如 1"
                                 />
                             </Form.Item>
                             <Form.Item label="最大值" name="min">
                                 <InputNumber
                                     style={{ width: '224px' }}
-                                    placeholder="最小值，如 1"
+                                    placeholder="最大值，如 1000"
                                 />
                             </Form.Item>
                         </Space>
                     </Form.Item>
                 )}
+
                 <Form.Item>
                     <div className="form-item">
                         <Form.Item
@@ -247,8 +252,8 @@ export const CreateFieldModal: React.FC<{
                 <Form.Item>
                     <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
                         <Button onClick={() => onClose()}>取消</Button>
-                        <Button type="primary" htmlType="submit">
-                            添加
+                        <Button type="primary" htmlType="submit" loading={loading}>
+                            {fieldAction === 'create' ? '添加' : '更新'}
                         </Button>
                     </Space>
                 </Form.Item>
@@ -274,7 +279,7 @@ export const DeleteFieldModal: React.FC<{
             destroyOnClose
             visible={visible}
             title={`删除【${selectedField?.displayName}】字段`}
-            onOk={() => {
+            onOk={async () => {
                 const fields = currentSchema.fields || []
                 const index = fields.findIndex(
                     (_: any) => _.id === selectedField.id || _.name === selectedField.name
@@ -284,23 +289,30 @@ export const DeleteFieldModal: React.FC<{
                     fields.splice(index, 1)
                 }
 
-                updateSchema(currentSchema?._id, {
-                    fields,
-                })
-                    .then(() => {
-                        message.success('删除字段成功')
-                        ctx.dispatch('getSchemas', projectId)
+                try {
+                    await updateSchema(currentSchema?._id, {
+                        fields,
                     })
-                    .catch(() => {
-                        message.error('删除字段失败')
-                    })
-                    .finally(() => {
-                        onClose()
-                    })
+                    message.success('删除字段成功')
+                    ctx.dispatch('getSchemas', projectId)
+                } catch (error) {
+                    message.error('删除字段失败')
+                } finally {
+                    onClose()
+                }
             }}
             onCancel={() => onClose()}
         >
             确认删除【{selectedField.displayName}（{selectedField?.name}）】字段吗？
         </Modal>
     )
+}
+
+export const getDefaultValueInput = (type: string) => {
+    switch (type) {
+        case 'Number':
+            return <InputNumber placeholder="此值的默认值" />
+        default:
+            return <Input placeholder="此值的默认值" />
+    }
 }

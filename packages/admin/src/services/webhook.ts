@@ -5,6 +5,7 @@ export interface Options {
     pageSize?: number
 
     filter?: {
+        projectId: string
         _id?: string
         ids?: string[]
         [key: string]: any
@@ -25,8 +26,8 @@ export const getWebhooks = async (options?: Partial<Options>) => {
     return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
-            action: 'getMany',
             options,
+            action: 'getMany',
         },
     })
 }
@@ -35,8 +36,8 @@ export const createWebhook = async (options?: Partial<Options>) => {
     return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
-            action: 'createOne',
             options,
+            action: 'createOne',
         },
     })
 }
@@ -45,8 +46,8 @@ export const updateWebhook = async (options?: Partial<Options>) => {
     return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
-            action: 'updateOne',
             options,
+            action: 'updateOne',
         },
     })
 }
@@ -55,8 +56,8 @@ export const deleteWebhook = async (options?: Partial<Options>) => {
     return tcbRequest('/api/webhook', {
         method: 'POST',
         data: {
-            action: 'deleteOne',
             options,
+            action: 'deleteOne',
         },
     })
 }

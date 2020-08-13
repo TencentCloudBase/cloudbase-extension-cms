@@ -1,7 +1,8 @@
-import { Controller, Post, Body } from '@nestjs/common'
-import { CloudBaseService } from '@/dynamic_modules/cloudbase'
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common'
 import { ContentService } from './content.service'
 import { IsNotEmpty, IsIn } from 'class-validator'
+import { PermissionGuard } from '@/guards'
+import { checkAccessAndGetResource } from '@/utils'
 
 const validActions = [
     'getOne',
@@ -14,6 +15,9 @@ const validActions = [
 ]
 
 class ActionBody {
+    @IsNotEmpty()
+    projectId: string
+
     @IsNotEmpty()
     resource: string
 
@@ -46,20 +50,25 @@ class ActionBody {
     }
 }
 
+@UseGuards(PermissionGuard('content'))
 @Controller('content')
 export class ContentController {
     constructor(private contentService: ContentService) {}
 
     @Post()
-    async handleAction(@Body() body: ActionBody) {
+    async handleAction(@Body() body: ActionBody, @Request() req: AuthRequest) {
         const {
+            projectId,
             action,
             resource,
             options = {
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
             },
         } = body
+
+        // 内容以原型为维度，不支持单个内容权限管理
+        checkAccessAndGetResource(projectId, req, resource)
 
         return this.contentService[action](resource, options as any)
     }

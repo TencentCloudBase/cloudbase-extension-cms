@@ -3,7 +3,6 @@ import { Tabs, Row, Col } from 'antd'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import ProjectInfo from './ProjectInfo'
-import ProjectMember from './ProjectMember'
 
 const { TabPane } = Tabs
 
@@ -22,11 +21,6 @@ export default (): React.ReactNode => {
                     <TabPane tab="项目" key="1">
                         <TabPaneContent>
                             <ProjectInfo />
-                        </TabPaneContent>
-                    </TabPane>
-                    <TabPane tab="成员" key="2">
-                        <TabPaneContent>
-                            <ProjectMember />
                         </TabPaneContent>
                     </TabPane>
                 </Tabs>

@@ -23,7 +23,7 @@ export class ContentService {
             }
         }
     ) {
-        const { filter = {}, fuzzyFilter, page, pageSize, sort } = options
+        const { filter = {}, fuzzyFilter, page = 1, pageSize = 20, sort } = options
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 

@@ -9,6 +9,7 @@ import { AppModule } from './app.module'
 import { GlobalAuthGuard } from './guards/auth.guard'
 import { AllExceptionsFilter } from './global.exception'
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
+import { TimeCost } from './interceptors/timecost.interceptor'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -22,6 +23,7 @@ export async function bootstrap() {
     // Security
     app.use(helmet())
 
+    // 参数校验
     app.useGlobalPipes(new ValidationPipe())
 
     // 登录校验
@@ -29,6 +31,8 @@ export async function bootstrap() {
 
     // 请求 body 大小限制
     app.use(bodyParser.raw({ limit: '50mb' }))
+
+    app.useGlobalInterceptors(new TimeCost())
 
     // 超时时间
     app.useGlobalInterceptors(new TimeoutInterceptor(5000))
