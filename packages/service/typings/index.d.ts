@@ -21,39 +21,52 @@ interface User {
     // 登陆失败次数
     failedLogins?: Record<string, number>[]
 
-    // 用户组
-    group: string[]
-
-    // 关联策略
-    attachedPolices: Policy[]
+    // 用户角色
+    roles: string[]
 }
 
-// TODO: 支持自定义
-interface Policy {
-    // 策略名
-    policyName: string
+interface UserRole {
+    // 角色名
+    roleName: string
 
-    // 策略说明
+    // 角色描述
     description: string
 
-    // policy 定义
-    definition: PolicyDoc
+    // 角色绑定的权限描述
+    permissions: Permission[]
 }
 
-interface PolicyStatement {
+/**
+ * 限制
+ * 项目 Id 为 * 时，资源必然为 *
+ * 服务未 * 时，资源必然为 *
+ */
+interface Permission {
+    // 项目
+    projectId: '*' | string
+
     // 行为
     action: string[] | ['*']
 
     // TODO: 允许访问/拒绝访问
     effect: 'allow' | 'deny'
 
+    // 服务
+    service: string | '*'
+
     // 具体资源
     resource: string[] | ['*']
 }
 
-interface PolicyDoc {
-    // 1.0、2.0、3.0 等
-    version: string
+interface RequestUser extends User {
+    // 用户可以访问的资源
+    projectResource?: {
+        [key: string]: '*' | string[]
+    }
 
-    statement: PolicyStatement[]
+    isAdmin: boolean
+}
+
+interface AuthRequest extends Request {
+    cmsUser: RequestUser
 }

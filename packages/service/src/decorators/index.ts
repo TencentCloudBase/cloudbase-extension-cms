@@ -1,1 +1,1 @@
-export * from './cam.decorator'
+export * from './permission.decorator'

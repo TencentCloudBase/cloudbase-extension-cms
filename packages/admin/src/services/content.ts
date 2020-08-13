@@ -1,14 +1,5 @@
 import { tcbRequest } from '@/utils'
 
-type Actions =
-    | 'getOne'
-    | 'getMany'
-    | 'create'
-    | 'updateOne'
-    | 'updateMany'
-    | 'deleteOne'
-    | 'deleteMany'
-
 export interface Options {
     page?: number
     pageSize?: number
@@ -30,22 +21,28 @@ export interface Options {
     payload?: Record<string, any>
 }
 
-export async function getContents(resource: string, options?: Options) {
+export async function getContents(projectId: string, resource: string, options?: Options) {
     return tcbRequest('/api/content', {
         method: 'POST',
         data: {
-            resource,
+            projectId,
             options,
+            resource,
             action: 'getMany',
         },
     })
 }
 
-export async function createContent(resource: string, payload: Record<string, any>) {
+export async function createContent(
+    projectId: string,
+    resource: string,
+    payload: Record<string, any>
+) {
     return tcbRequest('/api/content', {
         method: 'POST',
         data: {
             resource,
+            projectId,
             action: 'createOne',
             options: {
                 payload,
@@ -54,11 +51,12 @@ export async function createContent(resource: string, payload: Record<string, an
     })
 }
 
-export async function deleteContent(resource: string, id: string) {
+export async function deleteContent(projectId: string, resource: string, id: string) {
     return tcbRequest('/api/content', {
         method: 'POST',
         data: {
             resource,
+            projectId,
             options: {
                 filter: {
                     _id: id,
@@ -69,10 +67,16 @@ export async function deleteContent(resource: string, id: string) {
     })
 }
 
-export async function updateContent(resource: string, id: string, payload: Record<string, any>) {
+export async function updateContent(
+    projectId: string,
+    resource: string,
+    id: string,
+    payload: Record<string, any>
+) {
     return tcbRequest('/api/content', {
         method: 'POST',
         data: {
+            projectId,
             resource,
             options: {
                 payload,

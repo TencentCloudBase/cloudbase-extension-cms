@@ -1,8 +1,17 @@
-import { Controller, UseInterceptors, Post, UploadedFiles, HttpCode } from '@nestjs/common'
+import {
+    Controller,
+    UseInterceptors,
+    Post,
+    UploadedFiles,
+    HttpCode,
+    UseGuards,
+} from '@nestjs/common'
 import { AnyFilesInterceptor } from '@nestjs/platform-express'
-import { FileService } from './file.service'
+import { PermissionGuard } from '@/guards'
 import { IFile } from './types'
+import { FileService } from './file.service'
 
+@UseGuards(PermissionGuard('content'))
 @Controller('upload')
 export class FileController {
     constructor(private fileService: FileService) {}

@@ -24,6 +24,7 @@ import { getContents } from '@/services/content'
 import { getTempFileURL, uploadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import RichTextEditor from './RichText'
+import { useParams } from 'umi'
 
 const MarkdownEditor = React.lazy(() => import('./Markdown'))
 
@@ -153,14 +154,15 @@ const Connector: React.FC<{
     field: SchemaFieldV2
     onChange?: (v: string) => void
 }> = (props) => {
+    const { projectId } = useParams()
     const { value, onChange, field } = props
     const { connectField, connectResource } = field
     const [records, setRecords] = useState<Record<string, any>>([])
 
     useEffect(() => {
         const loadData = async () => {
-            const { data: schema } = await getSchema(connectResource)
-            const { data } = await getContents(schema.collectionName, {
+            const { data: schema } = await getSchema(projectId, connectResource)
+            const { data } = await getContents(projectId, schema.collectionName, {
                 page: 1,
                 pageSize: 1000,
             })
@@ -332,20 +334,20 @@ function getValidateRule(type: string) {
 
     switch (type) {
         case 'Url':
-            rule = { pattern: /^https?:\/\/[^\s$.?#].[^\s]*$/, message: '请输入正确的网址' }
+            rule = { type: 'url', message: '请输入正确的网址' }
             break
         case 'Email':
             rule = {
-                pattern: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/,
+                type: 'email',
                 message: '请输入正确的邮箱',
             }
             break
         case 'Number':
-            rule = { pattern: /^\d+$/, message: '请输入正确的数字' }
+            rule = { type: 'number', message: '请输入正确的数字' }
             break
         case 'Tel':
             rule = {
-                pattern: /^\d+$/,
+                type: 'number',
                 message: '请输入正确的电话号码',
             }
             break
@@ -357,12 +359,30 @@ function getValidateRule(type: string) {
 }
 
 const getRules = (field: SchemaFieldV2): Rule[] => {
-    const { isRequired, displayName } = field
+    const { isRequired, displayName, min, max, type } = field
 
     const rules: Rule[] = []
 
     if (isRequired) {
         rules.push({ required: isRequired, message: `${displayName} 字段是必须要的` })
+    }
+
+    if (min) {
+        const validType = type === 'String' || type === 'MultiLineString' ? 'string' : 'number'
+        rules.push({
+            min,
+            type: validType,
+            message: validType === 'string' ? `不能小于最小长度 ${min}` : `不能小于最小值 ${min}`,
+        })
+    }
+
+    if (max) {
+        const validType = type === 'String' || type === 'MultiLineString' ? 'string' : 'number'
+        rules.push({
+            max,
+            type: validType,
+            message: validType === 'string' ? `不能大于最大长度 ${max}` : `不能大于最大值 ${max}`,
+        })
     }
 
     const rule = getValidateRule(field.type)
@@ -377,7 +397,7 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
  */
 export function getFieldFormItem(field: SchemaFieldV2, key: number) {
     const rules = getRules(field)
-    const { name, type, min, max, description, displayName, defaultValue } = field
+    const { name, type, min, max, description, displayName } = field
 
     let FormItem
 
@@ -391,12 +411,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input
-                        type="text"
-                        minLength={min}
-                        maxLength={max}
-                        defaultValue={defaultValue}
-                    />
+                    <Input type="text" minLength={min} maxLength={max} />
                 </Form.Item>
             )
             break
@@ -409,7 +424,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <TextArea minLength={min} maxLength={max} defaultValue={defaultValue} />
+                    <TextArea minLength={min} maxLength={max} />
                 </Form.Item>
             )
             break
@@ -436,12 +451,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <InputNumber
-                        style={{ width: '100%' }}
-                        min={min}
-                        max={max}
-                        defaultValue={defaultValue}
-                    />
+                    <InputNumber style={{ width: '100%' }} min={min} max={max} />
                 </Form.Item>
             )
             break
@@ -454,7 +464,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input defaultValue={defaultValue} />
+                    <Input />
                 </Form.Item>
             )
             break
@@ -467,7 +477,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input defaultValue={defaultValue} />
+                    <Input />
                 </Form.Item>
             )
             break
@@ -624,7 +634,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input defaultValue={defaultValue} />
+                    <Input />
                 </Form.Item>
             )
     }

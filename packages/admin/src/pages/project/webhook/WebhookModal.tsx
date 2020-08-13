@@ -38,12 +38,16 @@ export const WebhookModal: React.FC<{
             if (action === 'create') {
                 await createWebhook({
                     payload: data,
+                    filter: {
+                        projectId,
+                    },
                 })
             }
 
             if (action === 'edit') {
                 await updateWebhook({
                     filter: {
+                        projectId,
                         _id: data._id,
                     },
                     payload: data,

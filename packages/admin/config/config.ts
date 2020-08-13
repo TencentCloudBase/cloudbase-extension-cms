@@ -15,7 +15,7 @@ export default defineConfig({
     },
     layout: {
         name: 'CloudBase CMS',
-        locale: true,
+        locale: false,
         siderWidth: 208,
     },
     locale: false,
@@ -50,6 +50,12 @@ export default defineConfig({
             layout: false,
             access: 'canAdmin',
             component: './system/setting',
+        },
+        {
+            path: '/settings/role/create',
+            layout: false,
+            access: 'canAdmin',
+            component: './system/setting/RoleCreating/index',
         },
         {
             path: '/:projectId/home',
@@ -92,7 +98,6 @@ export default defineConfig({
         },
         {
             component: './404',
-            layout: false,
         },
     ],
     // Theme for antd: https://ant.design/docs/react/customize-theme-cn

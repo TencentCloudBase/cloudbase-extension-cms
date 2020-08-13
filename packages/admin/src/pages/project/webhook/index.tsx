@@ -5,6 +5,7 @@ import ProTable, { ProColumns } from '@ant-design/pro-table'
 import { Typography, Button, Modal, Space, Tag, Tabs, Popover, message } from 'antd'
 import { getWebhooks, deleteWebhook } from '@/services/webhook'
 import { WebhookModal } from './WebhookModal'
+import { useParams } from 'umi'
 
 const { TabPane } = Tabs
 
@@ -109,6 +110,7 @@ const columns: ProColumns<Webhook>[] = WebhookColumns.map((item) => ({
 }))
 
 export default (): React.ReactNode => {
+    const { projectId } = useParams()
     const [modalVisible, setModalVisible] = useState(false)
     const [webhookAction, setWebhookAction] = useState<'create' | 'edit'>('create')
     const [selectedWebhook, setSelectedWebhook] = useState<Webhook>()
@@ -135,7 +137,10 @@ export default (): React.ReactNode => {
 
         const { data = [], total } = await getWebhooks({
             sort,
-            filter,
+            filter: {
+                ...filter,
+                projectId,
+            },
             pageSize,
             page: current,
         })
@@ -201,6 +206,7 @@ export default (): React.ReactNode => {
                                                 onOk: async () => {
                                                     await deleteWebhook({
                                                         filter: {
+                                                            projectId,
                                                             _id: row._id,
                                                         },
                                                     })

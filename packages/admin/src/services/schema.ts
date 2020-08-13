@@ -1,6 +1,6 @@
 import { tcbRequest } from '@/utils'
 
-export async function getSchemas(projectId: string, schemaId?: string) {
+export async function getSchemas(projectId?: string, schemaId?: string) {
     return tcbRequest('/api/schema', {
         method: 'GET',
         params: {
@@ -9,9 +9,12 @@ export async function getSchemas(projectId: string, schemaId?: string) {
     })
 }
 
-export async function getSchema(schemaId?: string) {
+export async function getSchema(projectId: string, schemaId: string) {
     return tcbRequest(`/api/schema/${schemaId}`, {
         method: 'GET',
+        params: {
+            projectId,
+        },
     })
 }
 

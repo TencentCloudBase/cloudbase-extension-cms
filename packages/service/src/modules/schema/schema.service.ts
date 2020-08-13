@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, UnauthorizedException } from '@nestjs/common'
 import CloudBase from '@cloudbase/manager-node'
 import { getEnvIdString } from '@/utils'
 
 @Injectable()
 export class SchemaService {
+    // 创建集合
     async createCollection(name: string) {
         const envId = getEnvIdString()
         const manager = CloudBase.init({
@@ -19,6 +20,7 @@ export class SchemaService {
         }
     }
 
+    // 删除集合
     async deleteCollection(name: string) {
         const envId = getEnvIdString()
         const manager = CloudBase.init({

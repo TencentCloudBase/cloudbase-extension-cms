@@ -1,7 +1,10 @@
-import { Controller, Post, Body } from '@nestjs/common'
-import { IsNotEmpty, IsIn } from 'class-validator'
+import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common'
+import { IsIn } from 'class-validator'
+import { PermissionGuard } from '@/guards'
 import { CollectionV2 } from '@/constants'
+import { checkAccessAndGetResource } from '@/utils'
 import { ContentService } from '../content/content.service'
+import { Webhook } from './type'
 
 const validActions = [
     'getOne',
@@ -39,22 +42,29 @@ class ActionBody {
         sort?: {
             [key: string]: 'ascend' | 'descend'
         }
-        payload?: Record<string, any>
+        payload?: Partial<Webhook>
     }
 }
+
+@UseGuards(PermissionGuard('webhook'))
 @Controller('webhook')
 export class WebhookController {
     constructor(private readonly contentService: ContentService) {}
 
     @Post()
-    async handleAction(@Body() body: ActionBody) {
+    async handleAction(@Body() body: ActionBody, @Request() req: AuthRequest) {
         const {
             action,
             options = {
                 page: 1,
-                pageSize: 10,
+                pageSize: 20,
             },
         } = body
+
+        const projectId = options?.filter?.projectId
+        const webhookId = options?.filter._id
+
+        checkAccessAndGetResource(projectId, req, webhookId)
 
         return this.contentService[action](CollectionV2.Webhooks, options as any)
     }

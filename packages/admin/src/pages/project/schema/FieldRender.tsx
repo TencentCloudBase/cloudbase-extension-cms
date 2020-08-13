@@ -29,9 +29,15 @@ export const SchemaFieldRender: React.SFC<{
                                 <div className="icon">{type?.icon}</div>
                                 <div className="flex-column">
                                     <Space align="center" style={{ marginBottom: '10px' }}>
-                                        <Typography.Title level={4} style={{ marginBottom: 0 }}>
-                                            {field.displayName}
-                                        </Typography.Title>
+                                        <Tooltip title={field.displayName}>
+                                            <Typography.Title
+                                                ellipsis
+                                                level={4}
+                                                style={{ marginBottom: 0, width: '200px' }}
+                                            >
+                                                {field.displayName}
+                                            </Typography.Title>
+                                        </Tooltip>
                                         <Typography.Text strong># {field.name}</Typography.Text>
                                         {field.description && (
                                             <Tooltip title={field.description}>
