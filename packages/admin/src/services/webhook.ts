@@ -16,7 +16,7 @@ export interface Options {
     }
 
     sort?: {
-        [key: string]: 'ascend' | 'descend'
+        [key: string]: 'ascend' | 'descend' | null
     }
 
     payload: Record<string, any>

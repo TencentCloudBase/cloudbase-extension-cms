@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { history, useRequest } from 'umi'
-import ProCard from '@ant-design/pro-card'
 import { LeftCircleTwoTone } from '@ant-design/icons'
 import { createUserRole } from '@/services/role'
-import { Row, Col, Space, Typography, Steps, message } from 'antd'
+import { Row, Col, Space, Typography, Steps, message, Card } from 'antd'
 import RolePermission from './RolePermission'
 import RoleInfo from './RoleInfo'
 import './index.less'
@@ -36,7 +35,7 @@ export default (): React.ReactNode => {
                     </Space>
                 </div>
                 <Typography.Title level={3}>创建角色</Typography.Title>
-                <ProCard split="vertical" gutter={[5, 5]} style={{ minHeight: '480px' }}>
+                <Card style={{ minHeight: '480px' }}>
                     <Steps current={currentStep}>
                         <Step title="角色信息" />
                         <Step title="角色权限" />
@@ -73,7 +72,7 @@ export default (): React.ReactNode => {
                             />
                         )}
                     </div>
-                </ProCard>
+                </Card>
             </Col>
             <Col flex="1 1 auto" />
         </Row>

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/dynamic_modules/cloudbase'
+import { dateToNumber } from '@/utils'
 
 @Injectable()
 export class ContentService {
@@ -119,8 +120,8 @@ export class ContentService {
 
         const data = {
             ...payload,
-            createTime: payload?.createTime ? new Date(payload?.createTime) : new Date(),
-            updateTime: new Date(),
+            _createTime: dateToNumber(),
+            _updateTime: dateToNumber(),
         }
 
         return collection.add(data)

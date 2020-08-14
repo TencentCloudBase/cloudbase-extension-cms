@@ -134,7 +134,11 @@ const RolePermission: React.FC<{
                                                     >
                                                         <Select placeholder="项目中的服务">
                                                             <Select.Option value="*">
-                                                                全部服务
+                                                                <h4>全部服务</h4>
+                                                                <div>
+                                                                    内容原型、内容集合、Webhook
+                                                                    等全部服务
+                                                                </div>
                                                             </Select.Option>
                                                             <Select.Option value="schema">
                                                                 <h4>内容原型</h4>

@@ -411,7 +411,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Input type="text" minLength={min} maxLength={max} />
+                    <Input type="text" />
                 </Form.Item>
             )
             break
@@ -424,7 +424,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <TextArea minLength={min} maxLength={max} />
+                    <TextArea />
                 </Form.Item>
             )
             break

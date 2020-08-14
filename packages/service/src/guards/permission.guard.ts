@@ -1,4 +1,3 @@
-import { Reflector } from '@nestjs/core'
 import {
     mixin,
     Injectable,
@@ -8,9 +7,11 @@ import {
     ExecutionContext,
 } from '@nestjs/common'
 import { CloudBaseService } from '@/dynamic_modules'
-import { CollectionV2 } from '@/constants'
+import { CollectionV2, SystemUserRoles } from '@/constants'
 
-export const ALLOW_ACTIONS = ['get', 'update', 'create', 'delete']
+const SkipService = ['auth', 'project']
+// 合法操作
+const ALLOW_ACTIONS = ['get', 'update', 'create', 'delete']
 
 @Injectable()
 class MixinPermissionGuard implements CanActivate {
@@ -19,10 +20,7 @@ class MixinPermissionGuard implements CanActivate {
     // 可以访问路由的服务权限
     protected readonly handleService: string
 
-    constructor(
-        private readonly cloudbaseService?: CloudBaseService,
-        private readonly reflector?: Reflector
-    ) {}
+    constructor(private readonly cloudbaseService?: CloudBaseService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request: AuthRequest = context.switchToHttp().getRequest()
@@ -57,14 +55,10 @@ class MixinPermissionGuard implements CanActivate {
             return true
         }
 
-        // 需要管理员权限才能访问
-        if (!isAdmin && needAdmin) {
-            return false
-        }
-
         // 项目管理员可以访问项目内的资源
         const isProjectAdmin = user.roles.find((roleId) => roleId === 'project:administrator')
         if (isProjectAdmin && !needAdmin) {
+            request.cmsUser.isProjectAdmin = true
             request.cmsUser.projectResource = {
                 '*': '*',
             }
@@ -83,9 +77,31 @@ class MixinPermissionGuard implements CanActivate {
             .limit(1000)
             .get()
 
+        // 内容管理员
+        const isContentAdmin = user.roles.find((roleId) => roleId === 'content:administrator')
+        if (isContentAdmin) {
+            userRoles.push(SystemUserRoles[2])
+        }
+
+        // 挂载用户可访问资源信息
+        request.cmsUser.accessibleService = userRoles
+            .map((role) => role.permissions)
+            .reduce((ret, current) => [...ret, ...current], [])
+            .map((permission) => permission.service)
+
+        // 需要管理员权限才能访问
+        if (!isAdmin && needAdmin) {
+            return false
+        }
+
         // 是否允许访问服务
         const allowService = userRoles.find((role) =>
-            role.permissions.find((_) => _.service === '*' || _.service === this.handleService)
+            role.permissions.find(
+                (_) =>
+                    _.service === '*' ||
+                    _.service === this.handleService ||
+                    SkipService.includes(this.handleService)
+            )
         )
 
         if (!allowService) {
@@ -94,28 +110,55 @@ class MixinPermissionGuard implements CanActivate {
 
         // 是否允许操作
         const allowAction = userRoles.find((role) =>
-            role.permissions.find(
-                (_) =>
-                    _.action.includes('*') ||
-                    _.action.find(
-                        (action) =>
-                            new RegExp(action).test(handleAction) && ALLOW_ACTIONS.includes(action)
-                    )
-            )
+            role.permissions.find((_) => {
+                if (SkipService.includes(this.handleService)) {
+                    return true
+                }
+
+                if (_.service === this.handleService && _.action.includes('*')) {
+                    return true
+                }
+
+                return _.action.find(
+                    (action) =>
+                        ALLOW_ACTIONS.includes(action) &&
+                        (action === '*' || new RegExp(action).test(handleAction))
+                )
+            })
         )
+
+        console.log(allowAction)
 
         if (!allowAction) {
             return false
         }
 
-        // 按项目 Id 聚合，用户可访问的资源
+        /**
+         * 至此，已经校验过服务和相关的操作，剩下的只需要校验具体的 projectId 和 resource 即可
+         * 按项目 Id 聚合，用户可访问的资源
+         * Permission 对象
+         * {
+         *    projectId: '*' | string
+         *    // 行为
+         *    action: string[] | ['*']
+         *    effect: 'allow' | 'deny'
+         *    // 服务，schema/content/webhook
+         *    service: string | '*'
+         *    // 具体资源
+         *    resource: string[] | ['*']
+         * }
+         * 1. 从用户绑定的角色列表中取出所有 permission 规则
+         * 2. 过滤出对当前路由（服务）起作用的 permissions 规则，并展开数组
+         * 3. 按照项目 Id，聚合为一个 projectId: [resource] 映射对象
+         *    {
+         *       projectId: [resourceId]
+         *    }
+         */
         const roleResource = userRoles
-            .filter((role) =>
-                role.permissions?.filter(
-                    (_) => _.service === '*' || this.handleService === _.service
-                )
-            )
             .map((role) => role.permissions)
+            .filter((permissions) =>
+                permissions?.filter((_) => _.service === '*' || this.handleService === _.service)
+            )
             .reduce((ret, current) => [...ret, ...current], [])
             .map((permission) => [permission.projectId, permission.resource])
             .reduce((ret: Record<string, any>, current: [string, string[]]) => {

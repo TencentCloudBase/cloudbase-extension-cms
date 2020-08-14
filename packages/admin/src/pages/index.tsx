@@ -14,7 +14,7 @@ import {
     Skeleton,
     Typography,
 } from 'antd'
-import { history, useRequest } from 'umi'
+import { history, useRequest, useAccess } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import styles from './index.less'
@@ -25,114 +25,122 @@ const { Header, Content } = Layout
 export default (): React.ReactNode => {
     const ctx = useConcent('$$global')
     const [reload, setReload] = useState(0)
-    const [modalVisible, setModalVisible] = useState(false)
     const { data = [], loading } = useRequest(() => getProjects(), {
         refreshDeps: [reload],
     })
+
+    const { isAdmin } = useAccess()
 
     if (loading) {
         return <Skeleton active />
     }
 
     return (
-        <>
-            <Layout className={styles.home}>
-                <Header className={styles.header}>
-                    <img className={styles.logo} src="/icon.svg" alt="logo" />
-                    <span className={styles.title}>CloudBase CMS</span>
-                    <div className={styles.account}>
-                        <AvatarDropdown />
-                    </div>
-                </Header>
-                <Content className={styles.content}>
-                    <Row>
-                        <Col
-                            xs={{ offset: 2 }}
-                            md={{ offset: 4 }}
-                            lg={{ offset: 6 }}
-                            xl={{ offset: 6 }}
-                            xxl={{ offset: 8 }}
-                        />
-                        <Col flex="1 1 auto">
-                            <Row gutter={[24, 40]}>
-                                <Col>
-                                    <Typography.Title level={3}>我的项目</Typography.Title>
-                                </Col>
-                            </Row>
-                            <Row gutter={[64, 40]}>
-                                {data.map((project, index) => (
-                                    <Col flex="0 1 250px" key={index}>
-                                        <Card
-                                            hoverable
-                                            onClick={() => {
-                                                ctx.setState({
-                                                    currentProject: project,
-                                                })
-                                                history.push(`/${project._id}/home`)
-                                            }}
-                                        >
-                                            <div
-                                                className={styles.project}
-                                                onClick={() => {
-                                                    history.push('/home')
-                                                }}
-                                            >
-                                                <div className={styles['project-logo']}>
-                                                    {project.name.slice(0, 2)}
-                                                </div>
-                                                <Typography.Title
-                                                    level={4}
-                                                    className={styles['project-title']}
-                                                >
-                                                    {project.name}
-                                                </Typography.Title>
-                                            </div>
-                                        </Card>
-                                    </Col>
-                                ))}
-                            </Row>
-                            <Row gutter={[0, 40]}>
-                                <Col>
-                                    <Typography.Title level={3}>新建项目</Typography.Title>
-                                </Col>
-                            </Row>
-                            <Row gutter={[64, 40]}>
-                                <Col flex="0 1 250px">
+        <Layout className={styles.home}>
+            <Header className={styles.header}>
+                <img className={styles.logo} src="/icon.svg" alt="logo" />
+                <span className={styles.title}>CloudBase CMS</span>
+                <div className={styles.account}>
+                    <AvatarDropdown />
+                </div>
+            </Header>
+            <Content className={styles.content}>
+                <Row>
+                    <Col
+                        xs={{ offset: 2 }}
+                        md={{ offset: 4 }}
+                        lg={{ offset: 6 }}
+                        xl={{ offset: 6 }}
+                        xxl={{ offset: 8 }}
+                    />
+                    <Col flex="1 1 auto">
+                        <Row gutter={[24, 40]}>
+                            <Col>
+                                <Typography.Title level={3}>我的项目</Typography.Title>
+                            </Col>
+                        </Row>
+                        <Row gutter={[64, 40]}>
+                            {data.map((project: any, index: any) => (
+                                <Col flex="0 1 250px" key={index}>
                                     <Card
                                         hoverable
                                         onClick={() => {
-                                            setModalVisible(true)
+                                            ctx.setState({
+                                                currentProject: project,
+                                            })
+                                            history.push(`/${project._id}/home`)
                                         }}
                                     >
-                                        <div className={styles.project} onClick={() => {}}>
-                                            <PlusSquareTwoTone style={{ fontSize: '60px' }} />
+                                        <div
+                                            className={styles.project}
+                                            onClick={() => {
+                                                history.push('/home')
+                                            }}
+                                        >
+                                            <div className={styles['project-logo']}>
+                                                {project.name.slice(0, 2)}
+                                            </div>
                                             <Typography.Title
                                                 level={4}
                                                 className={styles['project-title']}
                                             >
-                                                创建新项目
+                                                {project.name}
                                             </Typography.Title>
                                         </div>
                                     </Card>
                                 </Col>
-                            </Row>
-                        </Col>
-                        <Col
-                            xs={{ offset: 2 }}
-                            md={{ offset: 4 }}
-                            lg={{ offset: 6 }}
-                            xl={{ offset: 6 }}
-                            xxl={{ offset: 8 }}
-                        />
-                    </Row>
-                </Content>
-            </Layout>
+                            ))}
+                        </Row>
+                        {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
+                    </Col>
+                    <Col
+                        xs={{ offset: 2 }}
+                        md={{ offset: 4 }}
+                        lg={{ offset: 6 }}
+                        xl={{ offset: 6 }}
+                        xxl={{ offset: 8 }}
+                    />
+                </Row>
+            </Content>
+        </Layout>
+    )
+}
+
+export const CreateProject: React.FC<{
+    onReload: () => void
+}> = ({ onReload }) => {
+    const [modalVisible, setModalVisible] = useState(false)
+
+    return (
+        <>
+            <Row gutter={[0, 40]}>
+                <Col>
+                    <Typography.Title level={3}>新建项目</Typography.Title>
+                </Col>
+            </Row>
+            <Row gutter={[64, 40]}>
+                <Col flex="0 1 250px">
+                    <Card
+                        hoverable
+                        onClick={() => {
+                            setModalVisible(true)
+                        }}
+                    >
+                        <div className={styles.project} onClick={() => {}}>
+                            <PlusSquareTwoTone style={{ fontSize: '60px' }} />
+                            <Typography.Title level={4} className={styles['project-title']}>
+                                创建新项目
+                            </Typography.Title>
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
             <CreateProjectModal
                 visible={modalVisible}
                 onClose={() => setModalVisible(false)}
                 onSuccess={() => {
                     setModalVisible(false)
-                    setReload(reload + 1)
+                    onReload()
                 }}
             />
         </>

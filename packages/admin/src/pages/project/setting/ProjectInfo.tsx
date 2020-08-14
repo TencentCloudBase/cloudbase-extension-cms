@@ -57,8 +57,6 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
             <Modal
                 visible={modalVisible}
                 title="删除项目"
-                okText="确认"
-                cancelText="取消"
                 onCancel={() => setModalVisible(false)}
                 onOk={() => {
                     run()

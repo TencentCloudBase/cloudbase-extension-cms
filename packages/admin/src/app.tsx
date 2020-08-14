@@ -50,7 +50,7 @@ export async function getInitialState(): Promise<{
             history.push('/login')
         }
     } else {
-        let currentUser = {}
+        let currentUser = {} as any
         try {
             currentUser = await queryCurrent()
         } catch (e) {
@@ -80,7 +80,7 @@ export const layout = ({
         onPageChange: () => {
             // 如果没有登录，重定向到 login
 
-            if (!initialState?.currentUser?.access && history.location.pathname !== '/login') {
+            if (!initialState?.currentUser?.username && history.location.pathname !== '/login') {
                 history.push('/login')
             }
         },
@@ -117,8 +117,8 @@ const codeMessage = {
     202: '一个请求已经进入后台排队（异步任务）。',
     204: '删除数据成功。',
     400: '发出的请求有错误，服务器没有进行新建或修改数据的操作。',
-    401: '用户没有权限（令牌、用户名、密码错误）。',
-    403: '用户得到授权，但是访问是被禁止的。',
+    401: '您还没有登录，或登录身份过期，请重新登录！',
+    403: '您没有权限访问此资源或进行此操作！',
     404: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
     405: '请求方法不被允许。',
     406: '请求的格式不可得。',

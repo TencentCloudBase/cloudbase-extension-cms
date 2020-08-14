@@ -25,17 +25,9 @@ export class Project {
 
     description: string
 
-    // project cover image url
+    // 项目封面图
     cover?: string
 }
-
-const Default_Projects = [
-    {
-        _id: 'default',
-        name: '默认项目',
-        description: 'CMS 默认项目',
-    },
-]
 
 @UseGuards(PermissionGuard('project'))
 @Controller('project')
@@ -63,6 +55,8 @@ export class ProjectController {
         const filter: any = {}
 
         const allProjects = Object.keys(req.cmsUser.projectResource)
+
+        console.log(allProjects)
 
         // 可获取的所有项目列表
         if (!allProjects.some((_) => _ === '*')) {

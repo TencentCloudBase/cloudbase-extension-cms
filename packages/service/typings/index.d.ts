@@ -26,6 +26,8 @@ interface User {
 }
 
 interface UserRole {
+    _id: string
+
     // 角色名
     roleName: string
 
@@ -34,6 +36,8 @@ interface UserRole {
 
     // 角色绑定的权限描述
     permissions: Permission[]
+
+    type: string | 'system'
 }
 
 /**
@@ -52,6 +56,7 @@ interface Permission {
     effect: 'allow' | 'deny'
 
     // 服务
+    // 一个权限规则仅支持一个 service
     service: string | '*'
 
     // 具体资源
@@ -64,7 +69,17 @@ interface RequestUser extends User {
         [key: string]: '*' | string[]
     }
 
-    isAdmin: boolean
+    // 所有可访问的服务
+    accessibleService?: '*' | string[]
+
+    // 授权的操作
+    authorizedAction?: '*' | string[]
+
+    // 系统管理员
+    isAdmin?: boolean
+
+    // 项目管理员
+    isProjectAdmin?: boolean
 }
 
 interface AuthRequest extends Request {
