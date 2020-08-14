@@ -80,8 +80,13 @@ interface RequestUser extends User {
 
     // 项目管理员
     isProjectAdmin?: boolean
+
+    // 用户关联的角色信息
+    userRoles?: UserRole[]
 }
 
 interface AuthRequest extends Request {
+    handleService: string
+
     cmsUser: RequestUser
 }

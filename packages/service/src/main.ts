@@ -10,6 +10,7 @@ import { GlobalAuthGuard } from './guards/auth.guard'
 import { AllExceptionsFilter } from './global.exception'
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { TimeCost } from './interceptors/timecost.interceptor'
+import { ContextInterceptor } from './interceptors/context.interceptor'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -32,10 +33,14 @@ export async function bootstrap() {
     // 请求 body 大小限制
     app.use(bodyParser.raw({ limit: '50mb' }))
 
+    // 耗时
     app.useGlobalInterceptors(new TimeCost())
 
     // 超时时间
     app.useGlobalInterceptors(new TimeoutInterceptor(5000))
+
+    // context 处理
+    app.useGlobalInterceptors(new ContextInterceptor())
 
     // 错误处理
     app.useGlobalFilters(new AllExceptionsFilter())
