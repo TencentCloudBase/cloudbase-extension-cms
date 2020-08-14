@@ -101,6 +101,7 @@ export class SchemaController {
         }
 
         const code = await this.schemaService.createCollection(body.collectionName)
+
         if (code) {
             throw new CmsException(code, '创建集合失败')
         }
