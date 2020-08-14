@@ -66,6 +66,7 @@ tcb login
 初始化，安装依赖
 
 ```bash
+npm install
 npm run setup
 ```
 
