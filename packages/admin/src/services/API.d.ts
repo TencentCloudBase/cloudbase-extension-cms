@@ -1,17 +1,27 @@
 declare namespace API {
     export interface CurrentUser {
+        _id: string
+
+        username: string
+
+        password: string
+
+        // 创建时间
+        createTime: number
+
+        // 用户角色
+        roles: string[]
+
         avatar?: string
-        name?: string
-        title?: string
-        group?: string
-        signature?: string
-        tags?: {
-            key: string
-            label: string
-        }[]
-        userid?: string
-        access?: 'user' | 'guest' | 'admin'
-        unreadCount?: number
+
+        // 是否项目管理员
+        isAdmin: boolean
+
+        // 项目管理员
+        isProjectAdmin: boolean
+
+        // 所有可访问的服务
+        accessibleService?: '*' | string[]
     }
 
     export interface LoginStateType {

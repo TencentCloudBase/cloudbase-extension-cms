@@ -15,10 +15,19 @@ export interface Options {
     }
 
     sort?: {
-        [key: string]: 'ascend' | 'descend'
+        [key: string]: 'ascend' | 'descend' | null
     }
 
     payload?: Record<string, any>
+}
+
+export async function getContentSchemas(projectId: string) {
+    return tcbRequest('/api/content/schema', {
+        method: 'GET',
+        params: {
+            projectId,
+        },
+    })
 }
 
 export async function getContents(projectId: string, resource: string, options?: Options) {

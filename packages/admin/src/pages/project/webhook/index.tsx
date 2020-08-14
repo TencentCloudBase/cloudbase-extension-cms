@@ -1,11 +1,11 @@
+import { useParams } from 'umi'
 import React, { useRef, useState } from 'react'
 import { PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ProColumns } from '@ant-design/pro-table'
-import { Typography, Button, Modal, Space, Tag, Tabs, Popover, message } from 'antd'
 import { getWebhooks, deleteWebhook } from '@/services/webhook'
+import { Typography, Button, Modal, Space, Tag, Tabs, Popover, message, Tooltip } from 'antd'
 import { WebhookModal } from './WebhookModal'
-import { useParams } from 'umi'
 
 const { TabPane } = Tabs
 
@@ -15,9 +15,8 @@ interface Webhook {
     url: string
     method: string
     event: string[]
-    collections: SchemaV2[]
-    triggerType: string | 'all'
-    headers: { [key: string]: string }[]
+    collections: (SchemaV2 | '*')[]
+    headers: { key: string; value: string }[]
 }
 
 const EventMap = {
@@ -38,46 +37,37 @@ const WebhookColumns: ProColumns<Webhook>[] = [
         title: '触发路径',
         dataIndex: 'url',
         render: (_, row) => (
-            <Typography.Paragraph
-                ellipsis={{
-                    rows: 1,
-                    expandable: true,
-                }}
-            >
-                {row.url}
-            </Typography.Paragraph>
+            <Tooltip title={row.url}>
+                <Typography.Text>{row.url}</Typography.Text>
+            </Tooltip>
         ),
     },
     {
         title: '触发类型',
-        dataIndex: 'triggerType',
+        dataIndex: 'event',
         valueType: 'textarea',
         width: 150,
         render: (_, row) => {
-            if (row.triggerType === 'all') {
+            if (row.event.includes('*')) {
                 return '全部'
             }
 
-            if (row.triggerType === 'filter') {
-                return (
-                    <Popover
-                        title={null}
-                        trigger="hover"
-                        content={row.event
-                            .map((_) => EventMap[_])
-                            .map((_, index) => (
-                                <Tag key={index}>{_}</Tag>
-                            ))}
-                    >
-                        <div>
-                            <Tag>{row.event?.[0]}</Tag>
-                            {row.event?.length > 1 && '...'}
-                        </div>
-                    </Popover>
-                )
-            }
-
-            return row.event.map((_) => EventMap[_]).join(' ')
+            return (
+                <Popover
+                    title={null}
+                    trigger="hover"
+                    content={row.event
+                        .map((_) => EventMap[_])
+                        .map((_, index) => (
+                            <Tag key={index}>{_}</Tag>
+                        ))}
+                >
+                    <div>
+                        <Tag>{row.event?.[0]}</Tag>
+                        {row.event?.length > 1 && '...'}
+                    </div>
+                </Popover>
+            )
         },
     },
     {
@@ -85,9 +75,13 @@ const WebhookColumns: ProColumns<Webhook>[] = [
         dataIndex: 'collections',
         render: (_, row) => (
             <Space>
-                {row.collections.map((_, index) => (
-                    <Typography.Paragraph key={index}>{_.displayName}</Typography.Paragraph>
-                ))}
+                {row.collections.map((_, index) => {
+                    if (_ === '*') {
+                        return <Typography.Text key={index}>全部</Typography.Text>
+                    } else {
+                        return <Typography.Text key={index}>{_.displayName}</Typography.Text>
+                    }
+                })}
             </Space>
         ),
     },
@@ -127,7 +121,7 @@ export default (): React.ReactNode => {
     const tableRequest = async (
         params: { pageSize: number; current: number; [key: string]: any },
         sort: {
-            [key: string]: 'ascend' | 'descend'
+            [key: string]: 'ascend' | 'descend' | null
         },
         filter: {
             [key: string]: React.ReactText[]

@@ -69,7 +69,7 @@ export default (): React.ReactNode => {
                 </h2>
             }
         >
-            <ProCard split="vertical" gutter={[16, 16]}>
+            <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
                 <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Row justify="center">

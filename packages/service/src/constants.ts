@@ -47,17 +47,18 @@ export const CollectionV2 = {
 }
 
 // 系统默认角色
-export const SystemUserRoles = [
+export const SystemUserRoles: UserRole[] = [
     {
         _id: 'administrator',
         roleName: '系统管理员',
         description: '允许管理系统内所有用户及其权限、所有内容、所有系统设置等',
-        polices: [
+        permissions: [
             {
+                projectId: '*',
                 action: ['*'],
                 effect: 'allow',
                 resource: ['*'],
-                service: ['*'],
+                service: '*',
             },
         ],
         type: 'system',
@@ -66,12 +67,12 @@ export const SystemUserRoles = [
         _id: 'project:administrator',
         roleName: '项目管理员',
         description: '允许管理系统内的所有项目及项目内的资源',
-        polices: [
+        permissions: [
             {
                 action: ['*'],
-                project: ['*'],
+                projectId: '*',
                 effect: 'allow',
-                service: ['*'],
+                service: '*',
                 resource: ['*'],
             },
         ],
@@ -81,12 +82,12 @@ export const SystemUserRoles = [
         _id: 'content:administrator',
         roleName: '系统内容管理员',
         description: '允许管理系统内的所有内容',
-        polices: [
+        permissions: [
             {
                 action: ['*'],
-                project: ['*'],
+                projectId: '*',
                 effect: 'allow',
-                service: ['content'],
+                service: 'content',
                 resource: ['*'],
             },
         ],

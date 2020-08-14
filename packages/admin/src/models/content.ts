@@ -1,5 +1,5 @@
 import { IActionCtx } from 'concent'
-import { getSchemas } from '@/services/schema'
+import { getContentSchemas } from '@/services/content'
 
 export default {
     state: {
@@ -12,11 +12,11 @@ export default {
         selectedContent: {},
     },
     reducer: {
-        async getSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
+        async getContentSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
             ctx.setState({
                 loading: true,
             })
-            const { data } = await getSchemas(projectId)
+            const { data } = await getContentSchemas(projectId)
             const { currentSchema } = state
 
             // 重新获取时，如果存在选择的 schema，则也同时更新

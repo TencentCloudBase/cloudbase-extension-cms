@@ -4,12 +4,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import ProCard from '@ant-design/pro-card'
 import ProTable from '@ant-design/pro-table'
 import { PlusOutlined } from '@ant-design/icons'
+import { PageContainer } from '@ant-design/pro-layout'
 import { getContents, deleteContent } from '@/services/content'
 import { Menu, Button, Spin, Empty, Row, Col, Modal, message } from 'antd'
 import { createColumns } from './columns'
 import { ContentDrawer } from './ContentDrawer'
 import './index.less'
-import { PageContainer } from '@ant-design/pro-layout'
 
 export default (): React.ReactNode => {
     // 加载 schemas 数据
@@ -18,7 +18,7 @@ export default (): React.ReactNode => {
     const [contentModalVisible, setContentModalVisible] = useState(false)
 
     useEffect(() => {
-        ctx.dispatch('getSchemas', projectId)
+        ctx.dispatch('getContentSchemas', projectId)
     }, [])
 
     const tableRef = useRef<{
@@ -37,7 +37,7 @@ export default (): React.ReactNode => {
 
     return (
         <PageContainer className="page-container">
-            <ProCard split="vertical" gutter={[16, 16]}>
+            <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
                 <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Row justify="center">
@@ -111,8 +111,6 @@ export default (): React.ReactNode => {
                                             type="primary"
                                             onClick={() => {
                                                 const modal = Modal.confirm({
-                                                    okText: '确认',
-                                                    cancelText: '取消',
                                                     title: '确认删除此内容？',
                                                     onCancel: () => {
                                                         modal.destroy()
