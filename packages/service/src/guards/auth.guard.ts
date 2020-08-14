@@ -6,8 +6,8 @@ import {
     HttpException,
     ExecutionContext,
 } from '@nestjs/common'
+import { CollectionV2, SystemUserRoles } from '@/constants'
 import { getCloudBaseApp, isDevEnv } from '@/utils'
-import { CollectionV2 } from '@/constants'
 
 // 校验用户是否登录，是否存在
 @Injectable()
@@ -15,8 +15,7 @@ export class GlobalAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<AuthRequest & Request>()
 
-        // 跳过登录
-        if (request.path === '/api/auth/login' || isDevEnv()) {
+        if (isDevEnv()) {
             request.cmsUser = {
                 roles: ['administrator'],
                 username: 'admin',
@@ -32,6 +31,11 @@ export class GlobalAuthGuard implements CanActivate {
             //     password: 'cloudbase',
             // }
 
+            return true
+        }
+
+        // 跳过登录
+        if (request.path === '/api/auth/login') {
             return true
         }
 

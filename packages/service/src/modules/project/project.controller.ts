@@ -29,7 +29,6 @@ export class Project {
     cover?: string
 }
 
-@UseGuards(PermissionGuard('project'))
 @Controller('project')
 export class ProjectController {
     constructor(private readonly cloudbaseService: CloudBaseService) {}
@@ -76,7 +75,8 @@ export class ProjectController {
         }
     }
 
-    // create a project
+    // 系统管理员才能创建项目
+    @UseGuards(PermissionGuard('project', ['administrator']))
     @Post()
     async createProject(@Body() body: Project) {
         const { name } = body
@@ -101,7 +101,9 @@ export class ProjectController {
         return this.cloudbaseService.collection(CollectionV2.Projects).add(project)
     }
 
+    // 系统管理员才能更新项目
     @Put(':id')
+    @UseGuards(PermissionGuard('project', ['administrator']))
     async updateProject(
         @Param('id') id: string,
         @Body() payload: Partial<Project>,
@@ -112,6 +114,8 @@ export class ProjectController {
         return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).update(payload)
     }
 
+    // 系统管理员才能删除项目
+    @UseGuards(PermissionGuard('project', ['administrator']))
     @Delete(':id')
     async deleteProject(@Param('id') id: string, @Request() req: AuthRequest) {
         checkAccessAndGetResource(id, req, id)

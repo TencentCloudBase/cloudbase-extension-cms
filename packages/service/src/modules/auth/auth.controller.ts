@@ -1,9 +1,8 @@
-import { Controller, Post, Body, Request, UseGuards } from '@nestjs/common'
+import { IsNotEmpty } from 'class-validator'
+import { Controller, Post, Body, Request } from '@nestjs/common'
 import { genPassword, getFullDate } from '@/utils'
 import { CloudBaseService } from '@/dynamic_modules'
 import { CollectionV2 } from '@/constants'
-import { IsNotEmpty } from 'class-validator'
-import { PermissionGuard } from '@/guards'
 
 class AuthBody {
     @IsNotEmpty({
@@ -94,7 +93,6 @@ export class AuthController {
         }
     }
 
-    @UseGuards(PermissionGuard('auth'))
     @Post('currentUser')
     async getCurrentUser(@Request() req: AuthRequest) {
         const { cmsUser } = req
