@@ -28,8 +28,7 @@ export const CreateFieldModal: React.FC<{
             )
 
             if (existSameName && fieldAction === 'create') {
-                message.error(`已存在同名字段 ${fieldAttr.name}，请勿重复创建`)
-                return
+                throw new Error(`已存在同名字段 ${fieldAttr.name}，请勿重复创建`)
             }
 
             // 过滤掉值为 undefined 的数据
@@ -71,13 +70,20 @@ export const CreateFieldModal: React.FC<{
             await updateSchema(currentSchema?._id, {
                 fields,
             })
+
             ctx.dispatch('getSchemas', projectId)
             onClose()
         },
         {
             manual: true,
-            onError: () => message.error('添加字段失败'),
-            onSuccess: () => message.success('添加字段成功'),
+            onError: (e) =>
+                message.error(
+                    fieldAction === 'create'
+                        ? `添加字段失败：${e.message}`
+                        : `更新字段失败:${e.message}`
+                ),
+            onSuccess: () =>
+                message.success(fieldAction === 'create' ? '添加字段成功' : '更新字段失败'),
         }
     )
 
@@ -203,13 +209,13 @@ export const CreateFieldModal: React.FC<{
                 {selectedField.type === 'Number' && (
                     <Form.Item style={{ marginBottom: 0 }}>
                         <Space size="large">
-                            <Form.Item label="最小值" name="max">
+                            <Form.Item label="最小值" name="min">
                                 <InputNumber
                                     style={{ width: '224px' }}
                                     placeholder="最小值，如 1"
                                 />
                             </Form.Item>
-                            <Form.Item label="最大值" name="min">
+                            <Form.Item label="最大值" name="max">
                                 <InputNumber
                                     style={{ width: '224px' }}
                                     placeholder="最大值，如 1000"

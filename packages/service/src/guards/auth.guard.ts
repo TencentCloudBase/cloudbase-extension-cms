@@ -24,6 +24,14 @@ export class GlobalAuthGuard implements CanActivate {
                 password: 'cloudbase',
                 isAdmin: true,
             }
+
+            // request.cmsUser = {
+            //     roles: ['content:administrator'],
+            //     username: 'admin',
+            //     createTime: 2020,
+            //     password: 'cloudbase',
+            // }
+
             return true
         }
 

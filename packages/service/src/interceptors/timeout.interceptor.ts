@@ -1,12 +1,13 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { timeout } from 'rxjs/operators'
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nestjs/common'
+import config from '@/config'
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
     timeout: number
 
-    constructor(timeout = 10000) {
+    constructor(timeout = config.timeout) {
         this.timeout = timeout
     }
 

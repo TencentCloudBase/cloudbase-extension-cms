@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'umi'
+import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { Form, message, Space, Button, Drawer, Row } from 'antd'
 import { createContent, updateContent } from '@/services/content'
@@ -32,6 +32,29 @@ export const ContentDrawer: React.FC<{
               )
             : selectedContent
 
+    const { run, loading } = useRequest(
+        async (payload: any) => {
+            if (contentAction === 'create') {
+                await createContent(projectId, currentSchema?.collectionName, payload)
+            }
+
+            if (contentAction === 'edit') {
+                await updateContent(projectId, currentSchema?.collectionName, payload._id, payload)
+            }
+        },
+        {
+            manual: true,
+            onError: () => {
+                onClose()
+                message.error(contentAction === 'create' ? '创建内容失败' : '编辑内容失败')
+            },
+            onSuccess: () => {
+                onOk()
+                message.success(contentAction === 'create' ? '创建内容成功' : '更新内容成功')
+            },
+        }
+    )
+
     return (
         <Drawer
             destroyOnClose
@@ -45,29 +68,7 @@ export const ContentDrawer: React.FC<{
                 name="basic"
                 layout="vertical"
                 initialValues={initialValues}
-                onFinish={(v = {}) => {
-                    if (contentAction === 'create') {
-                        createContent(projectId, currentSchema?.collectionName, v)
-                            .then(() => {
-                                onOk()
-                                message.success('创建内容成功')
-                            })
-                            .catch(() => {
-                                message.error('创建内容失败')
-                            })
-                    }
-
-                    if (contentAction === 'edit') {
-                        updateContent(projectId, currentSchema?.collectionName, v._id, v)
-                            .then(() => {
-                                onOk()
-                                message.success('创建内容成功')
-                            })
-                            .catch(() => {
-                                message.error('创建内容失败')
-                            })
-                    }
-                }}
+                onFinish={(v = {}) => run(v)}
             >
                 <Row gutter={[24, 24]}>
                     {schema?.fields?.map((filed, index) => getFieldFormItem(filed, index))}
@@ -76,7 +77,7 @@ export const ContentDrawer: React.FC<{
                 <Form.Item>
                     <Space size="large">
                         <Button onClick={onClose}>取消</Button>
-                        <Button type="primary" htmlType="submit">
+                        <Button type="primary" htmlType="submit" loading={loading}>
                             确定
                         </Button>
                     </Space>

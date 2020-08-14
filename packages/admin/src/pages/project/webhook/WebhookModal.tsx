@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useParams, useRequest } from 'umi'
-import { Button, Modal, Space, message, Form, Input, Select, Checkbox } from 'antd'
+import { Button, Modal, Space, message, Form, Input, Select } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { createWebhook, updateWebhook } from '@/services/webhook'
 import { getSchemas } from '@/services/schema'
@@ -9,8 +9,6 @@ const EventMap = {
     create: '创建内容',
     delete: '删除内容',
     update: '更新内容',
-    updateMany: '更新内容[批量]',
-    deleteMany: '删除内容[批量]',
 }
 
 interface Webhook {
@@ -20,7 +18,6 @@ interface Webhook {
     method: string
     event: string[]
     collections: any[]
-    triggerType: string | 'all'
     headers: { [key: string]: string }[]
 }
 
@@ -32,12 +29,14 @@ export const WebhookModal: React.FC<{
     onSuccess: () => void
 }> = ({ visible, onClose, onSuccess, action, selectedWebhook }) => {
     const { projectId } = useParams()
-    const [formValue, setFormValue] = useState<any>()
     const { run, loading } = useRequest(
-        async (data: Webhook) => {
+        async (webhook: Webhook) => {
             if (action === 'create') {
                 await createWebhook({
-                    payload: data,
+                    payload: {
+                        ...webhook,
+                        projectId,
+                    },
                     filter: {
                         projectId,
                     },
@@ -48,9 +47,9 @@ export const WebhookModal: React.FC<{
                 await updateWebhook({
                     filter: {
                         projectId,
-                        _id: data._id,
+                        _id: webhook._id,
                     },
-                    payload: data,
+                    payload: webhook,
                 })
             }
 
@@ -64,7 +63,7 @@ export const WebhookModal: React.FC<{
     )
 
     // 加载数据库集合
-    const { data: schmeas = [], loading: schemaLoading } = useRequest<{ data: SchemaV2[] }>(() =>
+    const { data: schemas = [], loading: schemaLoading } = useRequest<{ data: SchemaV2[] }>(() =>
         getSchemas(projectId)
     )
 
@@ -77,12 +76,12 @@ export const WebhookModal: React.FC<{
     const initialWebhook = {
         ...selectedWebhook,
         collections: selectedWebhook?.collections.map((_) => _._id),
+        // events: selectedWebhook
     }
 
     return (
         <Modal
             centered
-            destroyOnClose
             width={700}
             footer={null}
             title={action === 'create' ? '创建 Webhook' : '编辑 Webhook'}
@@ -97,14 +96,14 @@ export const WebhookModal: React.FC<{
                 labelCol={{ span: 6 }}
                 initialValues={action === 'edit' ? initialWebhook : {}}
                 onFinish={(v: any = {}) => {
-                    v.event = v.triggerType ? [] : v.event
-                    v.triggerType = v.triggerType ? 'all' : 'filter'
-                    v.collections = schmeas.filter((_) => v.collections.includes(_._id))
+                    v.collections = v.collections?.map((coll: string) => {
+                        if (coll === '*') {
+                            return '*'
+                        } else {
+                            return schemas.find((schema) => coll === schema._id)
+                        }
+                    })
                     run(v)
-                }}
-                onValuesChange={(_, v) => {
-                    console.log(v)
-                    setFormValue(v)
                 }}
             >
                 <Form.Item
@@ -133,7 +132,10 @@ export const WebhookModal: React.FC<{
                     rules={[{ required: true, message: '请选择监听内容！' }]}
                 >
                     <Select mode="multiple" loading={schemaLoading}>
-                        {schmeas?.map((schema: any) => (
+                        <Select.Option key="all" value="*">
+                            全部内容
+                        </Select.Option>
+                        {schemas?.map((schema: any) => (
                             <Select.Option key={schema._id} value={schema._id}>
                                 {schema.displayName}
                             </Select.Option>
@@ -142,21 +144,18 @@ export const WebhookModal: React.FC<{
                 </Form.Item>
                 <Form.Item
                     label="触发事件"
-                    name="triggerType"
-                    valuePropName="checked"
-                    rules={[{ required: formValue?.triggerType, message: '请选择触发类型！' }]}
+                    name="event"
+                    rules={[{ required: true, message: '请选择触发类型！' }]}
                 >
-                    <Checkbox>全部事件</Checkbox>
+                    <Select mode="multiple">
+                        <Select.Option value="*">全部</Select.Option>
+                        {eventOptions.map((event, index) => (
+                            <Select.Option value={event.value} key={index}>
+                                {event.label}
+                            </Select.Option>
+                        ))}
+                    </Select>
                 </Form.Item>
-                {((action === 'create' && !formValue?.triggerType) ||
-                    (action === 'edit' && selectedWebhook?.triggerType === 'filter')) && (
-                    <Form.Item
-                        name="event"
-                        rules={[{ required: true, message: '请选择触发事件！' }]}
-                    >
-                        <Checkbox.Group options={eventOptions} />
-                    </Form.Item>
-                )}
 
                 <Form.Item label="HTTP 方法" name="method">
                     <Select>

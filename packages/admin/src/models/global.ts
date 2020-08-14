@@ -1,9 +1,9 @@
-export default {
-    state: {
-        projects: [],
-        currentProject: {},
-    },
-    init: () => {
-        return {}
-    },
-}
+// export default {
+//     state: {
+//         projects: [],
+//         currentProject: {},
+//     },
+//     init: () => {
+//         return {}
+//     },
+// }

@@ -1,3 +1,4 @@
+import { Method } from 'axios'
 import { SchemaV2 } from '../schema/types'
 
 export interface Webhook {
@@ -7,13 +8,11 @@ export interface Webhook {
 
     url: string
 
-    method: string
+    method: Method
 
     event: string[]
 
     collections: SchemaV2[]
 
-    triggerType: string | 'all'
-
-    headers: { [key: string]: string }[]
+    headers: { key: string; value: string }[]
 }

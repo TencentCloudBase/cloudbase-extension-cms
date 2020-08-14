@@ -63,13 +63,13 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
 
     const { currentUser } = initialState
 
-    if (!currentUser || !currentUser.name) {
+    if (!currentUser || !currentUser.username) {
         return loading
     }
 
     const menuHeaderDropdown = (
         <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-            {currentUser.access === 'admin' && (
+            {currentUser.username === 'admin' && (
                 <Menu.Item key="settings">
                     <SettingOutlined />
                     系统设置

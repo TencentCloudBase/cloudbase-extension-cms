@@ -57,8 +57,6 @@ export default (): React.ReactElement => {
                         disabled={item.type === 'system'}
                         onClick={() => {
                             Modal.confirm({
-                                okText: '确认',
-                                cancelText: '取消',
                                 title: `确认删除角色 ${item.roleName} ？`,
                                 onOk: async () => {
                                     await deleteUserRole(item._id)

@@ -110,8 +110,6 @@ export default (): React.ReactElement => {
                                         type="primary"
                                         onClick={() => {
                                             Modal.confirm({
-                                                okText: '确认',
-                                                cancelText: '取消',
                                                 title: `确认删除用户 ${item.username} ？`,
                                                 onOk: async () => {
                                                     await deleteUser(item._id)
