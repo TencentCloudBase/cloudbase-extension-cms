@@ -14,7 +14,7 @@ export class SchemaService {
         })
 
         try {
-            await manager.database.createCollection(name)
+            await manager.database.createCollectionIfNotExists(name)
         } catch (e) {
             return e.code
         }
