@@ -7,6 +7,7 @@
         "use": "@cloudbase/framework-plugin-website",
         "inputs": {
           "outputPath": "./packages/tcb-ext-cms-admin/build",
+          "buildCommand": "npm run build",
           "cloudPath": "/tcb-cms"
         }
       },
@@ -44,8 +45,7 @@
           "functionOptions": {
             "timeout": 5,
             "envVariables": {
-              "NODE_ENV": "production",
-              "CMS_CUSTOM_LOGIN_JSON": "{{env.customLoginJson}}"
+              "NODE_ENV": "production"
             }
           }
         }
