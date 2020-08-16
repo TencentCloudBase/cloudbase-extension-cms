@@ -186,7 +186,7 @@ const CreateUserModal: React.FC<{
         }
     )
 
-    const userRoles = SystemUserRoles
+    const { data: userRoles = [] } = useRequest(() => getUserRoles())
 
     return (
         <Modal
@@ -240,7 +240,7 @@ const CreateUserModal: React.FC<{
                     rules={[{ required: true, message: '请选择用户角色！' }]}
                 >
                     <Select mode="multiple">
-                        {userRoles.map((role, index) => (
+                        {userRoles?.map((role: any, index: any) => (
                             <Select.Option key={index} value={role._id}>
                                 <h4>{role.roleName}</h4>
                                 <div>{role.description}</div>

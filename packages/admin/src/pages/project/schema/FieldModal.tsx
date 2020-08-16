@@ -83,7 +83,7 @@ export const CreateFieldModal: React.FC<{
                         : `更新字段失败:${e.message}`
                 ),
             onSuccess: () =>
-                message.success(fieldAction === 'create' ? '添加字段成功' : '更新字段失败'),
+                message.success(fieldAction === 'create' ? '添加字段成功' : '更新字段成功'),
         }
     )
 

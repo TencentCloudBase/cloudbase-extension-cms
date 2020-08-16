@@ -1,19 +1,19 @@
 import { Request } from 'express'
-import {
-    Injectable,
-    CanActivate,
-    HttpStatus,
-    HttpException,
-    ExecutionContext,
-} from '@nestjs/common'
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 import { CollectionV2, SystemUserRoles } from '@/constants'
-import { getCloudBaseApp, isDevEnv } from '@/utils'
+import { getCloudBaseApp } from '@/utils'
 
-// 校验用户是否登录，是否存在
+// 校验、并挂载用户角色信息
 @Injectable()
-export class GlobalAuthGuard implements CanActivate {
+export class GlobalRoleGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<AuthRequest & Request>()
+
+        // 跳过登录
+        if (request.path === '/api/auth/login') {
+            return true
+        }
+
         const { cmsUser } = request
 
         const user = request.cmsUser
@@ -25,6 +25,7 @@ export class GlobalAuthGuard implements CanActivate {
         // 系统管理员，全部可以访问
         const isAdmin = user.roles.find((roleId) => roleId === 'administrator')
         if (isAdmin) {
+            request.cmsUser.userRoles = []
             request.cmsUser.isAdmin = true
             request.cmsUser.projectResource = {
                 '*': '*',
@@ -32,20 +33,16 @@ export class GlobalAuthGuard implements CanActivate {
             return true
         }
 
-        // 需要管理员权限才能访问
-        // if (!isAdmin && needAdmin) {
-        //     return false
-        // }
-
         // 项目管理员可以访问项目内的资源
-        // const isProjectAdmin = user.roles.find((roleId) => roleId === 'project:administrator')
-        // if (isProjectAdmin && !needAdmin) {
-        //     request.cmsUser.isProjectAdmin = true
-        //     request.cmsUser.projectResource = {
-        //         '*': '*',
-        //     }
-        //     return true
-        // }
+        const isProjectAdmin = user.roles.find((roleId) => roleId === 'project:administrator')
+        if (isProjectAdmin) {
+            request.cmsUser.userRoles = []
+            request.cmsUser.isProjectAdmin = true
+            request.cmsUser.projectResource = {
+                '*': '*',
+            }
+            return true
+        }
 
         const app = getCloudBaseApp()
         const db = app.database()

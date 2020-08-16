@@ -2,9 +2,9 @@
 export default function access(initialState: { currentUser?: API.CurrentUser }) {
     const { currentUser } = initialState || {}
 
-    console.log(currentUser)
+    console.log('Access', currentUser)
 
-    const { username, isAdmin = false, isProjectAdmin = false, accessibleService } =
+    const { username, isAdmin = false, isProjectAdmin = false, accessibleService, _id } =
         currentUser || {}
 
     const canProjectAdmin = isAdmin || isProjectAdmin
@@ -28,6 +28,6 @@ export default function access(initialState: { currentUser?: API.CurrentUser }) 
         canContent,
         canSchema,
         canProjectAdmin,
-        isLogin: Boolean(username),
+        isLogin: Boolean(username || _id),
     }
 }

@@ -1,12 +1,12 @@
 import { Alert, message, Button, Spin } from 'antd'
 import React, { useState } from 'react'
 import { useModel, history } from 'umi'
-import { getPageQuery } from '@/utils/utils'
-import { LoginParamsType, accountLogin } from '@/services/login'
+import { customLogin, getPageQuery } from '@/utils'
 import Footer from '@/components/Footer'
+import { LoginParamsType, accountLogin } from '@/services/login'
+import logo from '@/assets/logo.svg'
 import LoginFrom from './components'
 import styles from './index.less'
-import { customLogin } from '@/utils'
 
 const { Tab, Username, Password } = LoginFrom
 
@@ -30,6 +30,9 @@ const replaceGoto = () => {
     const urlParams = new URL(window.location.href)
     const params = getPageQuery()
     let { redirect } = params as { redirect: string }
+
+    const historyType = window.TcbCmsConfig.history
+
     if (redirect) {
         const redirectUrlParams = new URL(redirect)
         if (redirectUrlParams.origin === urlParams.origin) {
@@ -38,12 +41,16 @@ const replaceGoto = () => {
                 redirect = redirect.substr(redirect.indexOf('#') + 1)
             }
         } else {
-            window.location.href = '/'
+            window.location.href = historyType === 'hash' ? location.pathname : '/'
             return
         }
     }
 
-    window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/home')
+    if (historyType === 'hash') {
+        window.location.href = location.pathname
+    } else {
+        window.location.href = urlParams.href.split(urlParams.pathname)[0] + (redirect || '/home')
+    }
 }
 
 const Login: React.FC<{}> = () => {
@@ -53,7 +60,7 @@ const Login: React.FC<{}> = () => {
     const [loginErrorMessage, setLoginErrorMessage] = useState<string>('')
 
     // 已登录
-    if (initialState?.currentUser?.username) {
+    if (initialState?.currentUser?._id) {
         history.push('/home')
         return <Spin />
     }
@@ -92,7 +99,7 @@ const Login: React.FC<{}> = () => {
                     <div className={styles.top}>
                         <div className={styles.header}>
                             <a href="https://cloudbase.net" target="_blank">
-                                <img alt="logo" className={styles.logo} src="/icon.svg" />
+                                <img alt="logo" className={styles.logo} src={logo} />
                                 <span className={styles.title}>CloudBase CMS</span>
                             </a>
                         </div>

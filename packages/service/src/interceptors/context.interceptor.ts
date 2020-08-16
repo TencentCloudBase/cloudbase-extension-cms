@@ -7,9 +7,12 @@ export class ContextInterceptor implements NestInterceptor {
         // 超时处理
         const request: AuthRequest = context.switchToHttp().getRequest()
 
-        console.log('interceptor', request.cmsUser)
+        const { userRoles } = request.cmsUser || {}
 
-        const { userRoles } = request.cmsUser
+        // 无角色信息，跳过，防止覆盖默认的 projectResource
+        if (!userRoles?.length) {
+            return next.handle()
+        }
 
         // 挂载用户可访问资源信息
         request.cmsUser.accessibleService = userRoles
@@ -38,7 +41,7 @@ export class ContextInterceptor implements NestInterceptor {
          *       projectId: [resourceId]
          *    }
          */
-        const roleResource = userRoles
+        const projectResource = userRoles
             .map((role) => role.permissions)
             .filter((permissions) =>
                 permissions?.filter((_) => _.service === '*' || request.handleService === _.service)
@@ -56,7 +59,7 @@ export class ContextInterceptor implements NestInterceptor {
             }, {})
 
         // 权限
-        request.cmsUser.projectResource = roleResource
+        request.cmsUser.projectResource = projectResource
 
         return next.handle()
     }

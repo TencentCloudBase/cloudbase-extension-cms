@@ -6,11 +6,14 @@ import { ValidationPipe } from '@nestjs/common'
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express'
 
 import { AppModule } from './app.module'
+import { GlobalRoleGuard } from './guards/role.guard'
 import { GlobalAuthGuard } from './guards/auth.guard'
-import { AllExceptionsFilter } from './global.exception'
-import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
+
 import { TimeCost } from './interceptors/timecost.interceptor'
+import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { ContextInterceptor } from './interceptors/context.interceptor'
+
+import { AllExceptionsFilter } from './global.exception'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -29,6 +32,7 @@ export async function bootstrap() {
 
     // 登录校验
     app.useGlobalGuards(new GlobalAuthGuard())
+    app.useGlobalGuards(new GlobalRoleGuard())
 
     // 请求 body 大小限制
     app.use(bodyParser.raw({ limit: '50mb' }))
