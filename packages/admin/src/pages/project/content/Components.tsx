@@ -18,13 +18,13 @@ import {
     Progress,
 } from 'antd'
 import moment from 'moment'
+import { useParams } from 'umi'
 import { Rule } from 'antd/es/form'
 import { getSchema } from '@/services/schema'
 import { getContents } from '@/services/content'
-import { getTempFileURL, uploadFile } from '@/utils'
+import { getTempFileURL, uploadFile, downloadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import RichTextEditor from './RichText'
-import { useParams } from 'umi'
 
 const MarkdownEditor = React.lazy(() => import('./Markdown'))
 
@@ -61,12 +61,27 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
                 setLoading(false)
                 setImgUrl(url)
             })
-            .catch(() => {
+            .catch((e) => {
+                console.log(e)
                 setLoading(false)
             })
     }, [])
 
-    return loading ? <Spin /> : <img style={{ height: '120px' }} src={imgUrl} />
+    return loading ? (
+        <Spin />
+    ) : (
+        <Space direction="vertical">
+            <img style={{ height: '120px' }} src={imgUrl} />
+            <Button
+                size="small"
+                onClick={() => {
+                    downloadFile(src)
+                }}
+            >
+                下载图片
+            </Button>
+        </Space>
+    )
 }
 
 // custom file/image uploader
@@ -347,7 +362,7 @@ function getValidateRule(type: string) {
             break
         case 'Tel':
             rule = {
-                type: 'number',
+                pattern: /^\d+$/,
                 message: '请输入正确的电话号码',
             }
             break

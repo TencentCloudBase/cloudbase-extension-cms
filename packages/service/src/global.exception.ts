@@ -10,7 +10,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const request = ctx.getRequest<Request>()
 
         // print exception
-        console.log(exception)
+        console.log('服务异常', exception, exception?.toString())
 
         try {
             if (exception instanceof HttpException) {
@@ -31,7 +31,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
                 response.status(status).json(resData)
             } else {
-                response.status(500).json(exception)
+                response.status(200).json({
+                    code: 'SYS_ERR',
+                    path: request.url,
+                    message: exception?.toString(),
+                })
             }
         } catch (e) {
             console.log(e)

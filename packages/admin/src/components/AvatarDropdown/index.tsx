@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Menu, Spin } from 'antd'
-import { history, useModel } from 'umi'
-import { getPageQuery } from '@/utils/utils'
-import { outLogin } from '@/services/login'
+import { Avatar, Menu, Spin, message } from 'antd'
+import { history, useModel, useAccess } from 'umi'
+import { getCloudBaseApp, getPageQuery } from '@/utils'
 
 import { stringify } from 'querystring'
 import HeaderDropdown from '../HeaderDropdown'
@@ -17,7 +16,15 @@ export interface GlobalHeaderRightProps {
  * 退出登录，并且将当前的 url 保存
  */
 const loginOut = async () => {
-    await outLogin()
+    const app: any = await getCloudBaseApp()
+
+    console.log(app)
+
+    // 退出登录
+    await app.auth({ persistence: 'local' }).signOut()
+
+    message.success('退出登录成功！')
+
     const { redirect } = getPageQuery()
     // Note: There may be security issues, please note
     if (window.location.pathname !== '/login' && !redirect) {
@@ -32,6 +39,7 @@ const loginOut = async () => {
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     const { initialState, setInitialState } = useModel('@@initialState')
+    const { isAdmin } = useAccess()
 
     const onMenuClick = useCallback((event: any) => {
         const { key } = event
@@ -63,13 +71,13 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
 
     const { currentUser } = initialState
 
-    if (!currentUser || !currentUser.username) {
+    if (!currentUser?.username && !currentUser?._id) {
         return loading
     }
 
     const menuHeaderDropdown = (
         <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-            {currentUser.username === 'admin' && (
+            {isAdmin && (
                 <Menu.Item key="settings">
                     <SettingOutlined />
                     系统设置
@@ -91,12 +99,12 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     return (
         <HeaderDropdown overlay={menuHeaderDropdown}>
             <span className={`${styles.action} ${styles.account}`}>
-                {currentUser.avatar ? (
+                {currentUser?.avatar ? (
                     <Avatar
                         alt="avatar"
                         size="large"
                         className={styles.avatar}
-                        src={currentUser.avatar}
+                        src={currentUser?.avatar}
                     />
                 ) : (
                     <Avatar

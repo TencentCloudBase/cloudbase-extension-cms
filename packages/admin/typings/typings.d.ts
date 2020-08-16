@@ -28,10 +28,11 @@ interface Window {
         fieldsObject: GAFieldsObject | string
     ) => void
     reloadAuthorized: () => void
-    tcb: any
+    cloudbase: any
     TcbCmsConfig: {
+        history: 'hash' | 'browser'
         envId: string
-        cloudAccessDomain: string
+        cloudAccessPath: string
     }
     tinymce: any
 }

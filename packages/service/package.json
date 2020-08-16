@@ -12,6 +12,7 @@
         "debug": "nest start --debug --watch"
     },
     "dependencies": {
+        "@ant-design/pro-table": "^2.5.10",
         "@cloudbase/manager-node": "^3.4.1",
         "@cloudbase/node-sdk": "^2.2.3",
         "@nestjs/common": "^7.3.2",

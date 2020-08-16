@@ -1,21 +1,21 @@
 import { tcbRequest } from '@/utils'
 
 export const getUserRoles = async () => {
-    return tcbRequest('/api/role', {
+    return tcbRequest('/role', {
         method: 'GET',
         params: {},
     })
 }
 
 export const createUserRole = async (role: any) => {
-    return tcbRequest('/api/role', {
+    return tcbRequest('/role', {
         method: 'POST',
         data: role,
     })
 }
 
 // export const updateCamPolicy = async (options?: Partial<Options>) => {
-//     return tcbRequest('/api/cam', {
+//     return tcbRequest('/cam', {
 //         method: 'POST',
 //         data: {
 //             action: 'updateOne',
@@ -25,7 +25,7 @@ export const createUserRole = async (role: any) => {
 // }
 
 export const deleteUserRole = async (id: string) => {
-    return tcbRequest(`/api/role/${id}`, {
+    return tcbRequest(`/role/${id}`, {
         method: 'DELETE',
     })
 }

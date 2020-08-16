@@ -12,13 +12,15 @@ import {
     Button,
     message,
     Skeleton,
+    Tooltip,
     Typography,
 } from 'antd'
+import { useConcent } from 'concent'
 import { history, useRequest, useAccess } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
+import logo from '@/assets/logo.svg'
 import styles from './index.less'
-import { useConcent } from 'concent'
 
 const { Header, Content } = Layout
 
@@ -38,7 +40,7 @@ export default (): React.ReactNode => {
     return (
         <Layout className={styles.home}>
             <Header className={styles.header}>
-                <img className={styles.logo} src="/icon.svg" alt="logo" />
+                <img className={styles.logo} src={logo} alt="logo" />
                 <span className={styles.title}>CloudBase CMS</span>
                 <div className={styles.account}>
                     <AvatarDropdown />
@@ -80,12 +82,23 @@ export default (): React.ReactNode => {
                                             <div className={styles['project-logo']}>
                                                 {project.name.slice(0, 2)}
                                             </div>
-                                            <Typography.Title
-                                                level={4}
-                                                className={styles['project-title']}
-                                            >
-                                                {project.name}
-                                            </Typography.Title>
+                                            <Tooltip title={project.name}>
+                                                <Typography.Title
+                                                    ellipsis
+                                                    level={4}
+                                                    className={styles['project-title']}
+                                                >
+                                                    {project.name}
+                                                </Typography.Title>
+                                            </Tooltip>
+                                            <Tooltip title={project.description}>
+                                                <Typography.Paragraph
+                                                    ellipsis
+                                                    className={styles['project-desc']}
+                                                >
+                                                    {project.description}
+                                                </Typography.Paragraph>
+                                            </Tooltip>
                                         </div>
                                     </Card>
                                 </Col>

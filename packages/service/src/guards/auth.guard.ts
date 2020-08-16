@@ -6,7 +6,7 @@ import {
     HttpException,
     ExecutionContext,
 } from '@nestjs/common'
-import { CollectionV2, SystemUserRoles } from '@/constants'
+import { CollectionV2 } from '@/constants'
 import { getCloudBaseApp, isDevEnv } from '@/utils'
 
 // 校验用户是否登录，是否存在
@@ -14,22 +14,23 @@ import { getCloudBaseApp, isDevEnv } from '@/utils'
 export class GlobalAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<AuthRequest & Request>()
+        console.time('Entry')
 
         if (isDevEnv()) {
-            request.cmsUser = {
-                roles: ['administrator'],
-                username: 'admin',
-                createTime: 2020,
-                password: 'cloudbase',
-                isAdmin: true,
-            }
-
             // request.cmsUser = {
-            //     roles: ['content:administrator'],
+            //     roles: ['administrator'],
             //     username: 'admin',
             //     createTime: 2020,
             //     password: 'cloudbase',
+            //     isAdmin: true,
             // }
+
+            request.cmsUser = {
+                roles: ['content:administrator'],
+                username: 'admin',
+                createTime: 2020,
+                password: 'cloudbase',
+            }
 
             return true
         }
@@ -44,6 +45,8 @@ export class GlobalAuthGuard implements CanActivate {
         const app = getCloudBaseApp()
         const userInfo = app.auth().getUserInfo()
         const customUserId = userInfo?.customUserId
+
+        console.log('当前登录用户', userInfo)
 
         if (!customUserId) {
             throw new HttpException(

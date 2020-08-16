@@ -7,8 +7,12 @@ import UserManagement from './UserManagement'
 import RoleManagement from './RoleManagement'
 import './index.less'
 
+const Tabs = ['user', 'role']
+
 export default (): React.ReactNode => {
-    const [selectedMenu, selectMenu] = useState<string>('user')
+    const { tab } = history.location.query || {}
+    const targetTab = Tabs.includes(tab) ? tab : 'user'
+    const [selectedMenu, selectMenu] = useState<string>(targetTab)
 
     return (
         <Row className="system-settings">

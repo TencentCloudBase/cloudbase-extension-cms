@@ -10,8 +10,6 @@ const PageAccess: React.FC<{
 
     const accessible = Boolean(access[route.access])
 
-    console.log(access)
-
     return (
         <Access
             accessible={accessible}

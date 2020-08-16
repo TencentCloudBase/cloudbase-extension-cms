@@ -16,6 +16,7 @@ export default (): React.ReactNode => {
     const { run, loading } = useRequest(
         async (role: any) => {
             await createUserRole(role)
+            history.push('/settings?tab=role')
         },
         {
             manual: true,
