@@ -23,7 +23,7 @@ export interface Options {
 }
 
 export const getWebhooks = async (options?: Partial<Options>) => {
-    return tcbRequest('/api/webhook', {
+    return tcbRequest('/webhook', {
         method: 'POST',
         data: {
             options,
@@ -33,7 +33,7 @@ export const getWebhooks = async (options?: Partial<Options>) => {
 }
 
 export const createWebhook = async (options?: Partial<Options>) => {
-    return tcbRequest('/api/webhook', {
+    return tcbRequest('/webhook', {
         method: 'POST',
         data: {
             options,
@@ -43,7 +43,7 @@ export const createWebhook = async (options?: Partial<Options>) => {
 }
 
 export const updateWebhook = async (options?: Partial<Options>) => {
-    return tcbRequest('/api/webhook', {
+    return tcbRequest('/webhook', {
         method: 'POST',
         data: {
             options,
@@ -53,7 +53,7 @@ export const updateWebhook = async (options?: Partial<Options>) => {
 }
 
 export const deleteWebhook = async (options?: Partial<Options>) => {
-    return tcbRequest('/api/webhook', {
+    return tcbRequest('/webhook', {
         method: 'POST',
         data: {
             options,

@@ -35,13 +35,17 @@ export class ContentService {
             where._id = db.command.in(filter.ids)
         }
 
+        console.log(fuzzyFilter)
+
         if (fuzzyFilter) {
-            Object.keys(fuzzyFilter).forEach((key) => {
-                where[key] = db.RegExp({
-                    options: 'ig',
-                    regexp: fuzzyFilter[key],
+            Object.keys(fuzzyFilter)
+                .filter((key) => fuzzyFilter[key])
+                .forEach((key) => {
+                    where[key] = db.RegExp({
+                        options: 'ig',
+                        regexp: String(fuzzyFilter[key]),
+                    })
                 })
-            })
         }
 
         let query = collection.where(where)
@@ -51,10 +55,13 @@ export class ContentService {
         query = query.skip(Number(page - 1) * Number(pageSize)).limit(pageSize)
 
         if (sort) {
-            Object.keys(sort).forEach((key: string) => {
-                const direction = sort[key] === 'ascend' ? 'asc' : 'desc'
-                query.orderBy(key, direction)
-            })
+            console.log(sort)
+            Object.keys(sort)
+                .filter((key) => sort[key])
+                .forEach((key: string) => {
+                    const direction = sort[key] === 'ascend' ? 'asc' : 'desc'
+                    query = query.orderBy(key, direction)
+                })
         }
 
         const res = await query.get()

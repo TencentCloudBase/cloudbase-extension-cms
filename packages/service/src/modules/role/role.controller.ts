@@ -89,7 +89,7 @@ export class RoleController {
     }
 
     @Delete(':id')
-    async deleteUserRole(@Param() id: string) {
+    async deleteUserRole(@Param('id') id: string) {
         return this.cloudbaseService.collection(CollectionV2.CustomUserRoles).doc(id).remove()
     }
 }

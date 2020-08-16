@@ -1,6 +1,6 @@
 import React from 'react'
 import { run } from 'concent'
-import { notification } from 'antd'
+import { notification, message } from 'antd'
 import { ResponseError } from 'umi-request'
 import { history, RequestConfig, Link } from 'umi'
 import { setTwoToneColor } from '@ant-design/icons'
@@ -10,8 +10,7 @@ import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-la
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
 import * as models from './models'
-import { getCloudBaseApp } from './utils'
-import { isDevEnv } from './utils/utils'
+import { getCloudBaseApp, isDevEnv } from './utils'
 
 run(models)
 setTwoToneColor('#0052d9')
@@ -21,33 +20,38 @@ export async function getInitialState(): Promise<{
     settings?: LayoutSettings
     menu?: any[]
 }> {
-    const app = await getCloudBaseApp()
+    let app
+    let loginState
+
+    try {
+        app = await getCloudBaseApp()
+        // 获取登录态
+        loginState = await app
+            .auth({
+                persistence: 'local',
+            })
+            .getLoginState()
+    } catch (error) {
+        console.log(error)
+        message.error(`CloudBase JS SDK 初始化失败，${error.message}`)
+    }
+
+    // 没有登录，重新登录
+    if (!isDevEnv() && !loginState) {
+        history.push('/login')
+        return {}
+    }
 
     // 如果是登录页面，不执行
     if (history.location.pathname !== '/login') {
         try {
-            if (!isDevEnv()) {
-                // 获取登录态
-                const loginState = await app
-                    .auth({
-                        persistence: 'local',
-                    })
-                    .getLoginState()
-
-                if (!loginState) {
-                    history.push('/login')
-                    return {}
-                }
-            }
-
             const currentUser = await queryCurrent()
-
             return {
                 currentUser,
                 settings: defaultSettings,
             }
         } catch (error) {
-            history.push('/login')
+            return {}
         }
     } else {
         let currentUser = {} as any
@@ -60,10 +64,6 @@ export async function getInitialState(): Promise<{
             currentUser,
             settings: defaultSettings,
         }
-    }
-
-    return {
-        settings: defaultSettings,
     }
 }
 
@@ -79,8 +79,7 @@ export const layout = ({
         disableContentMargin: false,
         onPageChange: () => {
             // 如果没有登录，重定向到 login
-
-            if (!initialState?.currentUser?.username && history.location.pathname !== '/login') {
+            if (!initialState?.currentUser?._id && history.location.pathname !== '/login') {
                 history.push('/login')
             }
         },
@@ -160,6 +159,7 @@ const errorHandler = (error: ResponseError) => {
  * 全局 request 配置
  */
 export const request: RequestConfig = {
+    prefix: isDevEnv() ? '/api' : `https://${window.TcbCmsConfig.cloudAccessPath}/api`,
     errorHandler,
     errorConfig: {
         adaptor: (resData) => {

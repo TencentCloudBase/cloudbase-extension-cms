@@ -12,6 +12,8 @@ export class TimeoutInterceptor implements NestInterceptor {
     }
 
     intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+        console.log('请求时间：')
+        console.timeEnd('Entry')
         // 超时处理
         return next.handle().pipe(timeout(this.timeout))
     }

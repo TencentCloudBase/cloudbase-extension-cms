@@ -21,7 +21,7 @@ export class FileController {
     @Post()
     @HttpCode(200)
     @UseInterceptors(AnyFilesInterceptor())
-    async uploadFile(@UploadedFiles() _files: IFile[]) {
+    async createFile(@UploadedFiles() _files: IFile[]) {
         let files = _files
 
         // 上传文件

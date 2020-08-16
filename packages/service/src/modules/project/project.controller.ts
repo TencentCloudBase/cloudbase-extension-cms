@@ -55,8 +55,6 @@ export class ProjectController {
 
         const allProjects = Object.keys(req.cmsUser.projectResource)
 
-        console.log(allProjects)
-
         // 可获取的所有项目列表
         if (!allProjects.some((_) => _ === '*')) {
             const $ = this.cloudbaseService.db.command

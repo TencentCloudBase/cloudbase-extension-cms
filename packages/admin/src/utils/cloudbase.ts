@@ -1,22 +1,28 @@
-import { message } from 'antd'
+import { message, notification } from 'antd'
 import { request, history } from 'umi'
 import { RequestOptionsInit } from 'umi-request'
-import { isDevEnv } from './utils'
+import { isDevEnv } from './tool'
+import { codeMessage } from '@/constants'
 
 let app: any
+let auth: any
 
 export async function getCloudBaseApp() {
     if (!app) {
         const { envId } = window.TcbCmsConfig || {}
-        app = window.tcb.init({
+        app = window.cloudbase.init({
             env: envId,
         })
     }
 
-    const loginState = await app.auth({ persistence: 'local' }).getLoginState()
+    if (!auth) {
+        auth = app.auth({ persistence: 'local' })
+    }
+
+    const loginState = await auth.getLoginState()
 
     if (!loginState && !isDevEnv()) {
-        message.error('登录态失效，请重新登录！')
+        message.error('您还没有登录或登录已过期，请重新登录！')
         history.push('/login')
     }
 
@@ -28,6 +34,10 @@ export async function tcbRequest<T = any>(
     url: string,
     options: RequestOptionsInit & { skipErrorHandler?: boolean } = {}
 ) {
+    if (url === '/auth/login' && !isDevEnv()) {
+        return request<T>(url, options)
+    }
+
     if (isDevEnv()) {
         return request<T>(url, options)
     }
@@ -38,12 +48,20 @@ export async function tcbRequest<T = any>(
     const res = await app.callFunction({
         name: 'service',
         data: {
-            path: url,
+            path: `/api${url}`,
             httpMethod: method,
             queryStringParameters: params,
             body: data,
         },
     })
+
+    if (res.result?.statusCode === 500) {
+        notification.error({
+            message: '请求错误',
+            description: `服务异常 ${status}: ${url}`,
+        })
+        throw new Error('服务异常')
+    }
 
     // 转化响应值
     let body
@@ -54,7 +72,14 @@ export async function tcbRequest<T = any>(
         body = {}
     }
 
-    console.log(body)
+    if (body?.code) {
+        const errorText = codeMessage[res.result?.status || 500]
+        notification.error({
+            message: errorText,
+            description: `请求错误 ${status}: ${url}`,
+        })
+        throw new Error('服务异常')
+    }
 
     return body
 }
@@ -80,7 +105,7 @@ export async function uploadFile(file: File, onProgress: (v: number) => void): P
     const app = await getCloudBaseApp()
 
     const result = await app.uploadFile({
-        cloudPath: `upload/${Date.now()}.${file.name.split('.').slice(-1)[0]}`,
+        cloudPath: `upload/${Date.now()}-${file.name}`,
         filePath: file,
         onUploadProgress: (progressEvent: ProgressEvent) => {
             const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
@@ -97,4 +122,17 @@ export async function getTempFileURL(cloudId: string): Promise<string> {
         fileList: [cloudId],
     })
     return result.fileList[0].tempFileURL
+}
+
+// 下载文件
+export async function downloadFile(cloudId: string) {
+    const app = await getCloudBaseApp()
+
+    console.log(cloudId)
+
+    const result = await app.downloadFile({
+        fileID: cloudId,
+    })
+
+    console.log(result)
 }

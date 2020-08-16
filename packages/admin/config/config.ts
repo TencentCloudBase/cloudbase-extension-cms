@@ -5,6 +5,15 @@ import proxy from './proxy'
 const { REACT_APP_ENV } = process.env
 
 export default defineConfig({
+    // base: '/tcb-cms/',
+    // 静态资源路径
+    publicPath: './',
+    history: {
+        type: 'hash',
+    },
+    // manifest: {
+    //     basePath: '/tcb-cms',
+    // },
     hash: true,
     antd: {},
     alias: {
@@ -115,7 +124,7 @@ export default defineConfig({
     title: false,
     ignoreMomentLocale: true,
     proxy: proxy[REACT_APP_ENV || 'dev'],
-    manifest: {
-        basePath: '/',
-    },
+    // manifest: {
+    //     basePath: '/',
+    // },
 })
