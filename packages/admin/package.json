@@ -38,7 +38,7 @@
         "@umijs/hooks": "^1.9.3",
         "antd": "^4.5.4",
         "classnames": "^2.2.6",
-        "concent": "^2.8.18",
+        "concent": "2.7.27",
         "css.gg": "^2.0.0",
         "lodash": "^4.17.19",
         "moment": "^2.27.0",

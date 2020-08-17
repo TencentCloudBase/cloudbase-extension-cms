@@ -5240,10 +5240,10 @@ concent-plugin-redux-devtool@^2.0.2:
   dependencies:
     redux "^4.0.4"
 
-concent@^2.8.18:
-  version "2.8.18"
-  resolved "https://registry.yarnpkg.com/concent/-/concent-2.8.18.tgz#4e0df3f5902a354556b944cd94b79ba7c4994ce0"
-  integrity sha512-LFgu74S2Km28uvOj4lDDCom0MhM/c67vapjMFWp+SYHQ5sMG0N3YnQnpDnqURxDrWWTSz7OGBcaPxxASMLV+ww==
+concent@2.7.27:
+  version "2.7.27"
+  resolved "https://registry.yarnpkg.com/concent/-/concent-2.7.27.tgz#a2376def1903d386ab541afc438d9c2355163b32"
+  integrity sha512-zPE4YdO7DxbH170AY82Z4R35OIESymq3OrESlqI3CAxduGlzBE1/X68ZMH0f4zajKVc6bmL9Wk2zFMvwRh/EmA==
 
 confusing-browser-globals@^1.0.5, confusing-browser-globals@^1.0.9:
   version "1.0.9"

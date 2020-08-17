@@ -3,6 +3,7 @@ import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Switch, Space, Button, Select, InputNumber } from 'antd'
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 
 const { TextArea } = Input
 const { Option } = Select
@@ -48,6 +49,7 @@ export const CreateFieldModal: React.FC<{
             if (fieldAction === 'create') {
                 fields.push({
                     ...field,
+                    order: fields.length,
                     type: selectedField.type,
                 })
             }
@@ -96,6 +98,7 @@ export const CreateFieldModal: React.FC<{
         <Modal
             centered
             destroyOnClose
+            width={600}
             footer={null}
             visible={visible}
             title={modalTitle}
@@ -206,6 +209,7 @@ export const CreateFieldModal: React.FC<{
                         </Space>
                     </Form.Item>
                 )}
+
                 {selectedField.type === 'Number' && (
                     <Form.Item style={{ marginBottom: 0 }}>
                         <Space size="large">
@@ -222,6 +226,67 @@ export const CreateFieldModal: React.FC<{
                                 />
                             </Form.Item>
                         </Space>
+                    </Form.Item>
+                )}
+
+                {selectedField.type === 'Enum' && (
+                    <Form.Item label="枚举类型">
+                        <Form.List name="enumElements">
+                            {(fields, { add, remove }) => {
+                                return (
+                                    <div>
+                                        {fields?.map((field, index) => {
+                                            console.log(field)
+                                            return (
+                                                <Form.Item key={index}>
+                                                    <Form.Item
+                                                        noStyle
+                                                        name={[field.name, 'label']}
+                                                        validateTrigger={['onChange', 'onBlur']}
+                                                    >
+                                                        <Input
+                                                            placeholder="枚举元素展示别名，如 “已发布”"
+                                                            style={{ width: '40%' }}
+                                                        />
+                                                    </Form.Item>
+                                                    <Form.Item
+                                                        noStyle
+                                                        name={[field.name, 'value']}
+                                                        validateTrigger={['onChange', 'onBlur']}
+                                                    >
+                                                        <Input
+                                                            placeholder="枚举元素值，如 published"
+                                                            style={{
+                                                                marginLeft: '5%',
+                                                                width: '40%',
+                                                            }}
+                                                        />
+                                                    </Form.Item>
+                                                    <MinusCircleOutlined
+                                                        className="dynamic-delete-button"
+                                                        style={{ margin: '0 8px' }}
+                                                        onClick={() => {
+                                                            remove(field.name)
+                                                        }}
+                                                    />
+                                                </Form.Item>
+                                            )
+                                        })}
+                                        <Form.Item>
+                                            <Button
+                                                type="dashed"
+                                                onClick={() => {
+                                                    add()
+                                                }}
+                                                style={{ width: '60%' }}
+                                            >
+                                                <PlusOutlined /> 添加枚举元素
+                                            </Button>
+                                        </Form.Item>
+                                    </div>
+                                )
+                            }}
+                        </Form.List>
                     </Form.Item>
                 )}
 

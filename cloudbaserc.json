@@ -16,7 +16,7 @@
                     "functionRootPath": "./packages",
                     "functions": [
                         {
-                            "name": "tcb-cms-init",
+                            "name": "cms-init",
                             "config": {
                                 "timeout": 60,
                                 "envVariables": {
@@ -36,7 +36,7 @@
             "service": {
                 "use": "@cloudbase/framework-plugin-node",
                 "inputs": {
-                    "name": "service",
+                    "name": "tcb-ext-cms-service",
                     "entry": "app.js",
                     "projectPath": "./packages/service",
                     "path": "/tcb-ext-cms-service",

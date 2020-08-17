@@ -63,6 +63,7 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
             })
             .catch((e) => {
                 console.log(e)
+                message.error(`获取图片链接失败 ${e.message}`)
                 setLoading(false)
             })
     }, [])
@@ -164,14 +165,70 @@ const CustomDatePicker: React.FC<{
     )
 }
 
+const ConnectV1Render: React.FC<{
+    value?: string
+    field: SchemaFieldV2
+}> = (props) => {
+    const { projectId } = useParams()
+    const { value, field } = props
+    const { connectField, connectResource, connectMany } = field
+    const [records, setRecords] = useState<Record<string, any>>([])
+    const [loading, setLoading] = useState(true)
+
+    if (!value) return '-'
+
+    useEffect(() => {
+        const loadData = async () => {
+            let ids = []
+            if (typeof value === 'string') {
+                ids.push(value)
+            }
+
+            if (Array.isArray(value)) {
+                ids = value
+            }
+
+            const { data: schema } = await getSchema(projectId, connectResource)
+            const { data } = await getContents(projectId, schema.collectionName, {
+                filter: {
+                    ids: ids,
+                },
+            })
+            setRecords(data)
+        }
+
+        loadData()
+            .catch((e) => {
+                message.error(e.message || '获取数据错误')
+            })
+            .finally(() => {
+                setLoading(false)
+            })
+    }, [])
+
+    if (loading) {
+        return <Spin>加载中</Spin>
+    }
+
+    if (records?.length === 1 && !connectMany) {
+        return <Typography.Paragraph>{records?.[0][connectField]}</Typography.Paragraph>
+    }
+
+    return records.map((record: any, index: number) => (
+        <Tag key={index}>{record[connectField]}</Tag>
+    ))
+}
+
+// 外联，字段的值
 const Connector: React.FC<{
+    disabled?: boolean
     value?: string
     field: SchemaFieldV2
     onChange?: (v: string) => void
 }> = (props) => {
     const { projectId } = useParams()
-    const { value, onChange, field } = props
-    const { connectField, connectResource } = field
+    const { value, onChange, field, disabled } = props
+    const { connectField, connectResource, connectMany } = field
     const [records, setRecords] = useState<Record<string, any>>([])
 
     useEffect(() => {
@@ -190,10 +247,17 @@ const Connector: React.FC<{
     }, [])
 
     return (
-        <Select style={{ width: 200 }} placeholder="关联字段" value={value} onChange={onChange}>
+        <Select
+            disabled={disabled}
+            mode={connectMany ? 'multiple' : undefined}
+            style={{ width: 200 }}
+            placeholder="关联字段"
+            value={value}
+            onChange={onChange}
+        >
             {records?.length ? (
                 records?.map((record: Record<string, any>) => (
-                    <Option value={record[connectField]} key={record._id}>
+                    <Option value={record._id} key={record._id}>
                         {record[connectField]}
                     </Option>
                 ))
@@ -207,7 +271,7 @@ const Connector: React.FC<{
 /**
  * 根据类型获取展示字段组件
  */
-export function getFieldRender(field: { name: string; type: string }) {
+export function getFieldRender(field: SchemaFieldV2) {
     const { name, type } = field
 
     switch (type) {
@@ -252,7 +316,11 @@ export function getFieldRender(field: { name: string; type: string }) {
                 record: any,
                 index: number,
                 action: any
-            ): React.ReactNode | React.ReactNode[] => <Typography.Link>{text}</Typography.Link>
+            ): React.ReactNode | React.ReactNode[] => (
+                <Typography.Link href={record[name]} target="_blank">
+                    {text}
+                </Typography.Link>
+            )
         case 'Email':
             return (
                 text: React.ReactNode,
@@ -331,6 +399,15 @@ export function getFieldRender(field: { name: string; type: string }) {
                 </Typography.Text>
             )
 
+        case 'Connect':
+            return (
+                text: React.ReactNode,
+                record: any,
+                index: number,
+                action: any
+            ): React.ReactNode | React.ReactNode[] => (
+                <ConnectV1Render value={record[name]} field={field} />
+            )
         default:
             return (
                 text: React.ReactNode,
@@ -412,7 +489,7 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
  */
 export function getFieldFormItem(field: SchemaFieldV2, key: number) {
     const rules = getRules(field)
-    const { name, type, min, max, description, displayName } = field
+    const { name, type, min, max, description, displayName, enumElements } = field
 
     let FormItem
 
@@ -553,6 +630,30 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     valuePropName="fileList"
                 >
                     <CustomUploader type="file" />
+                </Form.Item>
+            )
+            break
+        case 'Enum':
+            FormItem = (
+                <Form.Item
+                    key={key}
+                    name={name}
+                    rules={rules}
+                    label={displayName}
+                    extra={description}
+                    valuePropName="fileList"
+                >
+                    <Select>
+                        {enumElements?.length ? (
+                            enumElements?.map((ele, index) => (
+                                <Option value={ele.value} key={index}>
+                                    {ele.label}
+                                </Option>
+                            ))
+                        ) : (
+                            <Option value="">空</Option>
+                        )}
+                    </Select>
                 </Form.Item>
             )
             break

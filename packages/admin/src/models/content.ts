@@ -3,7 +3,6 @@ import { getContentSchemas } from '@/services/content'
 
 export default {
     state: {
-        projectId: '',
         contents: [],
         loading: false,
         currentSchema: null,
@@ -23,7 +22,6 @@ export default {
             if (currentSchema) {
                 const schema = data.find((_: any) => _._id === currentSchema._id) || {}
                 return {
-                    projectId,
                     schemas: data,
                     currentSchema: schema,
                     loading: false,
@@ -31,7 +29,7 @@ export default {
             }
 
             return {
-                projectId,
+                currentSchema: data?.length ? data[0] : null,
                 schemas: data,
                 loading: false,
             }

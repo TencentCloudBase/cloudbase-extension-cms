@@ -60,7 +60,7 @@ export async function tcbRequest<T = any>(
             message: '请求错误',
             description: `服务异常：${status}: ${url}`,
         })
-        throw new Error('服务异常')
+        // throw new Error('服务异常')
     }
 
     // 转化响应值

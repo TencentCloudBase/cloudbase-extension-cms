@@ -55,8 +55,6 @@ export const ContentDrawer: React.FC<{
         }
     )
 
-    console.log(initialValues)
-
     return (
         <Drawer
             destroyOnClose
