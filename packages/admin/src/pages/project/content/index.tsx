@@ -7,7 +7,7 @@ import { PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
 import { getContents, deleteContent } from '@/services/content'
 import { Menu, Button, Spin, Empty, Row, Col, Modal, message } from 'antd'
-import { createColumns } from './columns'
+import { getTableColumns } from './columns'
 import { ContentDrawer } from './ContentDrawer'
 import './index.less'
 
@@ -32,7 +32,7 @@ export default (): React.ReactNode => {
     const {
         state: { currentSchema, schemas, loading },
     }: { state: SchemaState } = ctx
-    const columns = createColumns(currentSchema?.fields)
+    const columns = getTableColumns(currentSchema?.fields)
     const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
 
     return (
@@ -155,23 +155,31 @@ export default (): React.ReactNode => {
                                         }),
                                         {}
                                     )
+                                try {
+                                    const { data = [], total } = await getContents(
+                                        projectId,
+                                        resource,
+                                        {
+                                            sort,
+                                            filter,
+                                            pageSize,
+                                            fuzzyFilter,
+                                            page: current,
+                                        }
+                                    )
 
-                                const { data = [], total } = await getContents(
-                                    projectId,
-                                    resource,
-                                    {
-                                        sort,
-                                        filter,
-                                        pageSize,
-                                        fuzzyFilter,
-                                        page: current,
+                                    return {
+                                        data,
+                                        total,
+                                        success: true,
                                     }
-                                )
-
-                                return {
-                                    data,
-                                    total,
-                                    success: true,
+                                } catch (error) {
+                                    console.log(error)
+                                    return {
+                                        data: [],
+                                        total: 0,
+                                        success: true,
+                                    }
                                 }
                             }}
                             pagination={{

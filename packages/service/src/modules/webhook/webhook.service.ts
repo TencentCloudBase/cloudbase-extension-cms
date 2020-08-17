@@ -28,7 +28,6 @@ export class WebhookService {
 
     // 处理 webhook
     async callWebhook(options: WebhookCallOptions) {
-        console.log(options)
         const { projectId, resource, action, res } = options
 
         const $ = this.cloudbaseService.db.command

@@ -10,10 +10,11 @@ import { codeMessage } from '@/constants'
 import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
-import * as models from './models'
 import { getCloudBaseApp, isDevEnv } from './utils'
+import * as models from './models'
 
 run(models)
+
 setTwoToneColor('#0052d9')
 
 export async function getInitialState(): Promise<{

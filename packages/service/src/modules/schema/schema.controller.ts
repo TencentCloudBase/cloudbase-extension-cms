@@ -10,8 +10,8 @@ import {
     UseGuards,
     Controller,
     UseInterceptors,
-    ClassSerializerInterceptor,
     UnauthorizedException,
+    ClassSerializerInterceptor,
 } from '@nestjs/common'
 import { IsNotEmpty } from 'class-validator'
 import { CollectionV2 } from '@/constants'

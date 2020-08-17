@@ -51,6 +51,9 @@ export class SchemaFieldV2 {
     @IsNotEmpty()
     name: string
 
+    // 字段顺序
+    order: number
+
     // 字段描述
     description: string
 
@@ -87,11 +90,14 @@ export class SchemaFieldV2 {
     // 样式属性
     style: {}
 
-    // 联合类型记录值
-    union: {}
+    // 连接字段
+    connectField: string
+
+    // 连接资源 Id
+    connectResource: string
 
     // 枚举类型
-    enum: {}
+    enumElements: {}
 }
 
 // schema v1

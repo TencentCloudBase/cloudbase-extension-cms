@@ -22,7 +22,7 @@ import { getProjects, createProject } from '@/services/project'
 import logo from '@/assets/logo.svg'
 import styles from './index.less'
 
-const { Header, Content } = Layout
+const { Header, Content, Footer } = Layout
 
 export default (): React.ReactNode => {
     const ctx = useConcent('$$global')
@@ -115,6 +115,7 @@ export default (): React.ReactNode => {
                     />
                 </Row>
             </Content>
+            <Footer className={styles.footer}>CloudBase CMS 2.0.0</Footer>
         </Layout>
     )
 }

@@ -1,13 +1,14 @@
 /* eslint-disable */
 const CloudBase = require('@cloudbase/manager-node')
-const tcb = require('@cloudbase/node-sdk')
+const cloudbase = require('@cloudbase/node-sdk')
 
 const userJobs = require('./scripts/users')
 const deployJobs = require('./scripts/deploy')
+const migrateJobs = require('./scripts/migrate')
 
 module.exports.main = async (event, context) => {
     const envId = context.namespace || process.env.SCF_NAMESPACE
-    const app = tcb.init({
+    const app = cloudbase.init({
         env: envId,
     })
 
@@ -26,17 +27,17 @@ module.exports.main = async (event, context) => {
 
     const jobs = {
         // 创建管理员和运营者
-        ...userJobs,
+        // ...userJobs,
         // 部署静态网站
-        ...deployJobs,
+        // ...deployJobs,
+        // V1 迁移
+        ...migrateJobs,
     }
 
     // 注入全局的上下文
     const ctx = {
         app,
-        db: tcb.database({
-            env: envId,
-        }),
+        db: app.database(),
         manager: new CloudBase({
             secretId: process.env.TENCENTCLOUD_SECRETID,
             secretKey: process.env.TENCENTCLOUD_SECRETKEY,

@@ -9,9 +9,9 @@ module.exports = {
         return saveUser({
             manager,
             createTime: Date.now(),
-            userName: operatorName,
+            username: operatorName,
             password: operatorPassword,
-            role: 'operator',
+            roles: ['content:administrator'],
             config,
             db,
         })
@@ -24,9 +24,9 @@ module.exports = {
         return saveUser({
             manager,
             createTime: Date.now(),
-            userName: administratorName,
+            username: administratorName,
             password: administratorPassword,
-            role: 'administrator',
+            roles: ['administrator'],
             config,
             db,
         })
@@ -34,28 +34,26 @@ module.exports = {
 }
 
 // 保存用户
-async function saveUser({ createTime, userName, password, role, db, config, manager }) {
+async function saveUser({ createTime, username, password, role, db, config, manager }) {
     const salt = createTime + config.envId
     const genPasswordResult = await genPassword(password, salt)
 
     const collection = db.collection(config.usersCollectionName)
 
-    const dbRecords = await collection.where({ userName }).get()
+    const dbRecords = await collection.where({ username }).get()
 
     const data = {
-        userName,
+        username,
         password: genPasswordResult,
         createTime,
         role,
     }
 
-    console.log(dbRecords)
-
     if (dbRecords.code === 'DATABASE_COLLECTION_NOT_EXIST') {
         await manager.database.createCollectionIfNotExists(config.usersCollectionName)
         return saveUser({
             createTime,
-            userName,
+            username,
             password,
             role,
             db,
@@ -66,7 +64,7 @@ async function saveUser({ createTime, userName, password, role, db, config, mana
 
     // 如果用户已经存在，则进行 update（有可能账号密码修改））
     if (dbRecords.data.length) {
-        return collection.where({ userName }).update(data)
+        return collection.where({ username }).update(data)
     }
 
     return collection.add(data)
