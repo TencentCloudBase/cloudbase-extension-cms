@@ -18,6 +18,7 @@ export class GlobalAuthGuard implements CanActivate {
 
         if (isDevEnv()) {
             // request.cmsUser = {
+            //     _id: 'test',
             //     roles: ['administrator'],
             //     username: 'admin',
             //     createTime: 2020,
@@ -26,6 +27,7 @@ export class GlobalAuthGuard implements CanActivate {
             // }
 
             request.cmsUser = {
+                _id: 'test',
                 roles: ['content:administrator'],
                 username: 'admin',
                 createTime: 2020,
