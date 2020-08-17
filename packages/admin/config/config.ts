@@ -11,9 +11,6 @@ export default defineConfig({
     history: {
         type: 'hash',
     },
-    // manifest: {
-    //     basePath: '/tcb-cms',
-    // },
     hash: true,
     antd: {},
     alias: {
@@ -124,7 +121,7 @@ export default defineConfig({
     title: false,
     ignoreMomentLocale: true,
     proxy: proxy[REACT_APP_ENV || 'dev'],
-    // manifest: {
-    //     basePath: '/',
-    // },
+    manifest: {
+        basePath: '/',
+    },
 })

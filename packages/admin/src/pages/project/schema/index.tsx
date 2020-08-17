@@ -19,12 +19,12 @@ import {
     Typography,
 } from 'antd'
 import { FieldTypes } from '@/common'
+import { PageContainer } from '@ant-design/pro-layout'
 
 import { SchemaFieldRender } from './FieldRender'
 import { CreateFieldModal, DeleteFieldModal } from './FieldModal'
 import { CreateSchemaModal, DeleteSchemaModal } from './SchemaModal'
 import './index.less'
-import { PageContainer } from '@ant-design/pro-layout'
 
 const { Sider, Content } = Layout
 

@@ -29,6 +29,9 @@ interface SchemaFieldV1 {
 
     // 连接资源 Id
     connectResource: string
+
+    // 关联多个
+    connectMany: boolean
 }
 
 interface SchemaFieldV2 {
@@ -42,6 +45,9 @@ interface SchemaFieldV2 {
 
     // 在数据库中的字段名
     name: string
+
+    // 字段顺序
+    order: number
 
     // 字段描述
     description: string
@@ -79,11 +85,8 @@ interface SchemaFieldV2 {
     // 样式属性
     style: {}
 
-    // 联合类型记录值
-    union: {}
-
-    // 枚举类型
-    enum: {}
+    // 枚举类型的值
+    enumElements: { label: string; value: string }[]
 
     // 连接字段
     connectField: string
@@ -91,7 +94,8 @@ interface SchemaFieldV2 {
     // 连接资源 Id
     connectResource: string
 
-    _order: number
+    // 关联多个
+    connectMany: boolean
 }
 
 // schema v1

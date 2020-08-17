@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button, message, notification } from 'antd'
 import defaultSettings from '../config/defaultSettings'
+
 const { pwa } = defaultSettings // if pwa is true
 
 if (pwa) {

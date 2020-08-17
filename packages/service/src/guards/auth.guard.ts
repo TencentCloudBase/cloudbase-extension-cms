@@ -17,22 +17,22 @@ export class GlobalAuthGuard implements CanActivate {
         console.time('Entry')
 
         if (isDevEnv()) {
-            // request.cmsUser = {
-            //     _id: 'test',
-            //     roles: ['administrator'],
-            //     username: 'admin',
-            //     createTime: 2020,
-            //     password: 'cloudbase',
-            //     isAdmin: true,
-            // }
-
             request.cmsUser = {
                 _id: 'test',
-                roles: ['content:administrator'],
+                roles: ['administrator'],
                 username: 'admin',
                 createTime: 2020,
                 password: 'cloudbase',
+                isAdmin: true,
             }
+
+            // request.cmsUser = {
+            //     _id: 'test',
+            //     roles: ['content:administrator'],
+            //     username: 'admin',
+            //     createTime: 2020,
+            //     password: 'cloudbase',
+            // }
 
             return true
         }

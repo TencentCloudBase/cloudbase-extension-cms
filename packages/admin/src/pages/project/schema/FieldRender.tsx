@@ -1,8 +1,7 @@
 import React from 'react'
+import { FieldTypes } from '@/common'
 import { ExclamationCircleTwoTone } from '@ant-design/icons'
 import { Card, Space, Typography, Button, Tooltip } from 'antd'
-
-import { FieldTypes } from '@/common'
 
 export interface FieldType {
     icon: React.ReactNode
@@ -20,6 +19,7 @@ export const SchemaFieldRender: React.SFC<{
         <div>
             {schema?.fields
                 ?.filter((_) => _)
+                .sort((prev, next) => prev.order - next.order)
                 .map((field, index) => {
                     const type = FieldTypes.find((_) => _.type === field.type)
 

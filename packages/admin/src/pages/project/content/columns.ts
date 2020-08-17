@@ -17,7 +17,7 @@ const TypeWidthMap = {
 
 const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
 
-export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
+export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
     const columns: ProColumns[] = fields
         ?.filter((_) => _)
         .map((field) => {
@@ -39,10 +39,8 @@ export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
             // 不支持搜索的字段类型
             const hideInSearch = hideInSearchType.includes(type) || isHidden
 
-            return {
-                render,
+            const column: ProColumns = {
                 width,
-                valueType,
                 hideInSearch,
                 sorter: true,
                 filters: true,
@@ -51,6 +49,21 @@ export const createColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
                 title: displayName,
                 hideInTable: isHidden,
             }
+
+            if (type === 'Enum') {
+                column.valueEnum = field.enumElements.reduce(
+                    (ret, current) => ({
+                        [current.value]: current.label,
+                        ...ret,
+                    }),
+                    {}
+                )
+            } else {
+                column.render = render
+                column.valueType = valueType
+            }
+
+            return column
         })
     return columns
 }

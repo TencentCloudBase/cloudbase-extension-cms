@@ -25,7 +25,6 @@ export const FieldTypes = [
         name: '布尔值',
         icon: <i className="gg-check" />,
     },
-    // **枚举类型**
     // 时间
     {
         type: 'DateTime',
@@ -76,7 +75,7 @@ export const FieldTypes = [
         icon: <i className="gg-chevron-double-down-o" />,
     },
     {
-        type: 'Connect',
+        type: 'ConnectV2',
         name: '关联',
         icon: <i className="gg-arrow-top-right-r" />,
     },
@@ -84,6 +83,11 @@ export const FieldTypes = [
         type: 'Array',
         name: '数组',
         icon: <i className="gg-list" />,
+    },
+    {
+        type: 'Enum',
+        name: '枚举',
+        icon: <i className="gg-template" />,
     },
     // 数组：`Array<Value>`
     // 内容关联（外键）：分组与搜索，多层弹窗？
