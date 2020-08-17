@@ -58,7 +58,7 @@ export async function tcbRequest<T = any>(
     if (res.result?.statusCode === 500) {
         notification.error({
             message: '请求错误',
-            description: `服务异常 ${status}: ${url}`,
+            description: `服务异常：${status}: ${url}`,
         })
         throw new Error('服务异常')
     }
@@ -72,11 +72,13 @@ export async function tcbRequest<T = any>(
         body = {}
     }
 
+    console.log(body)
+
     if (body?.code) {
-        const errorText = codeMessage[res.result?.status || 500]
+        const errorText = codeMessage[res.result?.statusCode || 500]
         notification.error({
             message: errorText,
-            description: `请求错误 ${status}: ${url}`,
+            description: `请求错误：${status}: ${url}`,
         })
         throw new Error('服务异常')
     }
