@@ -3,7 +3,7 @@ import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { Form, message, Space, Button, Drawer, Row } from 'antd'
 import { createContent, updateContent } from '@/services/content'
-import { getFieldFormItem } from './Components'
+import { getFieldFormItem } from './FieldComponents'
 
 export const ContentDrawer: React.FC<{
     visible: boolean

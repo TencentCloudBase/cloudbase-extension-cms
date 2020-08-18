@@ -11,7 +11,7 @@ export interface Options {
     }
 
     fuzzyFilter?: {
-        [key: string]: string
+        [key: string]: any
     }
 
     sort?: {
