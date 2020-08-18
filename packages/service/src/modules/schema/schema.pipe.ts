@@ -27,15 +27,16 @@ export class SchemaTransfromPipe implements PipeTransform {
         }
 
         if (this.action === 'update') {
-            // 为 field 添加 id
-            value.fields =
-                value?.fields?.map((v) => {
+            if (value.fields?.length) {
+                // 为 field 添加 id
+                value.fields = value?.fields?.map((v) => {
                     const id = v.id || nanoid()
                     return {
                         ...v,
                         id,
                     }
-                }) || []
+                })
+            }
 
             return {
                 ...value,

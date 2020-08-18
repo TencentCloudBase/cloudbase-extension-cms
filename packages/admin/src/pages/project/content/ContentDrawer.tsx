@@ -46,11 +46,11 @@ export const ContentDrawer: React.FC<{
             manual: true,
             onError: () => {
                 onClose()
-                message.error(contentAction === 'create' ? '创建内容失败' : '编辑内容失败')
+                message.error(`${contentAction === 'create' ? '新建' : '更新'}内容失败`)
             },
             onSuccess: () => {
                 onOk()
-                message.success(contentAction === 'create' ? '创建内容成功' : '更新内容成功')
+                message.success(`${contentAction === 'create' ? '新建' : '更新'}内容成功`)
             },
         }
     )
@@ -62,7 +62,7 @@ export const ContentDrawer: React.FC<{
             visible={visible}
             onClose={onClose}
             width={drawerWidth}
-            title={`新建【${schema?.displayName}】`}
+            title={`${contentAction === 'create' ? '创建' : '更新'}【${schema?.displayName}】内容`}
         >
             <Form
                 name="basic"
@@ -78,7 +78,7 @@ export const ContentDrawer: React.FC<{
                     <Space size="large">
                         <Button onClick={onClose}>取消</Button>
                         <Button type="primary" htmlType="submit" loading={loading}>
-                            确定
+                            {contentAction === 'create' ? '创建' : '更新'}
                         </Button>
                     </Space>
                 </Form.Item>

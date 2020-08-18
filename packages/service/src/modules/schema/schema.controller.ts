@@ -18,7 +18,7 @@ import { CollectionV2 } from '@/constants'
 import { PermissionGuard } from '@/guards'
 import { checkAccessAndGetResource } from '@/utils'
 import { CloudBaseService } from '@/dynamic_modules'
-import { CmsException, RecordExistException } from '@/common'
+import { CmsException, RecordExistException, RecordNotExistException } from '@/common'
 import { SchemaService } from './schema.service'
 import { SchemaTransfromPipe } from './schema.pipe'
 import { SchemaV2 } from './types'
@@ -75,13 +75,13 @@ export class SchemaController {
 
         checkAccessAndGetResource(projectId, req, schemaId)
 
-        const { data, requestId } = await this.cloudbaseService
-            .collection(CollectionV2.Schemas)
-            .doc(schemaId)
-            .get()
+        const {
+            data: [schema],
+            requestId,
+        } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
 
         return {
-            data: data?.[0],
+            data: schema,
             requestId,
         }
     }
@@ -119,12 +119,32 @@ export class SchemaController {
     ) {
         checkAccessAndGetResource(payload.projectId, req, schemaId)
 
-        return this.cloudbaseService
+        const {
+            data: [schema],
+        } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
+
+        if (!schema) {
+            throw new RecordNotExistException('原型不存在！')
+        }
+
+        // 只有管理员可以重名集合
+        if (payload.collectionName && !req.cmsUser.isAdmin) {
+            throw new UnauthorizedException('您无权限进行重命名集合的操作')
+        }
+
+        const res = await this.cloudbaseService
             .collection(CollectionV2.Schemas)
             .where({
                 _id: schemaId,
             })
             .update(payload)
+
+        // 重命名集合
+        if (payload?.collectionName !== schema.collectionName) {
+            await this.schemaService.renameCollection(schema.collectionName, payload.collectionName)
+        }
+
+        return res
     }
 
     @Delete(':id')
@@ -142,12 +162,9 @@ export class SchemaController {
             throw new UnauthorizedException('您无权限进行删除集合的操作')
         }
 
-        const { data } = await this.cloudbaseService
-            .collection(CollectionV2.Schemas)
-            .doc(schemaId)
-            .get()
-
-        const schema = data?.[0]
+        const {
+            data: [schema],
+        } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
 
         const res = await this.cloudbaseService
             .collection(CollectionV2.Schemas)
