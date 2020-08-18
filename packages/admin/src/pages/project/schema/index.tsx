@@ -17,13 +17,14 @@ import {
     Space,
     Popover,
     Typography,
+    Tooltip,
 } from 'antd'
 import { FieldTypes } from '@/common'
 import { PageContainer } from '@ant-design/pro-layout'
 
 import { SchemaFieldRender } from './FieldRender'
 import { CreateFieldModal, DeleteFieldModal } from './FieldModal'
-import { CreateSchemaModal, DeleteSchemaModal } from './SchemaModal'
+import { SchemaModal, DeleteSchemaModal } from './SchemaModal'
 import './index.less'
 
 const { Sider, Content } = Layout
@@ -46,9 +47,12 @@ export default (): React.ReactNode => {
         state: { currentSchema, schemas, loading },
     }: { state: SchemaState } = ctx
 
-    const [createSchemaVisible, setCreateSchemaVisible] = useState(false)
+    const [schemaAction, setSchemaAction] = useState<'create' | 'edit'>('create')
+    const [schemaVisible, setSchemaVisible] = useState(false)
     const [deleteSchemaVisible, setDeleteSchmeaVisible] = useState(false)
+    // 新增字段
     const [fieldVisible, setFieldVisible] = useState(false)
+    // 删除字段
     const [deleteFieldVisible, setDeleteFieldVisible] = useState(false)
 
     useEffect(() => {
@@ -64,7 +68,10 @@ export default (): React.ReactNode => {
                 <h2 className="full-height">
                     <PlusCircleTwoTone
                         style={{ fontSize: '20px' }}
-                        onClick={() => setCreateSchemaVisible(true)}
+                        onClick={() => {
+                            setSchemaVisible(true)
+                            setSchemaAction('create')
+                        }}
                     />
                 </h2>
             }
@@ -117,7 +124,10 @@ export default (): React.ReactNode => {
                                                     <Button
                                                         type="primary"
                                                         size="small"
-                                                        onClick={() => setDeleteSchmeaVisible(true)}
+                                                        onClick={() => {
+                                                            setSchemaVisible(true)
+                                                            setSchemaAction('edit')
+                                                        }}
                                                     >
                                                         编辑原型
                                                     </Button>
@@ -139,6 +149,19 @@ export default (): React.ReactNode => {
                                                 onClick={() => {}}
                                             />
                                         </Popover>
+                                        {currentSchema.description && (
+                                            <Tooltip title={currentSchema.description}>
+                                                <Typography.Text
+                                                    ellipsis
+                                                    style={{
+                                                        marginLeft: '10px',
+                                                        maxWidth: '240px',
+                                                    }}
+                                                >
+                                                    {currentSchema.description}
+                                                </Typography.Text>
+                                            </Tooltip>
+                                        )}
                                     </Space>
                                     <Content>
                                         {currentSchema?.fields?.length ? (
@@ -189,7 +212,10 @@ export default (): React.ReactNode => {
                                 <Empty description="创建你的原型，开始使用 CMS">
                                     <Button
                                         type="primary"
-                                        onClick={() => setCreateSchemaVisible(true)}
+                                        onClick={() => {
+                                            setSchemaVisible(true)
+                                            setSchemaAction('create')
+                                        }}
                                     >
                                         创建原型
                                     </Button>
@@ -232,9 +258,11 @@ export default (): React.ReactNode => {
                 </Layout>
             </ProCard>
 
-            <CreateSchemaModal
-                visible={createSchemaVisible}
-                onClose={() => setCreateSchemaVisible(false)}
+            <SchemaModal
+                action={schemaAction}
+                visible={schemaVisible}
+                schema={currentSchema}
+                onClose={() => setSchemaVisible(false)}
             />
             <DeleteSchemaModal
                 visible={deleteSchemaVisible}

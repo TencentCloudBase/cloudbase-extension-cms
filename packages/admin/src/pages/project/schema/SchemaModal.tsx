@@ -1,42 +1,62 @@
 import React, { useState } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
-import { createSchema, deleteSchema } from '@/services/schema'
+import { createSchema, deleteSchema, updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from 'antd'
 
 const { TextArea } = Input
 
-export const CreateSchemaModal: React.FC<{
+export const SchemaModal: React.FC<{
     visible: boolean
+    schema?: SchemaV2
     onClose: () => void
-}> = ({ visible, onClose }) => {
+    action?: 'edit' | 'create'
+}> = ({ visible, onClose, action, schema }) => {
     const { projectId } = useParams()
     const ctx = useConcent('schema')
 
-    // 创建原型
+    // 创建/更新原型
     const { run, loading } = useRequest(
         async (data: SchemaV2) => {
-            const { displayName, collectionName } = data
+            const { displayName, collectionName, description } = data
 
-            await createSchema({
-                projectId,
-                displayName,
-                collectionName,
-            })
+            if (action === 'create') {
+                await createSchema({
+                    projectId,
+                    displayName,
+                    collectionName,
+                    description,
+                })
+            }
+
+            if (schema && action === 'edit') {
+                const diffData = Object.keys(data)
+                    .filter((key) => schema[key] !== data[key])
+                    .reduce(
+                        (ret, key) => ({
+                            ...ret,
+                            [key]: data[key],
+                        }),
+                        {}
+                    )
+
+                await updateSchema(schema?._id, diffData)
+            }
+
             onClose()
             ctx.dispatch('getSchemas', projectId)
         },
         {
             manual: true,
-            onError: () => message.error('创建原型失败'),
-            onSuccess: () => message.success('创建原型成功'),
+            onError: () => message.error(`${action === 'create' ? '创建' : '更新'}原型失败`),
+            onSuccess: () => message.success(`${action === 'create' ? '创建' : '更新'}原型成功`),
         }
     )
 
     return (
         <Modal
             centered
-            title="创建原型"
+            title={`${action === 'create' ? '创建' : '更新'}原型`}
             footer={null}
             visible={visible}
             onOk={() => onClose()}
@@ -45,8 +65,9 @@ export const CreateSchemaModal: React.FC<{
             <Form
                 name="basic"
                 layout="vertical"
-                labelCol={{ span: 6 }}
                 labelAlign="left"
+                labelCol={{ span: 6 }}
+                initialValues={action === 'edit' ? schema : undefined}
                 onFinish={(v: any) => {
                     run(v)
                 }}
@@ -62,6 +83,13 @@ export const CreateSchemaModal: React.FC<{
                 <Form.Item
                     label="数据库名"
                     name="collectionName"
+                    help={
+                        action === 'edit' && (
+                            <Typography.Text type="danger">
+                                更改数据库名会自动重命名原数据库（危险操作！仅管理员可操作！）
+                            </Typography.Text>
+                        )
+                    }
                     rules={[
                         { required: true, message: '请输入数据库名称！' },
                         {
@@ -80,7 +108,7 @@ export const CreateSchemaModal: React.FC<{
                     <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
                         <Button onClick={() => onClose()}>取消</Button>
                         <Button type="primary" htmlType="submit" loading={loading}>
-                            创建
+                            {action === 'create' ? '创建' : '更新'}
                         </Button>
                     </Space>
                 </Form.Item>
