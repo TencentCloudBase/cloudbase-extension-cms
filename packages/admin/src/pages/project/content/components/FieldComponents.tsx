@@ -41,7 +41,7 @@ const LazyMarkdownEditor: React.FC = (props: any) => (
 /**
  * 图片懒加载
  */
-const LazyImage: React.FC<{ src: string }> = ({ src }) => {
+export const LazyImage: React.FC<{ src: string }> = ({ src }) => {
     if (!src)
         return (
             <Empty
@@ -92,7 +92,7 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
 }
 
 // custom file/image uploader
-const CustomUploader: React.FC<{
+export const CustomUploader: React.FC<{
     type?: 'file' | 'image'
     value?: string
     onChange?: (v: string) => void
@@ -155,7 +155,7 @@ const CustomUploader: React.FC<{
     )
 }
 
-const CustomDatePicker: React.FC<{
+export const CustomDatePicker: React.FC<{
     type?: string
     value?: string
     onChange?: (v: string) => void
@@ -175,65 +175,27 @@ const CustomDatePicker: React.FC<{
 /**
  * 关联渲染
  */
-const ConnectRender: React.FC<{
-    value?: string
+export const ConnectRender: React.FC<{
+    value?: Record<string, any>
     field: SchemaFieldV2
 }> = (props) => {
-    const { projectId } = useParams()
     const { value, field } = props
-    const { connectField, connectResource, connectMany } = field
-    const [records, setRecords] = useState<Record<string, any>>([])
-    const [loading, setLoading] = useState(true)
+    const { connectField, connectMany } = field
 
-    if (!value) return '-'
+    if (!value || typeof value === 'string' || typeof value?.[0] === 'string') return '-'
 
-    let ids: string[] = []
-    if (typeof value === 'string') {
-        ids.push(value)
+    if (!connectMany) {
+        return <Typography.Text>{value[connectField]}</Typography.Text>
     }
 
-    if (Array.isArray(value)) {
-        ids = value
-    }
-
-    useRequest(
-        async () => {
-            const { data: schema } = await getSchema(projectId, connectResource)
-            const { data } = await getContents(projectId, schema.collectionName, {
-                filter: {
-                    ids,
-                },
-            })
-            setLoading(false)
-            setRecords(data)
-        },
-        {
-            cacheKey: `${connectResource}-${ids.join('-')}`,
-            onError: (e) => {
-                setLoading(false)
-                message.error(e.message || '获取数据错误')
-            },
-        }
-    )
-
-    if (loading) {
-        return <Spin>加载中</Spin>
-    }
-
-    if (records?.length === 1 && !connectMany) {
-        return <Typography.Text>{records?.[0][connectField]}</Typography.Text>
-    }
-
-    return records.map((record: any, index: number) => (
-        <Tag key={index}>{record[connectField]}</Tag>
-    ))
+    return value.map((record: any, index: number) => <Tag key={index}>{record[connectField]}</Tag>)
 }
 
 /**
  * 关联类型，编辑
  */
-const ConnectEditor: React.FC<{
-    value?: string
+export const ConnectEditor: React.FC<{
+    value?: Record<string, any>
     field: SchemaFieldV2
     onChange?: (v: string) => void
 }> = (props) => {
@@ -270,10 +232,12 @@ const ConnectEditor: React.FC<{
             mode={connectMany ? 'multiple' : undefined}
             style={{ width: 200 }}
             placeholder="关联字段"
-            value={value}
+            value={value?._id}
             onChange={onChange}
         >
-            {records?.length ? (
+            {loading ? (
+                <Option value={value?._id}>{value?.[connectField]}</Option>
+            ) : records?.length ? (
                 records?.map((record: Record<string, any>) => (
                     <Option value={record._id} key={record._id}>
                         {record[connectField]}

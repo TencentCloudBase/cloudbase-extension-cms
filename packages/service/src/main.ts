@@ -14,6 +14,7 @@ import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { ContextInterceptor } from './interceptors/context.interceptor'
 
 import { AllExceptionsFilter } from './global.exception'
+import config from './config'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -41,7 +42,7 @@ export async function bootstrap() {
     app.useGlobalInterceptors(new TimeCost())
 
     // 超时时间
-    app.useGlobalInterceptors(new TimeoutInterceptor(5000))
+    app.useGlobalInterceptors(new TimeoutInterceptor(config.timeout))
 
     // context 处理
     app.useGlobalInterceptors(new ContextInterceptor())
