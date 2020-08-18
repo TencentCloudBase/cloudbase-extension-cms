@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import VditorX from 'vditor'
 import 'vditor/dist/index.css'
+import { isDevEnv } from '@/utils'
 
 const MarkdownEditor: React.FC<{ value?: any; key: string; onChange?: (...args: any) => void }> = (
     props
@@ -15,7 +16,9 @@ const MarkdownEditor: React.FC<{ value?: any; key: string; onChange?: (...args: 
                 onChange(text)
             },
             upload: {
-                url: `https://${window.TcbCmsConfig.cloudAccessPath}/api/upload`,
+                url: isDevEnv()
+                    ? '/api/upload'
+                    : `https://${window.TcbCmsConfig.cloudAccessPath}/api/upload`,
             },
             theme: 'classic',
             placeholder: '欢迎使用云开发 CMS Markdown编辑器',

@@ -59,8 +59,9 @@ export class GlobalAuthGuard implements CanActivate {
             )
         }
 
-        const { data } = await app.database().collection(CollectionV2.Users).doc(customUserId).get()
-        const userRecord = data?.[0]
+        const {
+            data: [userRecord],
+        } = await app.database().collection(CollectionV2.Users).doc(customUserId).get()
 
         // 用户信息不存在
         if (!userRecord) {

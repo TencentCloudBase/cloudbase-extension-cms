@@ -25,11 +25,11 @@ export class RecordExistException extends HttpException {
 }
 
 export class RecordNotExistException extends HttpException {
-    constructor() {
+    constructor(msg?: string) {
         super(
             {
                 code: 'RECORD_EXIST',
-                message: '记录不存在',
+                message: msg || '记录不存在',
             },
             200
         )
