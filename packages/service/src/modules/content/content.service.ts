@@ -2,6 +2,8 @@ import _ from 'lodash'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/dynamic_modules/cloudbase'
 import { dateToNumber } from '@/utils'
+import { CollectionV2 } from '@/constants'
+import { SchemaV2, SchemaFieldV2 } from '../schema/types'
 
 @Injectable()
 export class ContentService {
@@ -11,11 +13,12 @@ export class ContentService {
         resource: string,
         options: {
             filter?: {
+                _id?: string
                 ids?: string[]
                 [key: string]: any
             }
             fuzzyFilter?: {
-                [key: string]: string
+                [key: string]: any
             }
             pageSize?: number
             page?: number
@@ -28,28 +31,32 @@ export class ContentService {
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 
-        // 删除 ids 字段
-        const where = _.omit(filter, 'ids')
+        // 删除 ids 字段，不修改 filter
+        let where = _.omit(filter, 'ids')
         // 支持批量查询
         if (filter?.ids?.length) {
             where._id = db.command.in(filter.ids)
         }
 
+        const {
+            data: [schema],
+        }: { data: SchemaV2[] } = await this.cloudbaseService
+            .collection(CollectionV2.Schemas)
+            .where({
+                collectionName: resource,
+            })
+            .get()
+
+        // 模糊搜索
         if (fuzzyFilter) {
-            Object.keys(fuzzyFilter)
-                .filter((key) => fuzzyFilter[key])
-                .forEach((key) => {
-                    const value = fuzzyFilter[key]
-                    if (typeof value === 'boolean' || typeof value === 'number') {
-                        where[key] = value
-                    } else {
-                        where[key] = db.RegExp({
-                            options: 'ig',
-                            regexp: String(fuzzyFilter[key]),
-                        })
-                    }
-                })
+            const conditions = this.handleFuzzySearch(fuzzyFilter, schema)
+            where = {
+                ...where,
+                ...conditions,
+            }
         }
+
+        console.log(where)
 
         let query = collection.where(where)
 
@@ -69,6 +76,17 @@ export class ContentService {
         }
 
         const res = await query.get()
+
+        // 如果获取定义的内容，且内容中存在关联的字段
+        // 则把返回结果中的所有关联字段 id 转换为关联 id 对应的数据
+        if (schema) {
+            // 存在关联类型字段
+            const connectFields = schema.fields.filter((field) => field.type === 'Connect')
+
+            if (connectFields?.length) {
+                res.data = await this.transformConnectField(res.data, connectFields)
+            }
+        }
 
         return { ...res, total: countRes.total }
     }
@@ -168,5 +186,110 @@ export class ContentService {
                 _id: db.command.in(filter.ids),
             })
             .remove()
+    }
+
+    private handleFuzzySearch(fuzzyFilter: Record<string, any>, schema: SchemaV2) {
+        const { db } = this.cloudbaseService
+        const $ = db.command
+        const where = {}
+
+        Object.keys(fuzzyFilter)
+            .filter((key) => typeof fuzzyFilter[key] !== 'undefined')
+            .forEach((key) => {
+                const value = fuzzyFilter[key]
+
+                if (typeof value === 'boolean' || typeof value === 'number') {
+                    where[key] = value
+                    return
+                }
+
+                const field = schema.fields.find((_) => _.name === key)
+
+                if (field.type === 'Connect') {
+                    where[key] = field.connectMany ? $.in(fuzzyFilter[key]) : fuzzyFilter[key]
+                    return
+                }
+
+                if (field.type === 'Array' || field.type === 'Enum') {
+                    where[key] = Array.isArray(fuzzyFilter[key])
+                        ? $.in(fuzzyFilter[key])
+                        : $.in([fuzzyFilter[key]])
+                    return
+                }
+
+                where[key] = db.RegExp({
+                    options: 'ig',
+                    regexp: String(fuzzyFilter[key]),
+                })
+            })
+
+        return where
+    }
+
+    private async transformConnectField(rawData: any[], connectFields: SchemaFieldV2[]) {
+        let data = rawData
+        const $ = this.cloudbaseService.db.command
+
+        // 获取所有 Schema 数据
+        const { data: schemas } = await this.cloudbaseService
+            .collection(CollectionV2.Schemas)
+            .where({})
+            .limit(1000)
+            .get()
+
+        // 转换 data 中的关联 field
+        const transformDataByField = async (field: SchemaFieldV2) => {
+            const { connectMany } = field
+            // 关联字段名
+            const fieldName = field.name
+
+            // 获取数据中所有的关联资源 Id
+            let ids = []
+            if (connectMany) {
+                // 合并数组
+                ids = data
+                    .filter((record) => record[fieldName]?.length)
+                    .map((record) => record[fieldName])
+                    .reduce((ret, current) => [...ret, ...current], [])
+            } else {
+                ids = data.map((record) => record[fieldName]).filter((_) => _)
+            }
+
+            // 集合名
+            const collectionName = schemas.find((schema) => schema._id === field.connectResource)
+                .collectionName
+
+            // 获取关联的数据，分页最大条数 50
+            const { data: connectData } = await this.cloudbaseService
+                .collection(collectionName)
+                .where({ _id: $.in(ids) })
+                .limit(1000)
+                .get()
+
+            data = data.map((record) => {
+                if (!record[fieldName]) return record
+                let connectRecord
+
+                if (connectMany) {
+                    connectRecord = record[fieldName].map((id) =>
+                        connectData.find((_) => _._id === id)
+                    )
+                } else {
+                    connectRecord = connectData.find((_) => _._id === record[fieldName])
+                }
+
+                return {
+                    ...record,
+                    [fieldName]: connectRecord,
+                }
+            })
+        }
+
+        // 转换 connectField
+        const promises = connectFields.map(transformDataByField)
+
+        await Promise.all(promises)
+
+        return data
     }
 }

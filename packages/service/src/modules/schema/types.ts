@@ -34,6 +34,9 @@ export class SchemaFieldV1 {
 
     // 连接资源 Id
     connectResource: string
+
+    // 关联多个
+    connectMany: boolean
 }
 
 export class SchemaFieldV2 {
@@ -98,8 +101,11 @@ export class SchemaFieldV2 {
     // 连接资源 Id
     connectResource: string
 
+    // 关联多个
+    connectMany: boolean
+
     // 枚举类型
-    enumElements: {}
+    enumElements: { label: string; value: string }[]
 }
 
 // schema v1

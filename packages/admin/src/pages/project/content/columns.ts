@@ -1,5 +1,5 @@
 import { ProColumns } from '@ant-design/pro-table'
-import { getFieldRender } from './Components'
+import { getFieldRender } from './components'
 
 type DateTime = 'dateTime' | 'textarea'
 

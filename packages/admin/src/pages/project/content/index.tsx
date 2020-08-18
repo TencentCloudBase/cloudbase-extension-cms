@@ -1,27 +1,24 @@
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import React, { useEffect, useRef, useState } from 'react'
 import ProCard from '@ant-design/pro-card'
-import ProTable from '@ant-design/pro-table'
-import { PlusOutlined } from '@ant-design/icons'
+import { Menu, Spin, Empty, Row, Col } from 'antd'
 import { PageContainer } from '@ant-design/pro-layout'
-import { getContents, deleteContent } from '@/services/content'
-import { Menu, Button, Spin, Empty, Row, Col, Modal, message } from 'antd'
-import { getTableColumns } from './columns'
-import { ContentDrawer } from './ContentDrawer'
-import { formatSearchData } from './utils'
+import React, { useEffect, useRef, useState } from 'react'
+import { ContentDrawer } from './components'
+import { ContentTable } from './ContentTable'
 import './index.less'
 
 export default (): React.ReactNode => {
-    // 加载 schemas 数据
     const { projectId } = useParams()
     const ctx = useConcent('content')
     const [contentModalVisible, setContentModalVisible] = useState(false)
 
+    // 加载 schemas 数据
     useEffect(() => {
         ctx.dispatch('getContentSchemas', projectId)
     }, [])
 
+    // table 引用
     const tableRef = useRef<{
         reload: (resetPageIndex?: boolean) => void
         reloadAndRest: () => void
@@ -33,7 +30,7 @@ export default (): React.ReactNode => {
     const {
         state: { currentSchema, schemas, loading },
     }: { state: SchemaState } = ctx
-    const columns = getTableColumns(currentSchema?.fields)
+
     const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
 
     return (
@@ -72,141 +69,9 @@ export default (): React.ReactNode => {
                 </ProCard>
                 <ProCard className="content-card" style={{ marginBottom: 0 }}>
                     {currentSchema ? (
-                        <ProTable
-                            search
-                            rowKey="_id"
-                            defaultData={[]}
-                            actionRef={tableRef}
-                            dateFormatter="string"
-                            scroll={{ x: 1000 }}
-                            headerTitle={
-                                <span className="table-title">{currentSchema.displayName}</span>
-                            }
-                            pagination={{
-                                showSizeChanger: true,
-                            }}
-                            beforeSearchSubmit={(params: any) =>
-                                formatSearchData(currentSchema, params)
-                            }
-                            columns={[
-                                ...columns,
-                                {
-                                    title: '操作',
-                                    width: 150,
-                                    align: 'center',
-                                    fixed: 'right',
-                                    valueType: 'option',
-                                    render: (text, row: any) => [
-                                        <Button
-                                            size="small"
-                                            type="primary"
-                                            key="edit"
-                                            onClick={() => {
-                                                ctx.setState({
-                                                    contentAction: 'edit',
-                                                    selectedContent: row,
-                                                })
-                                                setContentModalVisible(true)
-                                            }}
-                                        >
-                                            编辑
-                                        </Button>,
-                                        <Button
-                                            danger
-                                            size="small"
-                                            key="delete"
-                                            type="primary"
-                                            onClick={() => {
-                                                const modal = Modal.confirm({
-                                                    title: '确认删除此内容？',
-                                                    onCancel: () => {
-                                                        modal.destroy()
-                                                    },
-                                                    onOk: async () => {
-                                                        try {
-                                                            await deleteContent(
-                                                                projectId,
-                                                                currentSchema.collectionName,
-                                                                row._id
-                                                            )
-                                                            tableRef?.current?.reloadAndRest()
-                                                            message.success('删除内容成功')
-                                                        } catch (error) {
-                                                            message.error('删除内容失败')
-                                                        }
-                                                    },
-                                                })
-                                            }}
-                                        >
-                                            删除
-                                        </Button>,
-                                    ],
-                                },
-                            ]}
-                            request={async (
-                                params: { pageSize: number; current: number; [key: string]: any },
-                                sort,
-                                filter
-                            ) => {
-                                const { pageSize, current } = params
-                                const resource = currentSchema.collectionName
-
-                                // 从 params 中过滤出搜索字段
-                                const fuzzyFilter = Object.keys(params)
-                                    .filter((key) =>
-                                        currentSchema.fields?.find((field) => field.name === key)
-                                    )
-                                    .reduce(
-                                        (prev, key) => ({
-                                            ...prev,
-                                            [key]: params[key],
-                                        }),
-                                        {}
-                                    )
-
-                                try {
-                                    const { data = [], total } = await getContents(
-                                        projectId,
-                                        resource,
-                                        {
-                                            sort,
-                                            filter,
-                                            pageSize,
-                                            fuzzyFilter,
-                                            page: current,
-                                        }
-                                    )
-
-                                    return {
-                                        data,
-                                        total,
-                                        success: true,
-                                    }
-                                } catch (error) {
-                                    console.log(error)
-                                    return {
-                                        data: [],
-                                        total: 0,
-                                        success: true,
-                                    }
-                                }
-                            }}
-                            toolBarRender={() => [
-                                <Button
-                                    type="primary"
-                                    key="button"
-                                    icon={<PlusOutlined />}
-                                    onClick={() => {
-                                        ctx.setState({
-                                            contentAction: 'create',
-                                            selectedContent: null,
-                                        })
-                                        setContentModalVisible(true)
-                                    }}
-                                >
-                                    新建
-                                </Button>,
-                            ]}
+                        <ContentTable
+                            tableRef={tableRef}
+                            setModalVisible={(visible: boolean) => setContentModalVisible(visible)}
                         />
                     ) : (
                         <div className="content-empty">
