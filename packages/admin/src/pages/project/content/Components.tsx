@@ -18,7 +18,7 @@ import {
     Progress,
 } from 'antd'
 import moment from 'moment'
-import { useParams } from 'umi'
+import { useParams, useRequest } from 'umi'
 import { Rule } from 'antd/es/form'
 import { getSchema } from '@/services/schema'
 import { getContents } from '@/services/content'
@@ -38,6 +38,9 @@ const LazyMarkdownEditor: React.FC = (props: any) => (
     </Suspense>
 )
 
+/**
+ * 图片懒加载
+ */
 const LazyImage: React.FC<{ src: string }> = ({ src }) => {
     if (!src)
         return (
@@ -58,6 +61,7 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
     useEffect(() => {
         getTempFileURL(src)
             .then((url) => {
+                console.log(url)
                 setLoading(false)
                 setImgUrl(url)
             })
@@ -73,14 +77,16 @@ const LazyImage: React.FC<{ src: string }> = ({ src }) => {
     ) : (
         <Space direction="vertical">
             <img style={{ height: '120px' }} src={imgUrl} />
-            <Button
-                size="small"
-                onClick={() => {
-                    downloadFile(src)
-                }}
-            >
-                下载图片
-            </Button>
+            {imgUrl && (
+                <Button
+                    size="small"
+                    onClick={() => {
+                        downloadFile(src)
+                    }}
+                >
+                    下载图片
+                </Button>
+            )}
         </Space>
     )
 }
@@ -110,8 +116,8 @@ const CustomUploader: React.FC<{
                     },
                 ])
             })
-            .catch(() => {
-                message.error('加载图片失败')
+            .catch((e) => {
+                message.error(`加载图片失败 ${e.message}`)
             })
     }, [fileId])
 
@@ -150,22 +156,26 @@ const CustomUploader: React.FC<{
 }
 
 const CustomDatePicker: React.FC<{
+    type?: string
     value?: string
     onChange?: (v: string) => void
 }> = (props) => {
-    let { value, onChange = () => {} } = props
+    let { type, value, onChange = () => {} } = props
 
     return (
         <DatePicker
-            showTime
+            showTime={type === 'DateTime'}
             value={moment(value)}
-            format="YYYY-MM-DD HH:mm:ss"
+            format={type === 'DateTime' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'}
             onChange={(_, v) => onChange(v)}
         />
     )
 }
 
-const ConnectV1Render: React.FC<{
+/**
+ * 关联渲染
+ */
+const ConnectRender: React.FC<{
     value?: string
     field: SchemaFieldV2
 }> = (props) => {
@@ -177,41 +187,41 @@ const ConnectV1Render: React.FC<{
 
     if (!value) return '-'
 
-    useEffect(() => {
-        const loadData = async () => {
-            let ids = []
-            if (typeof value === 'string') {
-                ids.push(value)
-            }
+    let ids: string[] = []
+    if (typeof value === 'string') {
+        ids.push(value)
+    }
 
-            if (Array.isArray(value)) {
-                ids = value
-            }
+    if (Array.isArray(value)) {
+        ids = value
+    }
 
+    useRequest(
+        async () => {
             const { data: schema } = await getSchema(projectId, connectResource)
             const { data } = await getContents(projectId, schema.collectionName, {
                 filter: {
-                    ids: ids,
+                    ids,
                 },
             })
+            setLoading(false)
             setRecords(data)
-        }
-
-        loadData()
-            .catch((e) => {
-                message.error(e.message || '获取数据错误')
-            })
-            .finally(() => {
+        },
+        {
+            cacheKey: `${connectResource}-${ids.join('-')}`,
+            onError: (e) => {
                 setLoading(false)
-            })
-    }, [])
+                message.error(e.message || '获取数据错误')
+            },
+        }
+    )
 
     if (loading) {
         return <Spin>加载中</Spin>
     }
 
     if (records?.length === 1 && !connectMany) {
-        return <Typography.Paragraph>{records?.[0][connectField]}</Typography.Paragraph>
+        return <Typography.Text>{records?.[0][connectField]}</Typography.Text>
     }
 
     return records.map((record: any, index: number) => (
@@ -219,36 +229,44 @@ const ConnectV1Render: React.FC<{
     ))
 }
 
-// 外联，字段的值
-const Connector: React.FC<{
-    disabled?: boolean
+/**
+ * 关联类型，编辑
+ */
+const ConnectEditor: React.FC<{
     value?: string
     field: SchemaFieldV2
     onChange?: (v: string) => void
 }> = (props) => {
     const { projectId } = useParams()
-    const { value, onChange, field, disabled } = props
+    const { value, onChange, field } = props
     const { connectField, connectResource, connectMany } = field
     const [records, setRecords] = useState<Record<string, any>>([])
+    const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        const loadData = async () => {
+    useRequest(
+        async () => {
             const { data: schema } = await getSchema(projectId, connectResource)
             const { data } = await getContents(projectId, schema.collectionName, {
                 page: 1,
                 pageSize: 1000,
             })
-            setRecords(data)
-        }
 
-        loadData().catch((e) => {
-            message.error(e.message || '获取数据错误')
-        })
-    }, [])
+            setRecords(data)
+            setLoading(false)
+        },
+        {
+            // 根据连接的 schemaId 缓存
+            cacheKey: connectResource,
+            onError: (e) => {
+                message.error(e.message || '获取数据错误')
+                setLoading(false)
+            },
+        }
+    )
 
     return (
         <Select
-            disabled={disabled}
+            loading={loading}
             mode={connectMany ? 'multiple' : undefined}
             style={{ width: 200 }}
             placeholder="关联字段"
@@ -406,7 +424,7 @@ export function getFieldRender(field: SchemaFieldV2) {
                 index: number,
                 action: any
             ): React.ReactNode | React.ReactNode[] => (
-                <ConnectV1Render value={record[name]} field={field} />
+                <ConnectRender value={record[name]} field={field} />
             )
         default:
             return (
@@ -589,7 +607,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <CustomDatePicker />
+                    <CustomDatePicker type="Date" />
                 </Form.Item>
             )
             break
@@ -602,7 +620,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <CustomDatePicker />
+                    <CustomDatePicker type="DateTime" />
                 </Form.Item>
             )
             break
@@ -737,7 +755,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     label={displayName}
                     extra={description}
                 >
-                    <Connector field={field} />
+                    <ConnectEditor field={field} />
                 </Form.Item>
             )
             break

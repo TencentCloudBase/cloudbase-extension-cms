@@ -41,6 +41,7 @@ export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
 
             const column: ProColumns = {
                 width,
+                // 不可搜索的字段
                 hideInSearch,
                 sorter: true,
                 filters: true,

@@ -57,8 +57,10 @@ export class SchemaFieldV2 {
     // 字段描述
     description: string
 
-    // 默认排序字段
-    orderBy: string
+    // 排序字段
+    orderBy: {
+        [key: string]: 'asc' | 'desc'
+    }[]
 
     // 是否隐藏
     isHidden: boolean

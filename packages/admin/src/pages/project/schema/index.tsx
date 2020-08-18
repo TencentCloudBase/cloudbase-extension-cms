@@ -99,6 +99,7 @@ export default (): React.ReactNode => {
                         </Row>
                     )}
                 </ProCard>
+
                 <Layout className="schema-layout">
                     <Content className="full-height schema-layout-content">
                         {currentSchema?._id ? (
@@ -114,12 +115,19 @@ export default (): React.ReactNode => {
                                             content={
                                                 <Space>
                                                     <Button
+                                                        type="primary"
+                                                        size="small"
+                                                        onClick={() => setDeleteSchmeaVisible(true)}
+                                                    >
+                                                        编辑原型
+                                                    </Button>
+                                                    <Button
                                                         danger
                                                         type="primary"
                                                         size="small"
                                                         onClick={() => setDeleteSchmeaVisible(true)}
                                                     >
-                                                        删除
+                                                        删除原型
                                                     </Button>
                                                 </Space>
                                             }
@@ -189,6 +197,7 @@ export default (): React.ReactNode => {
                             </div>
                         )}
                     </Content>
+
                     <Sider className="schema-sider" width="240">
                         <Typography.Title level={3} className="schema-sider-header">
                             原型类型
@@ -232,6 +241,7 @@ export default (): React.ReactNode => {
                 onClose={() => setDeleteSchmeaVisible(false)}
             />
             <CreateFieldModal visible={fieldVisible} onClose={() => setFieldVisible(false)} />
+
             <DeleteFieldModal
                 visible={deleteFieldVisible}
                 onClose={() => setDeleteFieldVisible(false)}
