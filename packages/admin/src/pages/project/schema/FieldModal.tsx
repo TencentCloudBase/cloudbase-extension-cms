@@ -1,8 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
-import { Modal, Form, message, Input, Switch, Space, Button, Select, InputNumber } from 'antd'
+import {
+    Modal,
+    Form,
+    message,
+    Input,
+    Switch,
+    Space,
+    Button,
+    Select,
+    InputNumber,
+    Typography,
+} from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 
 const { TextArea } = Input
@@ -94,6 +105,13 @@ export const CreateFieldModal: React.FC<{
             ? `新建【${selectedField?.name}】字段`
             : `编辑【${selectedField?.displayName}】`
 
+    useEffect(() => {
+        if (selectedField?.connectResource) {
+            const schema = schemas.find((_: SchemaV2) => _._id === selectedField.connectResource)
+            setConnectSchema(schema)
+        }
+    }, [selectedField])
+
     return (
         <Modal
             centered
@@ -147,42 +165,58 @@ export const CreateFieldModal: React.FC<{
                 </Form.Item>
 
                 {selectedField?.type === 'Connect' && (
-                    <Form.Item label="关联">
-                        <Space>
-                            <Form.Item
-                                label="关联的内容"
-                                name="connectResource"
-                                rules={[{ required: true, message: '请选择关联内容！' }]}
-                            >
-                                <Select style={{ width: 200 }}>
-                                    {schemas?.map((schema: SchemaV2) => (
-                                        <Option value={schema._id} key={schema._id}>
-                                            {schema.displayName}
-                                        </Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-                            <Form.Item
-                                label="关联的字段"
-                                name="connectField"
-                                rules={[{ required: true, message: '请选择关联内容字段！' }]}
-                            >
-                                <Select style={{ width: 200 }} placeholder="关联字段">
-                                    {connectSchema?.fields?.length ? (
-                                        connectSchema.fields?.map((field: SchemaFieldV2) => (
-                                            <Option value={field.name} key={field.name}>
-                                                {field.displayName}
+                    <>
+                        <Form.Item label="关联">
+                            <Space>
+                                <Form.Item
+                                    label="关联的内容"
+                                    name="connectResource"
+                                    rules={[{ required: true, message: '请选择关联内容！' }]}
+                                >
+                                    <Select style={{ width: 200 }}>
+                                        {schemas?.map((schema: SchemaV2) => (
+                                            <Option value={schema._id} key={schema._id}>
+                                                {schema.displayName}
                                             </Option>
-                                        ))
-                                    ) : (
-                                        <Option value="" key={selectedField.name}>
-                                            空
-                                        </Option>
-                                    )}
-                                </Select>
-                            </Form.Item>
-                        </Space>
-                    </Form.Item>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                                <Form.Item
+                                    label="关联的字段"
+                                    name="connectField"
+                                    rules={[{ required: true, message: '请选择关联内容字段！' }]}
+                                >
+                                    <Select style={{ width: 200 }} placeholder="关联字段">
+                                        {connectSchema?.fields?.length ? (
+                                            connectSchema.fields?.map((field: SchemaFieldV2) => (
+                                                <Option value={field.name} key={field.name}>
+                                                    {field.displayName}
+                                                </Option>
+                                            ))
+                                        ) : (
+                                            <Option value="" key={selectedField.name}>
+                                                空
+                                            </Option>
+                                        )}
+                                    </Select>
+                                </Form.Item>
+                            </Space>
+                        </Form.Item>
+                        <Form.Item>
+                            <div className="form-item">
+                                <Form.Item
+                                    name="connectMany"
+                                    valuePropName="checked"
+                                    style={{ marginBottom: 0 }}
+                                >
+                                    <Switch />
+                                </Form.Item>
+                                <Form.Item style={{ marginBottom: 0 }}>
+                                    <span>是否关联多项</span>
+                                </Form.Item>
+                            </div>
+                        </Form.Item>
+                    </>
                 )}
 
                 {negativeTypes.includes(selectedField?.type) ? null : (
@@ -300,7 +334,11 @@ export const CreateFieldModal: React.FC<{
                             <Switch />
                         </Form.Item>
                         <Form.Item style={{ marginBottom: 0 }}>
-                            <span>是否必须</span>
+                            <Typography.Text>是否必需</Typography.Text>
+                            <br />
+                            <Typography.Text type="secondary">
+                                在创建内容时，此此段是必需要填写的
+                            </Typography.Text>
                         </Form.Item>
                     </div>
                 </Form.Item>
@@ -315,7 +353,11 @@ export const CreateFieldModal: React.FC<{
                             <Switch />
                         </Form.Item>
                         <Form.Item style={{ marginBottom: 0 }}>
-                            <span>是否隐藏</span>
+                            <Typography.Text>是否隐藏</Typography.Text>
+                            <br />
+                            <Typography.Text type="secondary">
+                                在内容集合表中隐藏该字段
+                            </Typography.Text>
                         </Form.Item>
                     </div>
                 </Form.Item>

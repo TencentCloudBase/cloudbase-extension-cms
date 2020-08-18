@@ -42,8 +42,6 @@ export class SchemaController {
     async getSchemas(@Query() query: SchemaQuery, @Request() req: AuthRequest) {
         const { projectId, page = 1, pageSize = 100 } = query
 
-        console.log(projectId, req.cmsUser)
-
         const schemas = checkAccessAndGetResource(projectId, req)
 
         const $ = this.cloudbaseService.db.command

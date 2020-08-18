@@ -9,6 +9,7 @@ import { getContents, deleteContent } from '@/services/content'
 import { Menu, Button, Spin, Empty, Row, Col, Modal, message } from 'antd'
 import { getTableColumns } from './columns'
 import { ContentDrawer } from './ContentDrawer'
+import { formatSearchData } from './utils'
 import './index.less'
 
 export default (): React.ReactNode => {
@@ -38,7 +39,7 @@ export default (): React.ReactNode => {
     return (
         <PageContainer className="page-container">
             <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
-                <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
+                <ProCard colSpan="240px" className="left-card" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Row justify="center">
                             <Col>
@@ -69,7 +70,7 @@ export default (): React.ReactNode => {
                         </Row>
                     )}
                 </ProCard>
-                <ProCard style={{ marginBottom: 0, width: 'calc(100% - 256px)' }}>
+                <ProCard className="content-card" style={{ marginBottom: 0 }}>
                     {currentSchema ? (
                         <ProTable
                             search
@@ -80,6 +81,12 @@ export default (): React.ReactNode => {
                             scroll={{ x: 1000 }}
                             headerTitle={
                                 <span className="table-title">{currentSchema.displayName}</span>
+                            }
+                            pagination={{
+                                showSizeChanger: true,
+                            }}
+                            beforeSearchSubmit={(params: any) =>
+                                formatSearchData(currentSchema, params)
                             }
                             columns={[
                                 ...columns,
@@ -143,6 +150,7 @@ export default (): React.ReactNode => {
                             ) => {
                                 const { pageSize, current } = params
                                 const resource = currentSchema.collectionName
+
                                 // 从 params 中过滤出搜索字段
                                 const fuzzyFilter = Object.keys(params)
                                     .filter((key) =>
@@ -155,6 +163,7 @@ export default (): React.ReactNode => {
                                         }),
                                         {}
                                     )
+
                                 try {
                                     const { data = [], total } = await getContents(
                                         projectId,
@@ -181,9 +190,6 @@ export default (): React.ReactNode => {
                                         success: true,
                                     }
                                 }
-                            }}
-                            pagination={{
-                                showSizeChanger: true,
                             }}
                             toolBarRender={() => [
                                 <Button
