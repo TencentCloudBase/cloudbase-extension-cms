@@ -14,7 +14,6 @@ import { getCloudBaseApp, isDevEnv } from '@/utils'
 export class GlobalAuthGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<AuthRequest & Request>()
-        console.time('Entry')
 
         if (isDevEnv()) {
             request.cmsUser = {

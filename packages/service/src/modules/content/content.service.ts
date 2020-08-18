@@ -35,20 +35,24 @@ export class ContentService {
             where._id = db.command.in(filter.ids)
         }
 
-        console.log(fuzzyFilter)
-
         if (fuzzyFilter) {
             Object.keys(fuzzyFilter)
                 .filter((key) => fuzzyFilter[key])
                 .forEach((key) => {
-                    where[key] = db.RegExp({
-                        options: 'ig',
-                        regexp: String(fuzzyFilter[key]),
-                    })
+                    const value = fuzzyFilter[key]
+                    if (typeof value === 'boolean' || typeof value === 'number') {
+                        where[key] = value
+                    } else {
+                        where[key] = db.RegExp({
+                            options: 'ig',
+                            regexp: String(fuzzyFilter[key]),
+                        })
+                    }
                 })
         }
 
         let query = collection.where(where)
+
         // 获取总数
         const countRes = await query.count()
         // 查询

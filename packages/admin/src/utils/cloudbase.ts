@@ -123,6 +123,12 @@ export async function getTempFileURL(cloudId: string): Promise<string> {
     const result = await app.getTempFileURL({
         fileList: [cloudId],
     })
+
+    if (result.fileList[0].code) {
+        throw new Error(result.fileList[0].code)
+    }
+
+    console.log(result)
     return result.fileList[0].tempFileURL
 }
 

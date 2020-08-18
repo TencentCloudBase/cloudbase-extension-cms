@@ -28,6 +28,11 @@ export const FieldTypes = [
     // 时间
     {
         type: 'DateTime',
+        name: '日期时间',
+        icon: <i className="gg-calendar-dates" />,
+    },
+    {
+        type: 'Date',
         name: '日期',
         icon: <i className="gg-calendar-dates" />,
     },
@@ -75,7 +80,7 @@ export const FieldTypes = [
         icon: <i className="gg-chevron-double-down-o" />,
     },
     {
-        type: 'ConnectV2',
+        type: 'Connect',
         name: '关联',
         icon: <i className="gg-arrow-top-right-r" />,
     },

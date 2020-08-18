@@ -29,8 +29,6 @@ export default {
                 }
             }
 
-            console.log(data)
-
             return {
                 currentSchema: data?.[0] ? data[0] : null,
                 schemas: data,
