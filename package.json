@@ -11,6 +11,8 @@
         "lint-staged:ts": "eslint --ext .ts,.tsx ",
         "lint:fix": "eslint --fix --cache --ext .ts,.tsx --format=pretty ./packages",
         "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto",
+        "deploy": "tcb framework:deploy",
+        "postdeploy": "tcb functions:invoke cms-init",
         "deploy:init": "tcb framework:deploy init",
         "deploy:service": "tcb framework:deploy service"
     },

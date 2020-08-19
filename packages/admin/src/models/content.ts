@@ -5,13 +5,14 @@ export default {
     state: {
         contents: [],
         loading: false,
+        contentLoading: false,
         currentSchema: null,
         // create 或 edit
         contentAction: 'create',
         selectedContent: {},
     },
     reducer: {
-        async getContentSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
+        async getContentSchemas(projectId: string, state: any, ctx: IActionCtx) {
             ctx.setState({
                 loading: true,
             })

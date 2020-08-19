@@ -31,8 +31,8 @@ export class ContentService {
         const db = this.cloudbaseService.db
         const collection = this.cloudbaseService.collection(resource)
 
-        // 删除 ids 字段，不修改 filter
-        let where = _.omit(filter, 'ids')
+        let where: any = {}
+
         // 支持批量查询
         if (filter?.ids?.length) {
             where._id = db.command.in(filter.ids)
@@ -50,6 +50,15 @@ export class ContentService {
         // 模糊搜索
         if (fuzzyFilter) {
             const conditions = this.handleFuzzySearch(fuzzyFilter, schema)
+            where = {
+                ...where,
+                ...conditions,
+            }
+        }
+
+        // 过滤
+        if (filter) {
+            const conditions = this.handleFuzzySearch(filter, schema)
             where = {
                 ...where,
                 ...conditions,
@@ -108,14 +117,16 @@ export class ContentService {
         const collection = this.cloudbaseService.collection(resource)
 
         // 查询一个
-        let { data } = await collection.where(filter).limit(1).get()
+        let {
+            data: [record],
+        } = await collection.where(filter).limit(1).get()
 
-        if (!data?.length) {
+        if (!record) {
             return {}
         }
 
         const updateData = _.omit(payload, '_id')
-        return collection.doc(data[0]._id).update(updateData)
+        return collection.doc(record._id).update(updateData)
     }
 
     async updateMany(
@@ -194,11 +205,12 @@ export class ContentService {
         const where = {}
 
         Object.keys(fuzzyFilter)
-            .filter((key) => typeof fuzzyFilter[key] !== 'undefined')
+            .filter((key) => typeof fuzzyFilter[key] !== 'undefined' && fuzzyFilter[key] !== null)
             .forEach((key) => {
+                console.log(key)
                 const value = fuzzyFilter[key]
 
-                if (typeof value === 'boolean' || typeof value === 'number') {
+                if (typeof value === 'boolean' || typeof value === 'number' || key === '_id') {
                     where[key] = value
                     return
                 }

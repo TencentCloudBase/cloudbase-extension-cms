@@ -6,8 +6,9 @@
             "admin": {
                 "use": "@cloudbase/framework-plugin-website",
                 "inputs": {
-                    "outputPath": "./packages/admin/build",
-                    "cloudPath": "/tcb-cms"
+                    "outputPath": "./packages/admin/dist",
+                    "buildCommand": "npm run build",
+                    "cloudPath": "{{env.deployPath}}"
                 }
             },
             "init": {
@@ -22,9 +23,8 @@
                                 "envVariables": {
                                     "CMS_ADMIN_USER_NAME": "{{env.administratorName}}",
                                     "CMS_ADMIN_PASS_WORD": "{{env.administratorPassword}}",
-                                    "CMS_OPERATOR_USER_NAME": "{{env.operatorName}}",
-                                    "CMS_OPERATOR_PASS_WORD": "{{env.operatorPassword}}",
-                                    "CMS_DEPLOY_PATH": "{{env.deployPath}}"
+                                    "CMS_DEPLOY_PATH": "{{env.deployPath}}",
+                                    "ACCESS_DOMAIN": "{{env.accessDomain}}"
                                 },
                                 "installDependency": true
                             },
@@ -35,6 +35,7 @@
             },
             "service": {
                 "use": "@cloudbase/framework-plugin-node",
+                "buildCommand": "npm run build",
                 "inputs": {
                     "name": "tcb-ext-cms-service",
                     "entry": "app.js",
