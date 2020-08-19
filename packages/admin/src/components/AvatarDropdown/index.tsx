@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Menu, Spin, message } from 'antd'
 import { history, useModel, useAccess } from 'umi'
-import { getCloudBaseApp, getPageQuery } from '@/utils'
+import { getCloudBaseApp, getPageQuery, logout } from '@/utils'
 
 import { stringify } from 'querystring'
 import HeaderDropdown from '../HeaderDropdown'
@@ -21,7 +21,7 @@ const loginOut = async () => {
     console.log(app)
 
     // 退出登录
-    await app.auth({ persistence: 'local' }).signOut()
+    await logout()
 
     message.success('退出登录成功！')
 

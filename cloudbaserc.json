@@ -43,8 +43,7 @@
                     "functionOptions": {
                         "timeout": 15,
                         "envVariables": {
-                            "NODE_ENV": "production",
-                            "CMS_CUSTOM_LOGIN_JSON": "{{env.CMS_CUSTOM_LOGIN_JSON}}"
+                            "NODE_ENV": "production"
                         }
                     }
                 }

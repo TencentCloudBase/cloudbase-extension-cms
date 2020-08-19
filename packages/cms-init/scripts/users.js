@@ -1,6 +1,4 @@
 /* eslint-disable */
-const { genPassword } = require('../utils/crypto')
-
 module.exports = {
     // 创建运营者账号
     async createOperator(context) {
@@ -34,33 +32,28 @@ module.exports = {
 }
 
 // 保存用户
-async function saveUser({ createTime, username, password, role, db, config, manager }) {
-    const salt = createTime + config.envId
-    const genPasswordResult = await genPassword(password, salt)
+async function saveUser({ createTime, username, password, roles, db, config, manager }) {
+    await manager.database.createCollectionIfNotExists(config.usersCollectionName)
 
     const collection = db.collection(config.usersCollectionName)
-
     const dbRecords = await collection.where({ username }).get()
 
     const data = {
         username,
-        password: genPasswordResult,
         createTime,
-        role,
+        roles,
     }
 
-    if (dbRecords.code === 'DATABASE_COLLECTION_NOT_EXIST') {
-        await manager.database.createCollectionIfNotExists(config.usersCollectionName)
-        return saveUser({
-            createTime,
-            username,
-            password,
-            role,
-            db,
-            config,
-            manager,
-        })
-    }
+    // 注册用户
+    const { User } = await manager.user.createEndUser({
+        username,
+        password,
+    })
+
+    // 添加 UUId 信息
+    data.uuid = User.UUId
+
+    console.log('注册用户失败', e)
 
     // 如果用户已经存在，则进行 update（有可能账号密码修改））
     if (dbRecords.data.length) {
