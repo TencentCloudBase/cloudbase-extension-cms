@@ -7,7 +7,6 @@ module.exports = {
         // node: true,
         // mocha: true,
         // jest: true,
-        // jquery: true
     },
     globals: {
         REACT_APP_ENV: true,

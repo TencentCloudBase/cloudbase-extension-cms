@@ -22,10 +22,10 @@
     node-cache "^4.2.0"
     ws "^7.0.0"
 
-"@cloudbase/manager-node@^3.7.0":
-  version "3.7.0"
-  resolved "https://registry.yarnpkg.com/@cloudbase/manager-node/-/manager-node-3.7.0.tgz#f00ea264cb5fa1fd978480794a40bb9b29d85892"
-  integrity sha512-aM7wTMcG7v/VKOCcN8eptuuTez9ustCtIygMN5+0gDSi3clBHdpDD+bMn1sFpZ5IEvURoEEb6EVr9OZrBb1dqA==
+"@cloudbase/manager-node@^3.7.1":
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/@cloudbase/manager-node/-/manager-node-3.7.1.tgz#8d6f786f05a08c50962369f4163fe92e05edfb6a"
+  integrity sha512-5PK1zxSPiVAfnWXU1MKGqWtnyNNOa5QQV8+nRpsmy/Z4GaL2MdOLifF59tVM3fR+N3SkQaZ6fMqbAQhDsYupmA==
   dependencies:
     "@cloudbase/database" "^0.6.2"
     archiver "^3.1.1"

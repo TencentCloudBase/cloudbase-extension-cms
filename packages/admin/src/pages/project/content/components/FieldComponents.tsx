@@ -623,7 +623,6 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                     rules={rules}
                     label={displayName}
                     extra={description}
-                    valuePropName="fileList"
                 >
                     <Select>
                         {enumElements?.length ? (

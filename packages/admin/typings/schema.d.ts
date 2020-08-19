@@ -140,10 +140,3 @@ interface SchemaV2 {
 }
 
 type CompatibleField = SchemaFieldV1 & SchemaFieldV2
-
-interface SchemaState {
-    projectId: string
-    currentSchema: SchemaV2
-    loading: boolean
-    schemas: SchemaV2[]
-}

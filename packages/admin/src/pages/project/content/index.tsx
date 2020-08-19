@@ -28,8 +28,8 @@ export default (): React.ReactNode => {
     }>()
 
     const {
-        state: { currentSchema, schemas, loading },
-    }: { state: SchemaState } = ctx
+        state: { currentSchema, contentLoading, schemas, loading },
+    } = ctx
 
     const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
 
@@ -49,12 +49,24 @@ export default (): React.ReactNode => {
                             defaultSelectedKeys={defaultSelectedMenu}
                             onClick={({ key }) => {
                                 const schema = schemas.find((item: SchemaV2) => item._id === key)
+
                                 ctx.setState({
+                                    contentLoading: true,
                                     currentSchema: schema,
                                 })
+
                                 if (tableRef?.current) {
-                                    tableRef.current?.reloadAndRest()
+                                    tableRef.current?.reset()
                                 }
+
+                                setTimeout(() => {
+                                    if (tableRef?.current) {
+                                        ctx.setState({
+                                            contentLoading: false,
+                                        })
+                                        tableRef.current?.reloadAndRest()
+                                    }
+                                }, 30)
                             }}
                         >
                             {schemas.map((item: SchemaV2) => (
@@ -69,10 +81,14 @@ export default (): React.ReactNode => {
                 </ProCard>
                 <ProCard className="content-card" style={{ marginBottom: 0 }}>
                     {currentSchema ? (
-                        <ContentTable
-                            tableRef={tableRef}
-                            setModalVisible={(visible: boolean) => setContentModalVisible(visible)}
-                        />
+                        contentLoading ? null : (
+                            <ContentTable
+                                tableRef={tableRef}
+                                setModalVisible={(visible: boolean) =>
+                                    setContentModalVisible(visible)
+                                }
+                            />
+                        )
                     ) : (
                         <div className="content-empty">
                             <Empty description="创建你的原型，开始使用 CMS">未选择内容</Empty>
