@@ -33,7 +33,7 @@ export const SchemaFieldRender: React.SFC<{
                                             <Typography.Title
                                                 ellipsis
                                                 level={4}
-                                                style={{ marginBottom: 0, width: '200px' }}
+                                                style={{ marginBottom: 0 }}
                                             >
                                                 {field.displayName}
                                             </Typography.Title>

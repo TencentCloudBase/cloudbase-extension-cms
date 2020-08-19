@@ -212,7 +212,7 @@ export const CreateFieldModal: React.FC<{
                                     <Switch />
                                 </Form.Item>
                                 <Form.Item style={{ marginBottom: 0 }}>
-                                    <span>是否关联多项</span>
+                                    <span>是否关联多项（支持选择多个关联文档）</span>
                                 </Form.Item>
                             </div>
                         </Form.Item>

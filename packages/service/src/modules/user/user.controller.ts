@@ -12,13 +12,13 @@ import {
     UseGuards,
 } from '@nestjs/common'
 import _ from 'lodash'
-import { CloudBaseService } from '@/dynamic_modules'
+import { PermissionGuard } from '@/guards'
 import { CollectionV2 } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
-import { genPassword, dateToNumber } from '@/utils'
+import { dateToNumber } from '@/utils'
+import { CloudBaseService } from '@/dynamic_modules'
 import { RecordExistException, RecordNotExistException } from '@/common'
-import { Roles } from '@/common/decorators'
-import { PermissionGuard } from '@/guards'
+import { UserService } from './user.service'
 
 class User {
     @IsNotEmpty()
@@ -30,9 +30,6 @@ class User {
     @IsNotEmpty()
     roles: string[]
 
-    // 兼容老版本，将 userName 转换成 username
-    userName?: string
-
     // 创建时间
     createTime: number
 
@@ -43,7 +40,10 @@ class User {
 @UseGuards(PermissionGuard('user', ['administrator']))
 @Controller('user')
 export class UserController {
-    constructor(private readonly cloudbaseService: CloudBaseService) {}
+    constructor(
+        private readonly cloudbaseService: CloudBaseService,
+        private readonly userService: UserService
+    ) {}
 
     @UseInterceptors(ClassSerializerInterceptor)
     @Get()
@@ -57,10 +57,9 @@ export class UserController {
             .limit(Number(pageSize))
             .get()
 
-        // 兼容老版本，将 userName 转换成 username
         data = data.map((_) => ({
             ..._,
-            username: _.username || _.userName,
+            username: _.username,
         }))
 
         return {
@@ -71,7 +70,7 @@ export class UserController {
 
     @Post()
     async createUser(@Body() body: User) {
-        // 检查集合是否存在
+        // 检查同名用户是否存在
         const { data } = await this.cloudbaseService
             .collection(CollectionV2.Users)
             .where({
@@ -80,35 +79,63 @@ export class UserController {
             .get()
 
         if (data?.length) {
-            throw new RecordExistException()
+            throw new RecordExistException('同名用户已存在')
         }
 
-        body.createTime = dateToNumber()
-        body.password = await genPassword(body.password, body.createTime)
+        // 注册用户
+        const { username, password } = body
+        const { UUId } = await this.userService.createUser(username, password)
 
-        return this.cloudbaseService.collection(CollectionV2.Users).add(body)
+        body.createTime = dateToNumber()
+
+        return this.cloudbaseService.collection(CollectionV2.Users).add({
+            ...body,
+            uuid: UUId,
+        })
     }
 
     @Put(':id')
-    async updateProject(@Param('id') id: string, @Body() payload: Partial<User>) {
-        const query = this.cloudbaseService.collection(CollectionV2.Users).doc(id)
-        const { data } = await query.get()
-        if (!data?.length) {
-            throw new RecordNotExistException()
+    async updateUser(@Param('id') id: string, @Body() payload: Partial<User>) {
+        const query = this.collection().doc(id)
+        const {
+            data: [userInfo],
+        } = await query.get()
+        if (!userInfo) {
+            throw new RecordNotExistException('用户不存在')
         }
 
-        // 加密
-        if (payload.password) {
-            payload.password = await genPassword(payload.password, data?.[0].createTime)
+        // 修改用户名或密码
+        const { username, password } = payload
+        if (password || username) {
+            await this.userService.updateUserInfo(userInfo.uuid, {
+                password,
+                username,
+            })
         }
 
-        // 不允许修改创建时间
-        const user = _.omit(payload, ['createTime', '_createTime'])
+        // 不存储密码
+        const user = _.omit(payload, ['password'])
         return query.update(user)
     }
 
     @Delete(':id')
     async deleteUser(@Param('id') userId) {
-        return this.cloudbaseService.collection(CollectionV2.Users).doc(userId).remove()
+        const {
+            data: [user],
+        } = await this.collection().doc(userId).get()
+
+        if (!user) {
+            throw new RecordNotExistException('用户不存在')
+        }
+
+        // 删除用户
+        const deleteRes = await this.userService.deleteUser(user.uuid)
+        console.log('删除用户', deleteRes)
+
+        return this.collection().doc(userId).remove()
+    }
+
+    private collection(name = CollectionV2.Users) {
+        return this.cloudbaseService.collection(name)
     }
 }

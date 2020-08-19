@@ -14,9 +14,6 @@ interface User {
 
     password: string
 
-    // 兼容老版本，将 userName 转换成 username
-    userName?: string
-
     // 创建时间
     createTime: number
 
@@ -25,6 +22,9 @@ interface User {
 
     // 用户角色
     roles: string[]
+
+    // cloudbase uuid
+    uuid: string
 }
 
 interface UserRole {

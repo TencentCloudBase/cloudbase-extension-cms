@@ -23,15 +23,17 @@ module.exports.main = async (event, context) => {
         CMS_OPERATOR_PASS_WORD: operatorPassword,
         // 部署路径
         CMS_DEPLOY_PATH: deployPath,
+        // 服务自定义域名
+        ACCESS_DOMAIN: accessDomain,
     } = process.env
 
     const jobs = {
         // 创建管理员和运营者
-        // ...userJobs,
+        ...userJobs,
         // 部署静态网站
         // ...deployJobs,
         // V1 迁移
-        ...migrateJobs,
+        // ...migrateJobs,
     }
 
     // 注入全局的上下文
@@ -54,6 +56,7 @@ module.exports.main = async (event, context) => {
         administratorName,
         administratorPassword,
         deployPath,
+        accessDomain
     }
 
     return runJobs(jobs, ctx)

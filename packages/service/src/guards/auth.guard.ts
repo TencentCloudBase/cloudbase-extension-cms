@@ -1,13 +1,14 @@
-import { Request } from 'express'
-import {
-    Injectable,
-    CanActivate,
-    HttpStatus,
-    HttpException,
-    ExecutionContext,
-} from '@nestjs/common'
 import { CollectionV2 } from '@/constants'
 import { getCloudBaseApp, isDevEnv } from '@/utils'
+import cloudbase from '@cloudbase/node-sdk'
+import {
+    CanActivate,
+    ExecutionContext,
+    HttpException,
+    HttpStatus,
+    Injectable,
+} from '@nestjs/common'
+import { Request } from 'express'
 
 // 校验用户是否登录，是否存在
 @Injectable()
@@ -23,6 +24,7 @@ export class GlobalAuthGuard implements CanActivate {
                 createTime: 2020,
                 password: 'cloudbase',
                 isAdmin: true,
+                uuid: 'xxx',
             }
 
             // request.cmsUser = {
@@ -31,6 +33,7 @@ export class GlobalAuthGuard implements CanActivate {
             //     username: 'admin',
             //     createTime: 2020,
             //     password: 'cloudbase',
+            //     uuid: 'xxx'
             // }
 
             return true
@@ -44,12 +47,15 @@ export class GlobalAuthGuard implements CanActivate {
         // 登录的用户
         // 目前只在云函数中能自动获取用户身份信息
         const app = getCloudBaseApp()
-        const userInfo = app.auth().getUserInfo()
-        const customUserId = userInfo?.customUserId
+        const { TCB_UUID } = cloudbase.getCloudbaseContext()
 
-        console.log('当前登录用户', userInfo)
+        console.log('用户 ID', TCB_UUID)
 
-        if (!customUserId) {
+        const { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
+
+        console.log('用户信息', userInfo)
+
+        if (!userInfo?.username) {
             throw new HttpException(
                 {
                     code: 'NO_AUTH',
@@ -61,7 +67,13 @@ export class GlobalAuthGuard implements CanActivate {
 
         const {
             data: [userRecord],
-        } = await app.database().collection(CollectionV2.Users).doc(customUserId).get()
+        } = await app
+            .database()
+            .collection(CollectionV2.Users)
+            .where({
+                username: userInfo.username,
+            })
+            .get()
 
         // 用户信息不存在
         if (!userRecord) {

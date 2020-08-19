@@ -126,8 +126,8 @@ export class ContentController {
                 projectId,
                 resource,
                 action,
-                res,
-                payload: options.payload,
+                actionRes: res,
+                actionOptions: options,
             })
             console.log('Webhook 触发成功！')
         } catch (error) {

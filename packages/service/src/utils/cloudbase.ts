@@ -1,4 +1,5 @@
 import cloudbase from '@cloudbase/node-sdk'
+import CloudBase from '@cloudbase/manager-node'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
 import { isDevEnv } from './tools'
 
@@ -11,18 +12,8 @@ export const getEnvIdString = (): string => {
 export const getCloudBaseApp = () => {
     // envId 为 symbol 值
     const envId = getEnvIdString()
-    const customLoginJson = process.env.CMS_CUSTOM_LOGIN_JSON
-
-    let credentials
-
-    try {
-        credentials = JSON.parse(customLoginJson)
-    } catch (e) {
-        // throw new Error('登录异常')
-    }
 
     let options: ICloudBaseConfig = {
-        credentials,
         env: envId,
     }
 
@@ -37,4 +28,24 @@ export const getCloudBaseApp = () => {
     const app = cloudbase.init(options)
 
     return app
+}
+
+export const getCloudBaseManager = (): CloudBase => {
+    const envId = getEnvIdString()
+
+    let options: ICloudBaseConfig = {
+        envId,
+    }
+
+    if (isDevEnv()) {
+        options = {
+            ...options,
+            secretId: process.env.SECRETID,
+            secretKey: process.env.SECRETKEY,
+        }
+    }
+
+    const manager = new CloudBase(options)
+
+    return manager
 }

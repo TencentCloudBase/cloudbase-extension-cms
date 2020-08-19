@@ -36,7 +36,7 @@ export default (): React.ReactNode => {
     return (
         <PageContainer className="page-container">
             <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
-                <ProCard colSpan="240px" className="left-card" style={{ marginBottom: 0 }}>
+                <ProCard colSpan="220px" className="left-card" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Row justify="center">
                             <Col>
