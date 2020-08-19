@@ -35,7 +35,7 @@ export const ContentTableSearch: React.FC<{
             }}
         >
             {schema?.fields
-                .filter((filed) => !negativeTypes.includes(filed.type))
+                ?.filter((filed) => !negativeTypes.includes(filed.type))
                 .map((field) => (
                     <Menu.Item key={field.name}>{field.displayName}</Menu.Item>
                 ))}
@@ -76,15 +76,17 @@ export const ContentTableSearch: React.FC<{
                     initialValues={{}}
                     onFinish={(v: any) => onSearch(v)}
                 >
-                    {searchFields.map((field, index) => (
-                        <Space key={index} align="center" style={{ marginRight: '15px' }}>
-                            {getSearchFieldItem(field, index)}
-                            <DeleteTwoTone
-                                onClick={() => deleteField(field)}
-                                style={{ marginLeft: '-15px' }}
-                            />
-                        </Space>
-                    ))}
+                    <Row>
+                        {searchFields.map((field, index) => (
+                            <Space key={index} align="center" style={{ marginRight: '15px' }}>
+                                {getSearchFieldItem(field, index)}
+                                <DeleteTwoTone
+                                    onClick={() => deleteField(field)}
+                                    style={{ marginLeft: '-15px' }}
+                                />
+                            </Space>
+                        ))}
+                    </Row>
                     <Row>
                         <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
                             <Form.Item>
@@ -128,7 +130,7 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
         case 'RichText':
         case 'MultiLineString':
             FormItem = (
-                <Form.Item key={key} name={name} label={displayName}>
+                <Form.Item key={key} name={name} label={displayName} style={{ minWidth: '100px' }}>
                     <Input type="text" />
                 </Form.Item>
             )
@@ -143,7 +145,7 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
         case 'Number':
             FormItem = (
                 <Form.Item key={key} name={name} label={displayName}>
-                    <InputNumber style={{ width: '100%' }} min={min} max={max} />
+                    <InputNumber min={min} max={max} />
                 </Form.Item>
             )
             break
@@ -164,8 +166,8 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
             break
         case 'Enum':
             FormItem = (
-                <Form.Item key={key} name={name} label={displayName} valuePropName="fileList">
-                    <Select mode="multiple">
+                <Form.Item key={key} name={name} label={displayName}>
+                    <Select mode="multiple" style={{ minWidth: '100px' }}>
                         {enumElements?.length ? (
                             enumElements?.map((ele, index) => (
                                 <Option value={ele.value} key={index}>

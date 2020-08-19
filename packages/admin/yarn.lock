@@ -82,15 +82,28 @@
     umi-utils "^1.5.1"
     yargs-parser "^16.1.0"
 
-"@ant-design/pro-field@0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-0.0.16.tgz#6ddd783d299e763fc9004cbc7032bc3797924d4c"
-  integrity sha512-rbzH3oNgbkKWsUzW+rWv1ymIsN+TIx+5twfUnVKVaZbO0xuwQMsUnDES14qKjX79UsSh2Q+y61YhNeJ4qaLplg==
+"@ant-design/pro-field@0.0.19":
+  version "0.0.19"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-0.0.19.tgz#e517ead7f4ee5f9d44366b742a7a34c0b0259ff4"
+  integrity sha512-6JFx1MYeSZycN/POpXIYiCE20E51FW6mWvylaW3ak0HkdK3lJW1l1SMMHLJpEFIQw/H1glro9MJC8KPvYcWZcg==
   dependencies:
     classnames "^2.2.6"
     lodash.isequal "^4.5.0"
     lodash.tonumber "^4.0.3"
     moment "^2.27.0"
+
+"@ant-design/pro-form@1.0.0-beta.17":
+  version "1.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-form/-/pro-form-1.0.0-beta.17.tgz#417aa824aa8b307d3924e43c5af86fba01eb9b0f"
+  integrity sha512-GpQz1EFT1Wy8dyoFNMLNSVCEpdjOifAx1uvhig5jwtHP5zEHQIuuI0GrPlZQTtqSBCdpRS+NHh5N+TENZdMiZg==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-field" "0.0.19"
+    "@ant-design/pro-provider" "0.0.5"
+    "@ant-design/pro-utils" "0.0.7"
+    classnames "^2.2.6"
+    rc-resize-observer "^0.2.3"
+    use-media-antd-query "^1.0.2"
 
 "@ant-design/pro-layout@^6.4.5":
   version "6.4.5"
@@ -142,15 +155,16 @@
   dependencies:
     rc-util "^5.0.1"
 
-"@ant-design/pro-table@^2.5.8":
-  version "2.5.8"
-  resolved "https://registry.yarnpkg.com/@ant-design/pro-table/-/pro-table-2.5.8.tgz#f233064b98dad49e233cd7f1a1230f67aa25bda1"
-  integrity sha512-vTPSSnx0sHtCAcKti+9Em4laUrAFWRHvO6zZXm1GBhwyplV3KvuHLTIjbnVWKtGF8MhtlDT/S6CVc7hcST26tQ==
+"@ant-design/pro-table@^2.5.15":
+  version "2.5.15"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-table/-/pro-table-2.5.15.tgz#c6be89aada631fc7b4dd2bbc0f1cefcb5946c700"
+  integrity sha512-vW7vQ/fcATrCaA+93fnX/ZH1fIVXS7hoomraOaX+rezdRIQPydnMuQl9b3rEG4irp6pfOx3VxPQJGEUZC4cduA==
   dependencies:
     "@ant-design/icons" "^4.1.0"
-    "@ant-design/pro-field" "0.0.16"
+    "@ant-design/pro-field" "0.0.19"
+    "@ant-design/pro-form" "1.0.0-beta.17"
     "@ant-design/pro-provider" "0.0.5"
-    "@ant-design/pro-utils" "0.0.5"
+    "@ant-design/pro-utils" "0.0.7"
     antd "^4.1.5"
     classnames "^2.2.6"
     dnd-core "^10.0.2"
@@ -167,6 +181,15 @@
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-utils/-/pro-utils-0.0.5.tgz#62826637bb72820409dfed9232f51626e46efaa8"
   integrity sha512-eliEJGm1e2nkPzyODlrBNpvjI8luVeZ0GU0pdR5kU7A2RA7IwR1D+suKYyKcuzeKEpyW14VzZkZ6q2l/FDWR9g==
+  dependencies:
+    "@types/lodash.isequal" "^4.5.5"
+    lodash.isequal "^4.5.0"
+    rc-util "^5.0.6"
+
+"@ant-design/pro-utils@0.0.7":
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-utils/-/pro-utils-0.0.7.tgz#757290a7fa19c05fb2ba524ea54a6bfab17f12f3"
+  integrity sha512-uOGCiILLx5Pvy26lUQ6OtYbZpPql59ZQL5HZt5nClV5BlpK3PYfOffRhJrtf6qIy6kzTxyIrn1UsKPTJMUvicg==
   dependencies:
     "@types/lodash.isequal" "^4.5.5"
     lodash.isequal "^4.5.0"
@@ -16406,7 +16429,7 @@ use-json-comparison@^1.0.3, use-json-comparison@^1.0.5:
   resolved "https://registry.yarnpkg.com/use-json-comparison/-/use-json-comparison-1.0.5.tgz#d41a72d65fcf4cf72acc85c8f3980e2173809d63"
   integrity sha512-P/AgEKXphcN0L/8G5wLfbEz88mZQ9ayHS1OVESZaS2nxkN/msDWTGE8E1e9HXOWCZ9yoAfDrbVKAmTYpsYupFA==
 
-use-media-antd-query@1.0.2, use-media-antd-query@^1.0.1:
+use-media-antd-query@1.0.2, use-media-antd-query@^1.0.1, use-media-antd-query@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/use-media-antd-query/-/use-media-antd-query-1.0.2.tgz#cbda1bdfb99cd20b0121a361c3d1331ca499ba58"
   integrity sha512-9exG6pzEtkwtJIM2loE5/lBdNeJHoX0/CYA8NVwC0UPaiCcpHKAEyj9sEa+dju7ERPaU0//gG8+Q6I7Jr265Eg==

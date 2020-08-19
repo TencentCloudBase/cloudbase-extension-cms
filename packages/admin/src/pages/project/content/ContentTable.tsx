@@ -18,7 +18,7 @@ export const ContentTable: React.FC<{
     const ctx = useConcent('content')
     const {
         state: { currentSchema },
-    }: { state: SchemaState } = ctx
+    } = ctx
 
     const [searchParams, setSearchParams] = useState<any>()
 
@@ -36,7 +36,9 @@ export const ContentTable: React.FC<{
         // 搜索参数
         const fuzzyFilter = searchParams
             ? Object.keys(searchParams)
-                  .filter((key) => currentSchema.fields?.some((field) => field.name === key))
+                  .filter((key) =>
+                      currentSchema.fields?.some((field: SchemaFieldV2) => field.name === key)
+                  )
                   .reduce(
                       (prev, key) => ({
                           ...prev,
@@ -61,7 +63,7 @@ export const ContentTable: React.FC<{
                 success: true,
             }
         } catch (error) {
-            console.log(error)
+            console.log('内容请求错误', error)
             return {
                 data: [],
                 total: 0,
@@ -82,7 +84,6 @@ export const ContentTable: React.FC<{
             <ProTable
                 rowKey="_id"
                 search={false}
-                defaultData={[]}
                 actionRef={tableRef}
                 dateFormatter="string"
                 scroll={{ x: 1000 }}

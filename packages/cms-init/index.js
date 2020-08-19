@@ -17,10 +17,6 @@ module.exports.main = async (event, context) => {
         CMS_ADMIN_USER_NAME: administratorName,
         // 管理员密码
         CMS_ADMIN_PASS_WORD: administratorPassword,
-        // 运营者账号
-        CMS_OPERATOR_USER_NAME: operatorName,
-        // 运营者密码
-        CMS_OPERATOR_PASS_WORD: operatorPassword,
         // 部署路径
         CMS_DEPLOY_PATH: deployPath,
         // 服务自定义域名
@@ -31,9 +27,9 @@ module.exports.main = async (event, context) => {
         // 创建管理员和运营者
         ...userJobs,
         // 部署静态网站
-        // ...deployJobs,
+        ...deployJobs,
         // V1 迁移
-        // ...migrateJobs,
+        ...migrateJobs,
     }
 
     // 注入全局的上下文
@@ -51,8 +47,6 @@ module.exports.main = async (event, context) => {
             contentsCollectionName: 'tcb-ext-cms-contents',
             usersCollectionName: 'tcb-ext-cms-users',
         },
-        operatorName,
-        operatorPassword,
         administratorName,
         administratorPassword,
         deployPath,
