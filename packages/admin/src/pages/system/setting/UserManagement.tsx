@@ -17,7 +17,7 @@ export default (): React.ReactElement => {
         refreshDeps: [reload],
     })
 
-    const { data: roles, loading: roleLoading } = useRequest(() => getUserRoles(), {
+    const { data: roles = [], loading: roleLoading } = useRequest(() => getUserRoles(), {
         refreshDeps: [reload],
     })
 
@@ -42,7 +42,6 @@ export default (): React.ReactElement => {
                 dataSource={data}
                 renderItem={(item: any) => ({
                     title: <Typography.Title level={4}>{item.username}</Typography.Title>,
-                    // subTitle: <Tag color="#5BD8A6">语雀专栏</Tag>,
                     actions: [
                         <Button
                             size="small"
@@ -78,10 +77,11 @@ export default (): React.ReactElement => {
                     description: (
                         <div>
                             {item.roles?.map((roleId: any, index: number) => {
-                                const role = roles.find((_: any) => _._id === roleId)
+                                const role = roles?.find((_: any) => _._id === roleId)
+
                                 return (
                                     <Tag key={index} color="#006eff">
-                                        {role.roleName}
+                                        {role?.roleName}
                                     </Tag>
                                 )
                             })}
@@ -150,6 +150,9 @@ export const SystemUserRoles = [
     },
 ]
 
+/**
+ * 创建用户
+ */
 const CreateUserModal: React.FC<{
     visible: boolean
     action: 'create' | 'edit'
@@ -214,17 +217,28 @@ const CreateUserModal: React.FC<{
                     rules={[
                         {
                             required: true,
-                            pattern: /^[a-zA-Z]{4,}$/,
-                            message: '用户名不符合规则！',
+                            pattern: /^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$/g,
+                            message: '用户名不符合规则',
+                        },
+                        {
+                            required: true,
+                            pattern: /\D+/g,
+                            message: '用户名不能是纯数字',
                         },
                     ]}
                 >
-                    <Input placeholder="仅支持大小写字母，不能小于 4 位" />
+                    <Input placeholder="用户名" />
                 </Form.Item>
                 <Form.Item
                     label="用户密码"
                     name="password"
-                    rules={[{ required: true, message: '请输入项目介绍！' }]}
+                    rules={[
+                        { required: true, min: 8, max: 32, message: '密码长度必需大于 8 位' },
+                        {
+                            pattern: /(?=.*\d)(?=.*[a-zA-Z]).{8,32}/,
+                            message: '密码必须包含字母和数字',
+                        },
+                    ]}
                 >
                     <Input.Password
                         placeholder="输入密码"

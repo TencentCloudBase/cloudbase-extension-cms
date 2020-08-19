@@ -77,7 +77,7 @@ export default (): React.ReactNode => {
             }
         >
             <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
-                <ProCard colSpan="240px" className="card-left" style={{ marginBottom: 0 }}>
+                <ProCard colSpan="220px" className="card-left" style={{ marginBottom: 0 }}>
                     {loading ? (
                         <Row justify="center">
                             <Col>
@@ -111,8 +111,8 @@ export default (): React.ReactNode => {
                     <Content className="full-height schema-layout-content">
                         {currentSchema?._id ? (
                             <Row>
-                                <Col flex="auto" />
-                                <Col flex="600px">
+                                <Col flex="1 1 auto" />
+                                <Col flex="0 1 600px">
                                     <Space className="schema-layout-header">
                                         <Typography.Title level={3}>
                                             {currentSchema.displayName}
@@ -205,7 +205,7 @@ export default (): React.ReactNode => {
                                         )}
                                     </Content>
                                 </Col>
-                                <Col flex="auto" />
+                                <Col flex="1 1 auto" />
                             </Row>
                         ) : (
                             <div className="schema-empty">
@@ -224,7 +224,7 @@ export default (): React.ReactNode => {
                         )}
                     </Content>
 
-                    <Sider className="schema-sider" width="240">
+                    <Sider className="schema-sider" width="220">
                         <Typography.Title level={3} className="schema-sider-header">
                             原型类型
                         </Typography.Title>

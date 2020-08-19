@@ -29,6 +29,21 @@ export async function getCloudBaseApp() {
     return app
 }
 
+// 用户名密码登录
+export async function loginWithPassword(username: string, password: string) {
+    // 登陆
+    await auth.signInWithUsernameAndPassword(username, password)
+}
+
+export async function logout() {
+    if (!auth) {
+        const app = await getCloudBaseApp()
+        auth = app.auth({ persistence: 'local' })
+    }
+
+    await auth.signOut()
+}
+
 // 兼容本地开发与云函数请求
 export async function tcbRequest<T = any>(
     url: string,
@@ -46,7 +61,7 @@ export async function tcbRequest<T = any>(
     const app = await getCloudBaseApp()
 
     const res = await app.callFunction({
-        name: 'service',
+        name: 'tcb-ext-cms-service',
         data: {
             path: `/api${url}`,
             httpMethod: method,
@@ -72,8 +87,6 @@ export async function tcbRequest<T = any>(
         body = {}
     }
 
-    console.log(body)
-
     if (body?.code) {
         const errorText = codeMessage[res.result?.statusCode || 500]
         notification.error({
@@ -84,22 +97,6 @@ export async function tcbRequest<T = any>(
     }
 
     return body
-}
-
-// 自定义登录
-export async function customLogin(ticket: string) {
-    try {
-        // 登陆
-        await app
-            .auth({
-                persistence: 'local',
-            })
-            .customAuthProvider()
-            .signIn(ticket)
-    } catch (e) {
-        console.log(e)
-        message.error('登录失败')
-    }
 }
 
 // 上传文件
@@ -136,11 +133,9 @@ export async function getTempFileURL(cloudId: string): Promise<string> {
 export async function downloadFile(cloudId: string) {
     const app = await getCloudBaseApp()
 
-    console.log(cloudId)
-
     const result = await app.downloadFile({
         fileID: cloudId,
     })
 
-    console.log(result)
+    console.log('下载文件', cloudId, result)
 }

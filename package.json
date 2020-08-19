@@ -10,7 +10,9 @@
         "lint-staged": "lint-staged",
         "lint-staged:ts": "eslint --ext .ts,.tsx ",
         "lint:fix": "eslint --fix --cache --ext .ts,.tsx --format=pretty ./packages",
-        "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto"
+        "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto",
+        "deploy:init": "tcb framework:deploy init",
+        "deploy:service": "tcb framework:deploy service"
     },
     "husky": {
         "hooks": {

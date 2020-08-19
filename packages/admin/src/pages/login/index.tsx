@@ -1,9 +1,9 @@
 import { Alert, message, Button, Spin } from 'antd'
 import React, { useState } from 'react'
 import { useModel, history } from 'umi'
-import { customLogin, getPageQuery } from '@/utils'
+import { getPageQuery, loginWithPassword } from '@/utils'
 import Footer from '@/components/Footer'
-import { LoginParamsType, accountLogin } from '@/services/login'
+import { LoginParamsType } from '@/services/login'
 import logo from '@/assets/logo.svg'
 import LoginFrom from './components'
 import styles from './index.less'
@@ -69,24 +69,27 @@ const Login: React.FC<{}> = () => {
         setSubmitting(true)
         setLoginErrorMessage('')
 
-        try {
-            // 登录
-            const res = await accountLogin({ ...values, type })
+        const { username, password } = values
 
-            // 登录成功
-            if (res.ticket) {
-                await customLogin(res.ticket)
-                message.success('登录成功')
-                replaceGoto()
-                setTimeout(() => {
-                    refresh()
-                }, 1000)
-                return
-            } else {
-                setLoginErrorMessage(res.message || '登录失败，请重试！')
+        try {
+            // 用户名密码登录
+            await loginWithPassword(username.trim(), password.trim())
+            message.success('登录成功')
+            replaceGoto()
+            setTimeout(() => {
+                refresh()
+            }, 1000)
+        } catch (error) {
+            try {
+                const e = JSON.parse(error.message)
+                if (e?.code === 'OPERATION_FAIL') {
+                    message.error('用户不存在或密码错误')
+                } else {
+                    message.error(e.message || '登录失败，请重试！')
+                }
+            } catch (_e) {
+                message.error(error.message || '登录失败，请重试！')
             }
-        } catch (e) {
-            message.error(e.message || '登录失败，请重试！')
         }
 
         setSubmitting(false)

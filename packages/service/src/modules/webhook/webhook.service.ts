@@ -16,10 +16,25 @@ export interface WebhookCallOptions {
     action: string
 
     // 响应数据
-    res: any
+    actionRes: any
 
-    // 请求 body
-    payload: any
+    // content action 选项
+    actionOptions?: {
+        page?: number
+        pageSize?: number
+        filter?: {
+            _id?: string
+            ids?: string[]
+            [key: string]: any
+        }
+        fuzzyFilter?: {
+            [key: string]: any
+        }
+        sort?: {
+            [key: string]: 'ascend' | 'descend'
+        }
+        payload?: Record<string, any>
+    }
 }
 
 @Injectable()
@@ -28,7 +43,7 @@ export class WebhookService {
 
     // 处理 webhook
     async callWebhook(options: WebhookCallOptions) {
-        const { projectId, resource, action, res } = options
+        const { projectId, resource, action, actionRes, actionOptions } = options
 
         const $ = this.cloudbaseService.db.command
         const webhookEvent = action.replace('One', '').replace('Many', '')
@@ -78,11 +93,12 @@ export class WebhookService {
                 url,
                 headers: httpHeaders,
                 data: {
-                    _id,
-                    name,
-                    resource,
+                    webhookId: _id,
+                    webhookName: name,
+                    collection: resource,
                     action,
-                    res,
+                    actionRes,
+                    actionFilter: actionOptions?.filter,
                 },
                 timeout: config.webhookTimeout,
             })
