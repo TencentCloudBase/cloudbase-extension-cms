@@ -45,7 +45,7 @@ export default (): React.ReactNode => {
     const ctx = useConcent('schema')
     const {
         state: { currentSchema, schemas, loading },
-    }: { state: SchemaState } = ctx
+    } = ctx
 
     const [schemaAction, setSchemaAction] = useState<'create' | 'edit'>('create')
     const [schemaVisible, setSchemaVisible] = useState(false)
