@@ -2,19 +2,26 @@
 
 👷 施工中 🚧
 
-## 安装到 CloudBase
+## 云开发部署
 
-### 前置依赖
+我们提供了一键部署到云开发环境的脚本，你可以按照下面的流程操作，部署 CloudBase CMS 到云开发环境中。
 
-1. 安装最新版本 CloudBase CLI（0.9.1+）
-   `npm install -g @cloudbase/cli`
-2. 开通一个按量计费的环境，或使用已有的按量计费环境
+### 0️⃣ 前置依赖
 
-### 配置
+1. 安装 [Node.js LTS 版本](https://nodejs.org/zh-cn/)
+2. 使用 Node 包管理器 NPM 安装最新版本的 CloudBase CLI 工具（0.9.1+）
 
-复制根目录下的 `.env.example` 为 `.env.local`，并填写相关的配置
+    `npm install -g @cloudbase/cli@latest`
 
-```
+3. 开通云开发服务，并创建按量计费环境（如果您已拥有云开发按量计费的环境，可跳过此步骤）
+
+    登录[腾讯云-云开发控制台](https://console.cloud.tencent.com/tcb/env/index?from=cli&source=cloudbase-cms&action=CreateEnv)，根据弹窗提示，开通服务，并创建按量计费环境。
+
+### 1️⃣ 配置
+
+复制项目根目录下的 `.env.example` 为 `.env.local`，并填写相关的配置
+
+```bash
 # 您的云开发环境 Id
 TCB_ENVID=envId
 # 管理员账户名，账号名长度需要大于 4 位，支持字母和数字
@@ -25,15 +32,17 @@ administratorPassword=82902Jkl
 deployPath=/tcb-cms/
 ```
 
-### 部署
+### 2️⃣ 安装依赖
 
-初始化，安装依赖
+在项目根目录下运行下面的命令：
 
 ```
 npm install && npm run setup
 ```
 
-部署到云函数
+### 3️⃣ 部署
+
+在项目根目录下运行下面的命令，会将 CloudBase CMS 的管理控制台部署到静态网站，Node 服务部署到云函数中
 
 ```
 npm run deploy:fn
@@ -62,8 +71,13 @@ window.TcbCmsConfig = {
 }
 ```
 
+安装依赖
+
 ```bash
-yarn
+# 安装 lerna 依赖
+npm install
+# 安装 package 依赖
 npm run setup
+# 启动开发
 npm run dev
 ```

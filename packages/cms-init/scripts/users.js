@@ -2,9 +2,18 @@
 module.exports = {
     async enablePasswordLogin(context) {
         const { manager } = context
+        const { ConfigList } = await manager.env.getLoginConfigList()
+        if (ConfigList && ConfigList.length) {
+            const usernameLogin = ConfigList.find((item) => item.Platform === 'USERNAME')
+            // 用户名免密登录配置已存在
+            if (usernameLogin) {
+                const res = await manager.env.updateLoginConfig(usernameLogin.Id, 'ENABLE')
+                console.log('开启密码登录', res)
+                return
+            }
+        }
         const res = await manager.env.createLoginConfig('USERNAME', 'username')
-
-        console.log('开启密码登录', res)
+        console.log('创建密码登录', res)
     },
     // 创建管理员账号
     async createAdministrator(context) {
