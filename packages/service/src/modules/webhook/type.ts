@@ -2,17 +2,17 @@ import { Method } from 'axios'
 import { SchemaV2 } from '../schema/types'
 
 export interface Webhook {
-    _id: string
+  _id: string
 
-    name: string
+  name: string
 
-    url: string
+  url: string
 
-    method: Method
+  method: Method
 
-    event: string[]
+  event: string[]
 
-    collections: SchemaV2[]
+  collections: SchemaV2[]
 
-    headers: { key: string; value: string }[]
+  headers: { key: string; value: string }[]
 }

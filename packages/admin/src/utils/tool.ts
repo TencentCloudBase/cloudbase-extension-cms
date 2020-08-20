@@ -5,19 +5,19 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(
 export const isUrl = (path: string): boolean => reg.test(path)
 
 export const getPageQuery = () => {
-    const { href } = window.location
-    const qsIndex = href.indexOf('?')
-    const sharpIndex = href.indexOf('#')
+  const { href } = window.location
+  const qsIndex = href.indexOf('?')
+  const sharpIndex = href.indexOf('#')
 
-    if (qsIndex !== -1) {
-        if (qsIndex > sharpIndex) {
-            return parse(href.split('?')[1])
-        }
-
-        return parse(href.slice(qsIndex + 1, sharpIndex))
+  if (qsIndex !== -1) {
+    if (qsIndex > sharpIndex) {
+      return parse(href.split('?')[1])
     }
 
-    return {}
+    return parse(href.slice(qsIndex + 1, sharpIndex))
+  }
+
+  return {}
 }
 
 // 判断是否是开发环境

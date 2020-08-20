@@ -9,115 +9,110 @@ import HeaderDropdown from '../HeaderDropdown'
 import styles from './index.less'
 
 export interface GlobalHeaderRightProps {
-    menu?: boolean
+  menu?: boolean
 }
 
 /**
  * 退出登录，并且将当前的 url 保存
  */
 const loginOut = async () => {
-    const app: any = await getCloudBaseApp()
+  const app: any = await getCloudBaseApp()
 
-    console.log(app)
+  console.log(app)
 
-    // 退出登录
-    await logout()
+  // 退出登录
+  await logout()
 
-    message.success('退出登录成功！')
+  message.success('退出登录成功！')
 
-    const { redirect } = getPageQuery()
-    // Note: There may be security issues, please note
-    if (window.location.pathname !== '/login' && !redirect) {
-        history.replace({
-            pathname: '/login',
-            search: stringify({
-                redirect: window.location.href,
-            }),
-        })
-    }
+  const { redirect } = getPageQuery()
+  // Note: There may be security issues, please note
+  if (window.location.pathname !== '/login' && !redirect) {
+    history.replace({
+      pathname: '/login',
+      search: stringify({
+        redirect: window.location.href,
+      }),
+    })
+  }
 }
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
-    const { initialState, setInitialState } = useModel('@@initialState')
-    const { isAdmin } = useAccess()
+  const { initialState, setInitialState } = useModel('@@initialState')
+  const { isAdmin } = useAccess()
 
-    const onMenuClick = useCallback((event: any) => {
-        const { key } = event
+  const onMenuClick = useCallback((event: any) => {
+    const { key } = event
 
-        if (key === 'logout') {
-            setInitialState({ ...initialState, currentUser: undefined })
-            loginOut()
-            return
-        }
-
-        history.push(`/${key}`)
-    }, [])
-
-    const loading = (
-        <span className={`${styles.action} ${styles.account}`}>
-            <Spin
-                size="small"
-                style={{
-                    marginLeft: 8,
-                    marginRight: 8,
-                }}
-            />
-        </span>
-    )
-
-    if (!initialState) {
-        return loading
+    if (key === 'logout') {
+      setInitialState({ ...initialState, currentUser: undefined })
+      loginOut()
+      return
     }
 
-    const { currentUser } = initialState
+    history.push(`/${key}`)
+  }, [])
 
-    if (!currentUser?.username && !currentUser?._id) {
-        return loading
-    }
+  const loading = (
+    <span className={`${styles.action} ${styles.account}`}>
+      <Spin
+        size="small"
+        style={{
+          marginLeft: 8,
+          marginRight: 8,
+        }}
+      />
+    </span>
+  )
 
-    const menuHeaderDropdown = (
-        <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
-            {isAdmin && (
-                <Menu.Item key="settings">
-                    <SettingOutlined />
-                    系统设置
-                </Menu.Item>
-            )}
+  if (!initialState) {
+    return loading
+  }
 
-            {/* <Menu.Item key="personal">
+  const { currentUser } = initialState
+
+  if (!currentUser?.username && !currentUser?._id) {
+    return loading
+  }
+
+  const menuHeaderDropdown = (
+    <Menu className={styles.menu} selectedKeys={[]} onClick={onMenuClick}>
+      {isAdmin && (
+        <Menu.Item key="settings">
+          <SettingOutlined />
+          系统设置
+        </Menu.Item>
+      )}
+
+      {/* <Menu.Item key="personal">
                 <UserOutlined />
                 个人设置
             </Menu.Item> */}
 
-            <Menu.Divider />
-            <Menu.Item key="logout">
-                <LogoutOutlined />
-                退出登录
-            </Menu.Item>
-        </Menu>
-    )
-    return (
-        <HeaderDropdown overlay={menuHeaderDropdown}>
-            <span className={`${styles.action} ${styles.account}`}>
-                {currentUser?.avatar ? (
-                    <Avatar
-                        alt="avatar"
-                        size="large"
-                        className={styles.avatar}
-                        src={currentUser?.avatar}
-                    />
-                ) : (
-                    <Avatar
-                        alt="avatar"
-                        size="large"
-                        className={styles.avatar}
-                        style={{ backgroundColor: '#0052d9' }}
-                        icon={<UserOutlined />}
-                    />
-                )}
-            </span>
-        </HeaderDropdown>
-    )
+      <Menu.Divider />
+      <Menu.Item key="logout">
+        <LogoutOutlined />
+        退出登录
+      </Menu.Item>
+    </Menu>
+  )
+  return (
+    <HeaderDropdown overlay={menuHeaderDropdown}>
+      <span className={`${styles.action} ${styles.account}`}>
+        {currentUser?.avatar ? (
+          <Avatar alt="avatar" size="large" className={styles.avatar} src={currentUser?.avatar} />
+        ) : (
+          <Avatar
+            alt="avatar"
+            size="large"
+            className={styles.avatar}
+            style={{ backgroundColor: '#0052d9' }}
+            icon={<UserOutlined />}
+          />
+        )}
+      </span>
+    </HeaderDropdown>
+  )
 }
 
 export default AvatarDropdown

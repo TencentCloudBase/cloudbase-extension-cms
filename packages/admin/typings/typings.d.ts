@@ -14,27 +14,27 @@ declare module 'omit.js'
 
 // google analytics interface
 interface GAFieldsObject {
-    eventCategory: string
-    eventAction: string
-    eventLabel?: string
-    eventValue?: number
-    nonInteraction?: boolean
+  eventCategory: string
+  eventAction: string
+  eventLabel?: string
+  eventValue?: number
+  nonInteraction?: boolean
 }
 
 interface Window {
-    ga: (
-        command: 'send',
-        hitType: 'event' | 'pageview',
-        fieldsObject: GAFieldsObject | string
-    ) => void
-    reloadAuthorized: () => void
-    cloudbase: any
-    TcbCmsConfig: {
-        history: 'hash' | 'browser'
-        envId: string
-        cloudAccessPath: string
-    }
-    tinymce: any
+  ga: (
+    command: 'send',
+    hitType: 'event' | 'pageview',
+    fieldsObject: GAFieldsObject | string
+  ) => void
+  reloadAuthorized: () => void
+  cloudbase: any
+  TcbCmsConfig: {
+    history: 'hash' | 'browser'
+    envId: string
+    cloudAccessPath: string
+  }
+  tinymce: any
 }
 
 declare let ga: Function

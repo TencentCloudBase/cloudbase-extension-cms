@@ -18,151 +18,145 @@ run(models)
 setTwoToneColor('#0052d9')
 
 export async function getInitialState(): Promise<{
-    currentUser?: API.CurrentUser
-    settings?: LayoutSettings
-    menu?: any[]
+  currentUser?: API.CurrentUser
+  settings?: LayoutSettings
+  menu?: any[]
 }> {
-    let app
-    let loginState
+  let app
+  let loginState
 
+  try {
+    app = await getCloudBaseApp()
+    // 获取登录态
+    loginState = await app
+      .auth({
+        persistence: 'local',
+      })
+      .getLoginState()
+  } catch (error) {
+    console.log(error)
+    message.error(`CloudBase JS SDK 初始化失败，${error.message}`)
+  }
+
+  // 没有登录，重新登录
+  if (!isDevEnv() && !loginState) {
+    history.push('/login')
+    return {}
+  }
+
+  // 如果是登录页面，不执行
+  if (history.location.pathname !== '/login') {
     try {
-        app = await getCloudBaseApp()
-        // 获取登录态
-        loginState = await app
-            .auth({
-                persistence: 'local',
-            })
-            .getLoginState()
+      const currentUser = await queryCurrent()
+      return {
+        currentUser,
+        settings: defaultSettings,
+      }
     } catch (error) {
-        console.log(error)
-        message.error(`CloudBase JS SDK 初始化失败，${error.message}`)
+      return {}
     }
-
-    // 没有登录，重新登录
-    if (!isDevEnv() && !loginState) {
-        history.push('/login')
-        return {}
+  } else {
+    let currentUser = {} as any
+    try {
+      currentUser = await queryCurrent()
+    } catch (e) {
+      console.log(e)
     }
-
-    // 如果是登录页面，不执行
-    if (history.location.pathname !== '/login') {
-        try {
-            const currentUser = await queryCurrent()
-            return {
-                currentUser,
-                settings: defaultSettings,
-            }
-        } catch (error) {
-            return {}
-        }
-    } else {
-        let currentUser = {} as any
-        try {
-            currentUser = await queryCurrent()
-        } catch (e) {
-            console.log(e)
-        }
-        return {
-            currentUser,
-            settings: defaultSettings,
-        }
+    return {
+      currentUser,
+      settings: defaultSettings,
     }
+  }
 }
 
 export const layout = ({
-    initialState,
+  initialState,
 }: {
-    initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser }
+  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser }
 }): BasicLayoutProps => {
-    return {
-        theme: 'light',
-        navTheme: 'light',
-        headerHeight: 64,
-        disableContentMargin: false,
-        onPageChange: () => {
-            // 如果没有登录，重定向到 login
-            if (!initialState?.currentUser?._id && history.location.pathname !== '/login') {
-                history.push('/login')
-            }
-        },
-        rightContentRender: () => <RightContent />,
-        menuItemRender: (menuItemProps, defaultDom) => {
-            const paths = history.location.pathname.split('/').filter((_: string) => _)
-            const projectId = paths[0]
+  return {
+    theme: 'light',
+    navTheme: 'light',
+    headerHeight: 64,
+    disableContentMargin: false,
+    onPageChange: () => {
+      // 如果没有登录，重定向到 login
+      if (!initialState?.currentUser?._id && history.location.pathname !== '/login') {
+        history.push('/login')
+      }
+    },
+    rightContentRender: () => <RightContent />,
+    menuItemRender: (menuItemProps, defaultDom) => {
+      const paths = history.location.pathname.split('/').filter((_: string) => _)
+      const projectId = paths[0]
 
-            if (menuItemProps.isUrl || menuItemProps.children) {
-                return defaultDom
-            }
+      if (menuItemProps.isUrl || menuItemProps.children) {
+        return defaultDom
+      }
 
-            if (menuItemProps.path) {
-                return (
-                    <Link to={menuItemProps.path.replace(':projectId', projectId)}>
-                        {defaultDom}
-                    </Link>
-                )
-            }
+      if (menuItemProps.path) {
+        return <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link>
+      }
 
-            return defaultDom
-        },
-        headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-        ...initialState?.settings,
-    }
+      return defaultDom
+    },
+    headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
+    ...initialState?.settings,
+  }
 }
 
 /**
  * 请求异常处理
  */
 const errorHandler = (error: ResponseError) => {
-    const { response } = error
+  const { response } = error
 
-    if (response?.status) {
-        const errorText = codeMessage[response.status] || response.statusText
-        const { status, url } = response
+  if (response?.status) {
+    const errorText = codeMessage[response.status] || response.statusText
+    const { status, url } = response
 
-        notification.error({
-            message: `请求错误 ${status}: ${url}`,
-            description: errorText,
-        })
-    }
+    notification.error({
+      message: `请求错误 ${status}: ${url}`,
+      description: errorText,
+    })
+  }
 
-    // if (!response) {
-    //     notification.error({
-    //         description: '您的网络发生异常，无法连接服务器',
-    //         message: '网络异常'
-    //     })
-    // }
+  // if (!response) {
+  //     notification.error({
+  //         description: '您的网络发生异常，无法连接服务器',
+  //         message: '网络异常'
+  //     })
+  // }
 
-    throw error
+  throw error
 }
 
 /**
  * 全局 request 配置
  */
 export const request: RequestConfig = {
-    prefix: isDevEnv() ? '/api' : `https://${window.TcbCmsConfig.cloudAccessPath}/api`,
-    errorHandler,
-    errorConfig: {
-        adaptor: (resData) => {
-            return {
-                ...resData,
-                success: !resData.code,
-                errorMessage: resData.message,
-            }
-        },
+  prefix: isDevEnv() ? '/api' : `https://${window.TcbCmsConfig.cloudAccessPath}/api`,
+  errorHandler,
+  errorConfig: {
+    adaptor: (resData) => {
+      return {
+        ...resData,
+        success: !resData.code,
+        errorMessage: resData.message,
+      }
     },
-    responseInterceptors: [
-        async (response, options) => {
-            const data = await response.clone().json()
-            if (data.code) {
-                notification.error({
-                    message: data.message || data.code,
-                    description: data.requestId
-                        ? `${data.code}\n[requestId]${data.requestId}`
-                        : data.code,
-                })
-            }
+  },
+  responseInterceptors: [
+    async (response, options) => {
+      const data = await response.clone().json()
+      if (data.code) {
+        notification.error({
+          message: data.message || data.code,
+          description: data.requestId ? `${data.code}\n[requestId]${data.requestId}` : data.code,
+        })
+      }
 
-            return response
-        },
-    ],
+      return response
+    },
+  ],
 }

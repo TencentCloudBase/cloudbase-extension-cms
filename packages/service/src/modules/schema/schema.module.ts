@@ -3,7 +3,7 @@ import { SchemaController } from './schema.controller'
 import { SchemaService } from './schema.service'
 
 @Module({
-    controllers: [SchemaController],
-    providers: [SchemaService],
+  controllers: [SchemaController],
+  providers: [SchemaService],
 })
 export class SchemaModule {}
