@@ -1,4 +1,4 @@
 export interface CmsException {
-    code: string
-    message: string
+  code: string
+  message: string
 }

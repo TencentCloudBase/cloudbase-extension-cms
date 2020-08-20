@@ -1,63 +1,63 @@
 import { tcbRequest } from '@/utils'
 
 export interface Options {
-    page?: number
-    pageSize?: number
+  page?: number
+  pageSize?: number
 
-    filter?: {
-        projectId: string
-        _id?: string
-        ids?: string[]
-        [key: string]: any
-    }
+  filter?: {
+    projectId: string
+    _id?: string
+    ids?: string[]
+    [key: string]: any
+  }
 
-    fuzzyFilter?: {
-        [key: string]: any
-    }
+  fuzzyFilter?: {
+    [key: string]: any
+  }
 
-    sort?: {
-        [key: string]: 'ascend' | 'descend' | null
-    }
+  sort?: {
+    [key: string]: 'ascend' | 'descend' | null
+  }
 
-    payload: Record<string, any>
+  payload: Record<string, any>
 }
 
 export const getWebhooks = async (options?: Partial<Options>) => {
-    return tcbRequest('/webhook', {
-        method: 'POST',
-        data: {
-            options,
-            action: 'getMany',
-        },
-    })
+  return tcbRequest('/webhook', {
+    method: 'POST',
+    data: {
+      options,
+      action: 'getMany',
+    },
+  })
 }
 
 export const createWebhook = async (options?: Partial<Options>) => {
-    return tcbRequest('/webhook', {
-        method: 'POST',
-        data: {
-            options,
-            action: 'createOne',
-        },
-    })
+  return tcbRequest('/webhook', {
+    method: 'POST',
+    data: {
+      options,
+      action: 'createOne',
+    },
+  })
 }
 
 export const updateWebhook = async (options?: Partial<Options>) => {
-    return tcbRequest('/webhook', {
-        method: 'POST',
-        data: {
-            options,
-            action: 'updateOne',
-        },
-    })
+  return tcbRequest('/webhook', {
+    method: 'POST',
+    data: {
+      options,
+      action: 'updateOne',
+    },
+  })
 }
 
 export const deleteWebhook = async (options?: Partial<Options>) => {
-    return tcbRequest('/webhook', {
-        method: 'POST',
-        data: {
-            options,
-            action: 'deleteOne',
-        },
-    })
+  return tcbRequest('/webhook', {
+    method: 'POST',
+    data: {
+      options,
+      action: 'deleteOne',
+    },
+  })
 }

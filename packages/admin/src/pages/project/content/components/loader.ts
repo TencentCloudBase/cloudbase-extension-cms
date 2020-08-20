@@ -1,59 +1,59 @@
 let callbacks: any = []
 
 function loadedTinymce() {
-    return window.tinymce
+  return window.tinymce
 }
 
 const dynamicLoadScript = (src: string, callback: (...args: any) => void) => {
-    const existingScript = document.getElementById(src)
-    const cb = callback || function () {}
+  const existingScript = document.getElementById(src)
+  const cb = callback || function () {}
 
-    if (!existingScript) {
-        const script = document.createElement('script')
-        script.src = src // src url for the third-party library being loaded.
-        script.id = src
-        document.body.appendChild(script)
-        callbacks.push(cb)
-        const onEnd = 'onload' in script ? stdOnEnd : ieOnEnd
-        onEnd(script)
+  if (!existingScript) {
+    const script = document.createElement('script')
+    script.src = src // src url for the third-party library being loaded.
+    script.id = src
+    document.body.appendChild(script)
+    callbacks.push(cb)
+    const onEnd = 'onload' in script ? stdOnEnd : ieOnEnd
+    onEnd(script)
+  }
+
+  if (existingScript && cb) {
+    if (loadedTinymce()) {
+      cb(null, existingScript)
+    } else {
+      callbacks.push(cb)
     }
+  }
 
-    if (existingScript && cb) {
-        if (loadedTinymce()) {
-            cb(null, existingScript)
-        } else {
-            callbacks.push(cb)
-        }
+  function stdOnEnd(script: HTMLScriptElement) {
+    script.onload = function () {
+      // this.onload = null here is necessary
+      // because even IE9 works not like others
+      this.onerror = this.onload = null
+      console.log('callback')
+      for (const cb of callbacks) {
+        cb(null, script)
+      }
+
+      callbacks = null
     }
-
-    function stdOnEnd(script: HTMLScriptElement) {
-        script.onload = function () {
-            // this.onload = null here is necessary
-            // because even IE9 works not like others
-            this.onerror = this.onload = null
-            console.log('callback')
-            for (const cb of callbacks) {
-                cb(null, script)
-            }
-
-            callbacks = null
-        }
-        script.onerror = function () {
-            this.onerror = this.onload = null
-            cb(new Error('Failed to load ' + src), script)
-        }
+    script.onerror = function () {
+      this.onerror = this.onload = null
+      cb(new Error('Failed to load ' + src), script)
     }
+  }
 
-    function ieOnEnd(script: any) {
-        script.onreadystatechange = function () {
-            if (this.readyState !== 'complete' && this.readyState !== 'loaded') return
-            this.onreadystatechange = null
-            for (const cb of callbacks) {
-                cb(null, script) // there is no way to catch loading errors in IE8
-            }
-            callbacks = null
-        }
+  function ieOnEnd(script: any) {
+    script.onreadystatechange = function () {
+      if (this.readyState !== 'complete' && this.readyState !== 'loaded') return
+      this.onreadystatechange = null
+      for (const cb of callbacks) {
+        cb(null, script) // there is no way to catch loading errors in IE8
+      }
+      callbacks = null
     }
+  }
 }
 
 export default dynamicLoadScript

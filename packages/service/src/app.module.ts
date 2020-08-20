@@ -14,30 +14,30 @@ import { WebhookModule } from './modules/webhook/webhook.module'
 import { RoleModule } from './modules/role/role.module'
 
 @Module({
-    imports: [
-        AuthModule,
-        FileModule,
-        UserModule,
-        SchemaModule,
-        ProjectModule,
-        ContentModule,
-        WebhookModule,
-        ConfigModule.forRoot({
-            isGlobal: true,
-            envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
-        }),
-        CloudBaseModule.forRoot({
-            envId: process.env.TCB_ENVID,
-            secretId: process.env.SECRETID,
-            secretKey: process.env.SECRETKEY,
-        }),
-        RoleModule,
-    ],
-    controllers: [AppController],
-    providers: [AppService],
+  imports: [
+    AuthModule,
+    FileModule,
+    UserModule,
+    SchemaModule,
+    ProjectModule,
+    ContentModule,
+    WebhookModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
+    }),
+    CloudBaseModule.forRoot({
+      envId: process.env.TCB_ENVID,
+      secretId: process.env.SECRETID,
+      secretKey: process.env.SECRETKEY,
+    }),
+    RoleModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(BodyConverter).forRoutes('*')
-    }
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(BodyConverter).forRoutes('*')
+  }
 }

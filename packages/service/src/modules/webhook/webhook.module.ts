@@ -4,7 +4,7 @@ import { ContentService } from '../content/content.service'
 import { WebhookService } from './webhook.service'
 
 @Module({
-    controllers: [WebhookController],
-    providers: [ContentService, WebhookService],
+  controllers: [WebhookController],
+  providers: [ContentService, WebhookService],
 })
 export class WebhookModule {}

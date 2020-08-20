@@ -5,14 +5,14 @@ import config from '@/config'
 
 @Injectable()
 export class TimeoutInterceptor implements NestInterceptor {
-    timeout: number
+  timeout: number
 
-    constructor(timeout = config.timeout) {
-        this.timeout = timeout
-    }
+  constructor(timeout = config.timeout) {
+    this.timeout = timeout
+  }
 
-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-        // 超时处理
-        return next.handle().pipe(timeout(this.timeout))
-    }
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    // 超时处理
+    return next.handle().pipe(timeout(this.timeout))
+  }
 }

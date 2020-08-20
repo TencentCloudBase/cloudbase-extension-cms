@@ -2,159 +2,154 @@ import React, { useState } from 'react'
 import { useRequest, useParams, history } from 'umi'
 import { getProject, updateProject, deleteProject } from '@/services/project'
 import {
-    Row,
-    Col,
-    Divider,
-    Button,
-    Space,
-    Typography,
-    Form,
-    Input,
-    Skeleton,
-    Modal,
-    message,
+  Row,
+  Col,
+  Divider,
+  Button,
+  Space,
+  Typography,
+  Form,
+  Input,
+  Skeleton,
+  Modal,
+  message,
 } from 'antd'
 import styles from './index.less'
 
 interface Project {
-    name: string
-    description: string
+  name: string
+  description: string
 }
 
 const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
-    const { projectId } = useParams()
-    const [modalVisible, setModalVisible] = useState(false)
-    const [projectName, setProjectName] = useState('')
+  const { projectId } = useParams()
+  const [modalVisible, setModalVisible] = useState(false)
+  const [projectName, setProjectName] = useState('')
 
-    // 删除项目
-    const { run, loading } = useRequest(
-        async () => {
-            await deleteProject(projectId)
-            setModalVisible(false)
-            message.success('删除项目成功')
-            setTimeout(() => {
-                history.push('/home')
-            }, 2000)
-        },
-        {
-            manual: true,
-        }
-    )
+  // 删除项目
+  const { run, loading } = useRequest(
+    async () => {
+      await deleteProject(projectId)
+      setModalVisible(false)
+      message.success('删除项目成功')
+      setTimeout(() => {
+        history.push('/home')
+      }, 2000)
+    },
+    {
+      manual: true,
+    }
+  )
 
-    return (
-        <>
-            <Typography.Title level={3}>危险操作</Typography.Title>
-            <Divider />
-            <Button
-                danger
-                type="primary"
-                onClick={() => {
-                    setModalVisible(true)
-                }}
-            >
-                删除项目
-            </Button>
-            <Modal
-                visible={modalVisible}
-                title="删除项目"
-                onCancel={() => setModalVisible(false)}
-                onOk={() => {
-                    run()
-                }}
-                okButtonProps={{
-                    loading,
-                    disabled: projectName !== project.name,
-                }}
-            >
-                <Space direction="vertical">
-                    <Typography.Paragraph>
-                        删除项目是不能恢复的，您确定要删除此项目吗？
-                        如果您想继续，请在下面的方框中输入此项目的名称：
-                        <Typography.Text strong>{project.name}</Typography.Text>
-                    </Typography.Paragraph>
-                    <Input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
-                </Space>
-            </Modal>
-        </>
-    )
+  return (
+    <>
+      <Typography.Title level={3}>危险操作</Typography.Title>
+      <Divider />
+      <Button
+        danger
+        type="primary"
+        onClick={() => {
+          setModalVisible(true)
+        }}
+      >
+        删除项目
+      </Button>
+      <Modal
+        visible={modalVisible}
+        title="删除项目"
+        onCancel={() => setModalVisible(false)}
+        onOk={() => {
+          run()
+        }}
+        okButtonProps={{
+          loading,
+          disabled: projectName !== project.name,
+        }}
+      >
+        <Space direction="vertical">
+          <Typography.Paragraph>
+            删除项目是不能恢复的，您确定要删除此项目吗？
+            如果您想继续，请在下面的方框中输入此项目的名称：
+            <Typography.Text strong>{project.name}</Typography.Text>
+          </Typography.Paragraph>
+          <Input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
+        </Space>
+      </Modal>
+    </>
+  )
 }
 
 export default (): React.ReactElement => {
-    const { projectId } = useParams()
-    const [reload, setReload] = useState(0)
-    const [changed, setChanged] = useState(false)
-    const { data: project, loading } = useRequest<{ data: Project }>(() => getProject(projectId), {
-        refreshDeps: [reload],
-    })
+  const { projectId } = useParams()
+  const [reload, setReload] = useState(0)
+  const [changed, setChanged] = useState(false)
+  const { data: project, loading } = useRequest<{ data: Project }>(() => getProject(projectId), {
+    refreshDeps: [reload],
+  })
 
-    const { run, loading: updateLoading } = useRequest(
-        async (payload: Partial<Project>) => {
-            await updateProject(projectId, payload)
-            setChanged(false)
-            setReload(reload + 1)
-            message.success('项目更新成功！')
-        },
-        {
-            manual: true,
-        }
-    )
-
-    if (loading || !project) {
-        return <Skeleton />
+  const { run, loading: updateLoading } = useRequest(
+    async (payload: Partial<Project>) => {
+      await updateProject(projectId, payload)
+      setChanged(false)
+      setReload(reload + 1)
+      message.success('项目更新成功！')
+    },
+    {
+      manual: true,
     }
+  )
 
-    return (
-        <>
-            <Typography.Title level={3}>项目信息</Typography.Title>
-            <Divider />
-            <Form
-                name="basic"
-                layout="vertical"
-                labelAlign="left"
-                initialValues={project}
-                labelCol={{ span: 6 }}
-                onFinish={(v = {}) => {
-                    run(v)
-                }}
-                onValuesChange={(_, v: Partial<Project>) => {
-                    if (v.name !== project?.name || v.description !== project.description) {
-                        setChanged(true)
-                    } else {
-                        setChanged(false)
-                    }
-                }}
-            >
-                <Form.Item
-                    label="项目名"
-                    name="name"
-                    rules={[{ required: true, message: '请输入项目名！' }]}
-                >
-                    <Input placeholder="项目名，如个人博客" />
-                </Form.Item>
+  if (loading || !project) {
+    return <Skeleton />
+  }
 
-                <Form.Item
-                    label="项目介绍"
-                    name="description"
-                    rules={[{ required: true, message: '请输入项目介绍！' }]}
-                >
-                    <Input placeholder="项目介绍，如我的个人博客" />
-                </Form.Item>
+  return (
+    <>
+      <Typography.Title level={3}>项目信息</Typography.Title>
+      <Divider />
+      <Form
+        name="basic"
+        layout="vertical"
+        labelAlign="left"
+        initialValues={project}
+        labelCol={{ span: 6 }}
+        onFinish={(v = {}) => {
+          run(v)
+        }}
+        onValuesChange={(_, v: Partial<Project>) => {
+          if (v.name !== project?.name || v.description !== project.description) {
+            setChanged(true)
+          } else {
+            setChanged(false)
+          }
+        }}
+      >
+        <Form.Item
+          label="项目名"
+          name="name"
+          rules={[{ required: true, message: '请输入项目名！' }]}
+        >
+          <Input placeholder="项目名，如个人博客" />
+        </Form.Item>
 
-                <Form.Item>
-                    <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
-                        <Button
-                            type="primary"
-                            htmlType="submit"
-                            disabled={!changed}
-                            loading={updateLoading}
-                        >
-                            保存
-                        </Button>
-                    </Space>
-                </Form.Item>
-            </Form>
+        <Form.Item
+          label="项目介绍"
+          name="description"
+          rules={[{ required: true, message: '请输入项目介绍！' }]}
+        >
+          <Input placeholder="项目介绍，如我的个人博客" />
+        </Form.Item>
 
-            <ProjectDangerAction project={project} />
-        </>
-    )
+        <Form.Item>
+          <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
+            <Button type="primary" htmlType="submit" disabled={!changed} loading={updateLoading}>
+              保存
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
+
+      <ProjectDangerAction project={project} />
+    </>
+  )
 }

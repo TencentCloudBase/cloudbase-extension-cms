@@ -5,47 +5,47 @@ import { isDevEnv } from './tools'
 
 // 从环境变量中读取
 export const getEnvIdString = (): string => {
-    const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
-    return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
+  const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
+  return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
 }
 
 export const getCloudBaseApp = () => {
-    // envId 为 symbol 值
-    const envId = getEnvIdString()
+  // envId 为 symbol 值
+  const envId = getEnvIdString()
 
-    let options: ICloudBaseConfig = {
-        env: envId,
+  let options: ICloudBaseConfig = {
+    env: envId,
+  }
+
+  if (isDevEnv()) {
+    options = {
+      ...options,
+      secretId: process.env.SECRETID,
+      secretKey: process.env.SECRETKEY,
     }
+  }
 
-    if (isDevEnv()) {
-        options = {
-            ...options,
-            secretId: process.env.SECRETID,
-            secretKey: process.env.SECRETKEY,
-        }
-    }
+  const app = cloudbase.init(options)
 
-    const app = cloudbase.init(options)
-
-    return app
+  return app
 }
 
 export const getCloudBaseManager = (): CloudBase => {
-    const envId = getEnvIdString()
+  const envId = getEnvIdString()
 
-    let options: ICloudBaseConfig = {
-        envId,
+  let options: ICloudBaseConfig = {
+    envId,
+  }
+
+  if (isDevEnv()) {
+    options = {
+      ...options,
+      secretId: process.env.SECRETID,
+      secretKey: process.env.SECRETKEY,
     }
+  }
 
-    if (isDevEnv()) {
-        options = {
-            ...options,
-            secretId: process.env.SECRETID,
-            secretKey: process.env.SECRETKEY,
-        }
-    }
+  const manager = new CloudBase(options)
 
-    const manager = new CloudBase(options)
-
-    return manager
+  return manager
 }
