@@ -74,7 +74,7 @@ export default defineConfig({
         },
         {
             path: '/:projectId/schema',
-            name: '内容原型',
+            name: '内容模型',
             icon: 'gold',
             access: 'canSchema',
             wrappers: ['../components/SecurityWrapper/index'],

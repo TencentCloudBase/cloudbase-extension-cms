@@ -56,11 +56,12 @@ export const SchemaModal: React.FC<{
     return (
         <Modal
             centered
-            title={`${action === 'create' ? '创建' : '更新'}原型`}
             footer={null}
+            width={600}
             visible={visible}
             onOk={() => onClose()}
             onCancel={() => onClose()}
+            title={`${action === 'create' ? '创建' : '更新'}原型`}
         >
             <Form
                 name="basic"
@@ -104,6 +105,7 @@ export const SchemaModal: React.FC<{
                 <Form.Item label="描述" name="description">
                     <TextArea placeholder="原型描述，如博客文章" />
                 </Form.Item>
+
                 <Form.Item>
                     <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
                         <Button onClick={() => onClose()}>取消</Button>
@@ -130,23 +132,23 @@ export const DeleteSchemaModal: React.FC<{
         <Modal
             centered
             destroyOnClose
-            title="删除内容原型"
+            title="删除内容模型"
             visible={visible}
             onCancel={() => onClose()}
             onOk={async () => {
                 try {
                     await deleteSchema(currentSchema._id, deleteCollection)
-                    message.success('删除内容原型成功！')
+                    message.success('删除内容模型成功！')
                     ctx.dispatch('getSchemas', projectId)
                 } catch (error) {
-                    message.error('删除内容原型失败！')
+                    message.error('删除内容模型失败！')
                 } finally {
                     onClose()
                 }
             }}
         >
             <Space direction="vertical">
-                <Typography.Text>确认删【{currentSchema?.displayName}】内容原型？</Typography.Text>
+                <Typography.Text>确认删【{currentSchema?.displayName}】内容模型？</Typography.Text>
                 <Checkbox
                     checked={deleteCollection}
                     onChange={(e) => setDeleteCollection(e.target.checked)}

@@ -28,7 +28,7 @@ export const FieldTypes = [
     // 时间
     {
         type: 'DateTime',
-        name: '日期时间',
+        name: '日期与时间',
         icon: <i className="gg-calendar-dates" />,
     },
     {
