@@ -22,7 +22,7 @@ export async function getCloudBaseApp() {
   const loginState = await auth.getLoginState()
 
   if (!loginState && !isDevEnv()) {
-    message.error('您还没有登录或登录已过期，请重新登录！')
+    message.error('您还没有登录或登录已过期，请登录后再操作！')
     history.push('/login')
   }
 
