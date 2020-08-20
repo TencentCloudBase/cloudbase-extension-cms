@@ -32,6 +32,7 @@ async function writeConfigJS(manager, envId, accessDomain, dir) {
     await writeFile(
         '/tmp/config.js',
         `window.TcbCmsConfig = {
+    history: 'hash',
     // 环境 Id
     envId: '${envId}',
     // 云接入默认域名/自定义域名，不带 https 协议符

@@ -9,11 +9,6 @@ export class GlobalRoleGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<AuthRequest & Request>()
 
-        // 跳过登录
-        if (request.path === '/api/auth/login') {
-            return true
-        }
-
         const { cmsUser } = request
 
         const user = request.cmsUser

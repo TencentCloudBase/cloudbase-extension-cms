@@ -39,11 +39,6 @@ export class GlobalAuthGuard implements CanActivate {
             return true
         }
 
-        // 跳过登录
-        if (request.path === '/api/auth/login') {
-            return true
-        }
-
         // 登录的用户
         // 目前只在云函数中能自动获取用户身份信息
         const app = getCloudBaseApp()
