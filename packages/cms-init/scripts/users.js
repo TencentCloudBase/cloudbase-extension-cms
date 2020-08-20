@@ -2,7 +2,9 @@
 module.exports = {
     async enablePasswordLogin(context) {
         const { manager } = context
-        await manager.env.createLoginConfig('USERNAME', 'username')
+        const res = await manager.env.createLoginConfig('USERNAME', 'username')
+
+        console.log('开启密码登录', res)
     },
     // 创建管理员账号
     async createAdministrator(context) {

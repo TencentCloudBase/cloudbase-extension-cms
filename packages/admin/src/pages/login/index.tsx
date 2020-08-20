@@ -82,7 +82,11 @@ const Login: React.FC<{}> = () => {
         } catch (error) {
             try {
                 const e = JSON.parse(error.message)
-                if (e?.code === 'OPERATION_FAIL') {
+                if (e.message.indexOf('not enable username login') > -1) {
+                    message.error(
+                        '环境未开启用户名密码登录，请到控制台 https://console.cloud.tencent.com/tcb/env/login 开启用户名密码登录'
+                    )
+                } else if (e?.code === 'OPERATION_FAIL') {
                     message.error('用户不存在或密码错误')
                 } else {
                     message.error(e.message || '登录失败，请重试！')
