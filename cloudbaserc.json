@@ -7,7 +7,7 @@
         "use": "@cloudbase/framework-plugin-website",
         "inputs": {
           "outputPath": "./packages/admin/dist",
-          "buildCommand": "npm run build",
+          "installCommand": "echo \"Skip Install\"",
           "cloudPath": "{{env.deployPath}}"
         }
       },
@@ -35,7 +35,6 @@
       },
       "service": {
         "use": "@cloudbase/framework-plugin-node",
-        "buildCommand": "npm run build",
         "inputs": {
           "name": "tcb-ext-cms-service",
           "entry": "app.js",
