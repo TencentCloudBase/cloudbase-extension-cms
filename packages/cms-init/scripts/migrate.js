@@ -169,7 +169,7 @@ async function migrateWebhooks(context, projectId) {
     await db
         .collection(webhookCollection)
         .where({
-            event: $.elemMatch($.eq('updateMany')),
+            event: $.and($.elemMatch($.eq('updateMany')), $.not($.elemMatch($.eq('update')))),
         })
         .update({
             event: $.push(['update']),
@@ -187,7 +187,7 @@ async function migrateWebhooks(context, projectId) {
     await db
         .collection(webhookCollection)
         .where({
-            event: $.elemMatch($.eq('deleteMany')),
+            event: $.and($.elemMatch($.eq('deleteMany')), $.not($.elemMatch($.eq('delete')))),
         })
         .update({
             event: $.push(['delete']),

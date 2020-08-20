@@ -48,7 +48,7 @@ export class ContentService {
             .get()
 
         // 模糊搜索
-        if (fuzzyFilter) {
+        if (fuzzyFilter && schema) {
             const conditions = this.handleFuzzySearch(fuzzyFilter, schema)
             where = {
                 ...where,
@@ -57,7 +57,7 @@ export class ContentService {
         }
 
         // 过滤
-        if (filter) {
+        if (filter && schema) {
             const conditions = this.handleFuzzySearch(filter, schema)
             where = {
                 ...where,
@@ -65,7 +65,7 @@ export class ContentService {
             }
         }
 
-        console.log(where)
+        console.log('where', where)
 
         let query = collection.where(where)
 

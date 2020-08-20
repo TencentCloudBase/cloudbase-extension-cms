@@ -67,6 +67,7 @@ export const LazyImage: React.FC<{ src: string }> = ({ src }) => {
             })
             .catch((e) => {
                 console.log(e)
+                console.log(e.message)
                 message.error(`获取图片链接失败 ${e.message}`)
                 setLoading(false)
             })
