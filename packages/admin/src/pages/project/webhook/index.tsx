@@ -129,20 +129,29 @@ export default (): React.ReactNode => {
     ) => {
         const { current, pageSize } = params
 
-        const { data = [], total } = await getWebhooks({
-            sort,
-            filter: {
-                ...filter,
-                projectId,
-            },
-            pageSize,
-            page: current,
-        })
+        try {
+            const { data = [], total } = await getWebhooks({
+                sort,
+                filter: {
+                    ...filter,
+                    projectId,
+                },
+                pageSize,
+                page: current,
+            })
 
-        return {
-            data,
-            total,
-            success: true,
+            return {
+                data,
+                total,
+                success: true,
+            }
+        } catch (error) {
+            console.log(error)
+            return {
+                data: [],
+                total: 0,
+                success: true,
+            }
         }
     }
 
