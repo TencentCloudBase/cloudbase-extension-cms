@@ -1,6 +1,6 @@
 export default {
-    state: {
-        projectId: '',
-        webhookAction: 'create',
-    },
+  state: {
+    projectId: '',
+    webhookAction: 'create',
+  },
 }

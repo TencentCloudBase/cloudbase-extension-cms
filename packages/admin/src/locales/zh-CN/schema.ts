@@ -1,3 +1,3 @@
 export default {
-    'schema.name': '原型',
+  'schema.name': '原型',
 }

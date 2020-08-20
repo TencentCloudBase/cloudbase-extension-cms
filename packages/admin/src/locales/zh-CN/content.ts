@@ -1,3 +1,3 @@
 export default {
-    'content.name': '内容',
+  'content.name': '内容',
 }

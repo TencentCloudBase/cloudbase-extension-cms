@@ -1,45 +1,45 @@
 declare namespace NodeJS {
-    export interface ProcessEnv {
-        NODE_ENV: 'development' | 'production'
-        TCB_ENVID: string
-        SECRETID: string
-        SECRETKEY: string
-    }
+  export interface ProcessEnv {
+    NODE_ENV: 'development' | 'production'
+    TCB_ENVID: string
+    SECRETID: string
+    SECRETKEY: string
+  }
 }
 
 interface User {
-    _id: string
+  _id: string
 
-    username: string
+  username: string
 
-    password: string
+  password: string
 
-    // 创建时间
-    createTime: number
+  // 创建时间
+  createTime: number
 
-    // 登陆失败次数
-    failedLogins?: Record<string, number>[]
+  // 登陆失败次数
+  failedLogins?: Record<string, number>[]
 
-    // 用户角色
-    roles: string[]
+  // 用户角色
+  roles: string[]
 
-    // cloudbase uuid
-    uuid: string
+  // cloudbase uuid
+  uuid: string
 }
 
 interface UserRole {
-    _id: string
+  _id: string
 
-    // 角色名
-    roleName: string
+  // 角色名
+  roleName: string
 
-    // 角色描述
-    description: string
+  // 角色描述
+  description: string
 
-    // 角色绑定的权限描述
-    permissions: Permission[]
+  // 角色绑定的权限描述
+  permissions: Permission[]
 
-    type: string | 'system'
+  type: string | 'system'
 }
 
 /**
@@ -48,47 +48,47 @@ interface UserRole {
  * 服务未 * 时，资源必然为 *
  */
 interface Permission {
-    // 项目
-    projectId: '*' | string
+  // 项目
+  projectId: '*' | string
 
-    // 行为
-    action: string[] | ['*']
+  // 行为
+  action: string[] | ['*']
 
-    // TODO: 允许访问/拒绝访问
-    effect: 'allow' | 'deny'
+  // TODO: 允许访问/拒绝访问
+  effect: 'allow' | 'deny'
 
-    // 服务
-    // 一个权限规则仅支持一个 service
-    service: string | '*'
+  // 服务
+  // 一个权限规则仅支持一个 service
+  service: string | '*'
 
-    // 具体资源
-    resource: string[] | ['*']
+  // 具体资源
+  resource: string[] | ['*']
 }
 
 interface RequestUser extends User {
-    // 用户可以访问的资源
-    projectResource?: {
-        [key: string]: '*' | string[]
-    }
+  // 用户可以访问的资源
+  projectResource?: {
+    [key: string]: '*' | string[]
+  }
 
-    // 所有可访问的服务
-    accessibleService?: '*' | string[]
+  // 所有可访问的服务
+  accessibleService?: '*' | string[]
 
-    // 授权的操作
-    authorizedAction?: '*' | string[]
+  // 授权的操作
+  authorizedAction?: '*' | string[]
 
-    // 系统管理员
-    isAdmin?: boolean
+  // 系统管理员
+  isAdmin?: boolean
 
-    // 项目管理员
-    isProjectAdmin?: boolean
+  // 项目管理员
+  isProjectAdmin?: boolean
 
-    // 用户关联的角色信息
-    userRoles?: UserRole[]
+  // 用户关联的角色信息
+  userRoles?: UserRole[]
 }
 
 interface AuthRequest extends Request {
-    handleService: string
+  handleService: string
 
-    cmsUser: RequestUser
+  cmsUser: RequestUser
 }

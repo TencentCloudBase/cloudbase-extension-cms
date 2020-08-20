@@ -6,83 +6,83 @@ import { createContent, updateContent } from '@/services/content'
 import { getFieldFormItem } from './FieldComponents'
 
 export const ContentDrawer: React.FC<{
-    visible: boolean
-    schema: SchemaV2
-    onClose: () => void
-    onOk: () => void
+  visible: boolean
+  schema: SchemaV2
+  onClose: () => void
+  onOk: () => void
 }> = ({ visible, onClose, onOk, schema }) => {
-    const { projectId } = useParams()
-    const ctx = useConcent('content')
-    const { currentSchema, selectedContent, contentAction } = ctx.state
+  const { projectId } = useParams()
+  const ctx = useConcent('content')
+  const { currentSchema, selectedContent, contentAction } = ctx.state
 
-    const hasLargeContent = schema?.fields?.find(
-        (_) => _.type === 'RichText' || _.type === 'Markdown'
-    )
+  const hasLargeContent = schema?.fields?.find(
+    (_) => _.type === 'RichText' || _.type === 'Markdown'
+  )
 
-    const drawerWidth = hasLargeContent ? '80%' : '40%'
+  const drawerWidth = hasLargeContent ? '80%' : '40%'
 
-    const initialValues =
-        contentAction === 'create'
-            ? schema?.fields?.reduce(
-                  (prev, field) => ({
-                      ...prev,
-                      [field.name]: field.defaultValue,
-                  }),
-                  {}
-              )
-            : selectedContent
+  const initialValues =
+    contentAction === 'create'
+      ? schema?.fields?.reduce(
+          (prev, field) => ({
+            ...prev,
+            [field.name]: field.defaultValue,
+          }),
+          {}
+        )
+      : selectedContent
 
-    const { run, loading } = useRequest(
-        async (payload: any) => {
-            if (contentAction === 'create') {
-                await createContent(projectId, currentSchema?.collectionName, payload)
-            }
+  const { run, loading } = useRequest(
+    async (payload: any) => {
+      if (contentAction === 'create') {
+        await createContent(projectId, currentSchema?.collectionName, payload)
+      }
 
-            if (contentAction === 'edit') {
-                await updateContent(projectId, currentSchema?.collectionName, payload._id, payload)
-            }
-        },
-        {
-            manual: true,
-            onError: () => {
-                onClose()
-                message.error(`${contentAction === 'create' ? '新建' : '更新'}内容失败`)
-            },
-            onSuccess: () => {
-                onOk()
-                message.success(`${contentAction === 'create' ? '新建' : '更新'}内容成功`)
-            },
-        }
-    )
+      if (contentAction === 'edit') {
+        await updateContent(projectId, currentSchema?.collectionName, payload._id, payload)
+      }
+    },
+    {
+      manual: true,
+      onError: () => {
+        onClose()
+        message.error(`${contentAction === 'create' ? '新建' : '更新'}内容失败`)
+      },
+      onSuccess: () => {
+        onOk()
+        message.success(`${contentAction === 'create' ? '新建' : '更新'}内容成功`)
+      },
+    }
+  )
 
-    return (
-        <Drawer
-            destroyOnClose
-            footer={null}
-            visible={visible}
-            onClose={onClose}
-            width={drawerWidth}
-            title={`${contentAction === 'create' ? '创建' : '更新'}【${schema?.displayName}】内容`}
-        >
-            <Form
-                name="basic"
-                layout="vertical"
-                initialValues={initialValues}
-                onFinish={(v = {}) => run(v)}
-            >
-                <Row gutter={[24, 24]}>
-                    {schema?.fields?.map((filed, index) => getFieldFormItem(filed, index))}
-                </Row>
+  return (
+    <Drawer
+      destroyOnClose
+      footer={null}
+      visible={visible}
+      onClose={onClose}
+      width={drawerWidth}
+      title={`${contentAction === 'create' ? '创建' : '更新'}【${schema?.displayName}】内容`}
+    >
+      <Form
+        name="basic"
+        layout="vertical"
+        initialValues={initialValues}
+        onFinish={(v = {}) => run(v)}
+      >
+        <Row gutter={[24, 24]}>
+          {schema?.fields?.map((filed, index) => getFieldFormItem(filed, index))}
+        </Row>
 
-                <Form.Item>
-                    <Space size="large">
-                        <Button onClick={onClose}>取消</Button>
-                        <Button type="primary" htmlType="submit" loading={loading}>
-                            {contentAction === 'create' ? '创建' : '更新'}
-                        </Button>
-                    </Space>
-                </Form.Item>
-            </Form>
-        </Drawer>
-    )
+        <Form.Item>
+          <Space size="large">
+            <Button onClick={onClose}>取消</Button>
+            <Button type="primary" htmlType="submit" loading={loading}>
+              {contentAction === 'create' ? '创建' : '更新'}
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
+    </Drawer>
+  )
 }

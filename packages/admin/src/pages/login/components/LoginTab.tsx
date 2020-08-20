@@ -5,38 +5,38 @@ import LoginContext, { LoginContextProps } from './LoginContext'
 const { TabPane } = Tabs
 
 const generateId = (() => {
-    let i = 0
-    return (prefix = '') => {
-        i += 1
-        return `${prefix}${i}`
-    }
+  let i = 0
+  return (prefix = '') => {
+    i += 1
+    return `${prefix}${i}`
+  }
 })()
 
 type TabPaneProps = Parameters<typeof Tabs.TabPane>[0]
 
 interface LoginTabProps extends TabPaneProps {
-    tabUtil: LoginContextProps['tabUtil']
-    key?: string
+  tabUtil: LoginContextProps['tabUtil']
+  key?: string
 }
 
 const LoginTab: React.FC<LoginTabProps> = (props) => {
-    useEffect(() => {
-        const uniqueId = generateId('login-tab-')
-        const { tabUtil } = props
-        if (tabUtil) {
-            tabUtil.addTab(uniqueId)
-        }
-    }, [])
-    const { children, ...rest } = props
-    return <TabPane {...rest}>{children}</TabPane>
+  useEffect(() => {
+    const uniqueId = generateId('login-tab-')
+    const { tabUtil } = props
+    if (tabUtil) {
+      tabUtil.addTab(uniqueId)
+    }
+  }, [])
+  const { children, ...rest } = props
+  return <TabPane {...rest}>{children}</TabPane>
 }
 
 const WrapContext: React.FC<TabPaneProps> & {
-    typeName: string
+  typeName: string
 } = (props) => (
-    <LoginContext.Consumer>
-        {(value) => <LoginTab tabUtil={value.tabUtil} {...props} />}
-    </LoginContext.Consumer>
+  <LoginContext.Consumer>
+    {(value) => <LoginTab tabUtil={value.tabUtil} {...props} />}
+  </LoginContext.Consumer>
 )
 
 // 标志位 用来判断是不是自定义组件
