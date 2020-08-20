@@ -30,7 +30,7 @@ export const CollectionV2 = {
     // 项目集合
     Projects: 'tcb-ext-cms-projects',
 
-    // 内容原型集合
+    // 内容模型集合
     Schemas: 'tcb-ext-cms-schemas',
 
     // Webhooks 集合

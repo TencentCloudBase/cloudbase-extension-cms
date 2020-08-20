@@ -60,16 +60,15 @@ export class SchemaFieldV2 {
     // 字段描述
     description: string
 
-    // 排序字段
-    orderBy: {
-        [key: string]: 'asc' | 'desc'
-    }[]
-
     // 是否隐藏
     isHidden: boolean
 
     // 是否必需字段
     isRequired: boolean
+
+    // 排序字段
+    isOrderField: boolean
+    orderDirection: 'asc' | 'desc'
 
     // 是否唯一
     isUnique: boolean

@@ -13,6 +13,8 @@ import {
     Select,
     InputNumber,
     Typography,
+    Row,
+    Col,
 } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 
@@ -28,6 +30,7 @@ export const CreateFieldModal: React.FC<{
 }> = ({ visible, onClose }) => {
     const ctx = useConcent('schema')
     const { projectId } = useParams()
+    const [formValue, setFormValue] = useState<any>()
     const [connectSchema, setConnectSchema] = useState<SchemaV2>()
     const {
         state: { currentSchema, schemas, fieldAction, selectedField },
@@ -128,11 +131,12 @@ export const CreateFieldModal: React.FC<{
                 layout="vertical"
                 labelCol={{ span: 6 }}
                 initialValues={fieldAction === 'edit' ? selectedField : {}}
-                onValuesChange={(v) => {
-                    if (v.connectResource) {
+                onValuesChange={(changed, v) => {
+                    if (changed.connectResource) {
                         const schema = schemas.find((_: SchemaV2) => _._id === v.connectResource)
                         setConnectSchema(schema)
                     }
+                    setFormValue(v)
                 }}
                 onFinish={(v: any) => {
                     createField(v)
@@ -225,41 +229,40 @@ export const CreateFieldModal: React.FC<{
                     </Form.Item>
                 )}
 
-                {['String', 'MultiLineString'].includes(selectedField.type) && (
+                {['String', 'MultiLineString', 'Number'].includes(selectedField.type) && (
                     <Form.Item style={{ marginBottom: 0 }}>
-                        <Space size="large">
-                            <Form.Item label="最小长度" name="min">
-                                <InputNumber
-                                    style={{ width: '224px' }}
-                                    placeholder="最小长度，如 1"
-                                />
-                            </Form.Item>
-                            <Form.Item label="最大长度" name="max">
-                                <InputNumber
-                                    style={{ width: '224px' }}
-                                    placeholder="最大长度，如 1000"
-                                />
-                            </Form.Item>
-                        </Space>
-                    </Form.Item>
-                )}
-
-                {selectedField.type === 'Number' && (
-                    <Form.Item style={{ marginBottom: 0 }}>
-                        <Space size="large">
-                            <Form.Item label="最小值" name="min">
-                                <InputNumber
-                                    style={{ width: '224px' }}
-                                    placeholder="最小值，如 1"
-                                />
-                            </Form.Item>
-                            <Form.Item label="最大值" name="max">
-                                <InputNumber
-                                    style={{ width: '224px' }}
-                                    placeholder="最大值，如 1000"
-                                />
-                            </Form.Item>
-                        </Space>
+                        <Row gutter={[24, 0]}>
+                            <Col flex="1 1 auto">
+                                <Form.Item
+                                    label={selectedField.type === 'Number' ? '最小值' : '最小长度'}
+                                    name="min"
+                                >
+                                    <InputNumber
+                                        style={{ width: '100%' }}
+                                        placeholder={
+                                            selectedField.type === 'Number'
+                                                ? '最小值，如 1'
+                                                : '最小长度，如 1'
+                                        }
+                                    />
+                                </Form.Item>
+                            </Col>
+                            <Col flex="1 1 auto">
+                                <Form.Item
+                                    label={selectedField.type === 'Number' ? '最大值' : '最大长度'}
+                                    name="max"
+                                >
+                                    <InputNumber
+                                        style={{ width: '100%' }}
+                                        placeholder={
+                                            selectedField.type === 'Number'
+                                                ? '最大值，如 1000'
+                                                : '最大长度，如 1000'
+                                        }
+                                    />
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Form.Item>
                 )}
 
@@ -280,7 +283,7 @@ export const CreateFieldModal: React.FC<{
                                                     >
                                                         <Input
                                                             placeholder="枚举元素展示别名，如 “已发布”"
-                                                            style={{ width: '40%' }}
+                                                            style={{ width: '43%' }}
                                                         />
                                                     </Form.Item>
                                                     <Form.Item
@@ -291,14 +294,14 @@ export const CreateFieldModal: React.FC<{
                                                         <Input
                                                             placeholder="枚举元素值，如 published"
                                                             style={{
-                                                                marginLeft: '5%',
-                                                                width: '40%',
+                                                                marginLeft: '3%',
+                                                                width: '43%',
                                                             }}
                                                         />
                                                     </Form.Item>
                                                     <MinusCircleOutlined
                                                         className="dynamic-delete-button"
-                                                        style={{ margin: '0 8px' }}
+                                                        style={{ margin: '0 0 0 15px' }}
                                                         onClick={() => {
                                                             remove(field.name)
                                                         }}
@@ -356,7 +359,43 @@ export const CreateFieldModal: React.FC<{
                             <Typography.Text>是否隐藏</Typography.Text>
                             <br />
                             <Typography.Text type="secondary">
-                                在内容集合表中隐藏该字段
+                                在展示内容时隐藏该字段
+                            </Typography.Text>
+                        </Form.Item>
+                    </div>
+                </Form.Item>
+
+                <Form.Item>
+                    <div className="form-item">
+                        <Row align="middle">
+                            <Col flex="1 1 auto">
+                                <Form.Item noStyle name="isOrderField" valuePropName="checked">
+                                    <Switch />
+                                </Form.Item>
+                            </Col>
+                            <Col flex="0 0 auto">
+                                {formValue?.isOrderField && (
+                                    <Form.Item noStyle name="orderDirection">
+                                        <Select
+                                            style={{ width: '200px' }}
+                                            placeholder="选择排序规则"
+                                        >
+                                            <Select.Option key="desc" value="desc">
+                                                降序（越大越靠前）
+                                            </Select.Option>
+                                            <Select.Option key="asc" value="asc">
+                                                升序（越小越靠前）
+                                            </Select.Option>
+                                        </Select>
+                                    </Form.Item>
+                                )}
+                            </Col>
+                        </Row>
+                        <Form.Item style={{ marginBottom: 0 }}>
+                            <Typography.Text>设为排序字段</Typography.Text>
+                            <br />
+                            <Typography.Text type="secondary">
+                                获取内容时根据此字段排序
                             </Typography.Text>
                         </Form.Item>
                     </div>
