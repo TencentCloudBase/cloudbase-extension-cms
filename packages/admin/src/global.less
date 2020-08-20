@@ -4,80 +4,84 @@
 html,
 body,
 #root {
-    height: 100%;
+  height: 100%;
 }
 
 .colorWeak {
-    filter: invert(80%);
+  filter: invert(80%);
 }
 
 .ant-layout {
-    .ant-pro-basicLayout-has-header {
-        margin: 24px;
-    }
+  .ant-pro-basicLayout-has-header {
+    margin: 24px;
+  }
 }
 
 canvas {
-    display: block;
+  display: block;
 }
 
 body {
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ul,
 ol {
-    list-style: none;
+  list-style: none;
 }
 
 @media (max-width: @screen-xs) {
-    .ant-table {
-        width: 100%;
-        overflow-x: auto;
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
 
-        &-thead > tr,
-        &-tbody > tr {
-            > th,
-            > td {
-                white-space: pre;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
 
-                > span {
-                    display: block;
-                }
-            }
+        > span {
+          display: block;
         }
+      }
     }
+  }
 }
 
 // 兼容IE11
 @media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
-    body .ant-design-pro > .ant-layout {
-        min-height: 100vh;
-    }
+  body .ant-design-pro > .ant-layout {
+    min-height: 100vh;
+  }
 }
 
 .page-container {
-    position: relative;
+  position: relative;
 
-    .ant-layout-header {
-        background-color: inherit;
-    }
+  .ant-layout-header {
+    background-color: inherit;
+  }
 }
 
 .full-height {
-    height: 100%;
+  height: 100%;
 }
 
 .ant-pro-table-column-setting-list-title {
-    padding: 0 16px;
+  padding: 0 16px;
 }
 
 .ant-pro-sider.ant-pro-sider-fixed {
-    position: fixed;
+  position: fixed;
 }
 
 h4.ant-typography {
-    font-size: 18px !important;
+  font-size: 18px !important;
+}
+
+.ant-pro-global-header-layout-mix {
+  background-image: linear-gradient(125deg, #002766 20%, #0050b3 20%) !important;
 }

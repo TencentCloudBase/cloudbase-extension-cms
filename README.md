@@ -11,11 +11,11 @@
 1. 安装 [Node.js LTS 版本](https://nodejs.org/zh-cn/)
 2. 使用 Node 包管理器 NPM 安装最新版本的 CloudBase CLI 工具（0.9.1+）
 
-    `npm install -g @cloudbase/cli@latest`
+   `npm install -g @cloudbase/cli@latest`
 
 3. 开通云开发服务，并创建按量计费环境（如果您已拥有云开发按量计费的环境，可跳过此步骤）
 
-    登录[腾讯云-云开发控制台](https://console.cloud.tencent.com/tcb/env/index?from=cli&source=cloudbase-cms&action=CreateEnv)，根据弹窗提示，开通服务，并创建按量计费环境。
+   登录[腾讯云-云开发控制台](https://console.cloud.tencent.com/tcb/env/index?from=cli&source=cloudbase-cms&action=CreateEnv)，根据弹窗提示，开通服务，并创建按量计费环境。
 
 ### 1️⃣ 配置
 
@@ -62,12 +62,12 @@ SECRETKEY=xxx
 
 ```js
 window.TcbCmsConfig = {
-    history: 'hash',
-    // 环境 Id
-    envId: 'envId',
-    // 云接入默认域名/自定义域名，不带 https 协议符
-    // https://console.cloud.tencent.com/tcb/env/access
-    cloudAccessPath: 'xxx.xx.tcloudbase.com/tcb-ext-cms-service',
+  history: 'hash',
+  // 环境 Id
+  envId: 'envId',
+  // 云接入默认域名/自定义域名，不带 https 协议符
+  // https://console.cloud.tencent.com/tcb/env/access
+  cloudAccessPath: 'xxx.xx.tcloudbase.com/tcb-ext-cms-service',
 }
 ```
 
@@ -81,3 +81,13 @@ npm run setup
 # 启动开发
 npm run dev
 ```
+
+## RoadMap
+
+🚀 表示已经实现的功能，👷 表示进行中的功能，⏳ 表示规划中的功能。
+
+| 功能                                     | 状态 |
+| ---------------------------------------- | ---- |
+| 数据导入、导出：支持内容数据的导入、导出 | 👷   |
+| 提供项目模板，支持从模板创建项目         | ⏳   |
+| 支持复杂的对象                           | ⏳   |

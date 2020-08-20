@@ -183,7 +183,9 @@ export const ConnectRender: React.FC<{
     return <Typography.Text>{value[connectField]}</Typography.Text>
   }
 
-  return value.map((record: any, index: number) => <Tag key={index}>{record[connectField]}</Tag>)
+  return value
+    .filter((_: any) => _)
+    .map((record: any, index: number) => <Tag key={index}>{record?.[connectField]}</Tag>)
 }
 
 /**
