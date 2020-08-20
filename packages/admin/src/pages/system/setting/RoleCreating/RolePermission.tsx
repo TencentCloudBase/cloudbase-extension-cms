@@ -136,14 +136,14 @@ const RolePermission: React.FC<{
                                                             <Select.Option value="*">
                                                                 <h4>全部服务</h4>
                                                                 <div>
-                                                                    内容原型、内容集合、Webhook
+                                                                    内容模型、内容集合、Webhook
                                                                     等全部服务
                                                                 </div>
                                                             </Select.Option>
                                                             <Select.Option value="schema">
-                                                                <h4>内容原型</h4>
+                                                                <h4>内容模型</h4>
                                                                 <div>
-                                                                    内容原型操作，如创建、修改原型等
+                                                                    内容模型操作，如创建、修改原型等
                                                                 </div>
                                                             </Select.Option>
                                                             <Select.Option value="content">

@@ -94,7 +94,7 @@ async function migrateSchemas(context, projectId) {
                           connectResource,
                       } = field
 
-                      return {
+                      const newField = {
                           id: nanoid(),
                           displayName: fieldLabel,
                           name: fieldName,
@@ -109,6 +109,14 @@ async function migrateSchemas(context, projectId) {
                           max: stringMaxLength,
                           order: index,
                       }
+
+                      // V1 中的 order 字段默认为排序字段
+                      if (fieldName === 'order') {
+                          newField.isOrderField = true
+                          newField.orderDirection = 'desc'
+                      }
+
+                      return newField
                   })
                 : []
 

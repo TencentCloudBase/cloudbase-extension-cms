@@ -1,6 +1,6 @@
 export default {
     'menu.overview': '概览',
-    'menu.schema': '内容原型',
+    'menu.schema': '内容模型',
     'menu.content': '内容集合',
     'menu.system-settings': '系统设置',
     'menu.webbook': 'Webbook',

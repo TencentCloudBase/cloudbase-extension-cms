@@ -60,7 +60,7 @@
                         },
                         {
                             "collectionName": "tcb-ext-cms-schemas",
-                            "description": "CMS V2 内容原型数据（请不需要手动修改）",
+                            "description": "CMS V2 内容模型数据（请不需要手动修改）",
                             "aclTag": "ADMINONLY"
                         },
                         {

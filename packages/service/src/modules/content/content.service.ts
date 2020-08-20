@@ -75,13 +75,20 @@ export class ContentService {
         query = query.skip(Number(page - 1) * Number(pageSize)).limit(pageSize)
 
         if (sort) {
-            console.log(sort)
             Object.keys(sort)
                 .filter((key) => sort[key])
                 .forEach((key: string) => {
                     const direction = sort[key] === 'ascend' ? 'asc' : 'desc'
                     query = query.orderBy(key, direction)
                 })
+        }
+
+        // 内置排序字段
+        if (schema?.fields?.find((_) => _.isOrderField)) {
+            const orderFields = schema?.fields?.filter((field) => field.isOrderField)
+            orderFields.forEach((field) => {
+                query = query.orderBy(field.name, field.orderDirection)
+            })
         }
 
         const res = await query.get()
