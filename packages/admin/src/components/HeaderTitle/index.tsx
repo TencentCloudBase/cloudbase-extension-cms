@@ -10,7 +10,7 @@ const HeaderTitle: React.SFC<{ collapsed: boolean }> = (props) => (
       history.push('/home')
     }}
   >
-    <img src={logo} alt="logo" />
+    <img src={logo} alt="logo" style={{ height: '35px', width: '35px' }} />
     <h1>{props.collapsed ? null : 'CloudBase CMS'}</h1>
   </a>
 )

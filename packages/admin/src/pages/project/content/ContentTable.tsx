@@ -148,6 +148,11 @@ export const ContentTable: React.FC<{
             key="button"
             icon={<PlusOutlined />}
             onClick={() => {
+              if (!currentSchema?._id) {
+                message.error('请选择需要创建的内容类型！')
+                return
+              }
+
               ctx.setState({
                 contentAction: 'create',
                 selectedContent: null,

@@ -1,7 +1,7 @@
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
-import { Menu, Spin, Empty, Row, Col } from 'antd'
+import { Menu, Spin, Empty, Row, Col, Typography } from 'antd'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useEffect, useRef, useState } from 'react'
 import { ContentDrawer } from './components'

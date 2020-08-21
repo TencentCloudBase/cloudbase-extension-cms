@@ -195,7 +195,7 @@ export const CreateFieldModal: React.FC<{
                         </Option>
                       ))
                     ) : (
-                      <Option value="" key={selectedField.name}>
+                      <Option value="" key={selectedField.name} disabled>
                         空
                       </Option>
                     )}
