@@ -167,7 +167,9 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
                 </Option>
               ))
             ) : (
-              <Option value="">空</Option>
+              <Option value="" disabled>
+                空
+              </Option>
             )}
           </Select>
         </Form.Item>

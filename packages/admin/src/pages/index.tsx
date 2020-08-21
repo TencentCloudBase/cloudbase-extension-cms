@@ -41,7 +41,7 @@ export default (): React.ReactNode => {
     <Layout className={styles.home}>
       <Header className={styles.header}>
         <img className={styles.logo} src={logo} alt="logo" />
-        <span className={styles.title}>CloudBase CMS</span>
+        <h1 className={styles.title}>CloudBase CMS</h1>
         <div className={styles.account}>
           <AvatarDropdown />
         </div>
@@ -53,7 +53,7 @@ export default (): React.ReactNode => {
             md={{ offset: 4 }}
             lg={{ offset: 6 }}
             xl={{ offset: 6 }}
-            xxl={{ offset: 8 }}
+            xxl={{ offset: 6 }}
           />
           <Col flex="1 1 auto">
             <Row gutter={[24, 40]}>
@@ -86,9 +86,9 @@ export default (): React.ReactNode => {
                         </Typography.Title>
                       </Tooltip>
                       <Tooltip title={project.description}>
-                        <Typography.Paragraph ellipsis className={styles['project-desc']}>
+                        <Typography.Text ellipsis className={styles['project-desc']}>
                           {project.description}
-                        </Typography.Paragraph>
+                        </Typography.Text>
                       </Tooltip>
                     </div>
                   </Card>
@@ -102,7 +102,7 @@ export default (): React.ReactNode => {
             md={{ offset: 4 }}
             lg={{ offset: 6 }}
             xl={{ offset: 6 }}
-            xxl={{ offset: 8 }}
+            xxl={{ offset: 6 }}
           />
         </Row>
       </Content>

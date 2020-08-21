@@ -241,7 +241,9 @@ export const ConnectEditor: React.FC<{
           </Option>
         ))
       ) : (
-        <Option value="">空</Option>
+        <Option value="" disabled>
+          空
+        </Option>
       )}
     </Select>
   )
@@ -573,7 +575,9 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
                 </Option>
               ))
             ) : (
-              <Option value="">空</Option>
+              <Option value="" disabled>
+                空
+              </Option>
             )}
           </Select>
         </Form.Item>

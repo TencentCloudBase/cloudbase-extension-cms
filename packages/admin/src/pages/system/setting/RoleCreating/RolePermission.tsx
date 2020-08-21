@@ -279,7 +279,7 @@ const ResourceSelect: React.FC<{
             )
           default:
             return (
-              <Select.Option key="index" value="">
+              <Select.Option key="index" value="" disabled>
                 空
               </Select.Option>
             )
