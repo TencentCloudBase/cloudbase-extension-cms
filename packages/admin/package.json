@@ -31,8 +31,8 @@
   ],
   "dependencies": {
     "@ant-design/icons": "^4.2.2",
-    "@ant-design/pro-card": "^1.0.0-beta.6",
-    "@ant-design/pro-layout": "^6.4.5",
+    "@ant-design/pro-card": "^1.0.2",
+    "@ant-design/pro-layout": "^6.4.9",
     "@ant-design/pro-list": "^0.0.8",
     "@ant-design/pro-table": "2.5.14",
     "@umijs/hooks": "^1.9.3",
