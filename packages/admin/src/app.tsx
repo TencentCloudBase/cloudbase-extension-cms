@@ -3,11 +3,11 @@ import { run } from 'concent'
 import { notification, message } from 'antd'
 import { ResponseError } from 'umi-request'
 import { history, RequestConfig, Link } from 'umi'
+import { codeMessage } from '@/constants'
 import { setTwoToneColor } from '@ant-design/icons'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
-import { codeMessage } from '@/constants'
-import { BasicLayoutProps, Settings as LayoutSettings } from '@ant-design/pro-layout'
+import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
 import { getCloudBaseApp, isDevEnv } from './utils'
@@ -44,36 +44,43 @@ export async function getInitialState(): Promise<{
     return {}
   }
 
+  let initialState: {
+    menu?: MenuDataItem[]
+    currentUser?: API.CurrentUser
+    settings?: LayoutSettings
+  } = {}
+  let currentUser = {} as any
+
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/login') {
-    try {
-      const currentUser = await queryCurrent()
-      return {
-        currentUser,
-        settings: defaultSettings,
-      }
-    } catch (error) {
-      return {}
-    }
-  } else {
-    let currentUser = {} as any
     try {
       currentUser = await queryCurrent()
     } catch (e) {
       console.log(e)
     }
-    return {
-      currentUser,
-      settings: defaultSettings,
+  } else {
+    try {
+      currentUser = await queryCurrent()
+    } catch (e) {
+      console.log(e)
     }
   }
+
+  initialState = {
+    currentUser,
+    settings: defaultSettings,
+  }
+
+  return initialState
 }
 
 export const layout = ({
-  initialState,
+  initialState = {},
 }: {
-  initialState: { settings?: LayoutSettings; currentUser?: API.CurrentUser }
+  initialState: { menu?: MenuDataItem[]; settings?: LayoutSettings; currentUser?: API.CurrentUser }
 }): BasicLayoutProps => {
+  const { currentUser, settings } = initialState
+
   return {
     theme: 'light',
     navTheme: 'light',
@@ -81,7 +88,7 @@ export const layout = ({
     disableContentMargin: false,
     onPageChange: () => {
       // 如果没有登录，重定向到 login
-      if (!initialState?.currentUser?._id && history.location.pathname !== '/login') {
+      if (!currentUser?._id && history.location.pathname !== '/login') {
         history.push('/login')
       }
     },
@@ -100,8 +107,13 @@ export const layout = ({
 
       return defaultDom
     },
+    // menuDataRender: () => {
+    //   return menu || []
+    // },
+    // 面包屑渲染
+    itemRender: () => null,
     headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-    ...initialState?.settings,
+    ...settings,
   }
 }
 

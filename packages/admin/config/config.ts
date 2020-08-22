@@ -79,6 +79,13 @@ export default defineConfig({
       access: 'canSchema',
       wrappers: ['../components/SecurityWrapper/index'],
       component: './project/schema/index',
+      // routes: [
+      //   {
+      //     path: '/:projectId/schema/:schemaId',
+      //     access: 'canSchema',
+      //     component: './project/schema/index',
+      //   },
+      // ],
     },
     {
       path: '/:projectId/content',

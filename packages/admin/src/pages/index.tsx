@@ -33,10 +33,53 @@ export default (): React.ReactNode => {
 
   const { isAdmin } = useAccess()
 
-  if (loading) {
-    return <Skeleton active />
-  }
+  return (
+    <ContentWrapper loading={loading}>
+      <Row gutter={[24, 40]}>
+        <Col>
+          <Typography.Title level={3}>我的项目</Typography.Title>
+        </Col>
+      </Row>
+      <Row gutter={[36, 36]}>
+        {data.map((project: any, index: any) => (
+          <Col flex="0 0 224px" key={index}>
+            <Card
+              hoverable
+              onClick={() => {
+                ctx.setState({
+                  currentProject: project,
+                })
+                history.push(`/${project._id}/home`)
+              }}
+            >
+              <div
+                className={styles.project}
+                onClick={() => {
+                  history.push('/home')
+                }}
+              >
+                <div className={styles['project-logo']}>{project.name.slice(0, 2)}</div>
+                <Tooltip title={project.name}>
+                  <Typography.Title ellipsis level={4} className={styles['project-title']}>
+                    {project.name}
+                  </Typography.Title>
+                </Tooltip>
+                <Tooltip title={project.description}>
+                  <Typography.Text ellipsis className={styles['project-desc']}>
+                    {project.description}
+                  </Typography.Text>
+                </Tooltip>
+              </div>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+      {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
+    </ContentWrapper>
+  )
+}
 
+const ContentWrapper: React.FC<{ loading: boolean }> = ({ children, loading }) => {
   return (
     <Layout className={styles.home}>
       <Header className={styles.header}>
@@ -48,62 +91,9 @@ export default (): React.ReactNode => {
       </Header>
       <Content className={styles.content}>
         <Row>
-          <Col
-            xs={{ offset: 2 }}
-            md={{ offset: 4 }}
-            lg={{ offset: 6 }}
-            xl={{ offset: 6 }}
-            xxl={{ offset: 6 }}
-          />
-          <Col flex="1 1 auto">
-            <Row gutter={[24, 40]}>
-              <Col>
-                <Typography.Title level={3}>我的项目</Typography.Title>
-              </Col>
-            </Row>
-            <Row gutter={[64, 40]}>
-              {data.map((project: any, index: any) => (
-                <Col flex="0 1 250px" key={index}>
-                  <Card
-                    hoverable
-                    onClick={() => {
-                      ctx.setState({
-                        currentProject: project,
-                      })
-                      history.push(`/${project._id}/home`)
-                    }}
-                  >
-                    <div
-                      className={styles.project}
-                      onClick={() => {
-                        history.push('/home')
-                      }}
-                    >
-                      <div className={styles['project-logo']}>{project.name.slice(0, 2)}</div>
-                      <Tooltip title={project.name}>
-                        <Typography.Title ellipsis level={4} className={styles['project-title']}>
-                          {project.name}
-                        </Typography.Title>
-                      </Tooltip>
-                      <Tooltip title={project.description}>
-                        <Typography.Text ellipsis className={styles['project-desc']}>
-                          {project.description}
-                        </Typography.Text>
-                      </Tooltip>
-                    </div>
-                  </Card>
-                </Col>
-              ))}
-            </Row>
-            {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
-          </Col>
-          <Col
-            xs={{ offset: 2 }}
-            md={{ offset: 4 }}
-            lg={{ offset: 6 }}
-            xl={{ offset: 6 }}
-            xxl={{ offset: 6 }}
-          />
+          <Col flex="2 1 auto" />
+          <Col flex="1 1 auto">{loading ? <Skeleton active /> : children}</Col>
+          <Col flex="2 1 auto" />
         </Row>
       </Content>
       <Footer className={styles.footer}>CloudBase CMS 2.0.0</Footer>
@@ -123,8 +113,8 @@ export const CreateProject: React.FC<{
           <Typography.Title level={3}>新建项目</Typography.Title>
         </Col>
       </Row>
-      <Row gutter={[64, 40]}>
-        <Col flex="0 1 250px">
+      <Row gutter={[36, 40]}>
+        <Col flex="0 0 224px">
           <Card
             hoverable
             onClick={() => {
