@@ -1,12 +1,10 @@
-import React from 'react'
+// import React from 'react'
 import { run } from 'concent'
 import { notification, message } from 'antd'
 import { ResponseError } from 'umi-request'
-import { history, RequestConfig, Link } from 'umi'
+import { history, RequestConfig } from 'umi'
 import { codeMessage } from '@/constants'
 import { setTwoToneColor } from '@ant-design/icons'
-import HeaderTitle from '@/components/HeaderTitle'
-import RightContent from '@/components/RightContent'
 import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
@@ -74,46 +72,22 @@ export async function getInitialState(): Promise<{
   return initialState
 }
 
+// 简单配置
 export const layout = ({
   initialState = {},
 }: {
   initialState: { menu?: MenuDataItem[]; settings?: LayoutSettings; currentUser?: API.CurrentUser }
 }): BasicLayoutProps => {
-  const { currentUser, settings } = initialState
+  const { currentUser } = initialState
 
   return {
-    theme: 'light',
-    navTheme: 'light',
-    headerHeight: 64,
-    disableContentMargin: false,
+    pure: true,
     onPageChange: () => {
       // 如果没有登录，重定向到 login
       if (!currentUser?._id && history.location.pathname !== '/login') {
         history.push('/login')
       }
     },
-    rightContentRender: () => <RightContent />,
-    menuItemRender: (menuItemProps, defaultDom) => {
-      const paths = history.location.pathname.split('/').filter((_: string) => _)
-      const projectId = paths[0]
-
-      if (menuItemProps.isUrl || menuItemProps.children) {
-        return defaultDom
-      }
-
-      if (menuItemProps.path) {
-        return <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link>
-      }
-
-      return defaultDom
-    },
-    // menuDataRender: () => {
-    //   return menu || []
-    // },
-    // 面包屑渲染
-    itemRender: () => null,
-    headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-    ...settings,
   }
 }
 

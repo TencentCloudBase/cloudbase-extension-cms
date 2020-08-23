@@ -3,7 +3,7 @@ import { getContentSchemas } from '@/services/content'
 
 export default {
   state: {
-    contents: [],
+    schemas: [],
     loading: false,
     contentLoading: false,
     currentSchema: null,
@@ -16,6 +16,7 @@ export default {
       ctx.setState({
         loading: true,
       })
+
       const { data } = await getContentSchemas(projectId)
       const { currentSchema } = state
 
@@ -29,8 +30,10 @@ export default {
         }
       }
 
+      console.log(data)
+
       return {
-        currentSchema: data?.length ? data[0] : null,
+        // currentSchema: data?.length ? data[0] : null,
         schemas: data,
         loading: false,
       }

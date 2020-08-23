@@ -10,15 +10,13 @@ import { ContentTableSearch } from './components'
 import './index.less'
 
 export const ContentTable: React.FC<{
+  currentSchema: SchemaV2
   tableRef: MutableRefObject<any>
   setModalVisible: (visible: boolean) => void
 }> = (props) => {
-  const { setModalVisible, tableRef } = props
+  const { setModalVisible, tableRef, currentSchema } = props
   const { projectId } = useParams()
   const ctx = useConcent('content')
-  const {
-    state: { currentSchema },
-  } = ctx
 
   const [searchParams, setSearchParams] = useState<any>()
 
