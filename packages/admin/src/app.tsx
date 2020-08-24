@@ -1,4 +1,3 @@
-// import React from 'react'
 import { run } from 'concent'
 import { notification, message } from 'antd'
 import { ResponseError } from 'umi-request'
