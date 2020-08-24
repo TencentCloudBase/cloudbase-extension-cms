@@ -67,6 +67,7 @@ export default defineConfig({
     },
     {
       path: '/',
+      exact: true,
       redirect: '/home',
     },
     {
@@ -74,6 +75,7 @@ export default defineConfig({
       layout: false,
       routes: [
         {
+          exact: true,
           path: '/:projectId/home',
           name: '概览',
           icon: 'eye',
@@ -82,6 +84,7 @@ export default defineConfig({
           component: './project/overview',
         },
         {
+          exact: true,
           path: '/:projectId/schema',
           name: '内容模型',
           icon: 'gold',
@@ -90,22 +93,7 @@ export default defineConfig({
           component: './project/schema/index',
         },
         {
-          path: '/:projectId/webhook',
-          name: 'Webbook',
-          icon: 'deployment-unit',
-          access: 'canWebhook',
-          wrappers: ['../components/SecurityWrapper/index'],
-          component: './project/webhook/index',
-        },
-        {
-          path: '/:projectId/setting',
-          name: '项目设置',
-          icon: 'setting',
-          access: 'canProjectAdmin',
-          wrappers: ['../components/SecurityWrapper/index'],
-          component: './project/setting/index',
-        },
-        {
+          path: '/:projectId/content',
           name: '内容集合',
           icon: 'database',
           access: 'canContent',
@@ -117,6 +105,24 @@ export default defineConfig({
               component: './project/content/index',
             },
           ],
+        },
+        {
+          exact: true,
+          path: '/:projectId/webhook',
+          name: 'Webbook',
+          icon: 'deployment-unit',
+          access: 'canWebhook',
+          wrappers: ['../components/SecurityWrapper/index'],
+          component: './project/webhook/index',
+        },
+        {
+          exact: true,
+          path: '/:projectId/setting',
+          name: '项目设置',
+          icon: 'setting',
+          access: 'canProjectAdmin',
+          wrappers: ['../components/SecurityWrapper/index'],
+          component: './project/setting/index',
         },
       ],
     },

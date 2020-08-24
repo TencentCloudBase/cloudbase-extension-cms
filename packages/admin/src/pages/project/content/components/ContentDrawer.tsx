@@ -13,7 +13,7 @@ export const ContentDrawer: React.FC<{
 }> = ({ visible, onClose, onOk, schema }) => {
   const { projectId } = useParams()
   const ctx = useConcent('content')
-  const { currentSchema, selectedContent, contentAction } = ctx.state
+  const { selectedContent, contentAction } = ctx.state
 
   const hasLargeContent = schema?.fields?.find(
     (_) => _.type === 'RichText' || _.type === 'Markdown'
@@ -35,11 +35,11 @@ export const ContentDrawer: React.FC<{
   const { run, loading } = useRequest(
     async (payload: any) => {
       if (contentAction === 'create') {
-        await createContent(projectId, currentSchema?.collectionName, payload)
+        await createContent(projectId, schema?.collectionName, payload)
       }
 
       if (contentAction === 'edit') {
-        await updateContent(projectId, currentSchema?.collectionName, payload._id, payload)
+        await updateContent(projectId, schema?.collectionName, payload._id, payload)
       }
     },
     {
