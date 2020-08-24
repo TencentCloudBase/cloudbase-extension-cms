@@ -36,7 +36,14 @@ async function saveUser({ createTime, username, password, roles, db, config, man
   await manager.database.createCollectionIfNotExists(config.usersCollectionName)
 
   const collection = db.collection(config.usersCollectionName)
-  const dbRecords = await collection.where({ username }).get()
+  const {
+    data: [dbRecord],
+  } = await collection.where({ username }).get()
+
+  // 用户已存在
+  if (dbRecord && dbRecord.uuid) {
+    return
+  }
 
   const data = {
     username,
@@ -54,7 +61,7 @@ async function saveUser({ createTime, username, password, roles, db, config, man
   data.uuid = User.UUId
 
   // 如果用户已经存在，则进行 update（有可能账号密码修改））
-  if (dbRecords.data.length) {
+  if (dbRecord) {
     return collection.where({ username }).update(data)
   }
 
