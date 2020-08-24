@@ -8,6 +8,7 @@
         "inputs": {
           "outputPath": "./packages/admin/dist",
           "installCommand": "echo \"Skip Install\"",
+          "buildCommand": "npm run build",
           "cloudPath": "{{env.deployPath}}"
         }
       },

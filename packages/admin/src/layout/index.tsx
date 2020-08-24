@@ -90,6 +90,7 @@ const Layout: React.FC<any> = (props) => {
     const { projectId = '' } = match?.params || {}
     const res = await getContentSchemas(projectId)
 
+    // 设置 schemas 数据
     ctx.setState({
       schemas: res.data,
     })

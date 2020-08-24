@@ -92,7 +92,15 @@ const ContentWrapper: React.FC<{ loading: boolean }> = ({ children, loading }) =
       <Content className={styles.content}>
         <Row>
           <Col flex="2 1 auto" />
-          <Col flex="1 1 auto">{loading ? <Skeleton active /> : children}</Col>
+          <Col flex="1 1 auto">
+            {loading ? (
+              <div style={{ minWidth: '600px' }}>
+                <Skeleton active />
+              </div>
+            ) : (
+              children
+            )}
+          </Col>
           <Col flex="2 1 auto" />
         </Row>
       </Content>

@@ -123,7 +123,7 @@ export class ContentService {
     const { filter = {}, payload } = options
     const collection = this.cloudbaseService.collection(resource)
 
-    // 查询一个
+    // 查询记录是否存在
     let {
       data: [record],
     } = await collection.where(filter).limit(1).get()
@@ -133,7 +133,12 @@ export class ContentService {
     }
 
     const updateData = _.omit(payload, '_id')
-    return collection.doc(record._id).update(updateData)
+
+    // 更新记录
+    return collection.doc(record._id).update({
+      ...updateData,
+      _updateTime: dateToNumber(),
+    })
   }
 
   async updateMany(
@@ -153,7 +158,10 @@ export class ContentService {
       .where({
         _id: db.command.in(filter.ids),
       })
-      .update(data)
+      .update({
+        ...data,
+        _updateTime: dateToNumber(),
+      })
   }
 
   async createOne(
@@ -245,6 +253,7 @@ export class ContentService {
     return where
   }
 
+  // 处理数据返回结果
   private async transformConnectField(rawData: any[], connectFields: SchemaFieldV2[]) {
     let data = rawData
     const $ = this.cloudbaseService.db.command
