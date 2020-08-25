@@ -120,7 +120,9 @@ const errorHandler = (error: ResponseError) => {
  * 全局 request 配置
  */
 export const request: RequestConfig = {
-  prefix: isDevEnv() ? '/api' : `https://${window.TcbCmsConfig.cloudAccessPath}/api`,
+  prefix: isDevEnv()
+    ? defaultSettings.globalPrefix
+    : `https://${window.TcbCmsConfig.cloudAccessPath}${defaultSettings.globalPrefix}`,
   errorHandler,
   errorConfig: {
     adaptor: (resData) => {

@@ -62,6 +62,7 @@ SECRETKEY=xxx
 
 ```js
 window.TcbCmsConfig = {
+  // 路由模式
   history: 'hash',
   // 环境 Id
   envId: 'envId',
@@ -92,3 +93,4 @@ npm run dev
 | 数据导入、导出：支持内容数据的导入、导出 | 👷   |
 | 提供项目模板，支持从模板创建项目         | ⏳   |
 | 支持复杂的对象                           | ⏳   |
+| 富文本编辑器优化，支持上传图片           | 🚀   |

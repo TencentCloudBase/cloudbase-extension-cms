@@ -15,6 +15,9 @@ export default {
   title: 'CloudBase CMS',
   pwa: false,
   iconfontUrl: '',
+  // 请求 prefix
+  globalPrefix: '/api/v1',
 } as LayoutSettings & {
   pwa: boolean
+  globalPrefix: string
 }

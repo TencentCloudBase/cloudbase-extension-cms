@@ -1,5 +1,5 @@
 export default {
-  globalPrefix: '/api',
+  globalPrefix: '/api/v1',
 
   // 请求处理超时时间
   timeout: 15000,

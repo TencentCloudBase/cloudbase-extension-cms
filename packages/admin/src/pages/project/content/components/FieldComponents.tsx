@@ -20,10 +20,13 @@ import {
 import moment from 'moment'
 import { useParams, useRequest } from 'umi'
 import { Rule } from 'antd/es/form'
+import 'moment/locale/zh-cn'
+import locale from 'antd/es/date-picker/locale/zh_CN'
 import { getSchema } from '@/services/schema'
 import { getContents } from '@/services/content'
 import { getTempFileURL, uploadFile, downloadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+
 import RichTextEditor from './RichText'
 
 const MarkdownEditor = React.lazy(() => import('./Markdown'))
@@ -159,8 +162,9 @@ export const CustomDatePicker: React.FC<{
 
   return (
     <DatePicker
-      showTime={type === 'DateTime'}
+      locale={locale}
       value={moment(value)}
+      showTime={type === 'DateTime'}
       format={type === 'DateTime' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'}
       onChange={(_, v) => onChange(v)}
     />

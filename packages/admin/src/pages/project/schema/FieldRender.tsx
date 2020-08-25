@@ -46,7 +46,7 @@ export const SchemaFieldRender: React.SFC<{
                   </Space>
                 </div>
               </Space>
-              <Space>{actionRender(field)}</Space>
+              {actionRender(field)}
             </Card>
           )
         })}

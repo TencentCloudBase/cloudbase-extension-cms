@@ -44,11 +44,7 @@ export class GlobalAuthGuard implements CanActivate {
     const app = getCloudBaseApp()
     const { TCB_UUID } = cloudbase.getCloudbaseContext()
 
-    console.log('用户 ID', TCB_UUID)
-
     const { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
-
-    console.log('用户信息', userInfo)
 
     if (!userInfo?.username) {
       throw new HttpException(

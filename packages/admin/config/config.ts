@@ -142,4 +142,28 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+  // webpack
+  // chunks: ['vendors', 'umi'],
+  // chainWebpack: function (config, { webpack }) {
+  //   config.merge({
+  //     optimization: {
+  //       minimize: true,
+  //       splitChunks: {
+  //         chunks: 'all',
+  //         minSize: 30000,
+  //         minChunks: 3,
+  //         automaticNameDelimiter: '.',
+  //         cacheGroups: {
+  //           vendor: {
+  //             name: 'vendors',
+  //             test({ resource }: any) {
+  //               return /[\\/]node_modules[\\/]/.test(resource)
+  //             },
+  //             priority: 10,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   })
+  // },
 })

@@ -85,26 +85,27 @@ export class SchemaController {
   @Post()
   async createSchema(@Body(new SchemaTransfromPipe('create')) body: SchemaV2) {
     // 检查同名集合是否存在，全局范围，不同项目不允许存在同名的集合
-    const { data } = await this.cloudbaseService
+    const {
+      data: [schema],
+    } = await this.cloudbaseService
       .collection(CollectionV2.Schemas)
       .where({
         collectionName: body.collectionName,
       })
       .get()
 
-    if (data?.length) {
+    if (schema) {
       throw new RecordExistException()
     }
 
+    // 创建集合
     const code = await this.schemaService.createCollection(body.collectionName)
 
     if (code) {
       throw new CmsException(code, '创建集合失败')
     }
 
-    const res = await this.cloudbaseService.collection(CollectionV2.Schemas).add(body)
-
-    return res
+    return this.cloudbaseService.collection(CollectionV2.Schemas).add(body)
   }
 
   @Put(':id')
