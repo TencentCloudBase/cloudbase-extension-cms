@@ -15,6 +15,7 @@ import {
   Typography,
   Row,
   Col,
+  Alert,
 } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 
@@ -23,6 +24,9 @@ const { Option } = Select
 
 // 不能设置默认值的类型
 const negativeTypes = ['File', 'Image', 'Array', 'Connect']
+
+// 保留字段名
+const ReservedFieldNames = ['_id', '_createTime', '_updateTime', '_status']
 
 export const CreateFieldModal: React.FC<{
   visible: boolean
@@ -112,6 +116,8 @@ export const CreateFieldModal: React.FC<{
     }
   }, [selectedField])
 
+  const isFieldNameReserved = ReservedFieldNames.includes(formValue.name)
+
   return (
     <Modal
       centered
@@ -160,6 +166,16 @@ export const CreateFieldModal: React.FC<{
         >
           <Input placeholder="数据库字段名，如 title" />
         </Form.Item>
+        {/^_/.test(formValue?.name) && (
+          <Alert
+            message="系统会使用 _ 开头的单词作为系统字段名，为了避免和系统字段冲突，建议您使用其他命名规则"
+            type="warning"
+          />
+        )}
+
+        {isFieldNameReserved && (
+          <Alert message={`${formValue.name} 是系统保留字段，请使用其他名称`} type="error" />
+        )}
 
         <Form.Item label="描述" name="description">
           <TextArea placeholder="原型描述，如博客文章标题" />
@@ -376,7 +392,12 @@ export const CreateFieldModal: React.FC<{
         <Form.Item>
           <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
             <Button onClick={() => onClose()}>取消</Button>
-            <Button type="primary" htmlType="submit" loading={loading}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              disabled={isFieldNameReserved}
+            >
               {fieldAction === 'create' ? '添加' : '更新'}
             </Button>
           </Space>

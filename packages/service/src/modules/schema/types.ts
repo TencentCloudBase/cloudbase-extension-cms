@@ -1,44 +1,5 @@
 import { IsNotEmpty } from 'class-validator'
 
-export class SchemaFieldV1 {
-  // 字段类型
-  @IsNotEmpty()
-  fieldType: string
-
-  // 展示标题
-  @IsNotEmpty()
-  fieldLabel: string
-
-  // 在数据库中的字段名
-  @IsNotEmpty()
-  fieldName: string
-
-  // 字段描述
-  helpText: string
-
-  // 是否隐藏
-  hidden: boolean
-
-  // 是否必需字段
-  isRequired: boolean
-
-  // 默认值
-  defaultValue: any
-
-  stringMinLength: number
-
-  stringMaxLength: number
-
-  // 连接字段
-  connectField: String
-
-  // 连接资源 Id
-  connectResource: string
-
-  // 关联多个
-  connectMany: boolean
-}
-
 export class SchemaFieldV2 {
   id: string
 
@@ -105,24 +66,6 @@ export class SchemaFieldV2 {
 
   // 枚举类型
   enumElements: { label: string; value: string }[]
-}
-
-// schema v1
-export class SchemaV1 {
-  _id: string
-
-  // 展示名称
-  label: string
-
-  collectionName: string
-
-  fields: SchemaFieldV1[]
-
-  description: string
-
-  createTime: string
-
-  updateTime: string
 }
 
 export class SchemaV2 {

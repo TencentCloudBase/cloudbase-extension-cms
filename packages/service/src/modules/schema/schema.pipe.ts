@@ -9,6 +9,7 @@ export class SchemaTransfromPipe implements PipeTransform {
     const _createTime = dateToNumber()
     const _updateTime = _createTime
 
+    // 为 field 添加 id
     if (this.action === 'create') {
       value.fields =
         value?.fields?.map((v) => {

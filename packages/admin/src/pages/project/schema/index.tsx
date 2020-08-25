@@ -166,7 +166,7 @@ export default (): React.ReactNode => {
                       <SchemaFieldRender
                         schema={currentSchema}
                         actionRender={(field) => (
-                          <>
+                          <Space>
                             <Button
                               size="small"
                               type="primary"
@@ -193,7 +193,7 @@ export default (): React.ReactNode => {
                             >
                               删除
                             </Button>
-                          </>
+                          </Space>
                         )}
                       />
                     ) : (
