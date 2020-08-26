@@ -66,7 +66,7 @@ async function createProject(context) {
   }
 }
 
-// 迁移原型
+// 迁移模型
 async function migrateSchemas(context, projectId) {
   const { db, manager } = context
 
@@ -134,7 +134,7 @@ async function migrateSchemas(context, projectId) {
 
     console.log(targetSchema)
 
-    // 跳过已存在的原型
+    // 跳过已存在的模型
     if (targetSchema && targetSchema.length) return
 
     await db.collection(schemaCollection).add(newSchema)

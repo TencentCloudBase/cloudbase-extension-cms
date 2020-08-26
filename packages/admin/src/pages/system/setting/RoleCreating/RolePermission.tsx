@@ -123,7 +123,7 @@ const RolePermission: React.FC<{
                               </Select.Option>
                               <Select.Option value="schema">
                                 <h4>内容模型</h4>
-                                <div>内容模型操作，如创建、修改原型等</div>
+                                <div>内容模型操作，如创建、修改模型等</div>
                               </Select.Option>
                               <Select.Option value="content">
                                 <h4>内容集合</h4>

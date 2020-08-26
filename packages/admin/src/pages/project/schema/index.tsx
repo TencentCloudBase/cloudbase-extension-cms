@@ -102,7 +102,7 @@ export default (): React.ReactNode => {
             </Menu>
           ) : (
             <Row justify="center">
-              <Col>原型为空</Col>
+              <Col>模型为空</Col>
             </Row>
           )}
         </ProCard>
@@ -127,7 +127,7 @@ export default (): React.ReactNode => {
                               setSchemaAction('edit')
                             }}
                           >
-                            编辑原型
+                            编辑模型
                           </Button>
                           <Button
                             danger
@@ -135,7 +135,7 @@ export default (): React.ReactNode => {
                             size="small"
                             onClick={() => setDeleteSchmeaVisible(true)}
                           >
-                            删除原型
+                            删除模型
                           </Button>
                         </Space>
                       }
@@ -207,7 +207,7 @@ export default (): React.ReactNode => {
               </Row>
             ) : (
               <div className="schema-empty">
-                <Empty description="创建你的原型，开始使用 CMS">
+                <Empty description="创建你的模型，开始使用 CMS">
                   <Button
                     type="primary"
                     onClick={() => {
@@ -215,7 +215,7 @@ export default (): React.ReactNode => {
                       setSchemaAction('create')
                     }}
                   >
-                    创建原型
+                    创建模型
                   </Button>
                 </Empty>
               </div>
@@ -224,7 +224,7 @@ export default (): React.ReactNode => {
 
           <Sider className="schema-sider" width="220">
             <Typography.Title level={3} className="schema-sider-header">
-              原型类型
+              模型类型
             </Typography.Title>
             <List
               bordered={false}
@@ -235,7 +235,7 @@ export default (): React.ReactNode => {
                   className="field-card"
                   onClick={() => {
                     if (!currentSchema) {
-                      message.info('请选择需要编辑的原型')
+                      message.info('请选择需要编辑的模型')
                       return
                     }
                     ctx.setState({

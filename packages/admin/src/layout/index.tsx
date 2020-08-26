@@ -81,7 +81,6 @@ const layoutProps: BasicLayoutProps = {
 
 const Layout: React.FC<any> = (props) => {
   const access = useAccess()
-
   const { children, location } = props
   const ctx = useConcent('content')
 

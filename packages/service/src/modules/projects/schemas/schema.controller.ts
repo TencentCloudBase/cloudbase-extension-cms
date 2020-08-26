@@ -134,7 +134,7 @@ export class SchemasController {
     } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
 
     if (!schema) {
-      throw new RecordNotExistException('原型不存在！')
+      throw new RecordNotExistException('模型不存在！')
     }
 
     // 只有管理员可以重名集合

@@ -46,23 +46,33 @@ export default (props: any): React.ReactNode => {
           ) : (
             <Empty description="当前内容模型字段为空，请添加字段后再创建内容">
               <Button
+                type="primary"
                 onClick={() => {
                   history.push(`/${projectId}/schema`)
                 }}
               >
-                更新内容模型
+                添加字段
               </Button>
             </Empty>
           )
         ) : (
           <div className="content-empty">
-            <Empty description="创建你的内容模板，开始使用 CMS">
+            <Empty
+              description={
+                <>
+                  <span>内容模型为空 🤔</span>
+                  <br />
+                  <span>创建你的内容模型，开始使用 CMS</span>
+                </>
+              }
+            >
               <Button
+                type="primary"
                 onClick={() => {
                   history.push(`/${projectId}/schema`)
                 }}
               >
-                创建内容模板
+                创建模型
               </Button>
             </Empty>
           </div>

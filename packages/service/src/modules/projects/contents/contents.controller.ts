@@ -112,7 +112,7 @@ export class ContentsController {
       },
     } = body
 
-    // 内容以原型为维度，不支持单个内容权限管理
+    // 内容以模型为维度，不支持单个内容权限管理
     // 这里的 resource 是 collectionName
     checkAccessAndGetResource(projectId, req, resource)
 

@@ -104,6 +104,9 @@ export default defineConfig({
               path: '/:projectId/content/:schemaId',
               component: './project/content/index',
             },
+            {
+              component: './project/content/index',
+            },
           ],
         },
         {
