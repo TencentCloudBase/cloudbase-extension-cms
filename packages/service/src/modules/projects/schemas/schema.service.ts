@@ -3,7 +3,7 @@ import CloudBase from '@cloudbase/manager-node'
 import { getEnvIdString } from '@/utils'
 
 @Injectable()
-export class SchemaService {
+export class SchemasService {
   // 创建集合
   async createCollection(name: string) {
     const envId = getEnvIdString()

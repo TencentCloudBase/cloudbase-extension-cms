@@ -227,11 +227,7 @@ const ResourceSelect: React.FC<{
           break
 
         case 'webhook':
-          data = await getWebhooks({
-            filter: {
-              projectId,
-            },
-          })
+          data = await getWebhooks(projectId)
       }
 
       return data

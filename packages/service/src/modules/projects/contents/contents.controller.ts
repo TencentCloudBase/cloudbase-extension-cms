@@ -1,9 +1,9 @@
-import { Controller, Post, Body, UseGuards, Request, Get, Query } from '@nestjs/common'
+import { Controller, Post, Body, UseGuards, Request, Get, Query, Param } from '@nestjs/common'
 import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
 import { checkAccessAndGetResource } from '@/utils'
-import { ContentService } from './content.service'
-import { WebhookService } from '../webhook/webhook.service'
+import { ContentsService } from './contents.service'
+import { WebhooksService } from '../webhooks/webhooks.service'
 import { CloudBaseService } from '@/dynamic_modules'
 import { CollectionV2 } from '@/constants'
 
@@ -18,9 +18,6 @@ const validActions = [
 ]
 
 class ActionBody {
-  @IsNotEmpty()
-  projectId: string
-
   @IsNotEmpty()
   resource: string
 
@@ -53,26 +50,28 @@ class ActionBody {
 }
 
 class SchemaQuery {
-  @IsNotEmpty()
-  projectId: string
-
   page?: number
 
   pageSize?: number
 }
 
 @UseGuards(PermissionGuard('content'))
-@Controller('content')
-export class ContentController {
+@Controller('projects/:projectId/contents')
+export class ContentsController {
   constructor(
-    private readonly contentService: ContentService,
-    private readonly webhookService: WebhookService,
+    private readonly contentsService: ContentsService,
+    private readonly webhookService: WebhooksService,
     private readonly cloudbaseService: CloudBaseService
   ) {}
 
-  @Get('schema')
-  async getContentSchemas(@Query() query: SchemaQuery, @Request() req: AuthRequest) {
-    const { projectId, page = 1, pageSize = 100 } = query
+  // 获取内容 schema 集合
+  @Get('schemas')
+  async getContentSchemas(
+    @Param('projectId') projectId,
+    @Query() query: SchemaQuery,
+    @Request() req: AuthRequest
+  ) {
+    const { page = 1, pageSize = 100 } = query
 
     const collectionNames = checkAccessAndGetResource(projectId, req)
 
@@ -97,10 +96,14 @@ export class ContentController {
     }
   }
 
+  // Admin Panel 入口
   @Post()
-  async handleAction(@Body() body: ActionBody, @Request() req: AuthRequest) {
+  async handleAction(
+    @Param('projectId') projectId,
+    @Body() body: ActionBody,
+    @Request() req: AuthRequest
+  ) {
     const {
-      projectId,
       action,
       resource,
       options = {
@@ -113,7 +116,7 @@ export class ContentController {
     // 这里的 resource 是 collectionName
     checkAccessAndGetResource(projectId, req, resource)
 
-    let res = await this.contentService[action](resource, options as any)
+    let res = await this.contentsService[action](resource, options as any)
 
     // get 不触发 webhook
     if (action === 'getOne' || action === 'getMany') {

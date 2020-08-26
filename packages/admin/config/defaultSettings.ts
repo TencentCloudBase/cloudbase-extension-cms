@@ -16,7 +16,7 @@ export default {
   pwa: false,
   iconfontUrl: '',
   // 请求 prefix
-  globalPrefix: '/api/v1',
+  globalPrefix: '/api/v1.0',
 } as LayoutSettings & {
   pwa: boolean
   globalPrefix: string

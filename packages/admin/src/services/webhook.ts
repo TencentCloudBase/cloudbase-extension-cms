@@ -5,7 +5,6 @@ export interface Options {
   pageSize?: number
 
   filter?: {
-    projectId: string
     _id?: string
     ids?: string[]
     [key: string]: any
@@ -22,8 +21,8 @@ export interface Options {
   payload: Record<string, any>
 }
 
-export const getWebhooks = async (options?: Partial<Options>) => {
-  return tcbRequest('/webhook', {
+export const getWebhooks = async (projectId: string, options?: Partial<Options>) => {
+  return tcbRequest(`/projects/${projectId}/webhooks`, {
     method: 'POST',
     data: {
       options,
@@ -32,8 +31,8 @@ export const getWebhooks = async (options?: Partial<Options>) => {
   })
 }
 
-export const createWebhook = async (options?: Partial<Options>) => {
-  return tcbRequest('/webhook', {
+export const createWebhook = async (projectId: string, options?: Partial<Options>) => {
+  return tcbRequest(`/projects/${projectId}/webhooks`, {
     method: 'POST',
     data: {
       options,
@@ -42,8 +41,8 @@ export const createWebhook = async (options?: Partial<Options>) => {
   })
 }
 
-export const updateWebhook = async (options?: Partial<Options>) => {
-  return tcbRequest('/webhook', {
+export const updateWebhook = async (projectId: string, options?: Partial<Options>) => {
+  return tcbRequest(`/projects/${projectId}/webhooks`, {
     method: 'POST',
     data: {
       options,
@@ -52,8 +51,8 @@ export const updateWebhook = async (options?: Partial<Options>) => {
   })
 }
 
-export const deleteWebhook = async (options?: Partial<Options>) => {
-  return tcbRequest('/webhook', {
+export const deleteWebhook = async (projectId: string, options?: Partial<Options>) => {
+  return tcbRequest(`/projects/${projectId}/webhooks`, {
     method: 'POST',
     data: {
       options,

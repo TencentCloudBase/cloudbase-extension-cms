@@ -9,7 +9,7 @@ import { ContentTable } from './ContentTable'
 import './index.less'
 
 export default (props: any): React.ReactNode => {
-  const { schemaId } = useParams()
+  const { schemaId, projectId } = useParams()
   const ctx = useConcent('content')
   const [contentModalVisible, setContentModalVisible] = useState(false)
 
@@ -37,17 +37,29 @@ export default (props: any): React.ReactNode => {
     <PageContainer className="page-container">
       <ProCard className="content-card" style={{ marginBottom: 0 }}>
         {currentSchema ? (
-          <ContentTable
-            currentSchema={currentSchema}
-            tableRef={tableRef}
-            setModalVisible={(visible: boolean) => setContentModalVisible(visible)}
-          />
+          currentSchema?.fields?.length ? (
+            <ContentTable
+              currentSchema={currentSchema}
+              tableRef={tableRef}
+              setModalVisible={(visible: boolean) => setContentModalVisible(visible)}
+            />
+          ) : (
+            <Empty description="当前内容模型字段为空，请添加字段后再创建内容">
+              <Button
+                onClick={() => {
+                  history.push(`/${projectId}/schema`)
+                }}
+              >
+                更新内容模型
+              </Button>
+            </Empty>
+          )
         ) : (
           <div className="content-empty">
             <Empty description="创建你的内容模板，开始使用 CMS">
               <Button
                 onClick={() => {
-                  history.push('/:projectId/schema')
+                  history.push(`/${projectId}/schema`)
                 }}
               >
                 创建内容模板

@@ -120,7 +120,7 @@ export default defineConfig({
           path: '/:projectId/setting',
           name: '项目设置',
           icon: 'setting',
-          access: 'canProjectAdmin',
+          access: 'isAdmin',
           wrappers: ['../components/SecurityWrapper/index'],
           component: './project/setting/index',
         },

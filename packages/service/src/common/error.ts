@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common'
+import { HttpException, ForbiddenException } from '@nestjs/common'
 
 export class CmsException extends HttpException {
   constructor(code: string, message: string) {
@@ -43,7 +43,7 @@ export class UnauthorizedOperation extends HttpException {
         code: 'UnauthorizedOperation',
         message: msg || '未授权的操作',
       },
-      200
+      403
     )
   }
 }

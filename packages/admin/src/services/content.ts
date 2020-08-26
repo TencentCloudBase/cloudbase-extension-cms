@@ -22,19 +22,15 @@ export interface Options {
 }
 
 export async function getContentSchemas(projectId: string) {
-  return tcbRequest('/content/schema', {
+  return tcbRequest(`/projects/${projectId}/contents/schemas`, {
     method: 'GET',
-    params: {
-      projectId,
-    },
   })
 }
 
 export async function getContents(projectId: string, resource: string, options?: Options) {
-  return tcbRequest('/content', {
+  return tcbRequest(`/projects/${projectId}/contents`, {
     method: 'POST',
     data: {
-      projectId,
       options,
       resource,
       action: 'getMany',
@@ -47,11 +43,10 @@ export async function createContent(
   resource: string,
   payload: Record<string, any>
 ) {
-  return tcbRequest('/content', {
+  return tcbRequest(`/projects/${projectId}/contents`, {
     method: 'POST',
     data: {
       resource,
-      projectId,
       action: 'createOne',
       options: {
         payload,
@@ -61,11 +56,10 @@ export async function createContent(
 }
 
 export async function deleteContent(projectId: string, resource: string, id: string) {
-  return tcbRequest('/content', {
+  return tcbRequest(`/projects/${projectId}/contents`, {
     method: 'POST',
     data: {
       resource,
-      projectId,
       options: {
         filter: {
           _id: id,
@@ -82,10 +76,9 @@ export async function updateContent(
   id: string,
   payload: Record<string, any>
 ) {
-  return tcbRequest('/content', {
+  return tcbRequest(`/projects/${projectId}/contents`, {
     method: 'POST',
     data: {
-      projectId,
       resource,
       options: {
         payload,

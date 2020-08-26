@@ -87,7 +87,7 @@ export const CreateFieldModal: React.FC<{
       }
 
       // 更新 schema fields
-      await updateSchema(currentSchema?._id, {
+      await updateSchema(projectId, currentSchema?._id, {
         fields,
       })
 
@@ -116,7 +116,7 @@ export const CreateFieldModal: React.FC<{
     }
   }, [selectedField])
 
-  const isFieldNameReserved = ReservedFieldNames.includes(formValue.name)
+  const isFieldNameReserved = ReservedFieldNames.includes(formValue?.name)
 
   return (
     <Modal
@@ -413,6 +413,7 @@ export const DeleteFieldModal: React.FC<{
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams()
   const ctx = useConcent('schema')
+  const [loading, setLoading] = useState(false)
 
   const {
     state: { currentSchema, selectedField },
@@ -424,7 +425,12 @@ export const DeleteFieldModal: React.FC<{
       destroyOnClose
       visible={visible}
       title={`删除【${selectedField?.displayName}】字段`}
+      okButtonProps={{
+        loading,
+      }}
       onOk={async () => {
+        setLoading(true)
+
         const fields = currentSchema.fields || []
         const index = fields.findIndex(
           (_: any) => _.id === selectedField.id || _.name === selectedField.name
@@ -435,7 +441,7 @@ export const DeleteFieldModal: React.FC<{
         }
 
         try {
-          await updateSchema(currentSchema?._id, {
+          await updateSchema(projectId, currentSchema?._id, {
             fields,
           })
           message.success('删除字段成功')
@@ -444,6 +450,7 @@ export const DeleteFieldModal: React.FC<{
           message.error('删除字段失败')
         } finally {
           onClose()
+          setLoading(false)
         }
       }}
       onCancel={() => onClose()}
