@@ -130,12 +130,9 @@ export default (): React.ReactNode => {
     const { current, pageSize } = params
 
     try {
-      const { data = [], total } = await getWebhooks({
+      const { data = [], total } = await getWebhooks(projectId, {
         sort,
-        filter: {
-          ...filter,
-          projectId,
-        },
+        filter,
         pageSize,
         page: current,
       })
@@ -207,9 +204,8 @@ export default (): React.ReactNode => {
                           modal.destroy()
                         },
                         onOk: async () => {
-                          await deleteWebhook({
+                          await deleteWebhook(projectId, {
                             filter: {
-                              projectId,
                               _id: row._id,
                             },
                           })

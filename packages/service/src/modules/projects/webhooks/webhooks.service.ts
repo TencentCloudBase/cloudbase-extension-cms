@@ -38,7 +38,7 @@ export interface WebhookCallOptions {
 }
 
 @Injectable()
-export class WebhookService {
+export class WebhooksService {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
 
   // 处理 webhook

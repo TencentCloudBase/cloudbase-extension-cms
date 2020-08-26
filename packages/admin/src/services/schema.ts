@@ -1,39 +1,33 @@
 import { tcbRequest } from '@/utils'
 
 export async function getSchemas(projectId?: string) {
-  return tcbRequest('/schema', {
+  return tcbRequest(`/projects/${projectId}/schemas`, {
     method: 'GET',
-    params: {
-      projectId,
-    },
   })
 }
 
 export async function getSchema(projectId: string, schemaId: string) {
-  return tcbRequest(`/schema/${schemaId}`, {
+  return tcbRequest(`/projects/${projectId}/schemas/${schemaId}`, {
     method: 'GET',
-    params: {
-      projectId,
-    },
   })
 }
 
-export async function createSchema(schema: Partial<SchemaV2>) {
-  return tcbRequest('/schema', {
+export async function createSchema(projectId: string, schema: Partial<SchemaV2>) {
+  return tcbRequest(`/projects/${projectId}/schemas`, {
     method: 'POST',
     data: schema,
   })
 }
 
-export async function updateSchema(schemaId: string, schema: Partial<SchemaV2>) {
-  return tcbRequest(`/schema/${schemaId}`, {
+export async function updateSchema(projectId: string, schemaId: string, schema: Partial<SchemaV2>) {
+  return tcbRequest(`/projects/${projectId}/schemas/${schemaId}`, {
     method: 'PUT',
     data: schema,
   })
 }
 
-export async function deleteSchema(schemaId: string, deleteCollection: boolean) {
-  return tcbRequest(`/schema/${schemaId}`, {
+export async function deleteSchema(projectId: string, schemaId: string, deleteCollection: boolean) {
+  return tcbRequest(`/projects/${projectId}/schemas/${schemaId}`, {
     method: 'DELETE',
     data: {
       deleteCollection,

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { IsNotEmpty } from 'class-validator'
 import {
   Controller,
@@ -11,11 +12,11 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common'
-import { dateToNumber, checkAccessAndGetResource } from '@/utils'
-import { CollectionV2 } from '@/constants'
 import { PermissionGuard } from '@/guards'
-import { RecordExistException } from '@/common'
-import { CloudBaseService } from '@/dynamic_modules/cloudbase'
+import { UnauthorizedOperation, RecordExistException } from '@/common'
+import { CloudBaseService } from '@/dynamic_modules'
+import { CollectionV2 } from '@/constants'
+import { dateToNumber } from '@/utils'
 
 export class Project {
   _id: string
@@ -29,15 +30,15 @@ export class Project {
   cover?: string
 }
 
-@Controller('project')
-export class ProjectController {
+@Controller('projects')
+export class ProjectsController {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
 
   @Get(':id')
   async getProject(@Param('id') id: string, @Request() req: AuthRequest) {
-    checkAccessAndGetResource(id, req, id)
+    this.checkAccessAndGetProjects(req, id)
 
-    const { data } = await this.cloudbaseService.collection(CollectionV2.Projects).doc(id).get()
+    const { data } = await this.collection().doc(id).get()
 
     return {
       data: data?.[0],
@@ -50,26 +51,26 @@ export class ProjectController {
     @Request() req: AuthRequest
   ) {
     const { page = 1, pageSize = 100 } = query
-
     const filter: any = {}
-
-    const allProjects = Object.keys(req.cmsUser.projectResource)
+    const allProjects = this.checkAccessAndGetProjects(req)
 
     // 可获取的所有项目列表
-    if (!allProjects.some((_) => _ === '*')) {
+    if (!allProjects?.some((_) => _ === '*')) {
       const $ = this.cloudbaseService.db.command
       filter._id = $.in(allProjects)
     }
 
-    const { data } = await this.cloudbaseService
-      .collection(CollectionV2.Projects)
-      .where(filter)
+    const dbQuery = this.collection().where(filter)
+    const countRes = await dbQuery.count()
+
+    const { data } = await dbQuery
       .skip(Number(page - 1) * Number(pageSize))
       .limit(Number(pageSize))
       .get()
 
     return {
       data,
+      total: countRes.total,
     }
   }
 
@@ -96,28 +97,41 @@ export class ProjectController {
       ...body,
       _createTime: dateToNumber(),
     }
-    return this.cloudbaseService.collection(CollectionV2.Projects).add(project)
+    return this.collection().add(project)
   }
 
   // 系统管理员才能更新项目
   @Put(':id')
   @UseGuards(PermissionGuard('project', ['administrator']))
-  async updateProject(
-    @Param('id') id: string,
-    @Body() payload: Partial<Project>,
-    @Request() req: AuthRequest
-  ) {
-    checkAccessAndGetResource(id, req, id)
-
-    return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).update(payload)
+  async updateProject(@Param('id') id: string, @Body() payload: Partial<Project>) {
+    return this.collection().doc(id).update(payload)
   }
 
   // 系统管理员才能删除项目
   @UseGuards(PermissionGuard('project', ['administrator']))
   @Delete(':id')
-  async deleteProject(@Param('id') id: string, @Request() req: AuthRequest) {
-    checkAccessAndGetResource(id, req, id)
+  async deleteProject(@Param('id') id: string) {
+    return this.collection().doc(id).remove()
+  }
 
-    return this.cloudbaseService.collection(CollectionV2.Projects).doc(id).remove()
+  private collection(collection = CollectionV2.Projects) {
+    return this.cloudbaseService.collection(collection)
+  }
+
+  private checkAccessAndGetProjects(req: AuthRequest, projectId?: string) {
+    const { projectResource = {} } = req.cmsUser
+
+    // projectResource 为空，无权限
+    if (_.isEmpty(projectResource)) {
+      throw new UnauthorizedOperation('您没有此资源的访问权限')
+    }
+
+    const allProjects = Object.keys(projectResource)
+
+    if (projectId && !allProjects.includes(projectId) && !allProjects.includes('*')) {
+      throw new UnauthorizedOperation('您没有此资源的访问权限')
+    }
+
+    return allProjects
   }
 }

@@ -145,6 +145,7 @@ export const ContentTable: React.FC<{
             type="primary"
             key="button"
             icon={<PlusOutlined />}
+            disabled={!currentSchema.fields?.length}
             onClick={() => {
               if (!currentSchema?._id) {
                 message.error('请选择需要创建的内容类型！')

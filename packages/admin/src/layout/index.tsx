@@ -1,6 +1,6 @@
 import { Spin } from 'antd'
 import React from 'react'
-import { history, Link, useRequest, matchPath } from 'umi'
+import { history, Link, useRequest, matchPath, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
 import defaultSettings from '../../config/defaultSettings'
@@ -17,27 +17,32 @@ import { useConcent } from 'concent'
 
 const customMenuDate: MenuDataItem[] = [
   {
+    authority: 'isLogin',
     path: '/:projectId/home',
     name: '概览',
     icon: <EyeTwoTone />,
   },
   {
+    authority: 'canSchema',
     path: '/:projectId/schema',
     name: '内容模型',
     icon: <GoldTwoTone />,
   },
   {
+    authority: 'canContent',
     path: '/:projectId/content',
     name: '内容集合',
     icon: <DatabaseTwoTone />,
     children: [],
   },
   {
+    authority: 'canWebhook',
     path: '/:projectId/webhook',
     name: 'Webbook',
     icon: <RocketTwoTone />,
   },
   {
+    authority: 'isAdmin',
     path: '/:projectId/setting',
     name: '项目设置',
     icon: <SettingTwoTone />,
@@ -75,7 +80,8 @@ const layoutProps: BasicLayoutProps = {
 }
 
 const Layout: React.FC<any> = (props) => {
-  console.log(props)
+  const access = useAccess()
+
   const { children, location } = props
   const ctx = useConcent('content')
 
@@ -88,6 +94,12 @@ const Layout: React.FC<any> = (props) => {
     })
 
     const { projectId = '' } = match?.params || {}
+
+    if (projectId === ':projectId') {
+      history.push('/home')
+      return
+    }
+
     const res = await getContentSchemas(projectId)
 
     // 设置 schemas 数据
@@ -122,7 +134,7 @@ const Layout: React.FC<any> = (props) => {
       }
       menuDataRender={(menuData: MenuDataItem[]) => {
         customMenuDate[2].children = contentChildMenus
-        return customMenuDate
+        return customMenuDate.filter((_) => access[_.authority as string])
       }}
       {...layoutProps}
     >

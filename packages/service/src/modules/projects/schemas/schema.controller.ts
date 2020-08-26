@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {
   Get,
   Post,
@@ -8,25 +9,21 @@ import {
   Delete,
   Request,
   UseGuards,
-  Controller,
   UseInterceptors,
   UnauthorizedException,
   ClassSerializerInterceptor,
+  Controller,
 } from '@nestjs/common'
-import { IsNotEmpty } from 'class-validator'
 import { CollectionV2 } from '@/constants'
 import { PermissionGuard } from '@/guards'
 import { checkAccessAndGetResource } from '@/utils'
 import { CloudBaseService } from '@/dynamic_modules'
 import { CmsException, RecordExistException, RecordNotExistException } from '@/common'
-import { SchemaService } from './schema.service'
+import { SchemasService } from './schema.service'
 import { SchemaTransfromPipe } from './schema.pipe'
 import { SchemaV2 } from './types'
 
 class SchemaQuery {
-  @IsNotEmpty()
-  projectId: string
-
   page?: number
 
   pageSize?: number
@@ -34,13 +31,19 @@ class SchemaQuery {
 
 @UseGuards(PermissionGuard('schema'))
 @UseInterceptors(ClassSerializerInterceptor)
-@Controller('schema')
-export class SchemaController {
-  constructor(private schemaService: SchemaService, private cloudbaseService: CloudBaseService) {}
+@Controller('projects/:projectId/schemas')
+export class SchemasController {
+  constructor(public schemaService: SchemasService, public cloudbaseService: CloudBaseService) {}
 
   @Get()
-  async getSchemas(@Query() query: SchemaQuery, @Request() req: AuthRequest) {
-    const { projectId, page = 1, pageSize = 100 } = query
+  async getSchemas(
+    @Param('projectId') projectId,
+    @Query() query: SchemaQuery,
+    @Request() req: AuthRequest
+  ) {
+    console.log('get', projectId)
+
+    const { page = 1, pageSize = 100 } = query
 
     const schemas = checkAccessAndGetResource(projectId, req)
 
@@ -65,9 +68,9 @@ export class SchemaController {
     }
   }
 
-  @Get(':id')
-  async getSchema(@Query() query: SchemaQuery, @Param('id') schemaId, @Request() req: AuthRequest) {
-    const { projectId } = query
+  @Get(':schemaId')
+  async getSchema(@Param() params, @Request() req: AuthRequest) {
+    const { projectId, schemaId } = params
 
     checkAccessAndGetResource(projectId, req, schemaId)
 
@@ -83,7 +86,10 @@ export class SchemaController {
   }
 
   @Post()
-  async createSchema(@Body(new SchemaTransfromPipe('create')) body: SchemaV2) {
+  async createSchema(
+    @Param('projectId') projectId,
+    @Body(new SchemaTransfromPipe('create')) body: SchemaV2
+  ) {
     // 检查同名集合是否存在，全局范围，不同项目不允许存在同名的集合
     const {
       data: [schema],
@@ -105,16 +111,23 @@ export class SchemaController {
       throw new CmsException(code, '创建集合失败')
     }
 
-    return this.cloudbaseService.collection(CollectionV2.Schemas).add(body)
+    return this.cloudbaseService.collection(CollectionV2.Schemas).add({
+      ...projectId,
+      projectId,
+    })
   }
 
-  @Put(':id')
+  @Put(':schemaId')
   async updateSchema(
-    @Param('id') schemaId,
+    @Param() params,
     @Body(new SchemaTransfromPipe('update')) payload: SchemaV2,
     @Request() req: AuthRequest
   ) {
-    checkAccessAndGetResource(payload.projectId, req, schemaId)
+    const { projectId, schemaId } = params
+
+    console.log(params)
+
+    checkAccessAndGetResource(projectId, req, schemaId)
 
     const {
       data: [schema],
@@ -129,12 +142,14 @@ export class SchemaController {
       throw new UnauthorizedException('您无权限进行重命名集合的操作')
     }
 
+    const data = _.omit(payload, 'projectId')
+
     const res = await this.cloudbaseService
       .collection(CollectionV2.Schemas)
       .where({
         _id: schemaId,
       })
-      .update(payload)
+      .update(data)
 
     // 重命名集合
     if (payload?.collectionName !== schema.collectionName) {
@@ -144,13 +159,14 @@ export class SchemaController {
     return res
   }
 
-  @Delete(':id')
+  @Delete(':schemaId')
   async deleteSchema(
-    @Param('id') schemaId,
-    @Body() body: { projectId: string; deleteCollection: boolean },
+    @Param() params,
+    @Body() body: { deleteCollection: boolean },
     @Request() req: AuthRequest
   ) {
-    const { projectId, deleteCollection } = body
+    const { projectId, schemaId } = params
+    const { deleteCollection } = body
 
     checkAccessAndGetResource(projectId, req, schemaId)
 

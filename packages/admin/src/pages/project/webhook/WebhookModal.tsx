@@ -32,11 +32,8 @@ export const WebhookModal: React.FC<{
   const { run, loading } = useRequest(
     async (webhook: Webhook) => {
       if (action === 'create') {
-        await createWebhook({
-          payload: {
-            ...webhook,
-            projectId,
-          },
+        await createWebhook(projectId, {
+          payload: webhook,
           filter: {
             projectId,
           },
@@ -44,9 +41,8 @@ export const WebhookModal: React.FC<{
       }
 
       if (action === 'edit') {
-        await updateWebhook({
+        await updateWebhook(projectId, {
           filter: {
-            projectId,
             _id: webhook._id,
           },
           payload: webhook,

@@ -21,8 +21,7 @@ export const SchemaModal: React.FC<{
       const { displayName, collectionName, description } = data
 
       if (action === 'create') {
-        await createSchema({
-          projectId,
+        await createSchema(projectId, {
           displayName,
           collectionName,
           description,
@@ -40,7 +39,7 @@ export const SchemaModal: React.FC<{
             {}
           )
 
-        await updateSchema(schema?._id, diffData)
+        await updateSchema(projectId, schema?._id, diffData)
       }
 
       onClose()
@@ -137,7 +136,7 @@ export const DeleteSchemaModal: React.FC<{
       onCancel={() => onClose()}
       onOk={async () => {
         try {
-          await deleteSchema(currentSchema._id, deleteCollection)
+          await deleteSchema(projectId, currentSchema._id, deleteCollection)
           message.success('删除内容模型成功！')
           ctx.dispatch('getSchemas', projectId)
         } catch (error) {

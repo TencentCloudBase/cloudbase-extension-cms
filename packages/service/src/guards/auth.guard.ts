@@ -22,7 +22,6 @@ export class GlobalAuthGuard implements CanActivate {
         roles: ['administrator'],
         username: 'admin',
         createTime: 2020,
-        password: 'cloudbase',
         isAdmin: true,
         uuid: 'xxx',
       }
@@ -32,28 +31,30 @@ export class GlobalAuthGuard implements CanActivate {
       //     roles: ['content:administrator'],
       //     username: 'admin',
       //     createTime: 2020,
-      //     password: 'cloudbase',
       //     uuid: 'xxx'
       // }
 
       return true
     }
 
-    // 登录的用户
+    // 获取用户信息
     // 目前只在云函数中能自动获取用户身份信息
     const app = getCloudBaseApp()
     const { TCB_UUID } = cloudbase.getCloudbaseContext()
-
     const { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
 
+    // 未登录用户
     if (!userInfo?.username) {
-      throw new HttpException(
-        {
-          code: 'NO_AUTH',
-          message: '未登录用户',
-        },
-        HttpStatus.FORBIDDEN
-      )
+      request.cmsUser = {
+        _id: 'test',
+        roles: ['public'],
+        username: '_anonymous',
+        createTime: 2020,
+        isAdmin: false,
+        uuid: '',
+      }
+
+      return true
     }
 
     const {

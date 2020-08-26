@@ -1,5 +1,5 @@
 import { Method } from 'axios'
-import { SchemaV2 } from '../schema/types'
+import { SchemaV2 } from '../schemas/types'
 
 export interface Webhook {
   _id: string

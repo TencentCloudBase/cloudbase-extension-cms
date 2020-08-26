@@ -12,13 +12,8 @@ interface User {
 
   username: string
 
-  password: string
-
   // 创建时间
   createTime: number
-
-  // 登陆失败次数
-  failedLogins?: Record<string, number>[]
 
   // 用户角色
   roles: string[]

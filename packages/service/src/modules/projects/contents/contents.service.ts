@@ -3,10 +3,10 @@ import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/dynamic_modules/cloudbase'
 import { dateToNumber } from '@/utils'
 import { CollectionV2 } from '@/constants'
-import { SchemaV2, SchemaFieldV2 } from '../schema/types'
+import { SchemaV2, SchemaFieldV2 } from '../schemas/types'
 
 @Injectable()
-export class ContentService {
+export class ContentsService {
   constructor(private cloudbaseService: CloudBaseService) {}
 
   async getMany(

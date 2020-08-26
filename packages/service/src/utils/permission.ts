@@ -1,6 +1,7 @@
+import _ from 'lodash'
 import { UnauthorizedOperation } from '@/common'
 
-// 校验项目访问权限，
+// 校验项目访问权限
 // 返回可访问的资源
 export const checkAccessAndGetResource = (
   projectId: string,
@@ -8,6 +9,11 @@ export const checkAccessAndGetResource = (
   resourceId?: string
 ) => {
   const { projectResource } = req.cmsUser
+
+  // projectResource 为空，无权限
+  if (_.isEmpty(projectResource)) {
+    throw new UnauthorizedOperation('您没有此资源的访问权限')
+  }
 
   // 所有可访问的项目 id
   const allProjectIds = Object.keys(projectResource)
