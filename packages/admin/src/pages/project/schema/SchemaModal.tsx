@@ -15,7 +15,7 @@ export const SchemaModal: React.FC<{
   const { projectId } = useParams()
   const ctx = useConcent('schema')
 
-  // 创建/更新原型
+  // 创建/更新模型
   const { run, loading } = useRequest(
     async (data: SchemaV2) => {
       const { displayName, collectionName, description } = data
@@ -47,8 +47,8 @@ export const SchemaModal: React.FC<{
     },
     {
       manual: true,
-      onError: () => message.error(`${action === 'create' ? '创建' : '更新'}原型失败`),
-      onSuccess: () => message.success(`${action === 'create' ? '创建' : '更新'}原型成功`),
+      onError: () => message.error(`${action === 'create' ? '创建' : '更新'}模型失败`),
+      onSuccess: () => message.success(`${action === 'create' ? '创建' : '更新'}模型成功`),
     }
   )
 
@@ -60,7 +60,7 @@ export const SchemaModal: React.FC<{
       visible={visible}
       onOk={() => onClose()}
       onCancel={() => onClose()}
-      title={`${action === 'create' ? '创建' : '更新'}原型`}
+      title={`${action === 'create' ? '创建' : '更新'}模型`}
     >
       <Form
         name="basic"
@@ -102,7 +102,7 @@ export const SchemaModal: React.FC<{
         </Form.Item>
 
         <Form.Item label="描述" name="description">
-          <TextArea placeholder="原型描述，如博客文章" />
+          <TextArea placeholder="模型描述，如博客文章" />
         </Form.Item>
 
         <Form.Item>

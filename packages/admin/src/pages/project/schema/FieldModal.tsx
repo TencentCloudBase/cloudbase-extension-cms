@@ -33,6 +33,7 @@ export const CreateFieldModal: React.FC<{
   onClose: () => void
 }> = ({ visible, onClose }) => {
   const ctx = useConcent('schema')
+  const contentCtx = useConcent('content')
   const { projectId } = useParams()
   const [formValue, setFormValue] = useState<any>()
   const [connectSchema, setConnectSchema] = useState<SchemaV2>()
@@ -92,6 +93,8 @@ export const CreateFieldModal: React.FC<{
       })
 
       ctx.dispatch('getSchemas', projectId)
+      contentCtx.dispatch('getContentSchemas', projectId)
+
       onClose()
     },
     {
@@ -178,7 +181,7 @@ export const CreateFieldModal: React.FC<{
         )}
 
         <Form.Item label="描述" name="description">
-          <TextArea placeholder="原型描述，如博客文章标题" />
+          <TextArea placeholder="模型描述，如博客文章标题" />
         </Form.Item>
 
         {selectedField?.type === 'Connect' && (
@@ -413,6 +416,7 @@ export const DeleteFieldModal: React.FC<{
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams()
   const ctx = useConcent('schema')
+  const contentCtx = useConcent('content')
   const [loading, setLoading] = useState(false)
 
   const {
@@ -446,6 +450,7 @@ export const DeleteFieldModal: React.FC<{
           })
           message.success('删除字段成功')
           ctx.dispatch('getSchemas', projectId)
+          contentCtx.dispatch('getContentSchemas', projectId)
         } catch (error) {
           message.error('删除字段失败')
         } finally {
