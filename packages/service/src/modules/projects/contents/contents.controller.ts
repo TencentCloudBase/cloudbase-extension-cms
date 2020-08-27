@@ -1,12 +1,23 @@
 import _ from 'lodash'
-import { Controller, Post, Body, UseGuards, Request, Get, Query, Param } from '@nestjs/common'
-import { IsNotEmpty, IsIn } from 'class-validator'
+import {
+  Post,
+  Body,
+  Get,
+  Query,
+  Param,
+  Delete,
+  Patch,
+  Request,
+  UseGuards,
+  Controller,
+} from '@nestjs/common'
 import { PermissionGuard } from '@/guards'
+import { IsNotEmpty, IsIn } from 'class-validator'
 import { checkAccessAndGetResource } from '@/utils'
-import { ContentsService } from './contents.service'
-import { WebhooksService } from '../webhooks/webhooks.service'
 import { CloudBaseService } from '@/dynamic_modules'
 import { CollectionV2 } from '@/constants'
+import { ContentsService } from './contents.service'
+import { WebhooksService } from '../webhooks/webhooks.service'
 
 const validActions = [
   'getOne',
@@ -99,25 +110,6 @@ export class ContentsController {
     }
   }
 
-  @Get(':resource')
-  async getResourceEntries(
-    @Param() params,
-    @Query()
-    query: QuerySearch,
-    @Request() req: AuthRequest
-  ) {
-    const { projectId, resource } = params
-    checkAccessAndGetResource(projectId, req, resource)
-
-    const options = {}
-
-    Object.keys(query)
-      .filter((key) => query[key])
-      .forEach((key) => _.set(options, key, query[key]))
-
-    return this.contentsService.getMany(resource, options)
-  }
-
   // Admin Panel 入口
   @Post()
   async handleAction(
@@ -160,5 +152,86 @@ export class ContentsController {
     }
 
     return res
+  }
+
+  // 获取所有文档
+  @Get(':resource/docs')
+  async getResourceDocs(
+    @Param() params,
+    @Query()
+    query: QuerySearch,
+    @Request() req: AuthRequest
+  ) {
+    const { projectId, resource } = params
+    checkAccessAndGetResource(projectId, req, resource)
+
+    const options = {}
+
+    Object.keys(query)
+      .filter((key) => query[key])
+      .forEach((key) => _.set(options, key, query[key]))
+
+    return this.contentsService.getMany(resource, options)
+  }
+
+  // 获取单个文档信息
+  @Get(':resource/docs/:docId')
+  async getResourceDoc(@Param() params, @Request() req: AuthRequest) {
+    const { projectId, resource, docId } = params
+    checkAccessAndGetResource(projectId, req, resource)
+
+    const options = {
+      filter: {
+        _id: docId,
+      },
+    }
+
+    return this.contentsService.getMany(resource, options)
+  }
+
+  // 创建文档
+  @Post(':resource/docs')
+  async createResourceDoc(
+    @Param() params,
+    @Body() payload: Record<string, any>,
+    @Request() req: AuthRequest
+  ) {
+    const { projectId, resource } = params
+    checkAccessAndGetResource(projectId, req, resource)
+
+    return this.contentsService.createOne(resource, {
+      payload,
+    })
+  }
+
+  // 更新单个文档
+  @Patch(':resource/docs/:docId')
+  async updateResourceDoc(
+    @Param() params,
+    @Body() payload: Record<string, any>,
+    @Request() req: AuthRequest
+  ) {
+    const { projectId, resource, docId } = params
+    checkAccessAndGetResource(projectId, req, resource)
+
+    return this.contentsService.updateOne(resource, {
+      filter: {
+        _id: docId,
+      },
+      payload,
+    })
+  }
+
+  // 删除单个文档
+  @Delete(':resource/docs/:docId')
+  async deleteResourceDoc(@Param() params, @Request() req: AuthRequest) {
+    const { projectId, resource, docId } = params
+    checkAccessAndGetResource(projectId, req, resource)
+
+    return this.contentsService.deleteOne(resource, {
+      filter: {
+        _id: docId,
+      },
+    })
   }
 }
