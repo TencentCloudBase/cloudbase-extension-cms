@@ -156,17 +156,17 @@ export const CustomUploader: React.FC<{
 export const CustomDatePicker: React.FC<{
   type?: string
   value?: string
-  onChange?: (v: string) => void
+  onChange?: (v: string | number) => void
 }> = (props) => {
   let { type, value, onChange = () => {} } = props
 
   return (
     <DatePicker
       locale={locale}
-      value={moment(value)}
+      value={value ? moment(value) : null}
       showTime={type === 'DateTime'}
       format={type === 'DateTime' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'}
-      onChange={(_, v) => onChange(v)}
+      onChange={(_, v) => onChange(moment(v).valueOf())}
     />
   )
 }

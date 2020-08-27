@@ -62,7 +62,7 @@ export default (props: any): React.ReactNode => {
                 <>
                   <span>内容模型为空 🤔</span>
                   <br />
-                  <span>创建你的内容模型，开始使用 CMS</span>
+                  <span>请先创建你的内容模型，再创建内容文档</span>
                 </>
               }
             >

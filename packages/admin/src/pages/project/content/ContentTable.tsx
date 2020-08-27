@@ -88,6 +88,22 @@ export const ContentTable: React.FC<{
           pageSizeOptions: ['10', '20', '30', '50'],
         }}
         columns={[
+          {
+            title: '序号',
+            width: 50,
+            align: 'center',
+            valueType: 'index',
+            render: (
+              text: React.ReactNode,
+              record: any,
+              index: number,
+              action: any
+            ): React.ReactNode | React.ReactNode[] => {
+              const { current, pageSize } = action
+              const serial = Number(pageSize) * (Number(current) - 1) + index + 1
+              return serial
+            },
+          },
           ...columns,
           {
             title: '操作',

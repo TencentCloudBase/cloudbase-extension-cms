@@ -124,7 +124,9 @@ export const DeleteSchemaModal: React.FC<{
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams()
   const ctx = useConcent('schema')
+  const contentCtx = useConcent('content')
   const { currentSchema = {} } = ctx.state
+  const [loading, setLoading] = useState(false)
   const [deleteCollection, setDeleteCollection] = useState(false)
 
   return (
@@ -134,15 +136,21 @@ export const DeleteSchemaModal: React.FC<{
       title="删除内容模型"
       visible={visible}
       onCancel={() => onClose()}
+      okButtonProps={{
+        loading,
+      }}
       onOk={async () => {
         try {
+          setLoading(true)
           await deleteSchema(projectId, currentSchema._id, deleteCollection)
           message.success('删除内容模型成功！')
           ctx.dispatch('getSchemas', projectId)
+          contentCtx.dispatch('getContentSchemas', projectId)
         } catch (error) {
           message.error('删除内容模型失败！')
         } finally {
           onClose()
+          setLoading(false)
         }
       }}
     >
