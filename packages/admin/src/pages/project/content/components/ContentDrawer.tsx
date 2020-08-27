@@ -32,6 +32,7 @@ export const ContentDrawer: React.FC<{
         )
       : selectedContent
 
+  // 创建/更新内容
   const { run, loading } = useRequest(
     async (payload: any) => {
       if (contentAction === 'create') {
@@ -39,7 +40,7 @@ export const ContentDrawer: React.FC<{
       }
 
       if (contentAction === 'edit') {
-        await updateContent(projectId, schema?.collectionName, payload._id, payload)
+        await updateContent(projectId, schema?.collectionName, selectedContent._id, payload)
       }
     },
     {

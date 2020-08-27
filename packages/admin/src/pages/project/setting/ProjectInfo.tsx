@@ -1,22 +1,11 @@
 import React, { useState } from 'react'
 import { useRequest, useParams, history } from 'umi'
 import { getProject, updateProject, deleteProject } from '@/services/project'
-import {
-  Row,
-  Col,
-  Divider,
-  Button,
-  Space,
-  Typography,
-  Form,
-  Input,
-  Skeleton,
-  Modal,
-  message,
-} from 'antd'
-import styles from './index.less'
+import { Divider, Button, Space, Typography, Form, Input, Skeleton, Modal, message } from 'antd'
+import './index.less'
 
 interface Project {
+  _id: string
   name: string
   description: string
 }
@@ -124,6 +113,9 @@ export default (): React.ReactElement => {
           }
         }}
       >
+        <Form.Item label="项目 Id">
+          <Typography.Paragraph copyable>{project?._id}</Typography.Paragraph>
+        </Form.Item>
         <Form.Item
           label="项目名"
           name="name"

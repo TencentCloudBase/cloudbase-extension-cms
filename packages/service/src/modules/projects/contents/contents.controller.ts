@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { Controller, Post, Body, UseGuards, Request, Get, Query, Param } from '@nestjs/common'
 import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
@@ -17,6 +18,23 @@ const validActions = [
   'deleteMany',
 ]
 
+interface QuerySearch {
+  page?: number
+  pageSize?: number
+  filter?: {
+    _id?: string
+    ids?: string[]
+    [key: string]: any
+  }
+  fuzzyFilter?: {
+    [key: string]: any
+  }
+  sort?: {
+    [key: string]: 'ascend' | 'descend'
+  }
+  payload?: Record<string, any>
+}
+
 class ActionBody {
   @IsNotEmpty()
   resource: string
@@ -31,22 +49,7 @@ class ActionBody {
     | 'deleteOne'
     | 'deleteMany'
 
-  options?: {
-    page?: number
-    pageSize?: number
-    filter?: {
-      _id?: string
-      ids?: string[]
-      [key: string]: any
-    }
-    fuzzyFilter?: {
-      [key: string]: any
-    }
-    sort?: {
-      [key: string]: 'ascend' | 'descend'
-    }
-    payload?: Record<string, any>
-  }
+  options?: QuerySearch
 }
 
 class SchemaQuery {
@@ -65,7 +68,7 @@ export class ContentsController {
   ) {}
 
   // 获取内容 schema 集合
-  @Get('schemas')
+  @Get()
   async getContentSchemas(
     @Param('projectId') projectId,
     @Query() query: SchemaQuery,
@@ -94,6 +97,25 @@ export class ContentsController {
       data,
       requestId,
     }
+  }
+
+  @Get(':resource')
+  async getResourceEntries(
+    @Param() params,
+    @Query()
+    query: QuerySearch,
+    @Request() req: AuthRequest
+  ) {
+    const { projectId, resource } = params
+    checkAccessAndGetResource(projectId, req, resource)
+
+    const options = {}
+
+    Object.keys(query)
+      .filter((key) => query[key])
+      .forEach((key) => _.set(options, key, query[key]))
+
+    return this.contentsService.getMany(resource, options)
   }
 
   // Admin Panel 入口

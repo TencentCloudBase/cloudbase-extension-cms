@@ -12,6 +12,18 @@ export class CmsException extends HttpException {
   }
 }
 
+export class BadRequestException extends HttpException {
+  constructor(msg?: string) {
+    super(
+      {
+        code: 'BadRequest',
+        message: msg || '请求参数异常',
+      },
+      200
+    )
+  }
+}
+
 export class RecordExistException extends HttpException {
   constructor(msg?: string) {
     super(
