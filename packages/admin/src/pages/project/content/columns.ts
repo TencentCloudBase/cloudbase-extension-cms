@@ -1,7 +1,7 @@
 import { ProColumns } from '@ant-design/pro-table'
 import { getFieldRender } from './components'
 
-type DateTime = 'dateTime' | 'textarea'
+type DateTime = 'dateTime' | 'date' | 'textarea'
 
 const TypeWidthMap = {
   String: 150,
@@ -23,7 +23,8 @@ export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
     .map((field) => {
       const { name, type, displayName, isHidden } = field
 
-      const valueType: DateTime = type === 'DateTime' ? 'dateTime' : 'textarea'
+      const valueType: DateTime =
+        type === 'DateTime' ? 'dateTime' : type === 'Date' ? 'date' : 'textarea'
 
       const render = getFieldRender(field)
 

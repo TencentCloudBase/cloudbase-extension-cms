@@ -83,9 +83,10 @@ const Layout: React.FC<any> = (props) => {
   const access = useAccess()
   const { children, location } = props
   const ctx = useConcent('content')
+  const { schemas } = ctx.state
 
   // 加载 content 集合
-  const { data: schemas, loading } = useRequest(async () => {
+  const { loading } = useRequest(async () => {
     const match = matchPath<{ projectId?: string }>(history.location.pathname, {
       path: '/:projectId/*',
       exact: true,
@@ -100,12 +101,10 @@ const Layout: React.FC<any> = (props) => {
     }
 
     const res = await getContentSchemas(projectId)
-
     // 设置 schemas 数据
     ctx.setState({
       schemas: res.data,
     })
-
     return res
   })
 

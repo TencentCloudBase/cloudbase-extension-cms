@@ -21,7 +21,11 @@ export default {
 
         // 重新获取时，如果存在选择的 schema，则也同时更新
         if (currentSchema?._id) {
-          const schema = data.find((_: any) => _._id === currentSchema._id) || {}
+          let schema = data.find((_: any) => _._id === currentSchema._id)
+
+          if (!schema?._id) {
+            schema = data[0]
+          }
 
           return {
             schemas: data,
@@ -31,7 +35,7 @@ export default {
         }
 
         return {
-          currentSchema: data?.[0] ? data[0] : null,
+          currentSchema: data?.[0]?._id ? data[0] : null,
           schemas: data,
           loading: false,
         }
