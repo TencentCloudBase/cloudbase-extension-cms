@@ -5,11 +5,11 @@ import {
   Query,
   Delete,
   Param,
-  Put,
   Controller,
   UseInterceptors,
   ClassSerializerInterceptor,
   UseGuards,
+  Patch,
 } from '@nestjs/common'
 import _ from 'lodash'
 import { PermissionGuard } from '@/guards'
@@ -94,7 +94,7 @@ export class UserController {
     })
   }
 
-  @Put(':id')
+  @Patch(':id')
   async updateUser(@Param('id') id: string, @Body() payload: Partial<User>) {
     const query = this.collection().doc(id)
     const {

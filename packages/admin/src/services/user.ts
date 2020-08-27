@@ -32,7 +32,7 @@ export const createUser = async (user: Record<string, string>) => {
 
 export const updateUser = async (id: string, payload: Record<string, string>) => {
   return tcbRequest(`/user/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     data: payload,
   })
 }

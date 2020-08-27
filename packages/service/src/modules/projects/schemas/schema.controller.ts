@@ -2,7 +2,6 @@ import _ from 'lodash'
 import {
   Get,
   Post,
-  Put,
   Body,
   Query,
   Param,
@@ -13,6 +12,7 @@ import {
   UnauthorizedException,
   ClassSerializerInterceptor,
   Controller,
+  Patch,
 } from '@nestjs/common'
 import { CollectionV2 } from '@/constants'
 import { PermissionGuard } from '@/guards'
@@ -112,12 +112,12 @@ export class SchemasController {
     }
 
     return this.cloudbaseService.collection(CollectionV2.Schemas).add({
-      ...projectId,
+      ...body,
       projectId,
     })
   }
 
-  @Put(':schemaId')
+  @Patch(':schemaId')
   async updateSchema(
     @Param() params,
     @Body(new SchemaTransfromPipe('update')) payload: SchemaV2,
