@@ -20,7 +20,7 @@ import { history, useRequest, useAccess } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import logo from '@/assets/logo.svg'
-import styles from './index.less'
+import './index.less'
 
 const { Header, Content, Footer } = Layout
 
@@ -53,21 +53,16 @@ export default (): React.ReactNode => {
               }}
             >
               <div
-                className={styles.project}
+                className="project"
                 onClick={() => {
                   history.push('/home')
                 }}
               >
-                <div className={styles['project-logo']}>{project.name.slice(0, 2)}</div>
+                <div className="project-logo">{project.name.slice(0, 2)}</div>
                 <Tooltip title={project.name}>
-                  <Typography.Title ellipsis level={4} className={styles['project-title']}>
+                  <Typography.Title ellipsis level={4} className="project-title">
                     {project.name}
                   </Typography.Title>
-                </Tooltip>
-                <Tooltip title={project.description}>
-                  <Typography.Text ellipsis className={styles['project-desc']}>
-                    {project.description}
-                  </Typography.Text>
                 </Tooltip>
               </div>
             </Card>
@@ -81,15 +76,15 @@ export default (): React.ReactNode => {
 
 const ContentWrapper: React.FC<{ loading: boolean }> = ({ children, loading }) => {
   return (
-    <Layout className={styles.home}>
-      <Header className={styles.header}>
-        <img className={styles.logo} src={logo} alt="logo" />
-        <h1 className={styles.title}>CloudBase CMS</h1>
-        <div className={styles.account}>
+    <Layout className="home">
+      <Header className="header">
+        <img className="logo" src={logo} alt="logo" />
+        <h1 className="title">CloudBase CMS</h1>
+        <div className="account">
           <AvatarDropdown />
         </div>
       </Header>
-      <Content className={styles.content}>
+      <Content className="content">
         <Row>
           <Col flex="2 1 auto" />
           <Col flex="1 1 auto">
@@ -104,7 +99,7 @@ const ContentWrapper: React.FC<{ loading: boolean }> = ({ children, loading }) =
           <Col flex="2 1 auto" />
         </Row>
       </Content>
-      <Footer className={styles.footer}>CloudBase CMS 2.0.0</Footer>
+      <Footer className="footer">CloudBase CMS 2.0.0</Footer>
     </Layout>
   )
 }
@@ -129,9 +124,9 @@ export const CreateProject: React.FC<{
               setModalVisible(true)
             }}
           >
-            <div className={styles.project} onClick={() => {}}>
+            <div className="project" onClick={() => {}}>
               <PlusSquareTwoTone style={{ fontSize: '60px' }} />
-              <Typography.Title level={4} className={styles['project-title']}>
+              <Typography.Title level={4} className="project-title">
                 创建新项目
               </Typography.Title>
             </div>

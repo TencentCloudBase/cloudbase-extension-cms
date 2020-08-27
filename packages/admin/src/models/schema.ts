@@ -20,7 +20,7 @@ export default {
         const { currentSchema } = state
 
         // 重新获取时，如果存在选择的 schema，则也同时更新
-        if (currentSchema) {
+        if (currentSchema?._id) {
           const schema = data.find((_: any) => _._id === currentSchema._id) || {}
 
           return {
