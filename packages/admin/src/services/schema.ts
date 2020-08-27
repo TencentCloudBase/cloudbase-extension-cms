@@ -21,7 +21,7 @@ export async function createSchema(projectId: string, schema: Partial<SchemaV2>)
 
 export async function updateSchema(projectId: string, schemaId: string, schema: Partial<SchemaV2>) {
   return tcbRequest(`/projects/${projectId}/schemas/${schemaId}`, {
-    method: 'PUT',
+    method: 'PATCH',
     data: schema,
   })
 }

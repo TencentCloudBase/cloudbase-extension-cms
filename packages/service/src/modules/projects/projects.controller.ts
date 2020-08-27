@@ -7,10 +7,10 @@ import {
   Get,
   Query,
   Param,
-  Put,
   Delete,
   Request,
   UseGuards,
+  Patch,
 } from '@nestjs/common'
 import { PermissionGuard } from '@/guards'
 import { UnauthorizedOperation, RecordExistException } from '@/common'
@@ -101,7 +101,7 @@ export class ProjectsController {
   }
 
   // 系统管理员才能更新项目
-  @Put(':id')
+  @Patch(':id')
   @UseGuards(PermissionGuard('project', ['administrator']))
   async updateProject(@Param('id') id: string, @Body() payload: Partial<Project>) {
     return this.collection().doc(id).update(payload)
@@ -111,6 +111,20 @@ export class ProjectsController {
   @UseGuards(PermissionGuard('project', ['administrator']))
   @Delete(':id')
   async deleteProject(@Param('id') id: string) {
+    // 删除此项目的 schema
+    await this.collection(CollectionV2.Schemas)
+      .where({
+        projectId: id,
+      })
+      .remove()
+
+    // 删除此项目的 Webhooks
+    await this.collection(CollectionV2.Webhooks)
+      .where({
+        projectId: id,
+      })
+      .remove()
+
     return this.collection().doc(id).remove()
   }
 

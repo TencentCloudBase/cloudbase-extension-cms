@@ -40,7 +40,7 @@ export async function updateProject(id: string, payload: Partial<Project>) {
   return tcbRequest<{
     data: Project[]
   }>(`/projects/${id}`, {
-    method: 'PUT',
+    method: 'PATCH',
     data: payload,
   })
 }
