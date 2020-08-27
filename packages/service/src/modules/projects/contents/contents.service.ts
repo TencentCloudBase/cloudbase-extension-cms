@@ -4,6 +4,7 @@ import { CloudBaseService } from '@/dynamic_modules/cloudbase'
 import { dateToNumber } from '@/utils'
 import { CollectionV2 } from '@/constants'
 import { SchemaV2, SchemaFieldV2 } from '../schemas/types'
+import { CmsException, BadRequestException } from '@/common'
 
 @Injectable()
 export class ContentsService {
@@ -118,10 +119,14 @@ export class ContentsService {
 
   async updateOne(
     resource: string,
-    options: { filter: { _id?: string }; payload: Record<string, any> }
+    options: { filter: { _id: string }; payload: Record<string, any> }
   ) {
-    const { filter = {}, payload } = options
+    const { filter, payload } = options
     const collection = this.cloudbaseService.collection(resource)
+
+    if (!filter._id) {
+      throw new BadRequestException('Id 不存在，更新失败！')
+    }
 
     // 查询记录是否存在
     let {

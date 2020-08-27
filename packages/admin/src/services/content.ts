@@ -22,7 +22,7 @@ export interface Options {
 }
 
 export async function getContentSchemas(projectId: string) {
-  return tcbRequest(`/projects/${projectId}/contents/schemas`, {
+  return tcbRequest(`/projects/${projectId}/contents`, {
     method: 'GET',
   })
 }
