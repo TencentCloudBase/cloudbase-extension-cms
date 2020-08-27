@@ -59,7 +59,7 @@ export default (): React.ReactNode => {
     ctx.dispatch('getSchemas', projectId)
   }, [])
 
-  const defaultSelectedMenu = currentSchema ? [currentSchema._id] : []
+  const defaultSelectedMenu = currentSchema?._id ? [currentSchema._id] : [schemas?.[0]?._id]
 
   return (
     <PageContainer
