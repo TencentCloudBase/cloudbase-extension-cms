@@ -75,7 +75,7 @@ export default (): React.ReactElement => {
                 const role = roles?.find((_: any) => _._id === roleId)
 
                 return (
-                  <Tag key={index} color="#006eff">
+                  <Tag key={index} color="#2575e6">
                     {role?.roleName}
                   </Tag>
                 )

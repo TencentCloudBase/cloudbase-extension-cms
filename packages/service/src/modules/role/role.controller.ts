@@ -1,10 +1,10 @@
 import _ from 'lodash'
-import { Controller, Get, Post, Delete, Body, Query, Param, UseGuards } from '@nestjs/common'
+import { IsNotEmpty } from 'class-validator'
+import { Controller, Get, Post, Delete, Body, Query, Param, UseGuards, Patch } from '@nestjs/common'
 import { CollectionV2, SystemUserRoles } from '@/constants'
-import { RecordExistException } from '@/common'
+import { RecordExistException, RecordNotExistException } from '@/common'
 import { CloudBaseService } from '@/dynamic_modules'
 import { PermissionGuard } from '@/guards'
-import { IsNotEmpty } from 'class-validator'
 
 class UserRole {
   // 角色名
@@ -42,7 +42,7 @@ class Permission {
 }
 
 @UseGuards(PermissionGuard('role', ['administrator']))
-@Controller('role')
+@Controller('roles')
 export class RoleController {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
 
@@ -50,8 +50,7 @@ export class RoleController {
   async getUserRoles(@Query() query: { page?: number; pageSize?: number } = {}) {
     const { page = 1, pageSize = 20 } = query
 
-    const { data, requestId } = await this.cloudbaseService
-      .collection(CollectionV2.CustomUserRoles)
+    const { data, requestId } = await this.collection()
       .where({})
       .skip(Number(page - 1) * Number(pageSize))
       .limit(Number(pageSize))
@@ -66,14 +65,15 @@ export class RoleController {
   @Post()
   async createUserRole(@Body() body: UserRole) {
     // 检查集合是否存在
-    const { data } = await this.cloudbaseService
-      .collection(CollectionV2.CustomUserRoles)
+    const {
+      data: [record],
+    } = await this.collection()
       .where({
         roleName: body.roleName,
       })
       .get()
 
-    if (data?.length) {
+    if (record) {
       throw new RecordExistException()
     }
 
@@ -85,11 +85,37 @@ export class RoleController {
       }
     })
 
-    return this.cloudbaseService.collection(CollectionV2.CustomUserRoles).add(role)
+    return this.collection().add(role)
+  }
+
+  @Patch(':id')
+  async updateUserRole(@Param('id') roleId, @Body() body: UserRole) {
+    // 检查集合是否存在
+    const {
+      data: [record],
+    } = await this.collection().doc(roleId).get()
+
+    if (!record) {
+      throw new RecordNotExistException()
+    }
+
+    const role = _.omit(body, ['_id'])
+
+    role.permissions.forEach((role) => {
+      if (!role.effect) {
+        role.effect = 'allow'
+      }
+    })
+
+    return this.collection().doc(roleId).update(role)
   }
 
   @Delete(':id')
   async deleteUserRole(@Param('id') id: string) {
-    return this.cloudbaseService.collection(CollectionV2.CustomUserRoles).doc(id).remove()
+    return this.collection().doc(id).remove()
+  }
+
+  private collection(collection = CollectionV2.CustomUserRoles) {
+    return this.cloudbaseService.collection(collection)
   }
 }
