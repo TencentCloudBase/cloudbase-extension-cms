@@ -225,10 +225,16 @@ export const CreateFieldModal: React.FC<{
             <Form.Item>
               <div className="form-item">
                 <Form.Item name="connectMany" valuePropName="checked" style={{ marginBottom: 0 }}>
-                  <Switch />
+                  <Switch disabled={fieldAction === 'edit'} />
                 </Form.Item>
                 <Form.Item style={{ marginBottom: 0 }}>
                   <span>是否关联多项（支持选择多个关联文档）</span>
+                  {fieldAction === 'edit' && (
+                    <>
+                      <br />
+                      <Typography.Text type="warning">关联多项与关联单项无法转换</Typography.Text>
+                    </>
+                  )}
                 </Form.Item>
               </div>
             </Form.Item>
