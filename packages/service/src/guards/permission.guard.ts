@@ -39,7 +39,13 @@ class MixinPermissionGuard implements CanActivate {
     }
 
     // 是否允许操作
-    const handleAction = context.getHandler().name
+    // HACK: 使用 Service 的函数名作为 action 判断依据：get, create, update, delete
+    let handleAction = context.getHandler().name
+    // 部分 service 使用 handleAction
+    if (handleAction === 'handleAction') {
+      const body = request.body as any
+      handleAction = body.action
+    }
     const allowAction = userRoles.find((role) =>
       role.permissions.find((_) => {
         if (_.service === this.handleService && _.action.includes('*')) {

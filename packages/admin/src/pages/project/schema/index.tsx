@@ -1,8 +1,8 @@
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
-import React, { useState, useEffect } from 'react'
-import { PlusCircleTwoTone, EditOutlined } from '@ant-design/icons'
+import React, { useState, useEffect, useCallback } from 'react'
+import { EditOutlined, PlusOutlined } from '@ant-design/icons'
 import {
   Card,
   Layout,
@@ -61,18 +61,29 @@ export default (): React.ReactNode => {
 
   const defaultSelectedMenu = currentSchema?._id ? [currentSchema._id] : []
 
+  const editFiled = useCallback((field: SchemaFieldV2) => {
+    ctx.setState({
+      fieldAction: 'edit',
+      selectedField: field,
+    })
+    setFieldVisible(true)
+  }, [])
+
   return (
     <PageContainer
       className="schema-page-container"
       extra={
         <h2 className="full-height">
-          <PlusCircleTwoTone
-            style={{ fontSize: '20px' }}
+          <Button
+            type="primary"
             onClick={() => {
               setSchemaVisible(true)
               setSchemaAction('create')
             }}
-          />
+          >
+            <PlusOutlined />
+            新建模型
+          </Button>
         </h2>
       }
     >
@@ -164,20 +175,11 @@ export default (): React.ReactNode => {
                   <Content>
                     {currentSchema?.fields?.length ? (
                       <SchemaFieldRender
+                        onFiledClick={(field) => editFiled(field)}
                         schema={currentSchema}
                         actionRender={(field) => (
                           <Space>
-                            <Button
-                              size="small"
-                              type="primary"
-                              onClick={() => {
-                                ctx.setState({
-                                  fieldAction: 'edit',
-                                  selectedField: field,
-                                })
-                                setFieldVisible(true)
-                              }}
-                            >
+                            <Button size="small" type="primary" onClick={() => editFiled(field)}>
                               编辑
                             </Button>
                             <Button

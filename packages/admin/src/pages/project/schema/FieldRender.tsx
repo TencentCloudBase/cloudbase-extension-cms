@@ -11,9 +11,10 @@ export interface FieldType {
 
 export const SchemaFieldRender: React.SFC<{
   schema: SchemaV2
+  onFiledClick: (filed: SchemaFieldV2) => void
   actionRender: (field: SchemaFieldV2) => React.ReactNode
 }> = (props) => {
-  const { schema, actionRender } = props
+  const { schema, actionRender, onFiledClick } = props
 
   return (
     <div>
@@ -24,7 +25,12 @@ export const SchemaFieldRender: React.SFC<{
           const type = FieldTypes.find((_) => _.type === field.type)
 
           return (
-            <Card hoverable key={index} className="schema-field-card">
+            <Card
+              hoverable
+              key={index}
+              className="schema-field-card"
+              onClick={() => onFiledClick(field)}
+            >
               <Space style={{ flex: '1 1 auto' }}>
                 <div className="icon">{type?.icon}</div>
                 <div className="flex-column">

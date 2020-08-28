@@ -88,11 +88,11 @@ export async function tcbRequest<T = any>(
     body = {}
   }
 
-  if (body?.code) {
+  if (body?.error) {
     const errorText = codeMessage[res.result?.statusCode || 500]
     notification.error({
       message: errorText,
-      description: `请求错误：${status}: ${url}`,
+      description: `请求错误：【${body.error.code}】: ${body.error.message}`,
     })
     throw new Error('服务异常')
   }

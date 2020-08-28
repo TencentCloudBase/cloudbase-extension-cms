@@ -71,8 +71,10 @@ export class GlobalAuthGuard implements CanActivate {
     if (!userRecord) {
       throw new HttpException(
         {
-          code: 'AUTH_EXPIRED',
-          message: '用户不存在，请确认登录信息！',
+          error: {
+            code: 'AUTH_EXPIRED',
+            message: '用户不存在，请确认登录信息！',
+          },
         },
         HttpStatus.FORBIDDEN
       )
