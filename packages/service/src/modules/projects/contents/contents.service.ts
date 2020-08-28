@@ -4,7 +4,7 @@ import { CloudBaseService } from '@/dynamic_modules/cloudbase'
 import { dateToNumber } from '@/utils'
 import { CollectionV2 } from '@/constants'
 import { SchemaV2, SchemaFieldV2 } from '../schemas/types'
-import { CmsException, BadRequestException } from '@/common'
+import { BadRequestException } from '@/common'
 
 @Injectable()
 export class ContentsService {

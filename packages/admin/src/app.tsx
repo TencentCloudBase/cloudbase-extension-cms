@@ -1,5 +1,6 @@
+import React from 'react'
 import { run } from 'concent'
-import { notification, message } from 'antd'
+import { notification, message, Typography } from 'antd'
 import { ResponseError } from 'umi-request'
 import { history, RequestConfig } from 'umi'
 import { codeMessage } from '@/constants'
@@ -90,25 +91,34 @@ export const layout = ({
 /**
  * 请求异常处理
  */
-const errorHandler = (error: ResponseError) => {
+const errorHandler = async (error: ResponseError) => {
   const { response } = error
 
   if (response?.status) {
     const errorText = codeMessage[response.status] || response.statusText
     const { status, url } = response
 
+    const data = await response.clone().json()
+    const message = data?.error?.message || data?.error?.code
+
     notification.error({
-      message: `请求错误 ${status}: ${url}`,
-      description: errorText,
+      message: `请求错误 ${status}`,
+      description: (
+        <>
+          <Typography.Text>{`${errorText} ${message}`}</Typography.Text>
+          <Typography.Text copyable>请求 URL：{url}</Typography.Text>
+        </>
+      ),
+      duration: 0,
     })
   }
 
-  // if (!response) {
-  //     notification.error({
-  //         description: '您的网络发生异常，无法连接服务器',
-  //         message: '网络异常'
-  //     })
-  // }
+  if (!response?.status) {
+    notification.error({
+      description: '您的网络发生异常，无法连接服务器',
+      message: '网络异常',
+    })
+  }
 
   throw error
 }
@@ -117,30 +127,8 @@ const errorHandler = (error: ResponseError) => {
  * 全局 request 配置
  */
 export const request: RequestConfig = {
+  errorHandler,
   prefix: isDevEnv()
     ? defaultSettings.globalPrefix
     : `https://${window.TcbCmsConfig.cloudAccessPath}${defaultSettings.globalPrefix}`,
-  errorHandler,
-  errorConfig: {
-    adaptor: (resData) => {
-      return {
-        ...resData,
-        success: !resData.code,
-        errorMessage: resData.message,
-      }
-    },
-  },
-  responseInterceptors: [
-    async (response, options) => {
-      const data = await response.clone().json()
-      if (data.code) {
-        notification.error({
-          message: data.message || data.code,
-          description: data.requestId ? `${data.code}\n[requestId]${data.requestId}` : data.code,
-        })
-      }
-
-      return response
-    },
-  ],
 }

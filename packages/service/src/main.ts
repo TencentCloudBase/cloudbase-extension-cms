@@ -13,7 +13,7 @@ import { TimeCost } from './interceptors/timecost.interceptor'
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { ContextInterceptor } from './interceptors/context.interceptor'
 
-import { AllExceptionsFilter } from './global.exception'
+import { AllExceptionsFilter } from './exceptions.filter'
 import config from './config'
 
 const expressApp = express()

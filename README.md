@@ -30,8 +30,8 @@ TCB_ENVID=envId
 administratorName=admin
 # 管理员账号密码，8~32位，密码支持字母、数字、字符、不能由纯字母或存数字组成
 administratorPassword=82902Jkl
-# CMS 控制台路径，如 /tcb-cms/
-deployPath=/tcb-cms/
+# CMS 控制台路径，如 /tcb-cms/，建议使用根路径 /
+deployPath=/
 ```
 
 ### 2️⃣ 安装依赖
