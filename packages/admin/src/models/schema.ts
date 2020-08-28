@@ -29,13 +29,14 @@ export default {
 
           return {
             schemas: data,
-            currentSchema: schema,
+            // 为空时置 schema 为空
+            currentSchema: schema || {},
             loading: false,
           }
         }
 
         return {
-          currentSchema: data?.[0]?._id ? data[0] : null,
+          currentSchema: data?.[0]?._id ? data[0] : {},
           schemas: data,
           loading: false,
         }
