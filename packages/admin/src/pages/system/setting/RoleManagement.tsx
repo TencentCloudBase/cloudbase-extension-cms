@@ -3,9 +3,11 @@ import { useRequest, history } from 'umi'
 import ProList from '@ant-design/pro-list'
 import { getUserRoles, deleteUserRole } from '@/services/role'
 import { Button, Tag, Modal, Skeleton, Typography } from 'antd'
+import { useConcent } from 'concent'
 
 export default (): React.ReactElement => {
   const [reload, setReload] = useState(0)
+  const ctx = useConcent('role')
 
   const { data, loading } = useRequest(() => getUserRoles(), {
     refreshDeps: [reload],
@@ -22,7 +24,7 @@ export default (): React.ReactElement => {
           key="new"
           size="small"
           type="primary"
-          onClick={() => history.push('/settings/role/create')}
+          onClick={() => history.push('/settings/role/action')}
         >
           新建
         </Button>,
@@ -37,24 +39,25 @@ export default (): React.ReactElement => {
         ),
         subTitle: item.type === 'system' && <Tag color="#2575e6">系统</Tag>,
         actions: [
-          // <Button
-          //     size="small"
-          //     key="edit"
-          //     type="primary"
-          //     onClick={() => {
-          //         setUserAction('edit')
-          //         setSelectedUser(item)
-          //         setModalVisible(true)
-          //     }}
-          // >
-          //     编辑
-          // </Button>,
+          <Button
+            size="small"
+            key="edit"
+            type="primary"
+            onClick={() => {
+              ctx.setState({
+                selectedRole: item,
+              })
+              history.push('/settings/role/action?action=edit')
+            }}
+          >
+            编辑
+          </Button>,
           <Button
             danger
             size="small"
             key="delete"
             type="primary"
-            disabled={item.type === 'system'}
+            disabled={item.type === 'system' || item.noDelete}
             onClick={() => {
               Modal.confirm({
                 title: `确认删除角色【${item.roleName}】？`,

@@ -3,7 +3,6 @@ import { notification, message } from 'antd'
 import { ResponseError } from 'umi-request'
 import { history, RequestConfig } from 'umi'
 import { codeMessage } from '@/constants'
-import { setTwoToneColor } from '@ant-design/icons'
 import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
@@ -11,8 +10,6 @@ import { getCloudBaseApp, isDevEnv } from './utils'
 import * as models from './models'
 
 run(models)
-
-setTwoToneColor('#0052d9')
 
 export async function getInitialState(): Promise<{
   currentUser?: API.CurrentUser

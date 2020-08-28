@@ -1,10 +1,10 @@
-import { defineConfig } from 'umi'
+import { defineConfig, IConfig } from 'umi'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 
 const { REACT_APP_ENV } = process.env
 
-export default defineConfig({
+const config: IConfig = {
   base: '/',
   // 静态资源路径
   publicPath: './',
@@ -59,11 +59,11 @@ export default defineConfig({
       component: './system/setting',
     },
     {
-      path: '/settings/role/create',
+      path: '/settings/role/action',
       layout: false,
       access: 'isAdmin',
       wrappers: ['../components/SecurityWrapper/index'],
-      component: './system/setting/RoleCreating/index',
+      component: './system/setting/RoleAction/index',
     },
     {
       path: '/',
@@ -145,28 +145,33 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
-  // webpack
-  // chunks: ['vendors', 'umi'],
-  // chainWebpack: function (config, { webpack }) {
-  //   config.merge({
-  //     optimization: {
-  //       minimize: true,
-  //       splitChunks: {
-  //         chunks: 'all',
-  //         minSize: 30000,
-  //         minChunks: 3,
-  //         automaticNameDelimiter: '.',
-  //         cacheGroups: {
-  //           vendor: {
-  //             name: 'vendors',
-  //             test({ resource }: any) {
-  //               return /[\\/]node_modules[\\/]/.test(resource)
-  //             },
-  //             priority: 10,
-  //           },
-  //         },
-  //       },
-  //     },
-  //   })
-  // },
-})
+}
+
+// webpack chunk 合并
+if (REACT_APP_ENV !== 'dev') {
+  config.chunks = ['vendors', 'umi']
+  config.chainWebpack = function (config, { webpack }) {
+    config.merge({
+      optimization: {
+        minimize: true,
+        splitChunks: {
+          chunks: 'all',
+          minSize: 30000,
+          minChunks: 3,
+          automaticNameDelimiter: '.',
+          cacheGroups: {
+            vendor: {
+              name: 'vendors',
+              test({ resource }: any) {
+                return /[\\/]node_modules[\\/]/.test(resource)
+              },
+              priority: 10,
+            },
+          },
+        },
+      },
+    })
+  }
+}
+
+export default defineConfig(config)

@@ -8,10 +8,11 @@ import { getWebhooks } from '@/services/webhook'
 
 const RolePermission: React.FC<{
   creating: boolean
+  actionText: string
   initialValues: any
   onConfirm: (...args: any) => void
   onPrevious: () => void
-}> = ({ creating, initialValues, onConfirm, onPrevious }) => {
+}> = ({ creating, initialValues, onConfirm, onPrevious, actionText }) => {
   const [permissionType, setPermissionType] = useState('project')
   const [formValue, setFormValue] = useState<any>({})
 
@@ -188,7 +189,7 @@ const RolePermission: React.FC<{
             上一步
           </Button>
           <Button type="primary" htmlType="submit" loading={creating}>
-            创建
+            {actionText}
           </Button>
         </Space>
       </Form.Item>

@@ -1,7 +1,8 @@
+import { useConcent } from 'concent'
 import React, { useState } from 'react'
 import { history, useRequest } from 'umi'
 import { LeftCircleTwoTone } from '@ant-design/icons'
-import { createUserRole } from '@/services/role'
+import { createUserRole, updateUserRole } from '@/services/role'
 import { Row, Col, Space, Typography, Steps, message, Card } from 'antd'
 import RolePermission from './RolePermission'
 import RoleInfo from './RoleInfo'
@@ -10,18 +11,28 @@ import './index.less'
 const { Step } = Steps
 
 export default (): React.ReactNode => {
-  const [formValue, setFormValue] = useState<any>({})
+  const { action } = history.location.query || {}
+  const ctx = useConcent('role')
+  const { selectedRole } = ctx.state
   const [currentStep, setCurrentStep] = useState(0)
+  const [formValue, setFormValue] = useState<any>()
+
+  const actionText = action === 'edit' ? '更新' : '新建'
 
   const { run, loading } = useRequest(
     async (role: any) => {
-      await createUserRole(role)
+      if (action === 'edit') {
+        await updateUserRole(selectedRole._id, role)
+      } else {
+        await createUserRole(role)
+      }
+
       history.push('/settings?tab=role')
     },
     {
       manual: true,
-      onError: () => message.error('创建角色失败'),
-      onSuccess: () => message.success('创建角色成功'),
+      onError: () => message.error(`${actionText}角色失败`),
+      onSuccess: () => message.success(`${actionText}角色成功`),
     }
   )
 
@@ -35,7 +46,7 @@ export default (): React.ReactNode => {
             <h3 style={{ marginBottom: '0.2rem' }}>返回</h3>
           </Space>
         </div>
-        <Typography.Title level={3}>创建角色</Typography.Title>
+        <Typography.Title level={3}>{actionText}角色</Typography.Title>
         <Card style={{ minHeight: '480px' }}>
           <Steps current={currentStep}>
             <Step title="角色信息" />
@@ -46,7 +57,7 @@ export default (): React.ReactNode => {
           <div style={{ paddingTop: '20px' }}>
             {currentStep === 0 && (
               <RoleInfo
-                initialValues={formValue}
+                initialValues={action === 'edit' ? selectedRole : formValue}
                 onConfrim={(v) => {
                   setFormValue({
                     ...formValue,
@@ -60,7 +71,8 @@ export default (): React.ReactNode => {
             {currentStep === 1 && (
               <RolePermission
                 creating={loading}
-                initialValues={formValue}
+                actionText={actionText}
+                initialValues={action === 'edit' ? selectedRole : formValue}
                 onConfirm={(v) => {
                   run({
                     ...formValue,

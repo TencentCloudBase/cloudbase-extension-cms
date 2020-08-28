@@ -3,6 +3,7 @@ import { request, history } from 'umi'
 import { RequestOptionsInit } from 'umi-request'
 import { isDevEnv } from './tool'
 import { codeMessage } from '@/constants'
+import defaultSettings from '../../config/defaultSettings'
 
 let app: any
 let auth: any
@@ -63,7 +64,7 @@ export async function tcbRequest<T = any>(
   const res = await app.callFunction({
     name: 'tcb-ext-cms-service',
     data: {
-      path: `/api${url}`,
+      path: `${defaultSettings.globalPrefix}${url}`,
       httpMethod: method,
       queryStringParameters: params,
       body: data,
