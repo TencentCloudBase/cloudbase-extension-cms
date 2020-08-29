@@ -28,6 +28,7 @@ import { getTempFileURL, uploadFile, downloadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 
 import RichTextEditor from './RichText'
+import { values } from 'lodash'
 
 const MarkdownEditor = React.lazy(() => import('./Markdown'))
 
@@ -95,20 +96,31 @@ export const CustomUploader: React.FC<{
   value?: string
   onChange?: (v: string) => void
 }> = (props) => {
-  let { value: fileId, type, onChange = () => {} } = props
+  let { value: fileUrl, type, onChange = () => {} } = props
+
+  if (fileUrl && !/^cloud:\/\/\S+/.test(fileUrl)) {
+    return (
+      <>
+        <Input type="url" value={fileUrl} onChange={(e) => onChange(e.target.value)} />
+        {type === 'image' && <img style={{ height: '120px', marginTop: '10px' }} src={fileUrl} />}
+      </>
+    )
+  }
+
   const [fileList, setFileList] = useState<any[]>()
   const [percent, setPercent] = useState(0)
   const [uploading, setUploading] = useState(false)
 
   // 加载图片预览
   useEffect(() => {
-    if (!fileId || type === 'file') return
-    getTempFileURL(fileId)
+    if (!fileUrl || type === 'file') return
+
+    getTempFileURL(fileUrl)
       .then((url: string) => {
         setFileList([
           {
             url,
-            uid: fileId,
+            uid: fileUrl,
             name: `已上传${type === 'file' ? '文件' : '图片'}`,
             status: 'done',
           },
@@ -117,7 +129,7 @@ export const CustomUploader: React.FC<{
       .catch((e) => {
         message.error(`加载图片失败 ${e.message}`)
       })
-  }, [fileId])
+  }, [fileUrl])
 
   return (
     <>
@@ -128,13 +140,13 @@ export const CustomUploader: React.FC<{
           setUploading(true)
           setPercent(0)
           // 上传文件
-          fileId = await uploadFile(file, (percent) => {
+          fileUrl = await uploadFile(file, (percent) => {
             setPercent(percent)
           })
-          onChange(fileId)
+          onChange(fileUrl)
           setFileList([
             {
-              uid: fileId,
+              uid: fileUrl,
               name: file.name,
               status: 'done',
             },
