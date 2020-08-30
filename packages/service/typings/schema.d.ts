@@ -1,3 +1,21 @@
+type SchemaFieldType =
+  | 'String'
+  | 'MultiLineString'
+  | 'Number'
+  | 'Boolean'
+  | 'DateTime'
+  | 'Date'
+  | 'File'
+  | 'Image'
+  | 'Email'
+  | 'Tel'
+  | 'Url'
+  | 'RichText'
+  | 'Markdown'
+  | 'Connect'
+  | 'Array'
+  | 'Enum'
+
 interface SchemaFieldV1 {
   // 字段类型
   fieldType: string

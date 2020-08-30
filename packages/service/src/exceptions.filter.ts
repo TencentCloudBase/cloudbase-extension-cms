@@ -25,7 +25,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     console.error('服务异常', exception, exception?.toString())
 
     try {
-      const httpRes = exception.getResponse() as NestResponse & SystemResponse
+      const httpRes = exception?.getResponse?.() as NestResponse & SystemResponse
 
       const status =
         exception instanceof HttpException
@@ -43,7 +43,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       } else if (httpRes?.error) {
         error = httpRes.error
       } else {
-        console.error('服务异常', httpRes)
+        console.error('服务异常，响应：', httpRes)
 
         error = {
           code: 'SYS_ERR',

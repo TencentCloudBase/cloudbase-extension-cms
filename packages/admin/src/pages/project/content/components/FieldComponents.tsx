@@ -28,7 +28,6 @@ import { getTempFileURL, uploadFile, downloadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 
 import RichTextEditor from './RichText'
-import { values } from 'lodash'
 
 const MarkdownEditor = React.lazy(() => import('./Markdown'))
 
@@ -298,7 +297,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => {
-        return <Typography.Text>{text ? 'True' : 'False'}</Typography.Text>
+        return <Typography.Text>{record[name] ? 'True' : 'False'}</Typography.Text>
       }
     case 'Number':
       return (

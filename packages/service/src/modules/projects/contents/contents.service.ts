@@ -4,7 +4,7 @@ import { CloudBaseService } from '@/dynamic_modules/cloudbase'
 import { dateToNumber } from '@/utils'
 import { CollectionV2 } from '@/constants'
 import { SchemaV2, SchemaFieldV2 } from '../schemas/types'
-import { BadRequestException } from '@/common'
+import { BadRequestException, RecordNotExistException } from '@/common'
 
 @Injectable()
 export class ContentsService {
@@ -137,7 +137,31 @@ export class ContentsService {
       return {}
     }
 
-    const updateData = _.omit(payload, '_id')
+    // 查询 schema 信息
+    const {
+      data: [schema],
+    } = await this.collection(CollectionV2.Schemas)
+      .where({
+        collectionName: resource,
+      })
+      .get()
+
+    if (!schema) {
+      throw new RecordNotExistException('原型记录不存在')
+    }
+
+    const updateData = _.mapValues(_.omit(payload, '_id'), (value, key) => {
+      const field = schema.fields.find((item) => item.name === key)
+      // Connect 转换成 id 存储
+      if (field?.type === 'Connect') {
+        if (Array.isArray(value)) {
+          return value.map((_) => _._id)
+        } else {
+          return value._id
+        }
+      }
+      return value
+    })
 
     // 更新记录
     return collection.doc(record._id).update({
@@ -217,6 +241,10 @@ export class ContentsService {
         _id: db.command.in(filter.ids),
       })
       .remove()
+  }
+
+  private collection(collection: string) {
+    return this.cloudbaseService.collection(collection)
   }
 
   private handleFuzzySearch(fuzzyFilter: Record<string, any>, schema: SchemaV2) {
