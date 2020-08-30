@@ -179,14 +179,22 @@ export default (): React.ReactNode => {
                         schema={currentSchema}
                         actionRender={(field) => (
                           <Space>
-                            <Button size="small" type="primary" onClick={() => editFiled(field)}>
+                            <Button
+                              size="small"
+                              type="primary"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                editFiled(field)
+                              }}
+                            >
                               编辑
                             </Button>
                             <Button
                               danger
                               size="small"
                               type="primary"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation()
                                 ctx.setState({
                                   selectedField: field,
                                 })

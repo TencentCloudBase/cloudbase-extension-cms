@@ -18,20 +18,10 @@ export const ContentDrawer: React.FC<{
   const hasLargeContent = schema?.fields?.find(
     (_) => _.type === 'RichText' || _.type === 'Markdown'
   )
-
   const drawerWidth = hasLargeContent ? '80%' : '40%'
 
-  const initialValues =
-    contentAction === 'create'
-      ? schema?.fields?.reduce(
-          (prev, field) => ({
-            ...prev,
-            [field.name]: field.defaultValue,
-          }),
-          {}
-        )
-      : selectedContent
-
+  // 表单初始值
+  const initialValues = getInitialValues(contentAction, schema, selectedContent)
   // 创建/更新内容
   const { run, loading } = useRequest(
     async (payload: any) => {
@@ -86,4 +76,32 @@ export const ContentDrawer: React.FC<{
       </Form>
     </Drawer>
   )
+}
+
+const getInitialValues = (action: string, schema: SchemaV2, selectedContent: any) => {
+  const initialValues =
+    action === 'create'
+      ? schema?.fields?.reduce((prev, field) => {
+          let { type, defaultValue } = field
+          // 布尔值默认为 false
+          if (type === 'Boolean' && typeof defaultValue !== 'boolean') {
+            defaultValue = false
+          }
+          return {
+            ...prev,
+            [field.name]: defaultValue,
+          }
+        }, {})
+      : selectedContent
+
+  if (action === 'edit') {
+    schema?.fields?.forEach((field) => {
+      let { type, name } = field
+      // 布尔值默认为 false
+      if (type === 'Boolean' && typeof selectedContent[name] !== 'boolean') {
+        selectedContent[name] = false
+      }
+    })
+  }
+  return initialValues
 }
