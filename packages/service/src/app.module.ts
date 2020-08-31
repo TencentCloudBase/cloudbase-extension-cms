@@ -9,6 +9,7 @@ import { AuthModule } from './modules/auth/auth.module'
 import { ProjectsModule } from './modules/projects/projects.module'
 import { UserModule } from './modules/user/user.module'
 import { RoleModule } from './modules/role/role.module'
+import { RequestTracking } from './services/requestTracking'
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { RoleModule } from './modules/role/role.module'
     RoleModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, RequestTracking],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
