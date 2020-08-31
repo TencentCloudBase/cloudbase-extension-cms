@@ -34,6 +34,15 @@ export class GlobalAuthGuard implements CanActivate {
       //     uuid: 'xxx'
       // }
 
+      // request.cmsUser = {
+      //   _id: 'test',
+      //   roles: ['public'],
+      //   username: '_anonymous',
+      //   createTime: 2020,
+      //   isAdmin: false,
+      //   uuid: '',
+      // }
+
       return true
     }
 
@@ -42,6 +51,8 @@ export class GlobalAuthGuard implements CanActivate {
     const app = getCloudBaseApp()
     const { TCB_UUID } = cloudbase.getCloudbaseContext()
     const { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
+
+    console.log(userInfo)
 
     // 未登录用户
     if (!userInfo?.username) {

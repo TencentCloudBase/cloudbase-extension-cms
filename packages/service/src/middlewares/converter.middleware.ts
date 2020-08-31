@@ -15,6 +15,9 @@ export class BodyConverter implements NestMiddleware {
       }
     }
 
+    // 打印请求信息
+    console.log('请求', req.path, req.params, req.body)
+
     next()
   }
 }
