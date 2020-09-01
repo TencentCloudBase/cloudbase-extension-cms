@@ -1,4 +1,4 @@
-import { useParams } from 'umi'
+import { useParams, history } from 'umi'
 import { useConcent } from 'concent'
 import ProTable from '@ant-design/pro-table'
 import { Button, Modal, message } from 'antd'
@@ -12,10 +12,9 @@ import './index.less'
 export const ContentTable: React.FC<{
   currentSchema: SchemaV2
   tableRef: MutableRefObject<any>
-  setModalVisible: (visible: boolean) => void
 }> = (props) => {
-  const { setModalVisible, tableRef, currentSchema } = props
-  const { projectId } = useParams()
+  const { tableRef, currentSchema } = props
+  const { projectId, schemaId } = useParams()
   const ctx = useConcent('content')
 
   const [searchParams, setSearchParams] = useState<any>()
@@ -122,7 +121,7 @@ export const ContentTable: React.FC<{
                     selectedContent: row,
                   })
 
-                  setModalVisible(true)
+                  history.push(`/${projectId}/content/${schemaId}/edit`)
                 }}
               >
                 编辑
@@ -172,7 +171,8 @@ export const ContentTable: React.FC<{
                 contentAction: 'create',
                 selectedContent: null,
               })
-              setModalVisible(true)
+
+              history.push(`/${projectId}/content/${schemaId}/edit`)
             }}
           >
             新建

@@ -18,33 +18,15 @@ async function migrateUsers(context) {
   let result = await manager.database.checkCollectionExists(userCollection)
   if (!result.Exists) return
 
-  // 将 userName 重名为 username
+  // 删除老的用户
   const $ = db.command
   await db
     .collection(userCollection)
-    .where({})
-    .update({
-      userName: $.rename('username'),
-    })
-
-  // 迁移管理员和运营人员
-  await db
-    .collection(userCollection)
     .where({
-      role: 'administrator',
+      userName: $.exists(true),
+      uuid: $.exists(false),
     })
-    .update({
-      roles: ['administrator'],
-    })
-
-  await db
-    .collection(userCollection)
-    .where({
-      role: 'operator',
-    })
-    .update({
-      roles: ['content:administrator'],
-    })
+    .remove()
 }
 
 // 创建项目

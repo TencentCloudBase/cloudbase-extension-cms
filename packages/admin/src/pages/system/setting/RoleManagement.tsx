@@ -24,7 +24,13 @@ export default (): React.ReactElement => {
           key="new"
           size="small"
           type="primary"
-          onClick={() => history.push('/settings/role/action')}
+          onClick={() => {
+            ctx.setState({
+              roleAction: 'create',
+              selectedRole: null,
+            })
+            history.push('/settings/role/edit')
+          }}
         >
           新建
         </Button>,
@@ -45,9 +51,10 @@ export default (): React.ReactElement => {
             type="primary"
             onClick={() => {
               ctx.setState({
+                roleAction: 'edit',
                 selectedRole: item,
               })
-              history.push('/settings/role/action?action=edit')
+              history.push('/settings/role/edit')
             }}
           >
             编辑

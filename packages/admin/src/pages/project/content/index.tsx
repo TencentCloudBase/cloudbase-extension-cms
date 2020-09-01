@@ -3,15 +3,13 @@ import { history, useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
-import React, { useRef, useState, useEffect } from 'react'
-import { ContentDrawer } from './components'
+import React, { useRef, useEffect } from 'react'
 import { ContentTable } from './ContentTable'
 import './index.less'
 
 export default (props: any): React.ReactNode => {
   const { schemaId, projectId } = useParams()
   const ctx = useConcent('content')
-  const [contentModalVisible, setContentModalVisible] = useState(false)
 
   // table 引用
   const tableRef = useRef<{
@@ -38,11 +36,7 @@ export default (props: any): React.ReactNode => {
       <ProCard className="content-card" style={{ marginBottom: 0 }}>
         {currentSchema ? (
           currentSchema?.fields?.length ? (
-            <ContentTable
-              currentSchema={currentSchema}
-              tableRef={tableRef}
-              setModalVisible={(visible: boolean) => setContentModalVisible(visible)}
-            />
+            <ContentTable currentSchema={currentSchema} tableRef={tableRef} />
           ) : (
             <Empty description="当前内容模型字段为空，请添加字段后再创建内容">
               <Button
@@ -78,15 +72,6 @@ export default (props: any): React.ReactNode => {
           </div>
         )}
       </ProCard>
-      <ContentDrawer
-        schema={currentSchema}
-        visible={contentModalVisible}
-        onClose={() => setContentModalVisible(false)}
-        onOk={() => {
-          setContentModalVisible(false)
-          tableRef?.current?.reload()
-        }}
-      />
     </PageContainer>
   )
 }

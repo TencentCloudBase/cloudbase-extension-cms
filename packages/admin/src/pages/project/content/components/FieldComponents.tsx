@@ -28,6 +28,7 @@ import { getTempFileURL, uploadFile, downloadFile } from '@/utils'
 import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 
 import RichTextEditor from './RichText'
+import { useConcent } from 'concent'
 
 const MarkdownEditor = React.lazy(() => import('./Markdown'))
 
@@ -212,6 +213,7 @@ export const ConnectEditor: React.FC<{
   onChange?: (v: string) => void
 }> = (props) => {
   const { projectId } = useParams()
+  const ctx = useConcent('content')
   const { value, onChange, field } = props
   const { connectField, connectResource, connectMany } = field
   const [records, setRecords] = useState<Record<string, any>>([])
@@ -219,7 +221,15 @@ export const ConnectEditor: React.FC<{
 
   useRequest(
     async () => {
-      const { data: schema } = await getSchema(projectId, connectResource)
+      const { schemas } = ctx.state
+      let schema = schemas.find((_: SchemaV2) => _._id === connectResource)
+
+      // 后台获取 Schema
+      if (!schema) {
+        const { data } = await getSchema(projectId, connectResource)
+        schema = data
+      }
+
       const { data } = await getContents(projectId, schema.collectionName, {
         page: 1,
         pageSize: 1000,
@@ -668,6 +678,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
       )
   }
 
+  // 弹性布局
   if (type === 'Markdown' || type === 'RichText') {
     return (
       <Col xs={24} sm={24} md={24} lg={24} xl={24} key={key}>
@@ -677,7 +688,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
   }
 
   return (
-    <Col xs={24} sm={24} md={12} lg={12} xl={12} key={key}>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={8} key={key}>
       {FormItem}
     </Col>
   )

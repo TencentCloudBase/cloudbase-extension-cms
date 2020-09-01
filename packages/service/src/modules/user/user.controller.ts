@@ -17,7 +17,7 @@ import { CollectionV2 } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
 import { dateToNumber } from '@/utils'
 import { CloudBaseService } from '@/dynamic_modules'
-import { RecordExistException, RecordNotExistException } from '@/common'
+import { RecordExistException, RecordNotExistException, UnauthorizedOperation } from '@/common'
 import { UserService } from './user.service'
 
 class User {
@@ -45,6 +45,7 @@ export class UserController {
     private readonly userService: UserService
   ) {}
 
+  // 获取所有用户
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getUsers(@Query() query: { page?: number; pageSize?: number } = {}) {
@@ -68,6 +69,7 @@ export class UserController {
     }
   }
 
+  // 创建用户
   @Post()
   async createUser(@Body() body: User) {
     // 检查同名用户是否存在
@@ -100,8 +102,13 @@ export class UserController {
     const {
       data: [userInfo],
     } = await query.get()
+
     if (!userInfo) {
       throw new RecordNotExistException('用户不存在')
+    }
+
+    if (userInfo.root) {
+      throw new UnauthorizedOperation('无法操作超级管理员')
     }
 
     // 修改用户名或密码
@@ -126,6 +133,10 @@ export class UserController {
 
     if (!user) {
       throw new RecordNotExistException('用户不存在')
+    }
+
+    if (user.root) {
+      throw new UnauthorizedOperation('无法操作超级管理员')
     }
 
     // 删除用户

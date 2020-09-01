@@ -59,11 +59,11 @@ const config: IConfig = {
       component: './system/setting',
     },
     {
-      path: '/settings/role/action',
+      path: '/settings/role/edit',
       layout: false,
       access: 'isAdmin',
       wrappers: ['../components/SecurityWrapper/index'],
-      component: './system/setting/RoleAction/index',
+      component: './system/setting/RoleEditor/index',
     },
     {
       path: '/',
@@ -103,6 +103,11 @@ const config: IConfig = {
               exact: true,
               path: '/:projectId/content/:schemaId',
               component: './project/content/index',
+            },
+            {
+              exact: true,
+              path: '/:projectId/content/:schemaId/edit',
+              component: './project/content/components/ContentEditor',
             },
             {
               component: './project/content/index',
