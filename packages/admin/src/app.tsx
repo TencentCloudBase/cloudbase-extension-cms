@@ -92,7 +92,7 @@ export const layout = ({
  * 请求异常处理
  */
 const errorHandler = async (error: ResponseError) => {
-  const { response } = error
+  const { response, data } = error
 
   if (response?.status) {
     const errorText = codeMessage[response.status] || response.statusText
@@ -113,7 +113,17 @@ const errorHandler = async (error: ResponseError) => {
     })
   }
 
-  if (!response?.status) {
+  if (data.error) {
+    const message = data?.error?.message || data?.error?.code
+
+    notification.error({
+      message: data.error.code,
+      description: <Typography.Text>{`${message}`}</Typography.Text>,
+      duration: 0,
+    })
+  }
+
+  if (!response?.status && !data?.error) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
       message: '网络异常',
@@ -128,6 +138,15 @@ const errorHandler = async (error: ResponseError) => {
  */
 export const request: RequestConfig = {
   errorHandler,
+  errorConfig: {
+    adaptor: (resData) => {
+      return {
+        ...resData,
+        success: !resData?.error,
+        errorMessage: resData?.error?.message,
+      }
+    },
+  },
   prefix: isDevEnv()
     ? defaultSettings.globalPrefix
     : `https://${window.TcbCmsConfig.cloudAccessPath}${defaultSettings.globalPrefix}`,

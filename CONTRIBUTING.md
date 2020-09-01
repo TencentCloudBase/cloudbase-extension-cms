@@ -11,7 +11,7 @@
 - 反馈 bug，提交 Issue
 - 在技术会议上发表技术演讲
 
-我们会将您加入[我们的贡献者名单](https://github.com/TencentCloudBase/cloudbase-extensions-cms）
+我们会将您加入[我们的贡献者名单](https://github.com/TencentCloudBase/cloudbase-extensions-cms)
 
 ## 本地开发
 

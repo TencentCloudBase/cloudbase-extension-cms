@@ -12,7 +12,7 @@
     </a>
     <br />
     <br />
-    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login">在线示例</a>
+    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">在线示例</a>
     ·
     <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
     ·

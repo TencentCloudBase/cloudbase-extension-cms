@@ -137,31 +137,35 @@ export class ContentsService {
       return {}
     }
 
-    // 查询 schema 信息
-    const {
-      data: [schema],
-    } = await this.collection(CollectionV2.Schemas)
-      .where({
-        collectionName: resource,
-      })
-      .get()
+    let updateData = _.omit(payload, '_id')
 
-    if (!schema) {
-      throw new RecordNotExistException('原型记录不存在')
-    }
+    if (resource !== CollectionV2.Webhooks) {
+      // 查询 schema 信息
+      const {
+        data: [schema],
+      } = await this.collection(CollectionV2.Schemas)
+        .where({
+          collectionName: resource,
+        })
+        .get()
 
-    const updateData = _.mapValues(_.omit(payload, '_id'), (value, key) => {
-      const field = schema.fields.find((item) => item.name === key)
-      // Connect 转换成 id 存储
-      if (field?.type === 'Connect') {
-        if (Array.isArray(value)) {
-          return value.map((_) => _._id)
-        } else {
-          return value._id
-        }
+      if (!schema) {
+        throw new RecordNotExistException('原型记录不存在')
       }
-      return value
-    })
+
+      updateData = _.mapValues(updateData, (value, key) => {
+        const field = schema.fields.find((item) => item.name === key)
+        // Connect 转换成 id 存储
+        if (field?.type === 'Connect') {
+          if (Array.isArray(value)) {
+            return value.map((_) => _._id)
+          } else {
+            return value._id
+          }
+        }
+        return value
+      })
+    }
 
     // 更新记录
     return collection.doc(record._id).update({
