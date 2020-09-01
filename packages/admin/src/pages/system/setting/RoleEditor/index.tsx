@@ -11,17 +11,16 @@ import './index.less'
 const { Step } = Steps
 
 export default (): React.ReactNode => {
-  const { action } = history.location.query || {}
   const ctx = useConcent('role')
-  const { selectedRole } = ctx.state
+  const { selectedRole, roleAction } = ctx.state
   const [currentStep, setCurrentStep] = useState(0)
   const [formValue, setFormValue] = useState<any>()
 
-  const actionText = action === 'edit' ? '更新' : '新建'
+  const actionText = roleAction === 'edit' ? '更新' : '新建'
 
   const { run, loading } = useRequest(
     async (role: any) => {
-      if (action === 'edit') {
+      if (roleAction === 'edit') {
         await updateUserRole(selectedRole._id, role)
       } else {
         await createUserRole(role)
@@ -57,7 +56,7 @@ export default (): React.ReactNode => {
           <div style={{ paddingTop: '20px' }}>
             {currentStep === 0 && (
               <RoleInfo
-                initialValues={action === 'edit' ? selectedRole : formValue}
+                initialValues={roleAction === 'edit' ? selectedRole : formValue}
                 onConfrim={(v) => {
                   setFormValue({
                     ...formValue,
@@ -72,7 +71,7 @@ export default (): React.ReactNode => {
               <RolePermission
                 creating={loading}
                 actionText={actionText}
-                initialValues={action === 'edit' ? selectedRole : formValue}
+                initialValues={roleAction === 'edit' ? selectedRole : formValue}
                 onConfirm={(v) => {
                   run({
                     ...formValue,

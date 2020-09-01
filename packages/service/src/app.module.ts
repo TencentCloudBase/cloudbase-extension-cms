@@ -10,6 +10,7 @@ import { ProjectsModule } from './modules/projects/projects.module'
 import { UserModule } from './modules/user/user.module'
 import { RoleModule } from './modules/role/role.module'
 import { RequestTracking } from './services/requestTracking'
+import { SettingModule } from './modules/setting/setting.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RequestTracking } from './services/requestTracking'
       secretKey: process.env.SECRETKEY,
     }),
     RoleModule,
+    SettingModule,
   ],
   controllers: [AppController],
   providers: [AppService, RequestTracking],

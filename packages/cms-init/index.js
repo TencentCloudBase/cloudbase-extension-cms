@@ -18,6 +18,9 @@ module.exports.main = async (event, context) => {
     CMS_ADMIN_USER_NAME: administratorName,
     // 管理员密码
     CMS_ADMIN_PASS_WORD: administratorPassword,
+    // 运营人员
+    "CMS_OPERATOR_USER_NAME": operatorName,
+    "CMS_OPERATOR_PASS_WORD": operatorPassword,
     // 部署路径
     CMS_DEPLOY_PATH: deployPath,
     // 服务自定义域名
@@ -53,6 +56,8 @@ module.exports.main = async (event, context) => {
     },
     administratorName,
     administratorPassword,
+    operatorName,
+    operatorPassword,
     deployPath,
     accessDomain,
   }

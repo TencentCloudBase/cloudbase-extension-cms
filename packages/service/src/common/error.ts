@@ -56,6 +56,7 @@ export class RecordNotExistException extends HttpException {
   }
 }
 
+// 没有权限访问的错误
 export class UnauthorizedOperation extends HttpException {
   constructor(msg?: string) {
     super(

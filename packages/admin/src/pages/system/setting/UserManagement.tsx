@@ -228,7 +228,7 @@ const CreateUserModal: React.FC<{
           label="用户密码"
           name="password"
           rules={[
-            { required: true, min: 8, max: 32, message: '密码长度必需大于 8 位' },
+            { required: action === 'create', min: 8, max: 32, message: '密码长度必需大于 8 位' },
             {
               pattern: /\D+/,
               message: '密码不能由纯数字或字母组成',
