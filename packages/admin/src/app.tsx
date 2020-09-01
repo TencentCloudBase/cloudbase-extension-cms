@@ -13,7 +13,7 @@ import * as models from './models'
 run(models)
 
 export async function getInitialState(): Promise<{
-  currentUser?: API.CurrentUser
+  currentUser?: Partial<API.CurrentUser>
   settings?: LayoutSettings
   menu?: any[]
 }> {
@@ -41,7 +41,7 @@ export async function getInitialState(): Promise<{
 
   let initialState: {
     menu?: MenuDataItem[]
-    currentUser?: API.CurrentUser
+    currentUser?: Partial<API.CurrentUser>
     settings?: LayoutSettings
   } = {}
   let currentUser = {} as any

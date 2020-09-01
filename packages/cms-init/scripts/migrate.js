@@ -39,7 +39,8 @@ async function createProject(context) {
 
   if (!data || !data.length) {
     const { id, _id } = await db.collection(projectCollection).add({
-      name: 'V1 项目',
+      name: 'V1 内容',
+      customId: 'default',
       description: 'CloudBase CMS V1 版本数据',
     })
     return id || _id
