@@ -29,11 +29,16 @@ export const WebhookModal: React.FC<{
   onSuccess: () => void
 }> = ({ visible, onClose, onSuccess, action, selectedWebhook }) => {
   const { projectId } = useParams()
+  const actionText = action === 'create' ? '创建' : '更新'
+
   const { run, loading } = useRequest(
     async (webhook: Webhook) => {
       if (action === 'create') {
         await createWebhook(projectId, {
-          payload: webhook,
+          payload: {
+            projectId,
+            ...webhook,
+          },
           filter: {
             projectId,
           },
@@ -43,9 +48,12 @@ export const WebhookModal: React.FC<{
       if (action === 'edit') {
         await updateWebhook(projectId, {
           filter: {
-            _id: webhook._id,
+            _id: selectedWebhook?._id,
           },
-          payload: webhook,
+          payload: {
+            projectId,
+            ...webhook,
+          },
         })
       }
 
@@ -53,8 +61,8 @@ export const WebhookModal: React.FC<{
     },
     {
       manual: true,
-      onError: () => message.error('创建 Webhook 失败'),
-      onSuccess: () => message.success('创建 Webhook 成功'),
+      onError: () => message.error(`${actionText} Webhook 失败`),
+      onSuccess: () => message.success(`${actionText} Webhook 成功`),
     }
   )
 
@@ -72,7 +80,6 @@ export const WebhookModal: React.FC<{
   const initialWebhook = {
     ...selectedWebhook,
     collections: selectedWebhook?.collections.map((_) => _._id),
-    // events: selectedWebhook
   }
 
   return (
@@ -80,7 +87,7 @@ export const WebhookModal: React.FC<{
       centered
       width={700}
       footer={null}
-      title={action === 'create' ? '创建 Webhook' : '编辑 Webhook'}
+      title={`${actionText} Webhook`}
       visible={visible}
       onOk={() => onClose()}
       onCancel={() => onClose()}
@@ -219,7 +226,7 @@ export const WebhookModal: React.FC<{
           <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
             <Button onClick={() => onClose()}>取消</Button>
             <Button type="primary" htmlType="submit" loading={loading}>
-              创建
+              {actionText}
             </Button>
           </Space>
         </Form.Item>
