@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons'
 import { getContentSchemas } from '@/services/content'
 import { useConcent } from 'concent'
+import logo from '@/assets/logo.svg'
 
 const customMenuDate: MenuDataItem[] = [
   {
@@ -50,6 +51,7 @@ const customMenuDate: MenuDataItem[] = [
 ]
 
 const layoutProps: BasicLayoutProps = {
+  logo,
   theme: 'light',
   navTheme: 'light',
   headerHeight: 64,
