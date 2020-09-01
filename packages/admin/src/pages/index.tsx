@@ -185,11 +185,25 @@ export const CreateProjectModal: React.FC<{
           name="name"
           rules={[{ required: true, message: '请输入项目名！' }]}
         >
-          <Input placeholder="项目名，如个人博客" />
+          <Input placeholder="项目名，如官网" />
+        </Form.Item>
+
+        <Form.Item
+          label="项目 Id"
+          name="customId"
+          rules={[
+            { required: true, message: '请输入项目 Id！' },
+            {
+              pattern: /^[a-zA-Z0-9]{1,16}$/,
+              message: '项目 Id 仅支持字母与数字，不大于 16 个字符',
+            },
+          ]}
+        >
+          <Input placeholder="项目 Id，如 website，仅支持字母与数字，不大于 16 个字符" />
         </Form.Item>
 
         <Form.Item label="项目介绍" name="description">
-          <Input placeholder="项目介绍，如我的个人博客" />
+          <Input placeholder="项目介绍，如官网内容管理" />
         </Form.Item>
 
         <Form.Item>

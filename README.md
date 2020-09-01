@@ -1,14 +1,58 @@
-# CloudBase CMS V2
+# CloudBase CMS
 
-![](./docs/assets/banner.png)
+<p align="center">
+  <img src="./docs/assets/banner.png" alt="Logo">
+  <h3 align="center">
+    打造云端一体化数据运营平台
+  </h3>
+  <p align="center">
+    <br />
+    <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms">
+      <strong>文档»</strong>
+    </a>
+    <br />
+    <br />
+    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login">在线示例</a>
+    ·
+    <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
+    ·
+    <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">特性建议</a>
+  </p>
+</p>
 
-👷 施工中 🚧
+CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营平台，提供了丰富的内容管理功能，可扩展性强，易于二次开发，并支持 API 访问。
 
-## 云开发部署
+## 功能特性
 
-我们提供了一键部署到云开发环境的脚本，你可以按照下面的流程操作，部署 CloudBase CMS 到云开发环境中。
+| 特性        | 介绍                                                                       |
+| ----------- | -------------------------------------------------------------------------- |
+| 免开发      | 基于模板配置生成内容管理界面，无须编写代码                                 |
+| 功能丰富    | 支持文本、图片、文件、枚举等多种类型内容的可视化编辑，并且支持内容关联     |
+| 权限控制    | 基于自定义角色的资源级权限管理，满足企业级需求                             |
+| 系统集成    | 支持 Webhook 触发，可以方便的与外部系统集成                                |
+| 数据源兼容  | 支持管理已有的云开发数据，也可以在 CMS 后台创建新的内容和数据集合          |
+| 部署简单    | 可在云开发控制台扩展管理界面一键部署和升级，也可通过项目提供的脚本自动部署 |
+| RESTful API | 支持通过 RESTful API 操作内容数据                                          |
 
-### 0️⃣ 前置依赖
+## 技术栈
+
+- ❤️ React
+- ❤️ Node.js + Nest.js + CloudBase
+- ❤️ TypeScript
+
+## 快速开始
+
+你可以通过下面的方式快速部署 CloudBase CMS
+
+### 扩展安装
+
+在[云开发控制台](https://console.cloud.tencent.com/tcb/cms)安装
+
+### 手动部署
+
+我们提供了一键部署到云开发环境的脚本，你可以按照下面的流程操作，使用 **[CloudBase Framework](https://github.com/TencentCloudBase/cloudbase-framework)** 框架将 CloudBase CMS 一键部署到云开发环境
+
+#### 0️⃣ 前置依赖
 
 1. 安装 [Node.js LTS 版本](https://nodejs.org/zh-cn/)
 2. 使用 Node 包管理器 NPM 安装最新版本的 CloudBase CLI 工具（0.9.1+）
@@ -19,7 +63,7 @@
 
    登录[腾讯云-云开发控制台](https://console.cloud.tencent.com/tcb/env/index?from=cli&source=cloudbase-cms&action=CreateEnv)，根据弹窗提示，开通服务，并创建按量计费环境。
 
-### 1️⃣ 配置
+#### 1️⃣ 配置
 
 复制项目根目录下的 `.env.example` 为 `.env.local`，并填写相关的配置
 
@@ -34,7 +78,7 @@ administratorPassword=82902Jkl
 deployPath=/
 ```
 
-### 2️⃣ 安装依赖
+#### 2️⃣ 安装依赖
 
 在项目根目录下运行下面的命令：
 
@@ -42,7 +86,7 @@ deployPath=/
 npm install && npm run setup
 ```
 
-### 3️⃣ 部署
+#### 3️⃣ 部署
 
 在项目根目录下运行下面的命令，会将 CloudBase CMS 的管理控制台部署到静态网站，Node 服务部署到云函数中
 
@@ -52,47 +96,56 @@ npm run deploy:fn
 
 ## 本地开发
 
-配置 packages/service/.env.local
-
-```
-TCB_ENVID=xxx
-SECRETID=xxx
-SECRETKEY=xxx
-```
-
-配置 packages/admin/public/config.js
-
-```js
-window.TcbCmsConfig = {
-  // 路由模式
-  history: 'hash',
-  // 环境 Id
-  envId: 'envId',
-  // 云接入默认域名/自定义域名，不带 https 协议符
-  // https://console.cloud.tencent.com/tcb/env/access
-  cloudAccessPath: 'xxx.xx.tcloudbase.com/tcb-ext-cms-service',
-}
-```
-
-安装依赖
-
-```bash
-# 安装 lerna 依赖
-npm install
-# 安装 package 依赖
-npm run setup
-# 启动开发
-npm run dev
-```
+参考[贡献指南](./CONTRIBUTING.md)
 
 ## RoadMap
 
-🚀 表示已经实现的功能，👷 表示进行中的功能，⏳ 表示规划中的功能。
+🚀 表示已经实现的功能，👷 表示进行中的功能，⏳ 表示规划中的功能，🏹 表示技术方案设计中的功能。
 
-| 功能                                     | 状态 |
-| ---------------------------------------- | ---- |
-| 支持 RESTful API                         | 👷   |
-| 数据导入、导出：支持内容数据的导入、导出 | 👷   |
-| 提供项目模板，支持从模板创建项目         | ⏳   |
-| 支持复杂的对象                           | ⏳   |
-| 富文本编辑器优化，支持上传图片           | 🚀   |
+| 功能                                                     | 状态      | 发布版本 |
+| -------------------------------------------------------- | --------- | -------- |
+| CMS 2.0 使用文档                                         | 👷 进行中 | V2.0     |
+| 支持 RESTful API                                         | 👷 进行中 | V2.0     |
+| 数据导入、导出：支持内容数据的导入、导出                 | 👷 进行中 |          |
+| 支持云应用部署                                           | 🏹 设计中 |          |
+| 提供更简单的部署方法：CI 部署                            | 🏹 设计中 |          |
+| 提供项目模板，支持从模板创建项目                         | 🏹 设计中 |          |
+| 支持复杂的对象，支持复杂数组类型，支持对象嵌套类型，JSON | 🏹 设计中 |          |
+| 图片、文件数组支持                                       | 🏹 设计中 |          |
+| 支持 GraphQL                                             | ⏳ 规划中 |          |
+| 内容表字段索引支持                                       | ⏳ 规划中 |          |
+| 定时任务 ⇒ 统计报表                                      | ⏳ 规划中 |          |
+| 富文本编辑器优化，支持上传图片                           | 🚀 已完成 | V2.0     |
+| 登录使用云开发账号密码登录                               | 🚀 已完成 | V2.0     |
+| 支持枚举类型                                             | 🚀 已完成 | V2.0     |
+| 细粒度角色权限管理权限控制                               | 🚀 已完成 | V2.0     |
+
+## 贡献指南
+
+欢迎大家参与到 CloudBase CMS 的开发工作，贡献一份力量
+
+您可以选择如下的贡献方式：
+
+- 贡献一篇技术文章
+- 贡献代码，提交 Pull Request
+- 反馈 bug，提交 Issue
+- 在技术会议上发表技术演讲
+- 贡献方式请参考 贡献指南 文档
+
+## 更新日志
+
+见[更新日志](./CHANGELOG.md)
+
+## License
+
+开源协议文档请参阅 [Apache License 2.0](./LICENSE)
+
+## 在线交流
+
+如果你有任何的使用问题、建议，都可以加入群聊，与我们交流
+
+<img src="./docs/assets/group.jpg" width="200px" alt=""/>
+
+## Contributors ✨
+
+等待你的贡献

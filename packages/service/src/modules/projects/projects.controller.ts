@@ -24,6 +24,9 @@ export class Project {
   @IsNotEmpty()
   name: string
 
+  @IsNotEmpty()
+  customId: string
+
   description: string
 
   // 项目封面图
