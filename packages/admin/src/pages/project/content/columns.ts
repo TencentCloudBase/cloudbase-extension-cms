@@ -67,5 +67,29 @@ export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
 
       return column
     })
+
+  columns.push(
+    {
+      width: 150,
+      sorter: true,
+      filters: true,
+      align: 'center',
+      title: '创建时间 💻',
+      hideInSearch: true,
+      dataIndex: '_createTime',
+      valueType: 'dateTime',
+    },
+    {
+      width: 150,
+      sorter: true,
+      filters: true,
+      dataIndex: '_updateTime',
+      align: 'center',
+      title: '更新时间 💻',
+      hideInSearch: true,
+      valueType: 'dateTime',
+    }
+  )
+
   return columns
 }

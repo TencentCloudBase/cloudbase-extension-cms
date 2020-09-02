@@ -94,6 +94,7 @@ const WebhookColumns: ProColumns<Webhook>[] = [
       POST: 'POST',
       UPDATE: 'UPDATE',
       DELETE: 'DELETE',
+      PATCH: 'PATCH',
     },
   },
 ]
