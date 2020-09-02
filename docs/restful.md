@@ -1,4 +1,6 @@
-# RESTful API
+# RESTful API（Alpha）
+
+> RESTful API 可能会发生重大更改，请勿使用到生产环境中。
 
 CloudBase CMS 2.0 版本起，CMS Service 提供了公开的 RESTful 接口，你可以通过 RESTful API 接口访问 CMS 服务，方便的获取内容数据。
 
@@ -173,19 +175,15 @@ GET /projects/{project}/contents/{resource}/docs/{docId}
 
 ```json
 {
-  "data": [
-    {
-      "_id": "ecdacfc05f3f28a800000bf51126de2f",
-      "name": "test",
-      "arr": ["sss", "sss", "ssss"],
-      "markdown": "markdown 文本",
-      "textarea": "ssssssssssssssssssssssssssssss",
-      "_createTime": 1597974695982,
-      "_updateTime": 1597974695982
-    }
-  ],
-  "requestId": "1742eb3145c_11",
-  "total": 1
+  "data": {
+    "_id": "ecdacfc05f3f28a800000bf51126de2f",
+    "name": "test",
+    "arr": ["sss", "sss", "ssss"],
+    "markdown": "markdown 文本",
+    "textarea": "ssssssssssssssssssssssssssssss",
+    "_createTime": 1597974695982,
+    "_updateTime": 1597974695982
+  }
 }
 ```
 
