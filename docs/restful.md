@@ -1,6 +1,4 @@
-# RESTful API（Alpha）
-
-> RESTful API 可能会发生重大更改，请勿使用到生产环境中。
+# RESTful API
 
 CloudBase CMS 2.0 版本起，CMS Service 提供了公开的 RESTful 接口，你可以通过 RESTful API 接口访问 CMS 服务，方便的获取内容数据。
 
