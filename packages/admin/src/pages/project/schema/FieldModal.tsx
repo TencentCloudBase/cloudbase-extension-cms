@@ -3,6 +3,8 @@ import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
 import {
+  Row,
+  Col,
   Modal,
   Form,
   message,
@@ -13,8 +15,6 @@ import {
   Select,
   InputNumber,
   Typography,
-  Row,
-  Col,
   Alert,
 } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'

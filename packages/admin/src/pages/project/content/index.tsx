@@ -1,24 +1,16 @@
-import { Empty, Button } from 'antd'
+import { Empty, Button, Skeleton } from 'antd'
 import { history, useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
-import React, { useRef, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ContentTable } from './ContentTable'
 import './index.less'
 
 export default (props: any): React.ReactNode => {
   const { schemaId, projectId } = useParams()
   const ctx = useConcent('content')
-
-  // table 引用
-  const tableRef = useRef<{
-    reload: (resetPageIndex?: boolean) => void
-    reloadAndRest: () => void
-    fetchMore: () => void
-    reset: () => void
-    clearSelected: () => void
-  }>()
+  const [contentLoading, setContentLoading] = useState(false)
 
   const {
     state: { schemas },
@@ -26,17 +18,22 @@ export default (props: any): React.ReactNode => {
 
   const currentSchema = schemas?.find((item: SchemaV2) => item._id === schemaId)
 
-  // 切换 schema 时重新加载数据
+  // HACK: 切换 schema 时卸载 Table，强制重新加载数据
   useEffect(() => {
-    tableRef.current?.reloadAndRest()
+    setContentLoading(true)
+    setTimeout(() => {
+      setContentLoading(false)
+    }, 200)
   }, [currentSchema])
 
   return (
     <PageContainer className="page-container">
       <ProCard className="content-card" style={{ marginBottom: 0 }}>
         {currentSchema ? (
-          currentSchema?.fields?.length ? (
-            <ContentTable currentSchema={currentSchema} tableRef={tableRef} />
+          contentLoading ? (
+            <Skeleton active />
+          ) : currentSchema?.fields?.length ? (
+            <ContentTable currentSchema={currentSchema} />
           ) : (
             <Empty description="当前内容模型字段为空，请添加字段后再创建内容">
               <Button

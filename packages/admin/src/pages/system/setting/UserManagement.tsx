@@ -222,7 +222,7 @@ const CreateUserModal: React.FC<{
             },
           ]}
         >
-          <Input placeholder="用户名" />
+          <Input placeholder="用户名，字母和数字的组合，长度范围是 1 ~ 32" />
         </Form.Item>
         <Form.Item
           label="用户密码"
@@ -240,7 +240,7 @@ const CreateUserModal: React.FC<{
           ]}
         >
           <Input.Password
-            placeholder="输入密码"
+            placeholder="密码长度必需大于 8 位，不能由纯数字或纯字母组成"
             visibilityToggle={action === 'create'}
             iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
           />

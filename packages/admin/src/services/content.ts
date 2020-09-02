@@ -70,6 +70,21 @@ export async function deleteContent(projectId: string, resource: string, id: str
   })
 }
 
+export async function batchDeleteContent(projectId: string, resource: string, ids: string[]) {
+  return tcbRequest(`/projects/${projectId}/contents`, {
+    method: 'POST',
+    data: {
+      resource,
+      options: {
+        filter: {
+          ids,
+        },
+      },
+      action: 'deleteMany',
+    },
+  })
+}
+
 export async function updateContent(
   projectId: string,
   resource: string,

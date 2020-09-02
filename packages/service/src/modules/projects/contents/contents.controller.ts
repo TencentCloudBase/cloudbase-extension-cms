@@ -186,7 +186,7 @@ export class ContentsController {
       },
     }
 
-    return this.contentsService.getMany(resource, options)
+    return this.contentsService.getOne(resource, options)
   }
 
   // 创建文档
