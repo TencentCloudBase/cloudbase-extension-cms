@@ -1,23 +1,30 @@
 import { useParams, history } from 'umi'
 import { useConcent } from 'concent'
 import ProTable from '@ant-design/pro-table'
-import { Button, Modal, message } from 'antd'
-import React, { MutableRefObject, useState } from 'react'
-import { PlusOutlined } from '@ant-design/icons'
-import { getContents, deleteContent } from '@/services/content'
+import { Button, Modal, message, Space, Row, Col } from 'antd'
+import React, { useState, useRef } from 'react'
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { getTableColumns } from './columns'
 import { ContentTableSearch } from './components'
 import './index.less'
 
 export const ContentTable: React.FC<{
   currentSchema: SchemaV2
-  tableRef: MutableRefObject<any>
 }> = (props) => {
-  const { tableRef, currentSchema } = props
-  const { projectId, schemaId } = useParams()
+  const { currentSchema } = props
   const ctx = useConcent('content')
-
+  const { projectId, schemaId } = useParams()
   const [searchParams, setSearchParams] = useState<any>()
+
+  // table 引用
+  const tableRef = useRef<{
+    reload: (resetPageIndex?: boolean) => void
+    reloadAndRest: () => void
+    fetchMore: () => void
+    reset: () => void
+    clearSelected: () => void
+  }>()
 
   const columns = getTableColumns(currentSchema?.fields)
 
@@ -73,11 +80,52 @@ export const ContentTable: React.FC<{
         schema={currentSchema}
         onSearch={(params) => {
           setSearchParams(params)
-          tableRef.current.reload(true)
+          tableRef?.current?.reload(true)
         }}
       />
       <ProTable
         rowKey="_id"
+        rowSelection={{}}
+        tableAlertRender={({ intl, selectedRowKeys, selectedRows }) => {
+          return (
+            <Row>
+              <Col flex="0 0 auto">
+                <Space>
+                  <span>已选中</span>
+                  <a style={{ fontWeight: 600 }}>{selectedRowKeys?.length}</a>
+                  <span>项</span>
+                </Space>
+              </Col>
+              <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
+                <Button
+                  danger
+                  size="small"
+                  type="primary"
+                  onClick={() => {
+                    const modal = Modal.confirm({
+                      title: '确认删除选中的内容？',
+                      onCancel: () => {
+                        modal.destroy()
+                      },
+                      onOk: async () => {
+                        try {
+                          const ids = selectedRows.map((_: any) => _._id)
+                          await batchDeleteContent(projectId, currentSchema.collectionName, ids)
+                          tableRef?.current?.reloadAndRest()
+                          message.success('删除内容成功')
+                        } catch (error) {
+                          message.error('删除内容失败')
+                        }
+                      },
+                    })
+                  }}
+                >
+                  <DeleteOutlined /> 删除
+                </Button>
+              </Col>
+            </Row>
+          )
+        }}
         search={false}
         actionRef={tableRef}
         dateFormatter="string"
@@ -87,22 +135,6 @@ export const ContentTable: React.FC<{
           pageSizeOptions: ['10', '20', '30', '50'],
         }}
         columns={[
-          {
-            title: '序号',
-            width: 50,
-            align: 'center',
-            valueType: 'index',
-            render: (
-              text: React.ReactNode,
-              record: any,
-              index: number,
-              action: any
-            ): React.ReactNode | React.ReactNode[] => {
-              const { current, pageSize } = action
-              const serial = Number(pageSize) * (Number(current) - 1) + index + 1
-              return serial
-            },
-          },
           ...columns,
           {
             title: '操作',

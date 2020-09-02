@@ -114,7 +114,13 @@ export class ContentsService {
 
     let query = collection.where(filter)
 
-    return query.limit(1).get() as any
+    const {
+      data: [record],
+    } = (await query.limit(1).get()) as any
+
+    return {
+      data: record,
+    }
   }
 
   async updateOne(
@@ -240,6 +246,8 @@ export class ContentsService {
     const db = this.cloudbaseService.db
     const collection = this.cloudbaseService.collection(resource)
 
+    console.log(filter)
+
     return collection
       .where({
         _id: db.command.in(filter.ids),
@@ -268,6 +276,8 @@ export class ContentsService {
         }
 
         const field = schema.fields.find((_) => _.name === key)
+
+        if (!field) return
 
         if (field.type === 'Connect') {
           where[key] = field.connectMany ? $.in(fuzzyFilter[key]) : fuzzyFilter[key]

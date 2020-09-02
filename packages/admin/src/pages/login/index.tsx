@@ -59,6 +59,8 @@ const Login: React.FC<{}> = () => {
   const [type, setType] = useState<string>('account')
   const [loginErrorMessage, setLoginErrorMessage] = useState<string>('')
 
+  console.log(initialState)
+
   // 已登录
   if (initialState?.currentUser?._id && initialState?.currentUser?.username) {
     history.push('/home')

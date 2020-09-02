@@ -67,11 +67,13 @@ const ContentEditor: React.FC = () => {
           onFinish={(v = {}) => run(v)}
         >
           <Row gutter={[24, 24]}>
-            <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={8}>
-              <Form.Item label="文档 Id" name="_id">
-                <Input type="text" disabled />
-              </Form.Item>
-            </Col>
+            {contentAction === 'edit' && (
+              <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={8}>
+                <Form.Item label="文档 Id" name="_id">
+                  <Input type="text" disabled />
+                </Form.Item>
+              </Col>
+            )}
             {schema?.fields?.map((filed, index) => getFieldFormItem(filed, index))}
           </Row>
 

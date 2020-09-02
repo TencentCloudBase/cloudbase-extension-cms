@@ -2,7 +2,7 @@ import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import React, { useState, useEffect, useCallback } from 'react'
-import { EditOutlined, PlusOutlined } from '@ant-design/icons'
+import { PlusOutlined, EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import {
   Card,
   Layout,
@@ -15,7 +15,6 @@ import {
   message,
   Empty,
   Space,
-  Popover,
   Typography,
   Tooltip,
 } from 'antd'
@@ -126,38 +125,19 @@ export default (): React.ReactNode => {
                 <Col flex="0 1 600px">
                   <Space className="schema-layout-header">
                     <Typography.Title level={3}>{currentSchema.displayName}</Typography.Title>
-                    <Popover
-                      placement="bottom"
-                      content={
-                        <Space>
-                          <Button
-                            type="primary"
-                            size="small"
-                            onClick={() => {
-                              setSchemaVisible(true)
-                              setSchemaAction('edit')
-                            }}
-                          >
-                            编辑模型
-                          </Button>
-                          <Button
-                            danger
-                            type="primary"
-                            size="small"
-                            onClick={() => setDeleteSchmeaVisible(true)}
-                          >
-                            删除模型
-                          </Button>
-                        </Space>
-                      }
-                    >
-                      <EditOutlined
-                        style={{
-                          fontSize: '18px',
+                    <Space size="middle">
+                      <EditTwoTone
+                        style={{ fontSize: '16px' }}
+                        onClick={() => {
+                          setSchemaVisible(true)
+                          setSchemaAction('edit')
                         }}
-                        onClick={() => {}}
                       />
-                    </Popover>
+                      <DeleteTwoTone
+                        style={{ fontSize: '16px' }}
+                        onClick={() => setDeleteSchmeaVisible(true)}
+                      />
+                    </Space>
                     {currentSchema.description && (
                       <Tooltip title={currentSchema.description}>
                         <Typography.Text
