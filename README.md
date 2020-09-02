@@ -7,7 +7,7 @@
   </h3>
   <p align="center">
     <br />
-    <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms">
+    <a href="./docs">
       <strong>文档»</strong>
     </a>
     <br />
