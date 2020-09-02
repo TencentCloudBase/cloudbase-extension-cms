@@ -1,7 +1,7 @@
 import React from 'react'
 import { useParams, useRequest, history } from 'umi'
 import { useConcent } from 'concent'
-import { Form, message, Space, Button, Row, Typography, Col } from 'antd'
+import { Form, message, Space, Button, Row, Typography, Col, Input } from 'antd'
 import { createContent, updateContent } from '@/services/content'
 import { getFieldFormItem } from './FieldComponents'
 import ProCard from '@ant-design/pro-card'
@@ -67,6 +67,11 @@ const ContentEditor: React.FC = () => {
           onFinish={(v = {}) => run(v)}
         >
           <Row gutter={[24, 24]}>
+            <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={8}>
+              <Form.Item label="文档 Id" name="_id">
+                <Input type="text" disabled />
+              </Form.Item>
+            </Col>
             {schema?.fields?.map((filed, index) => getFieldFormItem(filed, index))}
           </Row>
 
@@ -74,7 +79,13 @@ const ContentEditor: React.FC = () => {
             <Row>
               <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
                 <Space size="large">
-                  <Button onClick={() => {}}>取消</Button>
+                  <Button
+                    onClick={() => {
+                      history.goBack()
+                    }}
+                  >
+                    取消
+                  </Button>
                   <Button type="primary" htmlType="submit" loading={loading}>
                     {contentAction === 'create' ? '创建' : '更新'}
                   </Button>
