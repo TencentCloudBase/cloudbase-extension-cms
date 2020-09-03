@@ -17,7 +17,7 @@ import {
 import { CollectionV2 } from '@/constants'
 import { PermissionGuard } from '@/guards'
 import { checkAccessAndGetResource } from '@/utils'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { CmsException, RecordExistException, RecordNotExistException } from '@/common'
 import { SchemasService } from './schema.service'
 import { SchemaTransfromPipe } from './schema.pipe'

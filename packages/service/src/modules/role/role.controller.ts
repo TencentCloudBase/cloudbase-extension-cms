@@ -3,7 +3,7 @@ import { IsNotEmpty } from 'class-validator'
 import { Controller, Get, Post, Delete, Body, Query, Param, UseGuards, Patch } from '@nestjs/common'
 import { CollectionV2, SystemUserRoles } from '@/constants'
 import { RecordExistException, RecordNotExistException } from '@/common'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { PermissionGuard } from '@/guards'
 
 class UserRole {

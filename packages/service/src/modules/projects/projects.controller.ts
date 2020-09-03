@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common'
 import { PermissionGuard } from '@/guards'
 import { UnauthorizedOperation, RecordExistException } from '@/common'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { CollectionV2 } from '@/constants'
 import { dateToNumber } from '@/utils'
 
