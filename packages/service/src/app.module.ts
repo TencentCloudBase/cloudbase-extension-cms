@@ -9,11 +9,12 @@ import { AuthModule } from './modules/auth/auth.module'
 import { ProjectsModule } from './modules/projects/projects.module'
 import { UserModule } from './modules/user/user.module'
 import { RoleModule } from './modules/role/role.module'
-import { RequestTracking } from './services/requestTracking'
 import { SettingModule } from './modules/setting/setting.module'
+import { GlobalModule } from './global.module'
 
 @Module({
   imports: [
+    GlobalModule,
     AuthModule,
     FileModule,
     UserModule,
@@ -31,7 +32,7 @@ import { SettingModule } from './modules/setting/setting.module'
     SettingModule,
   ],
   controllers: [AppController],
-  providers: [AppService, RequestTracking],
+  providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

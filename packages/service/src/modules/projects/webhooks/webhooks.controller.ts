@@ -65,7 +65,7 @@ export class WebhooksController {
       },
     } = body
 
-    const webhookId = options?.filter._id
+    const webhookId = options?.filter?._id
 
     checkAccessAndGetResource(projectId, req, webhookId)
 

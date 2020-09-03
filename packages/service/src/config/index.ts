@@ -1,3 +1,4 @@
+// system config
 export default {
   globalPrefix: '/api/v1.0',
 

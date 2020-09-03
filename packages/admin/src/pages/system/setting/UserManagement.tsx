@@ -130,7 +130,7 @@ export const SystemUserRoles = [
   },
   {
     _id: 'content:administrator',
-    roleName: '系统内容管理员',
+    roleName: '内容管理员',
     description: '允许管理系统内的所有内容',
     polices: [
       {
@@ -222,7 +222,7 @@ const CreateUserModal: React.FC<{
             },
           ]}
         >
-          <Input placeholder="用户名，字母和数字的组合，长度范围是 1 ~ 32" />
+          <Input placeholder="用户名，字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32" />
         </Form.Item>
         <Form.Item
           label="用户密码"
