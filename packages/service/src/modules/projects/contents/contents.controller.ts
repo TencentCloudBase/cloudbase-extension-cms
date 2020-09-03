@@ -16,7 +16,7 @@ import { PermissionGuard } from '@/guards'
 import { CollectionV2 } from '@/constants'
 import { UnsupportedOperation } from '@/common'
 import { checkAccessAndGetResource } from '@/utils'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
 

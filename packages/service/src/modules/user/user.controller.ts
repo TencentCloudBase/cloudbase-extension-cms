@@ -16,7 +16,7 @@ import { PermissionGuard } from '@/guards'
 import { CollectionV2 } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
 import { dateToNumber } from '@/utils'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { RecordExistException, RecordNotExistException, UnauthorizedOperation } from '@/common'
 import { UserService } from './user.service'
 

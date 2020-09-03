@@ -1,5 +1,5 @@
 import { Controller, Get, Patch } from '@nestjs/common'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { CollectionV2 } from '@/constants'
 
 @Controller('setting')

@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config'
 import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
 import { BodyConverter } from '@/middlewares/converter.middleware'
-import { CloudBaseModule } from '@/dynamic_modules/cloudbase'
 import { FileModule } from './modules/file/file.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { ProjectsModule } from './modules/projects/projects.module'
@@ -22,11 +21,6 @@ import { GlobalModule } from './global.module'
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
-    }),
-    CloudBaseModule.forRoot({
-      envId: process.env.TCB_ENVID,
-      secretId: process.env.SECRETID,
-      secretKey: process.env.SECRETKEY,
     }),
     RoleModule,
     SettingModule,

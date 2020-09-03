@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { Injectable } from '@nestjs/common'
-import { CloudBaseService } from '@/dynamic_modules'
+import { CloudBaseService } from '@/services'
 import { CollectionV2 } from '@/constants'
 import config from '@/config'
 import { Webhook } from './type'

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { Injectable } from '@nestjs/common'
-import { CloudBaseService } from '@/dynamic_modules/cloudbase'
+import { CloudBaseService } from '@/services'
 import { dateToNumber } from '@/utils'
 import { CollectionV2 } from '@/constants'
 import { SchemaV2, SchemaFieldV2 } from '../schemas/types'
