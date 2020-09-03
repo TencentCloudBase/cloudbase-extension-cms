@@ -2,6 +2,16 @@
 
 CloudBase CMS 2.0 版本起，CMS Service 提供了公开的 RESTful 接口，你可以通过 RESTful API 接口访问 CMS 服务，方便的获取内容数据。
 
+## 访问
+
+默认情况下，通过 RESTful API 无法访问任何未授权资源。你可以将允许匿名访问的资源加到[**匿名用户**角色](./permission.md)中，实现资源允许公开访问的效果
+
+![](https://main.qcloudimg.com/raw/cc5186dc043e14d1a1b01da145f7dac0.png)
+
+如给匿名用户角色添加权限规则：博客文章查询，即可通过 RESTful API 查询博客项目的文章列表
+
+![](https://main.qcloudimg.com/raw/06fd63f98563821c521bc498cf9b1251.png)
+
 ## 请求路径
 
 CloudBase CMS 的 RESTful API 请求路径由三部分组成：部署路径 + API 基础路径 + 服务路径。如

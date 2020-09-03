@@ -12,7 +12,7 @@
     </a>
     <br />
     <br />
-    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">在线示例</a>
+    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">✨ 在线示例</a>
     ·
     <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
     ·
@@ -40,7 +40,7 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 - ❤️ Node.js + Nest.js + CloudBase
 - ❤️ TypeScript
 
-## 快速开始
+## 🚀 快速开始
 
 你可以通过下面的方式快速部署 CloudBase CMS
 
@@ -120,7 +120,7 @@ npm run deploy:fn
 | 支持枚举类型                                             | 🚀 已完成 | V2.0     |
 | 细粒度角色权限管理权限控制                               | 🚀 已完成 | V2.0     |
 
-## 贡献指南
+## 🤝 贡献指南
 
 欢迎大家参与到 CloudBase CMS 的开发工作，贡献一份力量
 
@@ -136,7 +136,7 @@ npm run deploy:fn
 
 见[更新日志](./CHANGELOG.md)
 
-## License
+## 📝 License
 
 开源协议文档请参阅 [Apache License 2.0](./LICENSE)
 
