@@ -11,11 +11,12 @@ import {
   UseGuards,
   Controller,
 } from '@nestjs/common'
-import { PermissionGuard } from '@/guards'
 import { IsNotEmpty, IsIn } from 'class-validator'
+import { PermissionGuard } from '@/guards'
+import { CollectionV2 } from '@/constants'
+import { UnsupportedOperation } from '@/common'
 import { checkAccessAndGetResource } from '@/utils'
 import { CloudBaseService } from '@/dynamic_modules'
-import { CollectionV2 } from '@/constants'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
 
@@ -128,7 +129,7 @@ export class ContentsController {
 
     // 内容以模型为维度，不支持单个内容权限管理
     // 这里的 resource 是 collectionName
-    checkAccessAndGetResource(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, resource)
 
     let res = await this.contentsService[action](resource, options as any)
 
@@ -163,7 +164,7 @@ export class ContentsController {
     @Request() req: AuthRequest
   ) {
     const { projectId, resource } = params
-    checkAccessAndGetResource(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, resource)
 
     const options = {}
 
@@ -178,7 +179,7 @@ export class ContentsController {
   @Get(':resource/docs/:docId')
   async getResourceDoc(@Param() params, @Request() req: AuthRequest) {
     const { projectId, resource, docId } = params
-    checkAccessAndGetResource(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, resource)
 
     const options = {
       filter: {
@@ -197,7 +198,7 @@ export class ContentsController {
     @Request() req: AuthRequest
   ) {
     const { projectId, resource } = params
-    checkAccessAndGetResource(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, resource)
 
     return this.contentsService.createOne(resource, {
       payload,
@@ -212,7 +213,7 @@ export class ContentsController {
     @Request() req: AuthRequest
   ) {
     const { projectId, resource, docId } = params
-    checkAccessAndGetResource(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, resource)
 
     return this.contentsService.updateOne(resource, {
       filter: {
@@ -226,12 +227,32 @@ export class ContentsController {
   @Delete(':resource/docs/:docId')
   async deleteResourceDoc(@Param() params, @Request() req: AuthRequest) {
     const { projectId, resource, docId } = params
-    checkAccessAndGetResource(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, resource)
 
     return this.contentsService.deleteOne(resource, {
       filter: {
         _id: docId,
       },
     })
+  }
+
+  // 二次校验权限
+  private async checkResourcePermission(projectId: string, req: AuthRequest, resource: string) {
+    // 检查 CMS 系统角色
+    checkAccessAndGetResource(projectId, req, resource)
+
+    const {
+      data: [schema],
+    } = await this.cloudbaseService
+      .collection(CollectionV2.Schemas)
+      .where({
+        collectionName: resource,
+      })
+      .get()
+
+    // CMS 只能操作 CMS 管理的集合，不能操作非 CMS 管理的集合
+    if (!schema) {
+      throw new UnsupportedOperation('集合记录不存在，无法操作，请检查此集合是否在 CMS 系统记录中')
+    }
   }
 }
