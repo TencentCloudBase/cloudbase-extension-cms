@@ -125,7 +125,7 @@ export const ContentTable: React.FC<{
                     })
                   }}
                 >
-                  <DeleteOutlined /> 删除
+                  <DeleteOutlined /> 删除文档
                 </Button>
               </Col>
             </Row>

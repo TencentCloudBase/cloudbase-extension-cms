@@ -24,8 +24,8 @@ import 'moment/locale/zh-cn'
 import locale from 'antd/es/date-picker/locale/zh_CN'
 import { getSchema } from '@/services/schema'
 import { getContents } from '@/services/content'
-import { getTempFileURL, uploadFile, downloadFile } from '@/utils'
-import { InboxOutlined, MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { getTempFileURL, uploadFile, downloadFile, copyToClipboard } from '@/utils'
+import { InboxOutlined, MinusCircleOutlined, PlusOutlined, CopyTwoTone } from '@ant-design/icons'
 
 import RichTextEditor from './RichText'
 import { useConcent } from 'concent'
@@ -46,11 +46,12 @@ const LazyMarkdownEditor: React.FC = (props: any) => (
  * 图片懒加载
  */
 export const LazyImage: React.FC<{ src: string }> = ({ src }) => {
-  if (!src)
+  if (!src) {
     return <Empty image="/img/empty.svg" imageStyle={{ height: '60px' }} description="未设定图片" />
+  }
 
   if (!/^cloud:\/\/\S+/.test(src)) {
-    return <img style={{ height: '100px' }} src={src} />
+    return <img style={{ height: '120px', maxWidth: '200px' }} src={src} />
   }
 
   const [imgUrl, setImgUrl] = useState('')
@@ -75,16 +76,41 @@ export const LazyImage: React.FC<{ src: string }> = ({ src }) => {
     <Spin />
   ) : (
     <Space direction="vertical">
-      <img style={{ height: '120px' }} src={imgUrl} />
+      <img style={{ height: '120px', maxWidth: '200px' }} src={imgUrl} />
       {imgUrl && (
-        <Button
-          size="small"
-          onClick={() => {
-            downloadFile(src)
-          }}
-        >
-          下载图片
-        </Button>
+        <Space>
+          <Button
+            size="small"
+            onClick={() => {
+              downloadFile(src)
+            }}
+          >
+            下载图片
+          </Button>
+          <Button
+            size="small"
+            onClick={() => {
+              getTempFileURL(src)
+                .then((url) => {
+                  copyToClipboard(url)
+                    .then(() => {
+                      message.success('复制到剪切板成功')
+                    })
+                    .catch(() => {
+                      message.error('复制到剪切板成功')
+                    })
+                })
+                .catch((e) => {
+                  console.log(e)
+                  console.log(e.message)
+                  message.error(`获取图片链接失败 ${e.message}`)
+                })
+            }}
+          >
+            访问链接
+            <CopyTwoTone />
+          </Button>
+        </Space>
       )}
     </Space>
   )

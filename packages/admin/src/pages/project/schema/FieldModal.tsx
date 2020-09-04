@@ -109,7 +109,7 @@ export const CreateFieldModal: React.FC<{
 
   const modalTitle =
     fieldAction === 'create'
-      ? `新建【${selectedField?.name}】字段`
+      ? `添加【${selectedField?.name}】字段`
       : `编辑【${selectedField?.displayName}】`
 
   useEffect(() => {
@@ -132,6 +132,10 @@ export const CreateFieldModal: React.FC<{
       onOk={() => onClose()}
       onCancel={() => onClose()}
     >
+      {fieldAction === 'create' && selectedField.desc && (
+        <Alert type="info" message={selectedField.desc} />
+      )}
+      <br />
       <Form
         name="basic"
         layout="vertical"

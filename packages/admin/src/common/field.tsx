@@ -30,11 +30,13 @@ export const FieldTypes = [
     type: 'DateTime',
     name: '日期与时间',
     icon: <i className="gg-calendar-dates" />,
+    desc: '包含日期和时间，如 2020-09-01 10:11:07',
   },
   {
     type: 'Date',
     name: '日期',
     icon: <i className="gg-calendar-dates" />,
+    desc: '只包含日期，如 2020-09-01',
   },
   // **颜色：Color**
   // 文件：File

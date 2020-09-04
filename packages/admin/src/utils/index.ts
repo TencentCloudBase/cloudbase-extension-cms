@@ -1,5 +1,6 @@
-export * from './cloudbase'
 export * from './tool'
+export * from './copy'
+export * from './cloudbase'
 
 // 驼峰转换下划线
 function humpToLine(name: string) {
