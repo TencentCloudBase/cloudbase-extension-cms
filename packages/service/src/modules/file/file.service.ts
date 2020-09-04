@@ -31,7 +31,7 @@ export class FileService {
     const day = dayjs().format('YYYY-MM-DD')
     // 上传文件
     const { fileID } = await this.cloudbaseService.app.uploadFile({
-      cloudPath: `cloudbase-cms/${day}/${nanoid(16)}-${file.originalname}`,
+      cloudPath: `cloudbase-cms/upload/${day}/${nanoid(16)}-${file.originalname}`,
       fileContent: file.buffer,
     })
     return {
