@@ -10,9 +10,9 @@ const TypeWidthMap = {
   Boolean: 100,
   DateTime: 150,
   File: 150,
-  Image: 150,
-  RichText: 200,
-  Markdown: 200,
+  Image: 200,
+  RichText: 150,
+  Markdown: 150,
 }
 
 const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
