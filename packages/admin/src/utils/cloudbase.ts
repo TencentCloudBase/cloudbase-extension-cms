@@ -1,9 +1,11 @@
-import { message, notification } from 'antd'
+import moment from 'moment'
 import { request, history } from 'umi'
+import { message, notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
-import { isDevEnv } from './tool'
 import { codeMessage } from '@/constants'
+import { isDevEnv } from './tool'
 import defaultSettings from '../../config/defaultSettings'
+import { random } from 'lodash'
 
 let app: any
 let auth: any
@@ -103,10 +105,11 @@ export async function tcbRequest<T = any>(
 // 上传文件
 export async function uploadFile(file: File, onProgress: (v: number) => void): Promise<string> {
   const app = await getCloudBaseApp()
+  const day = moment().format('YYYY-MM-DD')
 
   const result = await app.uploadFile({
-    cloudPath: `upload/${Date.now()}-${file.name}`,
     filePath: file,
+    cloudPath: `cloudbase-cms/${day}/${random(32)}-${file.name}`,
     onUploadProgress: (progressEvent: ProgressEvent) => {
       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
       onProgress(percentCompleted)
