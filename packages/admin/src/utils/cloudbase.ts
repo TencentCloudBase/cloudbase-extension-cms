@@ -3,9 +3,8 @@ import { request, history } from 'umi'
 import { message, notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
 import { codeMessage } from '@/constants'
-import { isDevEnv } from './tool'
+import { isDevEnv, random } from './tool'
 import defaultSettings from '../../config/defaultSettings'
-import { random } from 'lodash'
 
 let app: any
 let auth: any
@@ -109,7 +108,7 @@ export async function uploadFile(file: File, onProgress: (v: number) => void): P
 
   const result = await app.uploadFile({
     filePath: file,
-    cloudPath: `cloudbase-cms/${day}/${random(32)}-${file.name}`,
+    cloudPath: `cloudbase-cms/upload/${day}/${random(32)}-${file.name}`,
     onUploadProgress: (progressEvent: ProgressEvent) => {
       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
       onProgress(percentCompleted)

@@ -2,7 +2,7 @@ import { useParams, history } from 'umi'
 import { useConcent } from 'concent'
 import ProTable from '@ant-design/pro-table'
 import { Button, Modal, message, Space, Row, Col } from 'antd'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { getTableColumns } from './columns'
@@ -29,50 +29,55 @@ export const ContentTable: React.FC<{
   const columns = getTableColumns(currentSchema?.fields)
 
   // 表格请求
-  const tableRequest = async (
-    params: { pageSize: number; current: number; [key: string]: any },
-    sort: any,
-    filter: any
-  ) => {
-    const { pageSize, current } = params
-    const resource = currentSchema.collectionName
+  const tableRequest = useCallback(
+    async (
+      params: { pageSize: number; current: number; [key: string]: any },
+      sort: any,
+      filter: any
+    ) => {
+      const { pageSize, current } = params
+      const resource = currentSchema.collectionName
 
-    // 搜索参数
-    const fuzzyFilter = searchParams
-      ? Object.keys(searchParams)
-          .filter((key) => currentSchema.fields?.some((field: SchemaFieldV2) => field.name === key))
-          .reduce(
-            (prev, key) => ({
-              ...prev,
-              [key]: searchParams[key],
-            }),
-            {}
-          )
-      : {}
+      // 搜索参数
+      const fuzzyFilter = searchParams
+        ? Object.keys(searchParams)
+            .filter((key) =>
+              currentSchema.fields?.some((field: SchemaFieldV2) => field.name === key)
+            )
+            .reduce(
+              (prev, key) => ({
+                ...prev,
+                [key]: searchParams[key],
+              }),
+              {}
+            )
+        : {}
 
-    try {
-      const { data = [], total } = await getContents(projectId, resource, {
-        sort,
-        filter,
-        pageSize,
-        fuzzyFilter,
-        page: current,
-      })
+      try {
+        const { data = [], total } = await getContents(projectId, resource, {
+          sort,
+          filter,
+          pageSize,
+          fuzzyFilter,
+          page: current,
+        })
 
-      return {
-        data,
-        total,
-        success: true,
+        return {
+          data,
+          total,
+          success: true,
+        }
+      } catch (error) {
+        console.log('内容请求错误', error)
+        return {
+          data: [],
+          total: 0,
+          success: true,
+        }
       }
-    } catch (error) {
-      console.log('内容请求错误', error)
-      return {
-        data: [],
-        total: 0,
-        success: true,
-      }
-    }
-  }
+    },
+    []
+  )
 
   return (
     <>

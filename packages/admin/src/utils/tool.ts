@@ -24,3 +24,13 @@ export const getPageQuery = () => {
 export const isDevEnv = () => process.env.NODE_ENV === 'development'
 
 export const isProduction = () => process.env.NODE_ENV !== 'development'
+
+// 生成随机字符串
+export const random = (len: number) => {
+  const count = Math.ceil(Number(len) / 10) + 1
+  let ret = ''
+  for (let i = 0; i < count; i++) {
+    ret += Math.random().toString(36).substr(2)
+  }
+  return ret.substr(0, len)
+}

@@ -57,32 +57,32 @@
           "collections": [
             {
               "collectionName": "tcb-ext-cms-projects",
-              "description": "CMS V2 项目数据（请不要手动修改）",
+              "description": "CMS 系统项目数据（请不要手动修改）",
               "aclTag": "ADMINONLY"
             },
             {
               "collectionName": "tcb-ext-cms-schemas",
-              "description": "CMS V2 内容模型数据（请不需要手动修改）",
+              "description": "CMS 系统内容模型数据（请不需要手动修改）",
               "aclTag": "ADMINONLY"
             },
             {
               "collectionName": "tcb-ext-cms-users",
-              "description": " CMS V2 系统用户数据，存储 CMS 的用户信息，包括管理员和运营者的账号信息，包括角色信息，用户，加密存储的密码等（请不要手动修改）",
+              "description": "CMS 系统系统用户数据，存储 CMS 的用户信息，包括管理员账号信息，角色信息等（请不要手动修改）",
               "aclTag": "ADMINONLY"
             },
             {
               "collectionName": "tcb-ext-cms-webhooks",
-              "description": "CMS V2 系统 webhook 集合，存储 CMS 系统的回调接口配置，CMS 系统数据的变更可以通过回调来进行同步 （请不要手动修改）",
+              "description": "CMS 系统系统 webhook 集合，存储 CMS 系统的回调接口配置，CMS 系统数据的变更可以通过回调来进行同步 （请不要手动修改）",
               "aclTag": "ADMINONLY"
             },
             {
               "collectionName": "tcb-ext-cms-settings",
-              "description": "CMS V2 系统配置集合，存储 CMS 系统的设置（请不要手动修改）",
+              "description": "CMS 系统系统配置集合，存储 CMS 系统的设置（请不要手动修改）",
               "aclTag": "ADMINONLY"
             },
             {
               "collectionName": "tcb-ext-cms-user-roles",
-              "description": "CMS V2 系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）",
+              "description": "CMS 系统系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）",
               "aclTag": "ADMINONLY"
             }
           ]
