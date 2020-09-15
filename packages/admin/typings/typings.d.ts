@@ -33,8 +33,13 @@ interface Window {
     history: 'hash' | 'browser'
     envId: string
     cloudAccessPath: string
+    // 禁用帮助按钮
+    disableHelpButton: boolean
+    // 禁用通知提示
+    disableNotice: boolean
   }
   tinymce: any
+  // 禁用帮助按钮
 }
 
 declare let ga: Function
