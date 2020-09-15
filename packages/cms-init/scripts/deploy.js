@@ -11,14 +11,15 @@ module.exports = {
     const { config, deployPath, manager, accessDomain } = context
     const filterDeployPath = deployPath.replace(/^\//, '')
     const { envId } = config
-    // try {
-    //     await exec('cp -r build /tmp')
-    // } catch (e) {}
+    try {
+      await exec('cp -r build /tmp')
+    } catch (e) {}
 
     // 写入静态网站配置
     await writeConfigJS(manager, envId, accessDomain, filterDeployPath)
+
     // 同步静态网站
-    // return deployHostingFile(manager, '/tmp/build', filterDeployPath)
+    return deployHostingFile(manager, '/tmp/build', filterDeployPath)
   },
 }
 
