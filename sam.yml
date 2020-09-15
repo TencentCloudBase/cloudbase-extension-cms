@@ -43,7 +43,7 @@ Resources:
     Properties:
       FunctionName: tcb-ext-cms-service
       # CodeUri: cloud://appstore.6170-appstore-1259727701/tcb-ext-cms-service.zip
-      CodeUri: extension://d70cdf0ef4d149379023f3c03aeac197.zip
+      CodeUri: extension://ce3836857c984ea0b43f80e6b5e67e08.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -58,7 +58,7 @@ Resources:
     Properties:
       FunctionName: tcb-ext-cms-init
       # CodeUri: cloud://appstore.6170-appstore-1259727701/tcb-ext-cms-init.zip
-      CodeUri: extension://1012b9e1b5924f9d81bd587b9e2cb2a1.zip
+      CodeUri: extension://24b5b0949cbb48d989058a25ecb305ff.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -116,7 +116,7 @@ Resources:
   StaticStore:
     Type: CloudBase::StaticStore
     Properties:
-      Description: CMS 系统前端界面，基于 React 开发，通过 TCB JS SDK 访问 CMS 的函数、数据库和存储等资源 （请不要手动修改）
+      Description: CMS 系统前端界面，基于 React 开发，通过 CloudBase JS SDK 访问 CMS 的函数、数据库和存储等资源 （请不要手动修改）
 # 配置
 Config:
   # 初始化脚本

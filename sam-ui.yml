@@ -12,9 +12,14 @@ Form:
         Name: ADMIN
         Attributes:
           - type: text
-          - placeHolder: "请设置管理员账号（仅支持大小写字母）"
+          - placeHolder: "管理员账号，字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32"
           - class: "tea-input tea-input-s"
           - size: l
+        Validation:
+          Type: RegExp
+          Pattern: "^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$"
+          Flags: "g"
+          ErrorMessage: "字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32"
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_ADMIN_USER_NAME}
     - Label:
         Value: 管理员密码
@@ -24,9 +29,14 @@ Form:
         Name: ADMIN_PASSWORD
         Attributes:
           - type: text
-          - placeHolder: "请设置管理员密码"
+          - placeHolder: "管理员密码，长度必需大于 8 位，不能由纯数字或纯字母组成"
           - class: "tea-input tea-input-s"
           - size: l
+        Validation:
+          Type: RegExp
+          Pattern: "\\D+"
+          Flags: "g"
+          ErrorMessage: "长度必需大于 8 位，不能由纯数字或纯字母组成"
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_ADMIN_PASS_WORD}
     - Label:
         Value: 运营者账号（选填）
@@ -35,7 +45,7 @@ Form:
       Input:
         Attributes:
           - type: text
-          - placeHolder: "请设置运营者账号（仅支持大小写字母，不能和管理员账号相同）"
+          - placeHolder: "运营者账号（字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32，不能和管理员账号相同）"
           - class: "tea-input tea-input-s"
           - size: l
         CasCadeRule:
@@ -51,7 +61,7 @@ Form:
       Input:
         Attributes:
           - type: text
-          - placeHolder: "请设置运营者密码"
+          - placeHolder: "运营者密码，长度必需大于 8 位，不能由纯数字或纯字母组成"
           - class: "tea-input tea-input-s"
           - size: l
         CasCadeRule:
@@ -61,13 +71,25 @@ Form:
           ErrorMessage: "不能和管理员密码相同"
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_OPERATOR_PASS_WORD}
     - Label:
-        Value: 部署路径
+        Value: 部署路径（选填）
       Attributes:
         - class: "tea-form-item"
       Input:
         Attributes:
           - type: text
+          - defaultValue: "/tcb-cms/"
           - placeHolder: "请设置部署路径"
           - class: "tea-input tea-input-s"
           - size: l
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_DEPLOY_PATH}
+    - Label:
+        Value: CMS 自定义域名（选填）
+      Attributes:
+        - class: "tea-form-item"
+      Input:
+        Attributes:
+          - type: text
+          - placeHolder: "CMS 自定义域名，需要在静态网站托管中先绑定"
+          - class: "tea-input tea-input-s"
+          - size: l
+        ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.ACCESS_DOMAIN}
