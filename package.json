@@ -13,7 +13,9 @@
     "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto",
     "predeploy:fn": "lerna run build",
     "deploy:fn": "tcb framework:deploy",
-    "postdeploy:fn": "tcb functions:invoke cms-init"
+    "postdeploy:fn": "tcb functions:invoke cms-init",
+    "preext:zip": "rm -rf build && mkdir build && npm run build",
+    "ext:zip": "bash ./scripts/zip.sh"
   },
   "husky": {
     "hooks": {
