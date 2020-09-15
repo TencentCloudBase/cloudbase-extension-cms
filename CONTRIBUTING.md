@@ -15,10 +15,21 @@
 
 ## 本地开发
 
+### 安装 @cloudbase/cli
+
+使用 Node 包管理器 NPM 安装最新版本的 CloudBase CLI 工具（1.0.0+）
+
+```
+npm install -g @cloudbase/cli@latest
+```
+
+### 配置
+
 复制 `packages/service/.env.example` 为 `packages/service/.env.local`，并配置
 
 ```
 TCB_ENVID=xxx
+# 腾讯云-云 API 密钥授权
 SECRETID=xxx
 SECRETKEY=xxx
 ```
@@ -37,14 +48,24 @@ window.TcbCmsConfig = {
 }
 ```
 
-安装依赖
+### 安装依赖
 
 ```bash
 # 安装 lerna 依赖
 npm install
 # 安装 package 依赖
 npm run setup
-# 启动开发
+```
+
+### 创建数据库表
+
+```bash
+tcb framework deploy db
+```
+
+### 启动开发
+
+```bash
 cd packages/admin && npm run dev
 cd packages/service && npm run dev
 ```
