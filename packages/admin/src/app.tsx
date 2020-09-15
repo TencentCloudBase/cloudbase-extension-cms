@@ -36,6 +36,8 @@ export async function getInitialState(): Promise<{
   // 没有登录，重新登录
   if (!isDevEnv() && !loginState) {
     history.push('/login')
+    // 移除 loading 元素
+    document.getElementById('loading')?.remove()
     return {}
   }
 
@@ -66,6 +68,8 @@ export async function getInitialState(): Promise<{
     settings: defaultSettings,
   }
 
+  // 移除 loading 元素
+  document.getElementById('loading')?.remove()
   return initialState
 }
 
@@ -105,11 +109,11 @@ const errorHandler = async (error: ResponseError) => {
       message: `请求错误 ${status}`,
       description: (
         <>
-          <Typography.Text>{`${errorText} ${message}`}</Typography.Text>
+          <Typography.Text>{`${errorText} ${message || ''}`}</Typography.Text>
           <Typography.Text copyable>请求 URL：{url}</Typography.Text>
         </>
       ),
-      duration: 0,
+      duration: 5000,
     })
   }
 

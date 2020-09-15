@@ -13,6 +13,7 @@
     text-align: center;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding: 0 16px;
 
     .title {
@@ -21,7 +22,28 @@
       line-height: 32px;
       margin-bottom: 0;
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 600;
+    }
+
+    .left {
+      display: flex;
+      align-items: center;
+
+      h1 {
+        margin: 0 0 0 12px;
+      }
+    }
+
+    .right {
+      position: absolute;
+      right: 40px;
+      display: flex;
+      align-items: center;
+    }
+
+    .logo {
+      width: 35px;
+      height: 35px;
     }
   }
 
@@ -31,21 +53,16 @@
     align-items: center;
     justify-content: center;
   }
+
+  .help-btn {
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+  }
 }
 
 .footer {
   text-align: center;
-}
-
-.account {
-  position: absolute;
-  right: 40px;
-}
-
-.logo {
-  width: 35px;
-  height: 35px;
-  margin-right: 10px;
 }
 
 .content {
