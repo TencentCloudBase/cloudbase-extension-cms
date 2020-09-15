@@ -27,3 +27,6 @@ zipFunction() {
 
 zipFunction service
 zipFunction cms-init
+
+cd $__ABS_PATH__
+rm -rf packages/cms-init/build

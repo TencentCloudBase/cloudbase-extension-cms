@@ -55,22 +55,19 @@ export const ContentTableSearch: React.FC<{
 
   return (
     <>
-      <Row gutter={[24, 12]}>
-        <Col flex="1 1 auto">
-          <div className="table-title-container">
-            <span className="table-title">{schema.displayName}</span>
-          </div>
-        </Col>
-        <Col flex="0 0 auto">
-          <Dropdown overlay={fieldMenu}>
-            <Button size="small">
-              <FilterTwoTone /> 增加检索
-            </Button>
-          </Dropdown>
-        </Col>
-      </Row>
+      <Dropdown overlay={fieldMenu}>
+        <Button type="primary">
+          <FilterTwoTone /> 增加检索
+        </Button>
+      </Dropdown>
       {searchFields.length ? (
-        <Form name="basic" layout="inline" initialValues={{}} onFinish={(v: any) => onSearch(v)}>
+        <Form
+          name="basic"
+          layout="inline"
+          initialValues={{}}
+          onFinish={(v: any) => onSearch(v)}
+          style={{ marginTop: '15px' }}
+        >
           <Row>
             {searchFields.map((field, index) => (
               <Space key={index} align="center" style={{ marginRight: '15px' }}>

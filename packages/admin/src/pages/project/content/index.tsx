@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { ContentTable } from './ContentTable'
 import './index.less'
 
-export default (props: any): React.ReactNode => {
+export default (): React.ReactNode => {
   const { schemaId, projectId } = useParams()
   const ctx = useConcent('content')
   const [contentLoading, setContentLoading] = useState(false)
@@ -27,7 +27,16 @@ export default (props: any): React.ReactNode => {
   }, [currentSchema])
 
   return (
-    <PageContainer className="page-container">
+    <PageContainer
+      className="page-container"
+      content={
+        <div
+          dangerouslySetInnerHTML={{
+            __html: currentSchema?.description,
+          }}
+        />
+      }
+    >
       <ProCard className="content-card" style={{ marginBottom: 0 }}>
         {currentSchema ? (
           contentLoading ? (

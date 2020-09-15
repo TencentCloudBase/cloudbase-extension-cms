@@ -116,7 +116,9 @@ export const LazyImage: React.FC<{ src: string }> = ({ src }) => {
   )
 }
 
-// custom file/image uploader
+/**
+ * 文件、图片上传
+ */
 export const CustomUploader: React.FC<{
   type?: 'file' | 'image'
   value?: string
@@ -191,6 +193,9 @@ export const CustomUploader: React.FC<{
   )
 }
 
+/**
+ * 时间选择器
+ */
 export const CustomDatePicker: React.FC<{
   type?: string
   value?: string
@@ -219,15 +224,21 @@ export const ConnectRender: React.FC<{
   const { value, field } = props
   const { connectField, connectMany } = field
 
-  if (!value || typeof value === 'string' || typeof value?.[0] === 'string') return '-'
+  if (!value || typeof value === 'string' || typeof value?.[0] === 'string') return <span>-</span>
 
   if (!connectMany) {
     return <Typography.Text>{value[connectField]}</Typography.Text>
   }
 
-  return value
-    .filter((_: any) => _)
-    .map((record: any, index: number) => <Tag key={index}>{record?.[connectField]}</Tag>)
+  return (
+    <Space>
+      {value
+        .filter((_: any) => _)
+        .map((record: any, index: number) => (
+          <Tag key={index}>{record?.[connectField]}</Tag>
+        ))}
+    </Space>
+  )
 }
 
 /**
@@ -278,7 +289,7 @@ export const ConnectEditor: React.FC<{
     <Select
       loading={loading}
       mode={connectMany ? 'multiple' : undefined}
-      style={{ width: 200 }}
+      // style={{ width: 300 }}
       placeholder="关联字段"
       value={value?._id}
       onChange={onChange}
@@ -515,29 +526,130 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
 }
 
 /**
- * 字段编辑
+ * 字段编辑器
  */
-export function getFieldFormItem(field: SchemaFieldV2, key: number) {
-  const rules = getRules(field)
-  const { name, type, min, max, description, displayName, enumElements } = field
+export function getFieldEditor(field: SchemaFieldV2, key: number) {
+  const { name, type, min, max, enumElements } = field
 
-  let FormItem
+  let FieldEditor: React.ReactNode
 
   switch (type) {
     case 'String':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <Input type="text" />
-        </Form.Item>
-      )
+      FieldEditor = <Input type="text" />
       break
     case 'MultiLineString':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <TextArea />
-        </Form.Item>
+      FieldEditor = <TextArea />
+      break
+    case 'Boolean':
+      FieldEditor = <Switch checkedChildren="True" unCheckedChildren="False" />
+      break
+    case 'Number':
+      FieldEditor = <InputNumber style={{ width: '100%' }} min={min} max={max} />
+      break
+    case 'Url':
+      FieldEditor = <Input />
+      break
+    case 'Email':
+      FieldEditor = <Input />
+      break
+    case 'Tel':
+      FieldEditor = <Input style={{ width: '100%' }} />
+      break
+    case 'Date':
+      FieldEditor = <CustomDatePicker type="Date" />
+      break
+    case 'DateTime':
+      FieldEditor = <CustomDatePicker type="DateTime" />
+      break
+    case 'Image':
+      FieldEditor = <CustomUploader type="image" />
+      break
+    case 'File':
+      FieldEditor = <CustomUploader type="file" />
+      break
+    case 'Enum':
+      FieldEditor = (
+        <Select>
+          {enumElements?.length ? (
+            enumElements?.map((ele, index) => (
+              <Option value={ele.value} key={index}>
+                {ele.label}
+              </Option>
+            ))
+          ) : (
+            <Option value="" disabled>
+              空
+            </Option>
+          )}
+        </Select>
       )
       break
+    case 'Array':
+      FieldEditor = (
+        <Form.List name={name}>
+          {(fields, { add, remove }) => {
+            return (
+              <div>
+                {fields?.map((field, index) => {
+                  return (
+                    <Form.Item key={index}>
+                      <Form.Item {...field} noStyle validateTrigger={['onChange', 'onBlur']}>
+                        <Input style={{ width: '60%' }} />
+                      </Form.Item>
+                      <MinusCircleOutlined
+                        className="dynamic-delete-button"
+                        style={{ margin: '0 8px' }}
+                        onClick={() => {
+                          remove(field.name)
+                        }}
+                      />
+                    </Form.Item>
+                  )
+                })}
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => {
+                      add()
+                    }}
+                    style={{ width: '60%' }}
+                  >
+                    <PlusOutlined /> 添加字段
+                  </Button>
+                </Form.Item>
+              </div>
+            )
+          }}
+        </Form.List>
+      )
+      break
+    case 'Markdown':
+      FieldEditor = <LazyMarkdownEditor key={key} />
+      break
+    case 'RichText':
+      FieldEditor = <RichTextEditor key={String(key)} />
+      break
+    case 'Connect':
+      FieldEditor = <ConnectEditor field={field} />
+      break
+    default:
+      FieldEditor = <Input />
+  }
+
+  return FieldEditor
+}
+
+/**
+ * 字段编辑表单
+ */
+export function getFieldFormItem(field: SchemaFieldV2, key: number) {
+  const rules = getRules(field)
+  const { name, type, description, displayName } = field
+
+  let FieldEditor: any = getFieldEditor(field, key)
+  let FormItem
+
+  switch (type) {
     case 'Boolean':
       FormItem = (
         <Form.Item
@@ -548,56 +660,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
           extra={description}
           valuePropName="checked"
         >
-          <Switch checkedChildren="True" unCheckedChildren="False" />
-        </Form.Item>
-      )
-      break
-    case 'Number':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <InputNumber style={{ width: '100%' }} min={min} max={max} />
-        </Form.Item>
-      )
-      break
-    case 'Url':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <Input />
-        </Form.Item>
-      )
-      break
-    case 'Email':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <Input />
-        </Form.Item>
-      )
-      break
-    case 'Tel':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName}>
-          <Input style={{ width: '100%' }} />
-        </Form.Item>
-      )
-      break
-    case 'Date':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <CustomDatePicker type="Date" />
-        </Form.Item>
-      )
-      break
-    case 'DateTime':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <CustomDatePicker type="DateTime" />
-        </Form.Item>
-      )
-      break
-    case 'Image':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <CustomUploader type="image" />
+          {FieldEditor}
         </Form.Item>
       )
       break
@@ -611,95 +674,14 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
           extra={description}
           valuePropName="fileList"
         >
-          <CustomUploader type="file" />
-        </Form.Item>
-      )
-      break
-    case 'Enum':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <Select>
-            {enumElements?.length ? (
-              enumElements?.map((ele, index) => (
-                <Option value={ele.value} key={index}>
-                  {ele.label}
-                </Option>
-              ))
-            ) : (
-              <Option value="" disabled>
-                空
-              </Option>
-            )}
-          </Select>
-        </Form.Item>
-      )
-      break
-    case 'Array':
-      FormItem = (
-        <Form.Item key={key} rules={rules} label={displayName} extra={description}>
-          <Form.List name={name}>
-            {(fields, { add, remove }) => {
-              return (
-                <div>
-                  {fields?.map((field, index) => {
-                    return (
-                      <Form.Item key={index}>
-                        <Form.Item {...field} noStyle validateTrigger={['onChange', 'onBlur']}>
-                          <Input style={{ width: '60%' }} />
-                        </Form.Item>
-                        <MinusCircleOutlined
-                          className="dynamic-delete-button"
-                          style={{ margin: '0 8px' }}
-                          onClick={() => {
-                            remove(field.name)
-                          }}
-                        />
-                      </Form.Item>
-                    )
-                  })}
-                  <Form.Item>
-                    <Button
-                      type="dashed"
-                      onClick={() => {
-                        add()
-                      }}
-                      style={{ width: '60%' }}
-                    >
-                      <PlusOutlined /> 添加字段
-                    </Button>
-                  </Form.Item>
-                </div>
-              )
-            }}
-          </Form.List>
-        </Form.Item>
-      )
-      break
-    case 'Markdown':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <LazyMarkdownEditor key={key} />
-        </Form.Item>
-      )
-      break
-    case 'RichText':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <RichTextEditor key={String(key)} />
-        </Form.Item>
-      )
-      break
-    case 'Connect':
-      FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <ConnectEditor field={field} />
+          {FieldEditor}
         </Form.Item>
       )
       break
     default:
       FormItem = (
         <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
-          <Input />
+          {FieldEditor}
         </Form.Item>
       )
   }
@@ -714,7 +696,7 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
   }
 
   return (
-    <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={8} key={key}>
+    <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12} key={key}>
       {FormItem}
     </Col>
   )
