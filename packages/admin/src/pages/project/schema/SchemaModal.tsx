@@ -54,6 +54,7 @@ export const SchemaModal: React.FC<{
 
   return (
     <Modal
+      destroyOnClose
       centered
       footer={null}
       width={600}
@@ -101,8 +102,8 @@ export const SchemaModal: React.FC<{
           <Input placeholder="数据库名，如 article" />
         </Form.Item>
 
-        <Form.Item label="描述" name="description">
-          <TextArea placeholder="模型描述，如博客文章" />
+        <Form.Item label="描述信息" name="description">
+          <TextArea placeholder="描述信息，会展示在对应内容的管理页面顶部，可用于内容提示，支持 HTML 片段" />
         </Form.Item>
 
         <Form.Item>

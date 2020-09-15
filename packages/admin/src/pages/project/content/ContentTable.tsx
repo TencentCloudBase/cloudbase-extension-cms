@@ -194,8 +194,8 @@ export const ContentTable: React.FC<{
         request={tableRequest}
         toolBarRender={() => [
           <Button
-            type="primary"
             key="button"
+            type="primary"
             icon={<PlusOutlined />}
             disabled={!currentSchema.fields?.length}
             onClick={() => {

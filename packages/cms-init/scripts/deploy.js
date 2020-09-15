@@ -8,18 +8,24 @@ const exec = util.promisify(require('child_process').exec)
 module.exports = {
   // 部署静态资源
   async deployStatic(context) {
-    const { config, deployPath, manager, accessDomain } = context
+    const { config, deployPath = '/tcb-cms/', manager, accessDomain = '' } = context
     const filterDeployPath = deployPath.replace(/^\//, '')
     const { envId } = config
+
     try {
       await exec('cp -r build /tmp')
-    } catch (e) {}
+    } catch (e) {
+      // ignore error
+    }
+
+    // 同步静态网站
+    if (fs.existsSync('build')) {
+      console.log('====> 部署网站文件 <====')
+      await deployHostingFile(manager, '/tmp/build', filterDeployPath)
+    }
 
     // 写入静态网站配置
     await writeConfigJS(manager, envId, accessDomain, filterDeployPath)
-
-    // 同步静态网站
-    return deployHostingFile(manager, '/tmp/build', filterDeployPath)
   },
 }
 

@@ -17,8 +17,8 @@ const MarkdownEditor: React.FC<{ value?: any; key: string; onChange?: (...args: 
       },
       upload: {
         url: isDevEnv()
-          ? '/api/upload'
-          : `https://${window.TcbCmsConfig.cloudAccessPath}/api/upload`,
+          ? '/api/v1.0/upload'
+          : `https://${window.TcbCmsConfig.cloudAccessPath}/api/v1.0/upload`,
       },
       theme: 'classic',
       placeholder: '欢迎使用云开发 CMS Markdown编辑器',

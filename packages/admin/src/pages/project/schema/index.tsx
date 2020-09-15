@@ -138,19 +138,6 @@ export default (): React.ReactNode => {
                         onClick={() => setDeleteSchmeaVisible(true)}
                       />
                     </Space>
-                    {currentSchema.description && (
-                      <Tooltip title={currentSchema.description}>
-                        <Typography.Text
-                          ellipsis
-                          style={{
-                            marginLeft: '10px',
-                            maxWidth: '240px',
-                          }}
-                        >
-                          {currentSchema.description}
-                        </Typography.Text>
-                      </Tooltip>
-                    )}
                   </Space>
                   <Content>
                     {currentSchema?.fields?.length ? (
