@@ -30,6 +30,7 @@ export default (): React.ReactNode => {
     <PageContainer
       className="page-container"
       content={
+        // 渲染内容描述
         <div
           dangerouslySetInnerHTML={{
             __html: currentSchema?.description,

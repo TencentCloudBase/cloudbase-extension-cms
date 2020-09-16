@@ -1,13 +1,16 @@
 import { useParams, history } from 'umi'
 import { useConcent } from 'concent'
 import ProTable from '@ant-design/pro-table'
-import { Button, Modal, message, Space, Row, Col } from 'antd'
+import { Button, Modal, message, Space, Row, Col, Dropdown, Menu } from 'antd'
 import React, { useState, useRef, useCallback } from 'react'
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, FilterOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { getTableColumns } from './columns'
 import { ContentTableSearch } from './components'
 import './index.less'
+
+// 不能支持搜索的类型
+const negativeTypes = ['File', 'Image']
 
 export const ContentTable: React.FC<{
   currentSchema: SchemaV2
@@ -16,6 +19,8 @@ export const ContentTable: React.FC<{
   const ctx = useConcent('content')
   const { projectId, schemaId } = useParams()
   const [searchParams, setSearchParams] = useState<any>()
+  // 检索的字段
+  const [searchFields, setSearchFields] = useState<SchemaFieldV2[]>([])
 
   // table 引用
   const tableRef = useRef<{
@@ -28,7 +33,7 @@ export const ContentTable: React.FC<{
 
   const columns = getTableColumns(currentSchema?.fields)
 
-  // 表格请求
+  // 表格数据请求
   const tableRequest = useCallback(
     async (
       params: { pageSize: number; current: number; [key: string]: any },
@@ -79,10 +84,27 @@ export const ContentTable: React.FC<{
     []
   )
 
+  const fieldMenu = (
+    <Menu
+      onClick={({ key }) => {
+        const field = currentSchema.fields.find((_) => _.name === key)
+        field && setSearchFields([...searchFields, field])
+      }}
+    >
+      {currentSchema?.fields
+        ?.filter((filed) => !negativeTypes.includes(filed.type))
+        .map((field) => (
+          <Menu.Item key={field.name}>{field.displayName}</Menu.Item>
+        ))}
+    </Menu>
+  )
+
   return (
     <>
       <ContentTableSearch
         schema={currentSchema}
+        searchFields={searchFields}
+        setSearchFields={setSearchFields}
         onSearch={(params) => {
           setSearchParams(params)
           tableRef?.current?.reload(true)
@@ -91,46 +113,7 @@ export const ContentTable: React.FC<{
       <ProTable
         rowKey="_id"
         rowSelection={{}}
-        tableAlertRender={({ intl, selectedRowKeys, selectedRows }) => {
-          return (
-            <Row>
-              <Col flex="0 0 auto">
-                <Space>
-                  <span>已选中</span>
-                  <a style={{ fontWeight: 600 }}>{selectedRowKeys?.length}</a>
-                  <span>项</span>
-                </Space>
-              </Col>
-              <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
-                <Button
-                  danger
-                  size="small"
-                  type="primary"
-                  onClick={() => {
-                    const modal = Modal.confirm({
-                      title: '确认删除选中的内容？',
-                      onCancel: () => {
-                        modal.destroy()
-                      },
-                      onOk: async () => {
-                        try {
-                          const ids = selectedRows.map((_: any) => _._id)
-                          await batchDeleteContent(projectId, currentSchema.collectionName, ids)
-                          tableRef?.current?.reloadAndRest()
-                          message.success('删除内容成功')
-                        } catch (error) {
-                          message.error('删除内容失败')
-                        }
-                      },
-                    })
-                  }}
-                >
-                  <DeleteOutlined /> 删除文档
-                </Button>
-              </Col>
-            </Row>
-          )
-        }}
+        tableAlertRender={getTableAlertRender(projectId, currentSchema, tableRef)}
         search={false}
         actionRef={tableRef}
         dateFormatter="string"
@@ -193,6 +176,11 @@ export const ContentTable: React.FC<{
         ]}
         request={tableRequest}
         toolBarRender={() => [
+          <Dropdown overlay={fieldMenu} key="search">
+            <Button type="primary">
+              <FilterOutlined /> 增加检索
+            </Button>
+          </Dropdown>,
           <Button
             key="button"
             type="primary"
@@ -217,5 +205,57 @@ export const ContentTable: React.FC<{
         ]}
       />
     </>
+  )
+}
+
+/**
+ * Table 批量操作提醒
+ */
+const getTableAlertRender = (projectId: string, currentSchema: SchemaV2, tableRef: any) => ({
+  intl,
+  selectedRowKeys,
+  selectedRows,
+}: {
+  intl: any
+  selectedRowKeys: any[]
+  selectedRows: any[]
+}) => {
+  return (
+    <Row>
+      <Col flex="0 0 auto">
+        <Space>
+          <span>已选中</span>
+          <a style={{ fontWeight: 600 }}>{selectedRowKeys?.length}</a>
+          <span>项</span>
+        </Space>
+      </Col>
+      <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
+        <Button
+          danger
+          size="small"
+          type="primary"
+          onClick={() => {
+            const modal = Modal.confirm({
+              title: '确认删除选中的内容？',
+              onCancel: () => {
+                modal.destroy()
+              },
+              onOk: async () => {
+                try {
+                  const ids = selectedRows.map((_: any) => _._id)
+                  await batchDeleteContent(projectId, currentSchema.collectionName, ids)
+                  tableRef?.current?.reloadAndRest()
+                  message.success('删除内容成功')
+                } catch (error) {
+                  message.error('删除内容失败')
+                }
+              },
+            })
+          }}
+        >
+          <DeleteOutlined /> 删除文档
+        </Button>
+      </Col>
+    </Row>
   )
 }
