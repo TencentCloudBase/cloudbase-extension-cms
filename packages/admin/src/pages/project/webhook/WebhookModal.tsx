@@ -28,7 +28,7 @@ export const WebhookModal: React.FC<{
   onClose: () => void
   onSuccess: () => void
 }> = ({ visible, onClose, onSuccess, action, selectedWebhook }) => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const actionText = action === 'create' ? '创建' : '更新'
 
   const { run, loading } = useRequest(

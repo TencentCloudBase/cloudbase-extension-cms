@@ -68,7 +68,7 @@ export class WebhooksService {
     }
 
     const executions = webhooks.map(async (webhook: Webhook) => {
-      const { name, method, url, headers = [], _id } = webhook
+      const { method, url, headers = [] } = webhook
 
       // 拼接请求 Header
       const httpHeaders = headers?.reduce((prev, cur) => {
@@ -93,11 +93,9 @@ export class WebhooksService {
         url,
         headers: httpHeaders,
         data: {
-          webhookId: _id,
-          webhookName: name,
-          collection: resource,
           action,
           actionRes,
+          collection: resource,
           actionFilter: actionOptions?.filter,
         },
         timeout: config.webhookTimeout,
