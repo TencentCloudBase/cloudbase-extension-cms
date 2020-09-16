@@ -8,7 +8,7 @@ import { ContentTable } from './ContentTable'
 import './index.less'
 
 export default (): React.ReactNode => {
-  const { schemaId, projectId } = useParams()
+  const { schemaId, projectId } = useParams<any>()
   const ctx = useConcent('content')
   const [contentLoading, setContentLoading] = useState(false)
 

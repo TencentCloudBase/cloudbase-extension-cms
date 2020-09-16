@@ -105,7 +105,7 @@ const columns: ProColumns<Webhook>[] = WebhookColumns.map((item) => ({
 }))
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const [modalVisible, setModalVisible] = useState(false)
   const [webhookAction, setWebhookAction] = useState<'create' | 'edit'>('create')
   const [selectedWebhook, setSelectedWebhook] = useState<Webhook>()

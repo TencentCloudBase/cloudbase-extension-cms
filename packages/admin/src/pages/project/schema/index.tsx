@@ -40,7 +40,7 @@ export interface TableListItem {
 
 export default (): React.ReactNode => {
   // projectId
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const ctx = useConcent('schema')
   const {
     state: { currentSchema, schemas, loading },

@@ -12,7 +12,7 @@ export const SchemaModal: React.FC<{
   onClose: () => void
   action?: 'edit' | 'create'
 }> = ({ visible, onClose, action, schema }) => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const ctx = useConcent('schema')
 
   // 创建/更新模型
@@ -123,7 +123,7 @@ export const DeleteSchemaModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const ctx = useConcent('schema')
   const contentCtx = useConcent('content')
   const { currentSchema = {} } = ctx.state

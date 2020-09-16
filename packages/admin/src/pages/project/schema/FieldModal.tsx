@@ -34,7 +34,7 @@ export const CreateFieldModal: React.FC<{
 }> = ({ visible, onClose }) => {
   const ctx = useConcent('schema')
   const contentCtx = useConcent('content')
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const [formValue, setFormValue] = useState<any>()
   const [connectSchema, setConnectSchema] = useState<SchemaV2>()
   const {
@@ -424,7 +424,7 @@ export const DeleteFieldModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const ctx = useConcent('schema')
   const contentCtx = useConcent('content')
   const [loading, setLoading] = useState(false)
