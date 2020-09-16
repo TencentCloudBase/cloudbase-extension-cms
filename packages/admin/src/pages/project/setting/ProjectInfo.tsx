@@ -11,7 +11,7 @@ interface Project {
 }
 
 const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const [modalVisible, setModalVisible] = useState(false)
   const [projectName, setProjectName] = useState('')
 
@@ -74,7 +74,7 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
 }
 
 export default (): React.ReactElement => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const [reload, setReload] = useState(0)
   const [changed, setChanged] = useState(false)
   const { data: project, loading } = useRequest<{ data: Project }>(() => getProject(projectId), {

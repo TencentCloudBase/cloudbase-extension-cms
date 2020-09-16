@@ -17,7 +17,7 @@ export const ContentTable: React.FC<{
 }> = (props) => {
   const { currentSchema } = props
   const ctx = useConcent('content')
-  const { projectId, schemaId } = useParams()
+  const { projectId, schemaId } = useParams<any>()
   const [searchParams, setSearchParams] = useState<any>()
   // 检索的字段
   const [searchFields, setSearchFields] = useState<SchemaFieldV2[]>([])
@@ -81,7 +81,7 @@ export const ContentTable: React.FC<{
         }
       }
     },
-    []
+    [searchParams]
   )
 
   const fieldMenu = (

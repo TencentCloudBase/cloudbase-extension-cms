@@ -9,7 +9,7 @@ import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
 
 const ContentEditor: React.FC = () => {
-  const { schemaId, projectId } = useParams()
+  const { schemaId, projectId } = useParams<any>()
   const ctx = useConcent('content')
   const { selectedContent, contentAction } = ctx.state
   const {

@@ -249,7 +249,7 @@ export const ConnectEditor: React.FC<{
   field: SchemaFieldV2
   onChange?: (v: string) => void
 }> = (props) => {
-  const { projectId } = useParams()
+  const { projectId } = useParams<any>()
   const ctx = useConcent('content')
   const { value, onChange, field } = props
   const { connectField, connectResource, connectMany } = field
