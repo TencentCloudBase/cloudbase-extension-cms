@@ -1,47 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import {
-  Form,
-  Space,
-  Button,
-  Row,
-  Col,
-  Dropdown,
-  Menu,
-  Input,
-  Switch,
-  InputNumber,
-  Select,
-} from 'antd'
-import { FilterTwoTone, DeleteTwoTone } from '@ant-design/icons'
+import React, { useEffect } from 'react'
+import { Form, Space, Button, Row, Col, Input, Switch, InputNumber, Select } from 'antd'
+import { DeleteTwoTone } from '@ant-design/icons'
 import { CustomDatePicker, ConnectEditor } from './FieldComponents'
 
 const { Option } = Select
 
-// 不能设置默认值的类型
-const negativeTypes = ['File', 'Image']
-
 export const ContentTableSearch: React.FC<{
   schema: SchemaV2
+  searchFields: SchemaFieldV2[]
+  setSearchFields: (fields: SchemaFieldV2[]) => void
   onSearch: (v: Record<string, any>) => void
-}> = ({ schema, onSearch }) => {
-  // 检索的字段
-  const [searchFields, setSearchFields] = useState<SchemaFieldV2[]>([])
-
-  const fieldMenu = (
-    <Menu
-      onClick={({ key }) => {
-        const field = schema.fields.find((_) => _.name === key)
-        field && setSearchFields([...searchFields, field])
-      }}
-    >
-      {schema?.fields
-        ?.filter((filed) => !negativeTypes.includes(filed.type))
-        .map((field) => (
-          <Menu.Item key={field.name}>{field.displayName}</Menu.Item>
-        ))}
-    </Menu>
-  )
-
+}> = ({ schema, onSearch, searchFields, setSearchFields }) => {
   const deleteField = (field: SchemaFieldV2) => {
     const index = searchFields.findIndex((_) => _.id === field.id)
     const fields = searchFields.slice(0)
@@ -54,12 +23,7 @@ export const ContentTableSearch: React.FC<{
   }, [schema])
 
   return (
-    <>
-      <Dropdown overlay={fieldMenu}>
-        <Button type="primary">
-          <FilterTwoTone /> 增加检索
-        </Button>
-      </Dropdown>
+    <div>
       {searchFields.length ? (
         <Form
           name="basic"
@@ -98,7 +62,7 @@ export const ContentTableSearch: React.FC<{
           </Row>
         </Form>
       ) : null}
-    </>
+    </div>
   )
 }
 
