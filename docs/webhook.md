@@ -9,15 +9,13 @@
 - Webhook 名称
 - 触发 URL：特定事件发生时回调的 URL 地址
 - 监听内容：指定全部内容集合
-- HTTP 方法：支持 `GET`，`POST`，`UPDATE`，`DELETE`，`PATCH` 等方法
+- HTTP 方法：支持 `GET`，`POST`，`UPDATE`，`DELETE`，`PATCH` 等方法，建议使用 `POST` 方法
 - HTTP Headers：支持配置请求 URL 时的 HTTP Header
 
 ## 触发
 
-Webhook 触发时携带的 Body
+Webhook 触发时携带的 Body，即使你使用了 `GET` 方法，也会发送携带 Body 的请求
 
-- webhookId: Webhook 记录的 Id
-- webhookName: Webhook 的名字
 - collection: 触发事件的数据库集合名
 - action: 触发事件
   - createOne：创建内容
@@ -30,8 +28,6 @@ Webhook 触发时携带的 Body
 
 ```
 {
-  webhookId: '',
-  webhookName: '',
   collection: '',
   action: '',
   actionRes: '',
