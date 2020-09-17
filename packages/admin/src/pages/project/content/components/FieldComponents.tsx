@@ -164,23 +164,24 @@ export const CustomUploader: React.FC<{
       <Dragger
         fileList={fileList}
         listType={type === 'image' ? 'picture' : 'text'}
-        beforeUpload={async (file) => {
+        beforeUpload={(file) => {
           setUploading(true)
           setPercent(0)
           // 上传文件
-          fileUrl = await uploadFile(file, (percent) => {
+          uploadFile(file, (percent) => {
             setPercent(percent)
+          }).then((fileUrl) => {
+            onChange(fileUrl)
+            setFileList([
+              {
+                uid: fileUrl,
+                name: file.name,
+                status: 'done',
+              },
+            ])
+            message.success(`上传${type === 'file' ? '文件' : '图片'}成功`)
           })
-          onChange(fileUrl)
-          setFileList([
-            {
-              uid: fileUrl,
-              name: file.name,
-              status: 'done',
-            },
-          ])
-          message.success(`上传${type === 'file' ? '文件' : '图片'}成功`)
-          return Promise.reject()
+          return false
         }}
       >
         <p className="ant-upload-drag-icon">
@@ -352,7 +353,10 @@ export function getFieldRender(field: SchemaFieldV2) {
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => <Typography.Text>{text}</Typography.Text>
+      ): React.ReactNode | React.ReactNode[] => {
+        const num = typeof record[name] === 'undefined' ? '-' : record[name]
+        return <Typography.Text>{num} </Typography.Text>
+      }
     case 'Url':
       return (
         text: React.ReactNode,
