@@ -38,7 +38,7 @@ const loginOut = async () => {
 }
 
 const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
-  const { refresh, initialState, setInitialState } = useModel('@@initialState')
+  const { initialState, setInitialState } = useModel('@@initialState')
   const { isAdmin } = useAccess()
 
   const onMenuClick = useCallback((event: any) => {
@@ -46,7 +46,6 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
 
     if (key === 'logout') {
       setInitialState({ ...initialState, currentUser: {} })
-      refresh()
       loginOut()
       return
     }
