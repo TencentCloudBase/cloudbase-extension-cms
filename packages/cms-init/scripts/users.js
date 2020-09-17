@@ -59,8 +59,16 @@ async function saveUser({ createTime, username, password, roles, db, config, man
 
   console.log(dbRecord)
 
-  // 用户已存在
+  // 用户已存在，更新账号密码
   if (dbRecord && dbRecord.uuid) {
+    try {
+      await manager.user.modifyEndUser({
+        uuid: dbRecord.uuid,
+        password,
+      })
+    } catch (error) {
+      console.log('更新用户异常', error)
+    }
     return
   }
 
