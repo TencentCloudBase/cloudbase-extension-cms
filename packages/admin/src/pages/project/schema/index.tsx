@@ -16,7 +16,6 @@ import {
   Empty,
   Space,
   Typography,
-  Tooltip,
 } from 'antd'
 import { FieldTypes } from '@/common'
 import { PageContainer } from '@ant-design/pro-layout'

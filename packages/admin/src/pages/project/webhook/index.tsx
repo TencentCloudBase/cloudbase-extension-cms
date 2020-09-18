@@ -237,9 +237,9 @@ export default (): React.ReactNode => {
             ]}
           />
         </TabPane>
-        <TabPane tab="执行日志" key="log">
+        {/* <TabPane tab="执行日志" key="log">
           开发中
-        </TabPane>
+        </TabPane> */}
       </Tabs>
       <WebhookModal
         visible={modalVisible}
