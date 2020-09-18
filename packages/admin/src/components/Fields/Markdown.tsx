@@ -3,9 +3,11 @@ import VditorX from 'vditor'
 import 'vditor/dist/index.css'
 import { isDevEnv } from '@/utils'
 
-const MarkdownEditor: React.FC<{ value?: any; key: string; onChange?: (...args: any) => void }> = (
-  props
-) => {
+export const MarkdownEditor: React.FC<{
+  value?: any
+  key: string
+  onChange?: (...args: any) => void
+}> = (props) => {
   const { value, key = 'default', onChange = (...args: any) => {} } = props
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Form, Space, Button, Row, Col, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
-import { CustomDatePicker, ConnectEditor } from './FieldComponents'
+import { IDatePicker, IConnectEditor } from '@/components/Fields'
 
 const { Option } = Select
 
@@ -106,14 +106,14 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
     case 'Date':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <CustomDatePicker type="Date" />
+          <IDatePicker type="Date" />
         </Form.Item>
       )
       break
     case 'DateTime':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <CustomDatePicker type="DateTime" />
+          <IDatePicker type="DateTime" />
         </Form.Item>
       )
       break
@@ -139,7 +139,7 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
     case 'Connect':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <ConnectEditor field={field} />
+          <IConnectEditor field={field} />
         </Form.Item>
       )
       break
