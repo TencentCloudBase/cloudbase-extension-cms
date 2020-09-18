@@ -44,7 +44,6 @@ export default (): React.ReactElement => {
               type="primary"
               onClick={() => {
                 setUserAction('edit')
-                console.log(item)
                 setSelectedUser(item)
                 setModalVisible(true)
               }}
@@ -163,7 +162,7 @@ const CreateUserModal: React.FC<{
       }
 
       if (action === 'edit') {
-        const diffData = Object.keys(selectedUser)
+        const diffData = Object.keys(data)
           .filter((key) => selectedUser[key] !== data[key])
           .reduce(
             (ret, key) => ({

@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import { useRequest } from 'umi'
 import { getSchemas } from '@/services/schema'
 import { getProjects } from '@/services/project'
-import { Form, Space, Button, Select, Row, Col, message } from 'antd'
-import { PlusOutlined, DeleteTwoTone } from '@ant-design/icons'
+import { Form, Space, Button, Select, Row, Col, message, Typography, Skeleton } from 'antd'
+import { PlusOutlined, DeleteTwoTone, QuestionCircleTwoTone } from '@ant-design/icons'
 import { getWebhooks } from '@/services/webhook'
+
+const { Text } = Typography
 
 const RolePermission: React.FC<{
   creating: boolean
@@ -20,6 +22,10 @@ const RolePermission: React.FC<{
   const { data: projects = [], loading: projectLoading } = useRequest(() => getProjects(), {
     cacheKey: 'setting-role-project',
   })
+
+  if (projectLoading) {
+    return <Skeleton active />
+  }
 
   return (
     <Form
@@ -47,13 +53,24 @@ const RolePermission: React.FC<{
             setPermissionType(v)
           }}
         >
-          <Select.Option disabled value="system">
+          {/* <Select.Option disabled value="system">
             系统权限 - 暂不支持
-          </Select.Option>
+          </Select.Option> */}
           <Select.Option value="project">项目权限</Select.Option>
         </Select>
       </Form.Item>
-      <Form.Item label="权限规则" required>
+      <Form.Item
+        required
+        label={
+          <>
+            <Text>权限规则</Text>
+            <Text type="secondary">（四元素：项目 - 操作 - 服务 - 资源）</Text>
+            <a href="https://docs.cloudbase.net/cms/permission.html" target="_blank">
+              <QuestionCircleTwoTone />
+            </a>
+          </>
+        }
+      >
         <Form.List name="permissions">
           {(fields, { add, remove }) => {
             return (

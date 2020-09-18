@@ -123,7 +123,7 @@ const errorHandler = async (error: ResponseError) => {
     notification.error({
       message: data.error.code,
       description: <Typography.Text>{`${message}`}</Typography.Text>,
-      duration: 0,
+      duration: 5000,
     })
   }
 

@@ -39,7 +39,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
       if (httpRes?.statusCode) {
         error.code = httpRes.statusCode.toString()
-        error.message = httpRes.error || httpRes.message
+        error.message = `[${httpRes.error}] ${httpRes.message}`
       } else if (httpRes?.error) {
         error = httpRes.error
       } else {
