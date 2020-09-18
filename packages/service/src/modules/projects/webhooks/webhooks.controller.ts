@@ -69,6 +69,12 @@ export class WebhooksController {
 
     checkAccessAndGetResource(projectId, req, webhookId)
 
+    // 添加过滤条件
+    options.filter = {
+      ...options.filter,
+      projectId,
+    }
+
     return this.contentsService[action](CollectionV2.Webhooks, options as any)
   }
 }

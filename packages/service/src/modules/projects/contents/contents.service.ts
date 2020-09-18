@@ -57,13 +57,19 @@ export class ContentsService {
       }
     }
 
-    // 过滤
     if (filter && schema) {
       const conditions = this.handleFuzzySearch(filter, schema)
       where = {
         ...where,
         ...conditions,
       }
+    } else if (filter && !_.isEmpty(filter)) {
+      // 过滤，精确匹配，适用  webhooks 搜索
+      Object.keys(filter)
+        .filter((key) => typeof filter[key] !== 'undefined' && filter[key] !== null)
+        .forEach((key) => {
+          where[key] = filter[key]
+        })
     }
 
     console.log('where', where)
@@ -130,7 +136,7 @@ export class ContentsService {
     const { filter, payload } = options
     const collection = this.cloudbaseService.collection(resource)
 
-    if (!filter._id) {
+    if (!filter?._id) {
       throw new BadRequestException('Id 不存在，更新失败！')
     }
 
@@ -161,14 +167,19 @@ export class ContentsService {
 
       updateData = _.mapValues(updateData, (value, key) => {
         const field = schema.fields.find((item) => item.name === key)
-        // Connect 转换成 id 存储
-        if (field?.type === 'Connect') {
-          if (Array.isArray(value)) {
+
+        // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
+        if (field?.type === 'Connect' && value) {
+          // 多关联
+          if (Array.isArray(value) && typeof value?.[0] === 'object') {
             return value.map((_) => _._id)
-          } else {
+          }
+          // 单关联
+          if (!Array.isArray(value) && typeof value === 'object') {
             return value._id
           }
         }
+
         return value
       })
     }
@@ -259,6 +270,9 @@ export class ContentsService {
     return this.cloudbaseService.collection(collection)
   }
 
+  /**
+   * 处理字段搜索
+   */
   private handleFuzzySearch(fuzzyFilter: Record<string, any>, schema: SchemaV2) {
     const { db } = this.cloudbaseService
     const $ = db.command
