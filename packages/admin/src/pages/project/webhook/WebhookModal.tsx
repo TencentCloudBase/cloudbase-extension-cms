@@ -162,7 +162,6 @@ export const WebhookModal: React.FC<{
 
         <Form.Item label="HTTP 方法" name="method">
           <Select>
-            <Select.Option value="GET">GET</Select.Option>
             <Select.Option value="POST">POST</Select.Option>
             <Select.Option value="UPDATE">UPDATE</Select.Option>
             <Select.Option value="DELETE">DELETE</Select.Option>
