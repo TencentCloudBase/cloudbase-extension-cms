@@ -14,28 +14,11 @@ import {
 import _ from 'lodash'
 import { PermissionGuard } from '@/guards'
 import { CollectionV2 } from '@/constants'
-import { IsNotEmpty } from 'class-validator'
 import { dateToNumber } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { RecordExistException, RecordNotExistException, UnauthorizedOperation } from '@/common'
 import { UserService } from './user.service'
-
-class User {
-  @IsNotEmpty()
-  username: string
-
-  @IsNotEmpty()
-  password: string
-
-  @IsNotEmpty()
-  roles: string[]
-
-  // 创建时间
-  createTime: number
-
-  // 登陆失败次数
-  failedLogins?: Record<string, number>[]
-}
+import { User } from './user.dto'
 
 @UseGuards(PermissionGuard('user', ['administrator']))
 @Controller('user')
@@ -122,7 +105,9 @@ export class UserController {
 
     // 不存储密码
     const user = _.omit(payload, ['password'])
-    return query.update(user)
+
+    // 不能更新空对象
+    return _.isEmpty(user) ? {} : query.update(user)
   }
 
   @Delete(':id')

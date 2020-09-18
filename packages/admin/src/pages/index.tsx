@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { PlusSquareTwoTone, BellOutlined, MessageTwoTone } from '@ant-design/icons'
+import { PlusSquareTwoTone, BellOutlined, MessageOutlined } from '@ant-design/icons'
 import {
   Card,
   Row,
@@ -135,7 +135,7 @@ const ContentWrapper: React.FC<{ loading: boolean }> = ({ children, loading }) =
             type="primary"
             shape="circle"
             className="help-btn"
-            icon={<MessageTwoTone />}
+            icon={<MessageOutlined />}
           />
         </Popover>
       )}

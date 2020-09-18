@@ -1,45 +1,11 @@
 import _ from 'lodash'
-import { IsNotEmpty } from 'class-validator'
+
 import { Controller, Get, Post, Delete, Body, Query, Param, UseGuards, Patch } from '@nestjs/common'
 import { CollectionV2, SystemUserRoles } from '@/constants'
 import { RecordExistException, RecordNotExistException } from '@/common'
 import { CloudBaseService } from '@/services'
 import { PermissionGuard } from '@/guards'
-
-class UserRole {
-  // 角色名
-  @IsNotEmpty()
-  roleName: string
-
-  // 角色描述
-  @IsNotEmpty()
-  description: string
-
-  // 角色绑定的权限描述
-  @IsNotEmpty()
-  permissions: Permission[]
-}
-
-class Permission {
-  // 项目
-  @IsNotEmpty()
-  projectId: '*' | string
-
-  // 行为
-  @IsNotEmpty()
-  action: string[] | ['*']
-
-  // TODO: 允许访问/拒绝访问
-  effect: 'allow' | 'deny'
-
-  // 服务
-  @IsNotEmpty()
-  service: string | '*'
-
-  // 具体资源
-  @IsNotEmpty()
-  resource: string[] | ['*']
-}
+import { UserRole } from './role.dto'
 
 @UseGuards(PermissionGuard('role', ['administrator']))
 @Controller('roles')
@@ -112,6 +78,19 @@ export class RoleController {
 
   @Delete(':id')
   async deleteUserRole(@Param('id') id: string) {
+    // 检查是否有用户绑定了此角色
+    const $ = this.cloudbaseService.db.command
+    const {
+      data: [bindUser],
+    } = await this.collection(CollectionV2.Users)
+      .where({
+        roles: $.elemMatch($.eq(id)),
+      })
+      .get()
+    if (bindUser) {
+      throw new RecordExistException('存在用户绑定了此角色，无法删除此角色。请解绑用户角色后再操作')
+    }
+
     return this.collection().doc(id).remove()
   }
 
