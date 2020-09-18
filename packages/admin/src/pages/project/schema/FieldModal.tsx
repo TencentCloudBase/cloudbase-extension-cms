@@ -18,6 +18,7 @@ import {
   Alert,
 } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { getFieldDefaultValueInput } from './Field'
 
 const { TextArea } = Input
 const { Option } = Select
@@ -28,6 +29,9 @@ const negativeTypes = ['File', 'Image', 'Array', 'Connect']
 // 保留字段名
 const ReservedFieldNames = ['_id', '_createTime', '_updateTime', '_status']
 
+/**
+ * 添加字段
+ */
 export const CreateFieldModal: React.FC<{
   visible: boolean
   onClose: () => void
@@ -185,7 +189,7 @@ export const CreateFieldModal: React.FC<{
         )}
 
         <Form.Item label="描述" name="description">
-          <TextArea placeholder="模型描述，如博客文章标题" />
+          <TextArea placeholder="字段描述，如博客文章标题" />
         </Form.Item>
 
         {selectedField?.type === 'Connect' && (
@@ -247,7 +251,7 @@ export const CreateFieldModal: React.FC<{
 
         {negativeTypes.includes(selectedField?.type) ? null : (
           <Form.Item label="默认值" name="defaultValue">
-            <Input placeholder="此值的默认值" />
+            {getFieldDefaultValueInput(selectedField?.type)}
           </Form.Item>
         )}
 
@@ -291,7 +295,6 @@ export const CreateFieldModal: React.FC<{
                 return (
                   <div>
                     {fields?.map((field, index) => {
-                      console.log(field)
                       return (
                         <Form.Item key={index}>
                           <Form.Item
@@ -347,12 +350,11 @@ export const CreateFieldModal: React.FC<{
 
         <Form.Item>
           <div className="form-item">
-            <Form.Item name="isRequired" valuePropName="checked" style={{ marginBottom: 0 }}>
-              <Switch />
-            </Form.Item>
             <Form.Item style={{ marginBottom: 0 }}>
               <Typography.Text>是否必需</Typography.Text>
-              <br />
+              <Form.Item name="isRequired" valuePropName="checked" style={{ marginBottom: 0 }}>
+                <Switch />
+              </Form.Item>
               <Typography.Text type="secondary">在创建内容时，此此段是必需要填写的</Typography.Text>
             </Form.Item>
           </div>
@@ -360,12 +362,11 @@ export const CreateFieldModal: React.FC<{
 
         <Form.Item>
           <div className="form-item">
-            <Form.Item name="isHidden" valuePropName="checked" style={{ marginBottom: 0 }}>
-              <Switch />
-            </Form.Item>
             <Form.Item style={{ marginBottom: 0 }}>
               <Typography.Text>是否隐藏</Typography.Text>
-              <br />
+              <Form.Item name="isHidden" valuePropName="checked" style={{ marginBottom: 0 }}>
+                <Switch />
+              </Form.Item>
               <Typography.Text type="secondary">在展示内容时隐藏该字段</Typography.Text>
             </Form.Item>
           </div>
@@ -373,30 +374,29 @@ export const CreateFieldModal: React.FC<{
 
         <Form.Item>
           <div className="form-item">
-            <Row align="middle">
-              <Col flex="1 1 auto">
-                <Form.Item noStyle name="isOrderField" valuePropName="checked">
-                  <Switch />
-                </Form.Item>
-              </Col>
-              <Col flex="0 0 auto">
-                {formValue?.isOrderField && (
-                  <Form.Item noStyle name="orderDirection">
-                    <Select style={{ width: '200px' }} placeholder="选择排序规则">
-                      <Select.Option key="desc" value="desc">
-                        降序（越大越靠前）
-                      </Select.Option>
-                      <Select.Option key="asc" value="asc">
-                        升序（越小越靠前）
-                      </Select.Option>
-                    </Select>
-                  </Form.Item>
-                )}
-              </Col>
-            </Row>
             <Form.Item style={{ marginBottom: 0 }}>
               <Typography.Text>设为排序字段</Typography.Text>
-              <br />
+              <Row align="middle">
+                <Col flex="1 1 auto">
+                  <Form.Item noStyle name="isOrderField" valuePropName="checked">
+                    <Switch />
+                  </Form.Item>
+                </Col>
+                <Col flex="0 0 auto">
+                  {formValue?.isOrderField && (
+                    <Form.Item noStyle name="orderDirection">
+                      <Select style={{ width: '200px' }} placeholder="选择排序规则">
+                        <Select.Option key="desc" value="desc">
+                          降序（越大越靠前）
+                        </Select.Option>
+                        <Select.Option key="asc" value="asc">
+                          升序（越小越靠前）
+                        </Select.Option>
+                      </Select>
+                    </Form.Item>
+                  )}
+                </Col>
+              </Row>
               <Typography.Text type="secondary">获取内容时根据此字段排序</Typography.Text>
             </Form.Item>
           </div>
@@ -420,6 +420,9 @@ export const CreateFieldModal: React.FC<{
   )
 }
 
+/**
+ * 删除字段
+ */
 export const DeleteFieldModal: React.FC<{
   visible: boolean
   onClose: () => void
@@ -473,13 +476,4 @@ export const DeleteFieldModal: React.FC<{
       确认删除【{selectedField.displayName}（{selectedField?.name}）】字段吗？
     </Modal>
   )
-}
-
-export const getDefaultValueInput = (type: string) => {
-  switch (type) {
-    case 'Number':
-      return <InputNumber placeholder="此值的默认值" />
-    default:
-      return <Input placeholder="此值的默认值" />
-  }
 }

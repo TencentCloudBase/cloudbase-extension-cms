@@ -9,7 +9,7 @@ const TypeWidthMap = {
   Number: 120,
   Boolean: 100,
   DateTime: 150,
-  File: 150,
+  File: 200,
   Image: 200,
   RichText: 150,
   Markdown: 150,

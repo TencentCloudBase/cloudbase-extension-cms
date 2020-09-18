@@ -73,33 +73,31 @@ export const CustomUploader: React.FC<{
         <Dragger
           fileList={fileList}
           listType="picture"
-          beforeUpload={async (file) => {
+          beforeUpload={(file) => {
             setUploading(true)
             setPercent(0)
-            // 上传文件
-            let fileId
-            try {
-              fileId = await uploadFile(file, (percent) => {
-                setPercent(percent)
-              })
-            } catch (error) {
-              console.log(error)
-              message.error(`上传文件失败：${error.message}`)
-              return
-            }
-            const url = await getTempFileURL(fileId)
 
-            onChange(url)
-            setFileList([
-              {
-                uid: fileId,
-                name: file.name,
-                status: 'done',
-              },
-            ])
-            message.success(`上传图片成功`)
-            setVisible(false)
-            return Promise.reject()
+            uploadFileAndGetUrl(file, (percent) => {
+              setPercent(percent)
+            })
+              .then(({ url, fileId }) => {
+                onChange(url)
+                setFileList([
+                  {
+                    uid: fileId,
+                    name: file.name,
+                    status: 'done',
+                  },
+                ])
+                message.success(`上传图片成功`)
+                setVisible(false)
+              })
+              .catch((e) => {
+                console.log(e)
+                message.error(`上传文件失败：${e.message}`)
+              })
+
+            return false
           }}
         >
           <p className="ant-upload-drag-icon">
@@ -111,6 +109,18 @@ export const CustomUploader: React.FC<{
       </Modal>
     </>
   )
+}
+
+const uploadFileAndGetUrl = async (file: File, setPercent: (percent: number) => void) => {
+  const fileId = await uploadFile(file, (percent) => {
+    setPercent(percent)
+  })
+
+  const url = await getTempFileURL(fileId)
+  return {
+    url,
+    fileId,
+  }
 }
 
 export default RichText
