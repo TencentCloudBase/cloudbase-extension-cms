@@ -11,6 +11,7 @@ export const ContentTableSearch: React.FC<{
   setSearchFields: (fields: SchemaFieldV2[]) => void
   onSearch: (v: Record<string, any>) => void
 }> = ({ schema, onSearch, searchFields, setSearchFields }) => {
+  // 删除字段
   const deleteField = (field: SchemaFieldV2) => {
     const index = searchFields.findIndex((_) => _.id === field.id)
     const fields = searchFields.slice(0)
