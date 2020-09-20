@@ -87,6 +87,7 @@ export const IConnectEditor: React.FC<{
       value={value?._id}
       onChange={onChange}
       mode={connectMany ? 'multiple' : undefined}
+      style={{ width: '200px' }}
     >
       {loading ? (
         <Option value={value?._id}>加载中</Option>

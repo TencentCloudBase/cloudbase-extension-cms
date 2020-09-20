@@ -447,19 +447,20 @@ export const DeleteFieldModal: React.FC<{
       }}
       onOk={async () => {
         setLoading(true)
-
-        const fields = currentSchema.fields || []
+        const fields: any[] = (currentSchema.fields || []).slice()
         const index = fields.findIndex(
           (_: any) => _.id === selectedField.id || _.name === selectedField.name
         )
+
+        if (index > -1) {
+          fields.splice(index, 1)
+        }
 
         try {
           await updateSchema(projectId, currentSchema?._id, {
             fields,
           })
-          if (index > -1) {
-            fields.splice(index, 1)
-          }
+          currentSchema.fields.splice(index, 1)
           message.success('删除字段成功')
           ctx.dispatch('getSchemas', projectId)
           contentCtx.dispatch('getContentSchemas', projectId)
