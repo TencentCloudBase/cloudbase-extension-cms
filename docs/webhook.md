@@ -9,7 +9,7 @@
 - Webhook 名称
 - 触发 URL：特定事件发生时回调的 URL 地址
 - 监听内容：指定全部内容集合
-- HTTP 方法：支持 `GET`，`POST`，`UPDATE`，`DELETE`，`PATCH` 等方法，建议使用 `POST` 方法
+- HTTP 方法：支持 `POST`，`UPDATE`，`DELETE`，`PATCH` 等方法，建议使用 `POST` 方法
 - HTTP Headers：支持配置请求 URL 时的 HTTP Header
 
 ## 触发
