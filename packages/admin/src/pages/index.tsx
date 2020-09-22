@@ -19,6 +19,7 @@ import {
   Switch,
   Timeline,
   Popover,
+  Empty,
 } from 'antd'
 import moment from 'moment'
 import { useConcent } from 'concent'
@@ -41,47 +42,53 @@ export default (): React.ReactNode => {
   const { isAdmin } = useAccess()
 
   return (
-    <ContentWrapper loading={loading}>
+    <HomePage loading={loading}>
       <Row gutter={[24, 40]}>
         <Col>
           <Typography.Title level={3}>我的项目</Typography.Title>
         </Col>
       </Row>
-      <Row gutter={[36, 36]}>
-        {data.map((project: any, index: any) => (
-          <Col flex="0 0 224px" key={index}>
-            <Card
-              hoverable
-              onClick={() => {
-                ctx.setState({
-                  currentProject: project,
-                })
-                history.push(`/${project._id}/home`)
-              }}
-            >
-              <div
-                className="project"
+      {data?.length ? (
+        <Row gutter={[36, 36]}>
+          {data.map((project: any, index: any) => (
+            <Col flex="0 0 224px" key={index}>
+              <Card
+                hoverable
                 onClick={() => {
-                  history.push('/home')
+                  ctx.setState({
+                    currentProject: project,
+                  })
+                  history.push(`/${project._id}/home`)
                 }}
               >
-                <div className="project-logo">{project.name.slice(0, 2)}</div>
-                <Tooltip title={project.name}>
-                  <Typography.Title ellipsis level={4} className="project-title">
-                    {project.name}
-                  </Typography.Title>
-                </Tooltip>
-              </div>
-            </Card>
-          </Col>
-        ))}
-      </Row>
+                <div
+                  className="project"
+                  onClick={() => {
+                    history.push('/home')
+                  }}
+                >
+                  <div className="project-logo">{project.name.slice(0, 2)}</div>
+                  <Tooltip title={project.name}>
+                    <Typography.Title ellipsis level={4} className="project-title">
+                      {project.name}
+                    </Typography.Title>
+                  </Tooltip>
+                </div>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      ) : (
+        <div className="empty-tip">
+          <Empty description="项目为空，请先创建项目后再操作" />
+        </div>
+      )}
       {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
-    </ContentWrapper>
+    </HomePage>
   )
 }
 
-const ContentWrapper: React.FC<{ loading: boolean }> = ({ children, loading }) => {
+const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
   return (
     <Layout className="home">
       <Header className="header">

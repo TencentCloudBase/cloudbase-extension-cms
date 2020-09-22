@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Form, Space, Button, Row, Col, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
@@ -8,9 +8,10 @@ const { Option } = Select
 export const ContentTableSearch: React.FC<{
   schema: SchemaV2
   searchFields: SchemaFieldV2[]
-  setSearchFields: (fields: SchemaFieldV2[]) => void
+  searchValues: any
   onSearch: (v: Record<string, any>) => void
-}> = ({ schema, onSearch, searchFields, setSearchFields }) => {
+  setSearchFields: (fields: SchemaFieldV2[]) => void
+}> = ({ schema, onSearch, searchFields, searchValues = {}, setSearchFields }) => {
   // 删除字段
   const deleteField = (field: SchemaFieldV2) => {
     const index = searchFields.findIndex((_) => _.id === field.id)
@@ -19,17 +20,13 @@ export const ContentTableSearch: React.FC<{
     setSearchFields(fields)
   }
 
-  useEffect(() => {
-    setSearchFields([])
-  }, [schema])
-
   return (
     <div>
       {searchFields.length ? (
         <Form
           name="basic"
           layout="inline"
-          initialValues={{}}
+          initialValues={searchValues}
           onFinish={(v: any) => onSearch(v)}
           style={{ marginTop: '15px' }}
         >

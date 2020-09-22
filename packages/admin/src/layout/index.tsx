@@ -58,24 +58,6 @@ const layoutProps: BasicLayoutProps = {
   disableContentMargin: true,
   rightContentRender: () => <RightContent />,
   headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
-  menuItemRender: (menuItemProps, defaultDom) => {
-    const match = matchPath<{ projectId?: string }>(history.location.pathname, {
-      path: '/:projectId/*',
-      exact: true,
-      strict: false,
-    })
-    const { projectId = '' } = match?.params || {}
-
-    if (menuItemProps.isUrl || menuItemProps.children) {
-      return defaultDom
-    }
-
-    if (menuItemProps.path) {
-      return <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link>
-    }
-
-    return defaultDom
-  },
   // 面包屑渲染
   itemRender: () => null,
   ...defaultSettings,
@@ -135,6 +117,39 @@ const Layout: React.FC<any> = (props) => {
       menuDataRender={(menuData: MenuDataItem[]) => {
         customMenuDate[2].children = contentChildMenus
         return customMenuDate.filter((_) => access[_.authority as string])
+      }}
+      menuItemRender={(menuItemProps, defaultDom) => {
+        const match = matchPath<{ projectId?: string }>(history.location.pathname, {
+          path: '/:projectId/*',
+          exact: true,
+          strict: false,
+        })
+
+        // 项目 Id
+        const { projectId = '' } = match?.params || {}
+
+        if (menuItemProps.isUrl || menuItemProps.children) {
+          return defaultDom
+        }
+
+        if (menuItemProps.path) {
+          return (
+            <Link
+              to={menuItemProps.path.replace(':projectId', projectId)}
+              onClick={() => {
+                // 清空搜索数据
+                ctx.setState({
+                  searchFields: [],
+                  searchParams: {},
+                })
+              }}
+            >
+              {defaultDom}
+            </Link>
+          )
+        }
+
+        return defaultDom
       }}
       {...layoutProps}
     >
