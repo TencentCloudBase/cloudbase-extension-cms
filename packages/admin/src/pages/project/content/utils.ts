@@ -29,3 +29,28 @@ export const formatSearchData = (schema: SchemaV2, params: Record<string, any>) 
     }
   }, {})
 }
+
+export const calculateFieldWidth = (field: SchemaFieldV2) => {
+  const TypeWidthMap = {
+    String: 150,
+    MultiLineString: 150,
+    Number: 120,
+    Boolean: 100,
+    DateTime: 150,
+    File: 200,
+    Image: 200,
+    RichText: 150,
+    Markdown: 150,
+  }
+
+  const { displayName, type } = field
+  // 计算列宽度
+  const nameWidth = displayName.length * 25
+  let width
+  if (TypeWidthMap[type]) {
+    width = nameWidth > TypeWidthMap[type] ? nameWidth : TypeWidthMap[type]
+  } else {
+    width = nameWidth > 150 ? nameWidth : 150
+  }
+  return width
+}

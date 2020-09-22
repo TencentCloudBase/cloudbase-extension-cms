@@ -24,6 +24,7 @@ import {
   IUploader,
 } from '@/components/Fields'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { calculateFieldWidth } from '../utils'
 
 const MarkdownEditor = React.lazy(() => import('@/components/Fields/Markdown'))
 const RichTextEditor = React.lazy(() => import('@/components/Fields/RichText'))
@@ -48,6 +49,7 @@ const LazyRichTextEditor: React.FC = (props: any) => (
  */
 export function getFieldRender(field: SchemaFieldV2) {
   const { name, type } = field
+  const width = calculateFieldWidth(field)
 
   switch (type) {
     case 'String':
@@ -56,7 +58,11 @@ export function getFieldRender(field: SchemaFieldV2) {
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => text
+      ): React.ReactNode | React.ReactNode[] => (
+        <Typography.Text ellipsis style={{ width }}>
+          {text}
+        </Typography.Text>
+      )
     case 'Text':
     case 'MultiLineString':
       return (
@@ -65,7 +71,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width: '120px' }}>
+        <Typography.Text ellipsis style={{ width }}>
           {text}
         </Typography.Text>
       )
@@ -160,7 +166,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width: '200px' }}>
+        <Typography.Text ellipsis style={{ width }}>
           {text}
         </Typography.Text>
       )
@@ -172,7 +178,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width: '200px' }}>
+        <Typography.Text ellipsis style={{ width }}>
           {text}
         </Typography.Text>
       )

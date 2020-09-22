@@ -4,7 +4,7 @@ import ProList from '@ant-design/pro-list'
 import { Skeleton, Button, Tag, Space, Typography, message, Modal, Form, Input, Select } from 'antd'
 
 import { getUsers, createUser, deleteUser, updateUser } from '@/services/user'
-import { EyeTwoTone, EyeInvisibleOutlined } from '@ant-design/icons'
+import { EyeTwoTone, PlusOutlined, EyeInvisibleOutlined } from '@ant-design/icons'
 import { getUserRoles } from '@/services/role'
 
 export default (): React.ReactElement => {
@@ -29,8 +29,8 @@ export default (): React.ReactElement => {
     <>
       <ProList<string>
         actions={[
-          <Button key="new" size="small" type="primary" onClick={() => setModalVisible(true)}>
-            新建
+          <Button key="new" type="primary" onClick={() => setModalVisible(true)}>
+            <PlusOutlined /> 新建
           </Button>,
         ]}
         rowKey="id"
@@ -42,6 +42,7 @@ export default (): React.ReactElement => {
               size="small"
               key="edit"
               type="primary"
+              disabled={item?.root}
               onClick={() => {
                 setUserAction('edit')
                 setSelectedUser(item)
@@ -55,6 +56,7 @@ export default (): React.ReactElement => {
               size="small"
               key="delete"
               type="primary"
+              disabled={item?.root}
               onClick={() => {
                 Modal.confirm({
                   title: `确认删除用户 ${item.username} ？`,
