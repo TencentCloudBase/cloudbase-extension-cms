@@ -4,6 +4,7 @@ import ProList from '@ant-design/pro-list'
 import { getUserRoles, deleteUserRole } from '@/services/role'
 import { Button, Tag, Modal, Skeleton, Typography } from 'antd'
 import { useConcent } from 'concent'
+import { PlusOutlined } from '@ant-design/icons'
 
 export default (): React.ReactElement => {
   const [reload, setReload] = useState(0)
@@ -22,7 +23,6 @@ export default (): React.ReactElement => {
       actions={[
         <Button
           key="new"
-          size="small"
           type="primary"
           onClick={() => {
             ctx.setState({
@@ -32,6 +32,7 @@ export default (): React.ReactElement => {
             history.push('/settings/role/edit')
           }}
         >
+          <PlusOutlined />
           新建
         </Button>,
       ]}

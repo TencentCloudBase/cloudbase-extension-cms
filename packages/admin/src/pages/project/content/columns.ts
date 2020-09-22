@@ -1,5 +1,6 @@
 import { ProColumns } from '@ant-design/pro-table'
 import { getFieldRender } from './components'
+import { calculateFieldWidth } from './utils'
 
 type DateTime = 'dateTime' | 'date' | 'textarea'
 
@@ -28,14 +29,8 @@ export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
 
       const render = getFieldRender(field)
 
-      // 计算列宽度
-      const nameWidth = displayName.length * 25
-      let width
-      if (TypeWidthMap[type]) {
-        width = nameWidth > TypeWidthMap[type] ? nameWidth : TypeWidthMap[type]
-      } else {
-        width = nameWidth > 150 ? nameWidth : 150
-      }
+      // 计算列宽度，略大于计算宽度
+      const width = calculateFieldWidth(field) + 10
 
       // 不支持搜索的字段类型
       const hideInSearch = hideInSearchType.includes(type) || isHidden
