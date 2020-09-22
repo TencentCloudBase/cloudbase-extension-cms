@@ -142,6 +142,7 @@ const config: IConfig = {
   theme: {
     // ...darkTheme,
     'primary-color': defaultSettings.primaryColor,
+    'border-radius-base': '3px',
   },
   // @ts-ignore
   title: false,

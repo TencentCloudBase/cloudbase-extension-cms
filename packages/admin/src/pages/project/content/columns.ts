@@ -4,20 +4,11 @@ import { calculateFieldWidth } from './utils'
 
 type DateTime = 'dateTime' | 'date' | 'textarea'
 
-const TypeWidthMap = {
-  String: 150,
-  MultiLineString: 150,
-  Number: 120,
-  Boolean: 100,
-  DateTime: 150,
-  File: 200,
-  Image: 200,
-  RichText: 150,
-  Markdown: 150,
-}
-
 const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
 
+/**
+ * 获取表格 column 渲染配置
+ */
 export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
   const columns: ProColumns[] = fields
     ?.filter((_) => _)

@@ -12,8 +12,8 @@
     "lint:fix": "eslint --fix --cache --ext .ts,.tsx --format=pretty ./packages",
     "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto",
     "predeploy:fn": "lerna run build",
-    "deploy:fn": "tcb framework deploy --verbose",
-    "postdeploy:fn": "tcb functions invoke cms-init",
+    "deploy:fn": "tcb framework deploy",
+    "postdeploy:fn": "tcb fn invoke cms-init",
     "preext:zip": "rm -rf build && mkdir build && npm run build",
     "ext:zip": "bash ./scripts/zip.sh"
   },

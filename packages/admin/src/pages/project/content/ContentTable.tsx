@@ -2,7 +2,7 @@ import { useParams, history } from 'umi'
 import { useConcent } from 'concent'
 import ProTable from '@ant-design/pro-table'
 import { Button, Modal, message, Space, Row, Col, Dropdown, Menu } from 'antd'
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useRef, useCallback } from 'react'
 import { PlusOutlined, DeleteOutlined, FilterOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { getTableColumns } from './columns'
@@ -12,15 +12,19 @@ import './index.less'
 // 不能支持搜索的类型
 const negativeTypes = ['File', 'Image']
 
+/**
+ * 内容展示表格
+ */
 export const ContentTable: React.FC<{
   currentSchema: SchemaV2
 }> = (props) => {
   const { currentSchema } = props
   const ctx = useConcent('content')
   const { projectId, schemaId } = useParams<any>()
-  const [searchParams, setSearchParams] = useState<any>()
+
   // 检索的字段
-  const [searchFields, setSearchFields] = useState<SchemaFieldV2[]>([])
+  const { searchFields, searchParams } = ctx.state
+  const setSearchFields = (fields: any[]) => ctx.dispatch('setSearchFields', fields)
 
   // table 引用
   const tableRef = useRef<{
@@ -104,9 +108,12 @@ export const ContentTable: React.FC<{
       <ContentTableSearch
         schema={currentSchema}
         searchFields={searchFields}
+        searchValues={searchParams}
         setSearchFields={setSearchFields}
         onSearch={(params) => {
-          setSearchParams(params)
+          ctx.setState({
+            searchParams: params,
+          })
           tableRef?.current?.reload(true)
         }}
       />
