@@ -91,7 +91,7 @@ npm install && npm run setup
 在项目根目录下运行下面的命令，会将 CloudBase CMS 的管理控制台部署到静态网站，Node 服务部署到云函数中
 
 ```
-npm run deploy:fn
+npm run deploy
 ```
 
 ## 本地开发
