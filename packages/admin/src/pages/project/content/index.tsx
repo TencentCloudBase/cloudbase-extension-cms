@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { ContentTable } from './ContentTable'
 import './index.less'
 
-type Ctx = CtxM<{}, 'content'> // 属于content模块的实例上下文类型
+type Ctx = CtxM<{}, 'content'> // 属于 content 模块的实例上下文类型
 
 export default (): React.ReactNode => {
   const { schemaId, projectId } = useParams<any>()
@@ -36,7 +36,7 @@ export default (): React.ReactNode => {
         // 渲染内容描述
         <div
           dangerouslySetInnerHTML={{
-            __html: currentSchema?.description,
+            __html: currentSchema?.description || '',
           }}
         />
       }

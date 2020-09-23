@@ -2,6 +2,7 @@ import React from 'react'
 import { Form, Space, Button, Row, Col, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
+import { calculateFieldWidth } from '../utils'
 
 const { Option } = Select
 
@@ -69,6 +70,7 @@ export const ContentTableSearch: React.FC<{
  */
 export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
   const { name, type, min, max, displayName, enumElements } = field
+  const width = calculateFieldWidth(field)
 
   let FormItem
 
@@ -81,8 +83,8 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
     case 'RichText':
     case 'MultiLineString':
       FormItem = (
-        <Form.Item key={key} name={name} label={displayName} style={{ minWidth: '100px' }}>
-          <Input type="text" />
+        <Form.Item key={key} name={name} label={displayName}>
+          <Input type="text" style={{ width }} />
         </Form.Item>
       )
       break
@@ -96,7 +98,7 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
     case 'Number':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <InputNumber min={min} max={max} />
+          <InputNumber min={min} max={max} style={{ width }} />
         </Form.Item>
       )
       break
@@ -118,7 +120,7 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
     case 'Enum':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <Select mode="multiple" style={{ minWidth: '100px' }}>
+          <Select mode="multiple" style={{ width }}>
             {enumElements?.length ? (
               enumElements?.map((ele, index) => (
                 <Option value={ele.value} key={index}>
@@ -144,14 +146,14 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
     case 'Array':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <Input placeholder="目前只支持单个值搜索" />
+          <Input placeholder="目前只支持单个值搜索" style={{ width }} />
         </Form.Item>
       )
       break
     default:
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <Input />
+          <Input style={{ width }} />
         </Form.Item>
       )
   }

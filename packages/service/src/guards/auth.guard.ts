@@ -56,16 +56,24 @@ export class GlobalAuthGuard implements CanActivate {
 
     // 未登录用户
     if (!userInfo?.username) {
-      request.cmsUser = {
-        _id: 'test',
-        roles: ['public'],
-        username: '_anonymous',
-        createTime: 2020,
-        isAdmin: false,
-        uuid: '',
-      }
+      throw new HttpException(
+        {
+          code: 'NO_AUTH',
+          message: '未登录用户',
+        },
+        HttpStatus.FORBIDDEN
+      )
 
-      return true
+      // request.cmsUser = {
+      //   _id: 'restful',
+      //   roles: ['public'],
+      //   username: '_anonymous',
+      //   createTime: 2020,
+      //   isAdmin: false,
+      //   uuid: '',
+      // }
+
+      // return true
     }
 
     const {

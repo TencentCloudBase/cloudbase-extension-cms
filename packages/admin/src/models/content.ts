@@ -1,17 +1,28 @@
 import { IActionCtx } from 'concent'
 import { getContentSchemas } from '@/services/content'
 
+interface ContentState {
+  schemas: SchemaV2[]
+  loading: boolean
+  contentAction: 'create' | 'edit'
+  selectedContent: any
+  searchFields: any[]
+  searchParams: any
+}
+
+const state: ContentState = {
+  schemas: [],
+  loading: false,
+  // create 或 edit
+  contentAction: 'create',
+  selectedContent: {},
+  // 保存搜索条件
+  searchFields: [],
+  searchParams: {},
+}
+
 export default {
-  state: {
-    schemas: [],
-    loading: false,
-    // create 或 edit
-    contentAction: 'create',
-    selectedContent: {},
-    // 保存搜索条件
-    searchFields: [],
-    searchParams: {},
-  },
+  state,
   reducer: {
     setSearchFields(fields: []) {
       return {

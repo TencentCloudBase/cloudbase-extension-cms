@@ -34,7 +34,7 @@ export const calculateFieldWidth = (field: SchemaFieldV2) => {
   const TypeWidthMap = {
     String: 150,
     MultiLineString: 150,
-    Number: 120,
+    Number: 150,
     Boolean: 100,
     DateTime: 150,
     File: 200,

@@ -1,14 +1,24 @@
 import { IActionCtx } from 'concent'
 import { getSchemas } from '@/services/schema'
 
+interface SchemaState {
+  currentSchema: SchemaV2 | null
+  loading: boolean
+  schemas: SchemaV2[]
+  fieldAction: 'create' | 'edit'
+  selectedField: SchemaFieldV2 | null
+}
+
+const state: SchemaState = {
+  currentSchema: null,
+  loading: false,
+  schemas: [],
+  fieldAction: 'create',
+  selectedField: null,
+}
+
 export default {
-  state: {
-    currentSchema: null,
-    loading: false,
-    schemas: [],
-    fieldAction: 'create',
-    selectedField: {},
-  },
+  state,
   reducer: {
     async getSchemas(projectId: string, state: any, ctx: IActionCtx) {
       ctx.setState({

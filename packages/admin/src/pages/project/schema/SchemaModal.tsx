@@ -8,7 +8,7 @@ const { TextArea } = Input
 
 export const SchemaModal: React.FC<{
   visible: boolean
-  schema?: SchemaV2
+  schema?: SchemaV2 | null
   onClose: () => void
   action?: 'edit' | 'create'
 }> = ({ visible, onClose, action, schema }) => {
@@ -68,7 +68,7 @@ export const SchemaModal: React.FC<{
         layout="vertical"
         labelAlign="left"
         labelCol={{ span: 6 }}
-        initialValues={action === 'edit' ? schema : undefined}
+        initialValues={action === 'edit' ? schema || {} : undefined}
         onFinish={(v: any) => {
           run(v)
         }}
