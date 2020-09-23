@@ -2,19 +2,24 @@ import { IActionCtx } from 'concent'
 import { getSchemas } from '@/services/schema'
 
 interface SchemaState {
-  currentSchema: SchemaV2 | null
+  currentSchema: SchemaV2
   loading: boolean
   schemas: SchemaV2[]
   fieldAction: 'create' | 'edit'
-  selectedField: SchemaFieldV2 | null
+  selectedField: {
+    type: string
+    name: string
+    icon: React.ReactNode
+    desc: string
+  } & SchemaFieldV2
 }
 
 const state: SchemaState = {
-  currentSchema: null,
+  currentSchema: {} as any,
   loading: false,
   schemas: [],
   fieldAction: 'create',
-  selectedField: null,
+  selectedField: {} as any,
 }
 
 export default {
@@ -28,7 +33,7 @@ export default {
       try {
         const { data } = await getSchemas(projectId)
         const { currentSchema } = state
-        if (!currentSchema) return;
+        if (!currentSchema) return
 
         // 重新获取时，如果存在选择的 schema，则也同时更新
         if (currentSchema?._id) {

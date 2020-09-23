@@ -10,6 +10,7 @@ import {
   Request,
   UseGuards,
   Controller,
+  HttpCode,
 } from '@nestjs/common'
 import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
@@ -113,6 +114,7 @@ export class ContentsController {
 
   // Admin Panel 入口
   @Post()
+  @HttpCode(200)
   async handleAction(
     @Param('projectId') projectId,
     @Body() body: ActionBody,
