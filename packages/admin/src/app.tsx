@@ -113,7 +113,6 @@ const errorHandler = async (error: ResponseError) => {
           <Typography.Text copyable>请求 URL：{url}</Typography.Text>
         </>
       ),
-      duration: 5000,
     })
   }
 
@@ -123,7 +122,6 @@ const errorHandler = async (error: ResponseError) => {
     notification.error({
       message: data.error.code,
       description: <Typography.Text>{`${message}`}</Typography.Text>,
-      duration: 5000,
     })
   }
 

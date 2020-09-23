@@ -8,11 +8,20 @@ import { getContents } from '@/services/content'
 const { Option } = Select
 const { Text } = Typography
 
+interface Doc {
+  _id: string
+  [key: string]: any
+}
+type IConnectSingleValue = string | Doc
+type IConnectMultiValue = string[] & Doc[]
+type IConnectValue = IConnectSingleValue | IConnectMultiValue
+type ISelectValue = string | string[]
+
 /**
  * 关联渲染
  */
 export const IConnectRender: React.FC<{
-  value?: Record<string, any>
+  value?: IConnectValue
   field: SchemaFieldV2
 }> = (props) => {
   const { value, field } = props
@@ -39,15 +48,17 @@ export const IConnectRender: React.FC<{
  * 关联类型，编辑
  */
 export const IConnectEditor: React.FC<{
-  value?: Record<string, any>
+  value?: IConnectValue
   field: SchemaFieldV2
-  onChange?: (v: string) => void
+  onChange?: (v: string | string[]) => void
 }> = (props) => {
   const { projectId } = useParams<any>()
   const ctx = useConcent('content')
-  const { value, onChange, field } = props
+  const { value = [], onChange, field } = props
   const { connectField, connectResource, connectMany } = field
-  const [records, setRecords] = useState<Record<string, any>>([])
+
+  // 加载关联的文档列表
+  const [docs, setDocs] = useState<Doc[]>([])
   const [loading, setLoading] = useState(true)
 
   useRequest(
@@ -66,7 +77,7 @@ export const IConnectEditor: React.FC<{
         pageSize: 1000,
       })
 
-      setRecords(data)
+      setDocs(data)
       setLoading(false)
     },
     {
@@ -79,22 +90,24 @@ export const IConnectEditor: React.FC<{
     }
   )
 
+  const connectIds = transformConnectValues(value, connectMany)
+
   return (
-    <Select
+    <Select<ISelectValue>
       loading={loading}
       disabled={loading}
-      placeholder="关联字段"
-      value={value?._id}
+      value={connectIds}
       onChange={onChange}
-      mode={connectMany ? 'multiple' : undefined}
+      placeholder="关联字段"
       style={{ width: '200px' }}
+      mode={connectMany ? 'multiple' : undefined}
     >
       {loading ? (
-        <Option value={value?._id}>加载中</Option>
-      ) : records?.length ? (
-        records?.map((record: Record<string, any>) => (
-          <Option value={record._id} key={record._id}>
-            {record[connectField]}
+        <Option value="">加载中</Option>
+      ) : docs?.length ? (
+        docs?.map((doc) => (
+          <Option value={doc._id} key={doc._id}>
+            {doc[connectField]}
           </Option>
         ))
       ) : (
@@ -104,4 +117,17 @@ export const IConnectEditor: React.FC<{
       )}
     </Select>
   )
+}
+
+// 将关联的数据转换成关联数据对应的 _id 数据
+const transformConnectValues = (value: IConnectValue, connectMany: boolean): string | string[] => {
+  if (connectMany) {
+    return (value as IConnectMultiValue)
+      .filter((_) => _)
+      .map((_: any) => {
+        return typeof _ === 'string' ? _ : _?._id
+      })
+  }
+
+  return typeof value === 'string' ? value : (value as { _id: string; [key: string]: any })?._id
 }
