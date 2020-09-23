@@ -1,4 +1,6 @@
-# RESTful API
+# RESTful API 设计文档
+
+**此功能为实验性质，未来可能会发生重大变化**
 
 CloudBase CMS 2.0 版本起，CMS Service 提供了公开的 RESTful 接口，你可以通过 RESTful API 接口访问 CMS 服务，方便的获取内容数据。
 

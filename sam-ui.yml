@@ -33,7 +33,7 @@ Form:
           - size: l
         Validation:
           Type: Attribute
-          Rule: ${STRING(value)}.$match(\\D+,g).$match([^a-zA-Z])
+          Rule: ${STRING(value)}.$match(\\D+,g).$match([^a-zA-Z]).$match(.{8,32})
           ErrorMessage: "长度必需大于 8 位，不能由纯数字或纯字母组成"
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_ADMIN_PASS_WORD}
     - Label:
@@ -70,7 +70,7 @@ Form:
           - size: l
         Validation:
           Type: Attribute
-          Rule: ${STRING(value)}.$match(\\D+,g).$match([^a-zA-Z])
+          Rule: ${STRING(value)}.$match(\\D+,g).$match([^a-zA-Z]).$match(.{8,32})
           ErrorMessage: "长度必需大于 8 位，不能由纯数字或纯字母组成"
         CasCadeRule:
           Master: ADMIN_PASSWORD
