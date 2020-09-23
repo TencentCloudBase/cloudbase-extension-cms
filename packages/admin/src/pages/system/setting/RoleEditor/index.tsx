@@ -1,4 +1,5 @@
 import { useConcent } from 'concent'
+import { CtxM } from 'typings/store'
 import React, { useState } from 'react'
 import { history, useRequest } from 'umi'
 import { LeftCircleTwoTone } from '@ant-design/icons'
@@ -8,10 +9,11 @@ import RolePermission from './RolePermission'
 import RoleInfo from './RoleInfo'
 import './index.less'
 
+type Ctx = CtxM<{}, 'role'> // 属于role模块的实例上下文类型
 const { Step } = Steps
 
 export default (): React.ReactNode => {
-  const ctx = useConcent('role')
+  const ctx = useConcent<{}, Ctx>('role')
   const { selectedRole, roleAction } = ctx.state
   const [currentStep, setCurrentStep] = useState(0)
   const [formValue, setFormValue] = useState<any>()

@@ -19,6 +19,7 @@ import {
 } from 'antd'
 import { FieldTypes } from '@/common'
 import { PageContainer } from '@ant-design/pro-layout'
+import { CtxM } from 'typings/store'
 
 import { SchemaFieldRender } from './FieldRender'
 import { CreateFieldModal, DeleteFieldModal } from './FieldModal'
@@ -26,6 +27,7 @@ import { SchemaModal, DeleteSchemaModal } from './SchemaModal'
 import './index.less'
 
 const { Sider, Content } = Layout
+type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 
 export interface TableListItem {
   key: number
@@ -40,7 +42,7 @@ export interface TableListItem {
 export default (): React.ReactNode => {
   // projectId
   const { projectId } = useParams<any>()
-  const ctx = useConcent('schema')
+  const ctx = useConcent<{}, Ctx>('schema')
   const {
     state: { currentSchema, schemas, loading },
   } = ctx
@@ -54,7 +56,8 @@ export default (): React.ReactNode => {
   const [deleteFieldVisible, setDeleteFieldVisible] = useState(false)
 
   useEffect(() => {
-    ctx.dispatch('getSchemas', projectId)
+    // ctx.dispatch('getSchemas', projectId)
+    ctx.mr.getSchemas(projectId);
   }, [])
 
   const defaultSelectedMenu = currentSchema?._id ? [currentSchema._id] : []
