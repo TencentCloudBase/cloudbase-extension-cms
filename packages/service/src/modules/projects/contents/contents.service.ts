@@ -359,6 +359,14 @@ export class ContentsService {
         if (!record[fieldName]) return record
         let connectRecord
 
+        // 关联的数据被删除
+        if (!connectData) {
+          return {
+            ...record,
+            [fieldName]: null,
+          }
+        }
+
         if (connectMany) {
           connectRecord = record[fieldName].map((id) => connectData.find((_) => _._id === id))
         } else {

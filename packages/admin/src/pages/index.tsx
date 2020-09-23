@@ -117,35 +117,31 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
         </Row>
       </Content>
       <Footer className="footer">CloudBase CMS 2.0.0</Footer>
-      {window.TcbCmsConfig.disableHelpButton ? null : (
-        <Popover
-          placement="topLeft"
-          title="帮助"
-          content={
-            <Space>
-              <Button type="primary">
-                <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">
-                  文档
-                </a>
-              </Button>
-              <Button type="primary">
-                <a href="https://support.qq.com/products/148793" target="_blank">
-                  反馈
-                </a>
-              </Button>
-            </Space>
-          }
-          trigger="click"
-        >
-          <Button
-            size="large"
-            type="primary"
-            shape="circle"
-            className="help-btn"
-            icon={<MessageOutlined />}
-          />
-        </Popover>
-      )}
+      <div className="help-btn">
+        {window.TcbCmsConfig.disableHelpButton ? null : (
+          <Popover
+            placement="topLeft"
+            title="帮助"
+            content={
+              <Space>
+                <Button type="primary">
+                  <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">
+                    文档
+                  </a>
+                </Button>
+                <Button type="primary">
+                  <a href="https://support.qq.com/products/148793" target="_blank">
+                    反馈
+                  </a>
+                </Button>
+              </Space>
+            }
+            trigger="click"
+          >
+            <Button size="large" type="primary" shape="circle" icon={<MessageOutlined />} />
+          </Popover>
+        )}
+      </div>
     </Layout>
   )
 }

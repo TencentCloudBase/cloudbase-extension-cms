@@ -203,7 +203,6 @@ export const ILazyImage: React.FC<{ src: string }> = ({ src }) => {
   useEffect(() => {
     getTempFileURL(src)
       .then((url) => {
-        console.log(url)
         setLoading(false)
         setImgUrl(url)
       })
