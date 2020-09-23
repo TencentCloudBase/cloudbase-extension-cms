@@ -1,12 +1,12 @@
 import { tcbRequest } from '@/utils'
 
-export async function getSchemas(projectId?: string) {
+export async function getSchemas(projectId?: string): Promise<{ data: SchemaV2[] }> {
   return tcbRequest(`/projects/${projectId}/schemas`, {
     method: 'GET',
   })
 }
 
-export async function getSchema(projectId: string, schemaId: string) {
+export async function getSchema(projectId: string, schemaId: string): Promise<{ data: SchemaV2 }> {
   return tcbRequest(`/projects/${projectId}/schemas/${schemaId}`, {
     method: 'GET',
   })

@@ -20,7 +20,7 @@ const state: SchemaState = {
 export default {
   state,
   reducer: {
-    async getSchemas(projectId: string, state: any, ctx: IActionCtx) {
+    async getSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
       ctx.setState({
         loading: true,
       })
@@ -28,6 +28,7 @@ export default {
       try {
         const { data } = await getSchemas(projectId)
         const { currentSchema } = state
+        if (!currentSchema) return;
 
         // 重新获取时，如果存在选择的 schema，则也同时更新
         if (currentSchema?._id) {
