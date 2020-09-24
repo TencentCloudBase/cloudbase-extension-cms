@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { PlusSquareTwoTone, BellOutlined, MessageOutlined } from '@ant-design/icons'
+import {
+  PlusSquareTwoTone,
+  BellOutlined,
+  MessageOutlined,
+  setTwoToneColor,
+} from '@ant-design/icons'
 import {
   Card,
   Row,
@@ -27,8 +32,10 @@ import { history, useRequest, useAccess } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import logo from '@/assets/logo.svg'
-import './index.less'
 import { getCmsNotices } from '@/services/notice'
+import './index.less'
+
+setTwoToneColor('#0052d9')
 
 const { Header, Content, Footer } = Layout
 

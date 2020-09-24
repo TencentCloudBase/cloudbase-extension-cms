@@ -1,9 +1,6 @@
 import React from 'react'
 import { Button, message, notification } from 'antd'
-import { setTwoToneColor } from '@ant-design/icons'
 import defaultSettings from '../config/defaultSettings'
-
-setTwoToneColor('#0052d9')
 
 const { pwa } = defaultSettings // if pwa is true
 

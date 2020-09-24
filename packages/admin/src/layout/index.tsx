@@ -3,7 +3,6 @@ import React from 'react'
 import { history, Link, useRequest, matchPath, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
-import defaultSettings from '../../config/defaultSettings'
 import ProLayout, { MenuDataItem, BasicLayoutProps } from '@ant-design/pro-layout'
 import {
   EyeTwoTone,
@@ -11,10 +10,14 @@ import {
   DatabaseTwoTone,
   SettingTwoTone,
   RocketTwoTone,
+  setTwoToneColor,
 } from '@ant-design/icons'
 import { getContentSchemas } from '@/services/content'
 import { useConcent } from 'concent'
 import logo from '@/assets/logo.svg'
+import defaultSettings from '../../config/defaultSettings'
+
+setTwoToneColor('#0052d9')
 
 const customMenuDate: MenuDataItem[] = [
   {
@@ -79,7 +82,7 @@ const Layout: React.FC<any> = (props) => {
 
     const { projectId = '' } = match?.params || {}
 
-    if (projectId === ':projectId') {
+    if (projectId === ':projectId' || !projectId) {
       history.push('/home')
       return
     }

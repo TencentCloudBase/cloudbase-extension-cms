@@ -24,7 +24,11 @@ IntroUrl: https://cloud.tencent.com/document/product/876/44547
 ChangeLog:
   - Title: 2.0.0
     Content:
-      - 新增用户权限管理功能
+      - 全新的 UI 交互设计，创造高效愉悦的使用体验
+      - 新增项目管理，支持内容资源隔离，企业级管理模式
+      - 全新的用户权限管理体系，基于自定义角色的资源级权限管理
+      - 全新的富文本编辑器，支持图片上传，带来新的使用体验
+      - 新增枚举、多行字符串等新类型
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -42,8 +46,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-service
-      # CodeUri: cloud://appstore.6170-appstore-1259727701/tcb-ext-cms-service.zip
-      CodeUri: extension://568fb2ccfff94e918467e34ecc022e94.zip
+      CodeUri: extension://d657d1f8b69d40a185a2347fe4302cc8.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -57,8 +60,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-init
-      # CodeUri: cloud://appstore.6170-appstore-1259727701/tcb-ext-cms-init.zip
-      CodeUri: extension://6a176c91a72c42fabd41dd63ce9763b2.zip
+      CodeUri: extension://bc3eef7f40504c6297273d649a9e73b2.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -67,11 +69,11 @@ Resources:
       Handler: index.main
       Environment:
         Variables:
-          # CMS_ADMIN_USER_NAME: ""
-          # CMS_ADMIN_PASS_WORD: ""
-          # CMS_OPERATOR_USER_NAME: ""
-          # CMS_OPERATOR_PASS_WORD: ""
-          CMS_DEPLOY_PATH: "/tcb-cms"
+          CMS_ADMIN_USER_NAME: ""
+          CMS_ADMIN_PASS_WORD: ""
+          CMS_OPERATOR_USER_NAME: ""
+          CMS_OPERATOR_PASS_WORD: ""
+          CMS_DEPLOY_PATH: "/tcb-cms/"
       Role: TCB_QcsRole
   ProjectDB:
     Type: CloudBase::FlexDB
