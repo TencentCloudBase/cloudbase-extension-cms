@@ -26,6 +26,9 @@ const { TextArea } = Input
 const { Option } = Select
 const { Text } = Typography
 
+type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
+type ContentCtx = CtxM<{}, 'content'>
+
 // 不能设置默认值的类型
 const negativeTypes = ['File', 'Image', 'Array', 'Connect']
 
@@ -438,8 +441,8 @@ export const DeleteFieldModal: React.FC<{
   onClose: () => void
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent('schema')
-  const contentCtx = useConcent('content')
+  const ctx = useConcent<{}, Ctx>('schema')
+  const contentCtx = useConcent<{}, ContentCtx>('content')
   const [loading, setLoading] = useState(false)
 
   const {
@@ -473,7 +476,7 @@ export const DeleteFieldModal: React.FC<{
           currentSchema.fields.splice(index, 1)
           message.success('删除字段成功')
           ctx.mr.getSchemas(projectId)
-          contentCtx.mr.g('getContentSchemas', projectId)
+          contentCtx.mr.getContentSchemas(projectId)
         } catch (error) {
           message.error('删除字段失败')
         } finally {
