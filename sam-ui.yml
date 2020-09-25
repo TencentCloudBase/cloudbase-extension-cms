@@ -99,7 +99,7 @@ Form:
         Required: false
         Attributes:
           - type: text
-          - placeHolder: "CMS 自定义域名，如 cloudbase.net，需要在静态网站托管中先绑定"
+          - placeHolder: "CMS 自定义 HTTP 访问服务域名，如 api.cloudbase.net"
           - class: "tea-input tea-input-s"
           - size: l
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.ACCESS_DOMAIN}
