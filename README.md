@@ -142,8 +142,10 @@ npm run deploy
 
 如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
 
-<img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
-<img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
+<div>
+  <img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
+  <img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
+</div>
 
 ## Contributors ✨
 
