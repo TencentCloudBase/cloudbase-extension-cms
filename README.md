@@ -1,6 +1,9 @@
 # CloudBase CMS
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p align="center">
@@ -10,7 +13,7 @@
   </h3>
   <p align="center">
     <br />
-    <a href="./docs">
+    <a href="https://docs.cloudbase.net/cms/intro.html">
       <strong>文档»</strong>
     </a>
     <br />
@@ -50,51 +53,9 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 
 在[云开发控制台](https://console.cloud.tencent.com/tcb/cms)安装
 
-### 手动部署
+### 源码部署
 
-我们提供了一键部署到云开发环境的脚本，你可以按照下面的流程操作，使用 **[CloudBase Framework](https://github.com/TencentCloudBase/cloudbase-framework)** 框架将 CloudBase CMS 一键部署到云开发环境
-
-#### 0️⃣ 前置依赖
-
-1. 安装 [Node.js LTS 版本](https://nodejs.org/zh-cn/)
-2. 使用 Node 包管理器 NPM 安装最新版本的 CloudBase CLI 工具（0.9.1+）
-
-   `npm install -g @cloudbase/cli@latest`
-
-3. 开通云开发服务，并创建按量计费环境（如果您已拥有云开发按量计费的环境，可跳过此步骤）
-
-   登录[腾讯云-云开发控制台](https://console.cloud.tencent.com/tcb/env/index?from=cli&source=cloudbase-cms&action=CreateEnv)，根据弹窗提示，开通服务，并创建按量计费环境。
-
-#### 1️⃣ 配置
-
-复制项目根目录下的 `.env.example` 为 `.env.local`，并填写相关的配置
-
-```bash
-# 您的云开发环境 Id
-TCB_ENVID=envId
-# 管理员账户名，账号名长度需要大于 4 位，支持字母和数字
-administratorName=admin
-# 管理员账号密码，8~32位，密码支持字母、数字、字符、不能由纯字母或存数字组成
-administratorPassword=82902Jkl
-# CMS 控制台路径，如 /tcb-cms/，建议使用根路径 /
-deployPath=/
-```
-
-#### 2️⃣ 安装依赖
-
-在项目根目录下运行下面的命令：
-
-```
-npm install && npm run setup
-```
-
-#### 3️⃣ 部署
-
-在项目根目录下运行下面的命令，会将 CloudBase CMS 的管理控制台部署到静态网站，Node 服务部署到云函数中
-
-```
-npm run deploy
-```
+参考 CMS 使用说明[文档](https://docs.cloudbase.net/cms/install/source.html)
 
 ## 本地开发
 
@@ -152,7 +113,8 @@ npm run deploy
 
 ## Contributors ✨
 
-等待你的贡献
+贡献人员
+
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -165,4 +127,5 @@ npm run deploy
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
