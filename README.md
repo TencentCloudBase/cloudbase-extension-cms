@@ -13,12 +13,12 @@
   </h3>
   <p align="center">
     <br />
-    <a href="https://docs.cloudbase.net/cms/intro.html">
-      <strong>文档»</strong>
+    <a href="https://cms-demo-1252710547.tcloudbaseapp.com">
+      <strong>✨ 在线示例（账号密码见微信群公告）»</strong>
     </a>
     <br />
     <br />
-    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">✨ 在线示例（账号密码见微信群公告）</a>
+    <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">文档</a>
     ·
     <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
     ·
@@ -26,7 +26,7 @@
   </p>
 </p>
 
-CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营平台，提供了丰富的内容管理功能，可扩展性强，易于二次开发，并支持 API 访问。
+CloudBase CMS 是云开发推出的，开源内容管理运营平台，提供了丰富的内容管理功能，安装简单，易于二次开发，并与云开发的生态体系紧密结合，助力开发者提升开发效率。
 
 ## 功能特性
 
@@ -39,10 +39,16 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 | 数据源兼容 | 支持管理已有的云开发数据，也可以在 CMS 后台创建新的内容和数据集合          |
 | 部署简单   | 可在云开发控制台扩展管理界面一键部署和升级，也可通过项目提供的脚本自动部署 |
 
+## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
+
+<div align="center">
+  <img src="./docs/assets/overview.png" width="500px" center/>
+</div>
+
 ## 技术栈
 
 - ❤️ React
-- ❤️ Node.js + Nest.js + CloudBase
+- ❤️ Node.js + Nest.js + [CloudBase](https://docs.cloudbase.net)
 - ❤️ TypeScript
 
 ## 🚀 快速开始
@@ -57,9 +63,22 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 
 参考 CMS 使用说明[文档](https://docs.cloudbase.net/cms/install/source.html)
 
-## 本地开发
+## 使用案例
 
-参考[贡献指南](./CONTRIBUTING.md)
+<table>
+  <tr>
+    <td align="center"><a href="https://docs.cloudbase.net">
+      <img src="./docs/examples/cloudbase.png" width="100px;" alt=""/>
+      <br /><sub><b>云开发</b></sub></a>
+    </td>
+    <td align="center">
+      <a href="https://face.xiaoxili.com/">
+      <img src="./docs/examples/hi-avatar.jpg" width="100px;" alt=""/><br />
+      <sub><b>Hi 头像</b></sub>
+    </a>
+    </td>
+  </tr>
+</table>
 
 ## RoadMap
 
@@ -82,6 +101,15 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 | 支持枚举类型                                             | 🚀 已完成 | V2.0     |
 | 细粒度角色权限管理权限控制                               | 🚀 已完成 | V2.0     |
 
+## 在线交流
+
+如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
+
+<div align="center">
+  <img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
+  <img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
+</div>
+
 ## 🤝 贡献指南
 
 欢迎大家参与到 CloudBase CMS 的开发工作，贡献一份力量
@@ -94,6 +122,10 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 - 在技术会议上发表技术演讲
 - 贡献方式请参考 贡献指南 文档
 
+### 本地开发
+
+参考[贡献指南](./CONTRIBUTING.md)
+
 ## 更新日志
 
 见[更新日志](./CHANGELOG.md)
@@ -101,15 +133,6 @@ CloudBase CMS 是云开发推出的开源的、综合性内容数据管理运营
 ## 📝 License
 
 开源协议文档请参阅 [Apache License 2.0](./LICENSE)
-
-## 在线交流
-
-如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
-
-<div>
-  <img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
-  <img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
-</div>
 
 ## Contributors ✨
 
