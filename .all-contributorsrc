@@ -15,6 +15,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "fantasticsoul",
+      "name": "幻魂",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/7334950?v=4",
+      "profile": "https://www.zzkai.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
