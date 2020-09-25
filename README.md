@@ -1,4 +1,7 @@
 # CloudBase CMS
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p align="center">
   <img src="./docs/assets/banner.png" alt="Logo">
@@ -150,3 +153,15 @@ npm run deploy
 ## Contributors ✨
 
 等待你的贡献
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/chhpt"><img src="https://avatars2.githubusercontent.com/u/19288423?v=4" width="100px;" alt=""/><br /><sub><b>wuyiqing</b></sub></a><br /><a href="#infra-chhpt" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/commits?author=chhpt" title="Code">💻</a> <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/commits?author=chhpt" title="Documentation">📖</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
