@@ -26,7 +26,7 @@
   </p>
 </p>
 
-CloudBase CMS 是云开发推出的，开源内容管理运营平台，提供了丰富的内容管理功能，安装简单，易于二次开发，并与云开发的生态体系紧密结合，助力开发者提升开发效率。
+CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理运营平台，提供了丰富的内容管理功能，安装简单，易于二次开发，并与云开发的生态体系紧密结合，助力开发者提升开发效率。
 
 ## 功能特性
 
@@ -57,7 +57,7 @@ CloudBase CMS 是云开发推出的，开源内容管理运营平台，提供了
 
 ### 扩展安装
 
-在[云开发控制台](https://console.cloud.tencent.com/tcb/cms)安装
+在[云开发控制台](https://console.cloud.tencent.com/tcb/extensions/index)安装
 
 ### 源码部署
 
