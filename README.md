@@ -12,7 +12,7 @@
     </a>
     <br />
     <br />
-    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">✨ 在线示例</a>
+    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">✨ 在线示例（账号密码见微信群公告）</a>
     ·
     <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
     ·
@@ -140,9 +140,10 @@ npm run deploy
 
 ## 在线交流
 
-如果你有任何的使用问题、建议，都可以加入群聊，与我们交流
+如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
 
-<img src="./docs/assets/group.jpg" width="200px" alt=""/>
+<img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
+<img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
 
 ## Contributors ✨
 

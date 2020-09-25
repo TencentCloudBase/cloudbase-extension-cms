@@ -1,25 +1,30 @@
 /* eslint-disable */
 module.exports = {
-  async enablePasswordLogin(context) {
-    const { manager } = context
-    const { ConfigList } = await manager.env.getLoginConfigList()
-    if (ConfigList && ConfigList.length) {
-      const usernameLogin = ConfigList.find((item) => item.Platform === 'USERNAME')
-      // 用户名免密登录配置已存在
-      if (usernameLogin) {
-        const res = await manager.env.updateLoginConfig(usernameLogin.Id, 'ENABLE')
-        console.log('开启密码登录', res)
-        return
-      }
-    }
-    const res = await manager.env.createLoginConfig('USERNAME', 'username')
-    console.log('创建密码登录', res)
-  },
   async createUsers(context) {
     // 不能并发执行
+    // 创建密码
+    await enablePasswordLogin(context)
+    // 创建用户
     await createOperator(context)
+    // 创建用户
     await createAdministrator(context)
   },
+}
+
+async function enablePasswordLogin(context) {
+  const { manager } = context
+  const { ConfigList } = await manager.env.getLoginConfigList()
+  if (ConfigList && ConfigList.length) {
+    const usernameLogin = ConfigList.find((item) => item.Platform === 'USERNAME')
+    // 用户名免密登录配置已存在
+    if (usernameLogin) {
+      const res = await manager.env.updateLoginConfig(usernameLogin.Id, 'ENABLE')
+      console.log('开启密码登录', res)
+      return
+    }
+  }
+  const res = await manager.env.createLoginConfig('USERNAME', 'username')
+  console.log('创建密码登录', res)
 }
 
 // 创建管理员账号
