@@ -1,51 +1,63 @@
 /* eslint-disable */
 module.exports = {
-  async enablePasswordLogin(context) {
-    const { manager } = context
-    const { ConfigList } = await manager.env.getLoginConfigList()
-    if (ConfigList && ConfigList.length) {
-      const usernameLogin = ConfigList.find((item) => item.Platform === 'USERNAME')
-      // 用户名免密登录配置已存在
-      if (usernameLogin) {
-        const res = await manager.env.updateLoginConfig(usernameLogin.Id, 'ENABLE')
-        console.log('开启密码登录', res)
-        return
-      }
+  async createUsers(context) {
+    // 不能并发执行
+    // 创建密码
+    await enablePasswordLogin(context)
+    // 创建用户
+    await createOperator(context)
+    // 创建用户
+    await createAdministrator(context)
+  },
+}
+
+async function enablePasswordLogin(context) {
+  const { manager } = context
+  const { ConfigList } = await manager.env.getLoginConfigList()
+  if (ConfigList && ConfigList.length) {
+    const usernameLogin = ConfigList.find((item) => item.Platform === 'USERNAME')
+    // 用户名免密登录配置已存在
+    if (usernameLogin) {
+      const res = await manager.env.updateLoginConfig(usernameLogin.Id, 'ENABLE')
+      console.log('开启密码登录', res)
+      return
     }
-    const res = await manager.env.createLoginConfig('USERNAME', 'username')
-    console.log('创建密码登录', res)
-  },
-  // 创建管理员账号
-  async createAdministrator(context) {
-    const { administratorName, administratorPassword, config, db, manager } = context
+  }
+  const res = await manager.env.createLoginConfig('USERNAME', 'username')
+  console.log('创建密码登录', res)
+}
 
-    return saveUser({
-      manager,
-      createTime: Date.now(),
-      username: administratorName,
-      password: administratorPassword,
-      roles: ['administrator'],
-      config,
-      db,
-      root: true,
-    })
-  },
-  // 创建运营人员账号
-  async createOperator(context) {
-    const { operatorName, operatorPassword, config, db, manager } = context
+// 创建管理员账号
+async function createAdministrator(context) {
+  const { administratorName, administratorPassword, config, db, manager } = context
 
-    if (!operatorName || !operatorPassword) return
+  return saveUser({
+    manager,
+    createTime: Date.now(),
+    username: administratorName,
+    password: administratorPassword,
+    roles: ['administrator'],
+    config,
+    db,
+    root: true,
+  })
+}
 
-    return saveUser({
-      manager,
-      createTime: Date.now(),
-      username: operatorName,
-      password: operatorPassword,
-      roles: ['content:administrator'],
-      config,
-      db,
-    })
-  },
+// 创建运营人员账号
+async function createOperator(context) {
+  const { operatorName, operatorPassword, config, db, manager } = context
+
+  if (!operatorName || !operatorPassword) return
+
+  return saveUser({
+    manager,
+    createTime: Date.now(),
+    username: operatorName,
+    password: operatorPassword,
+    roles: ['content:administrator'],
+    config,
+    db,
+  })
 }
 
 // 保存用户

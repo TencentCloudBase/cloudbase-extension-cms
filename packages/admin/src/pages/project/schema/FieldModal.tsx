@@ -17,11 +17,17 @@ import {
   Typography,
   Alert,
 } from 'antd'
+import { CtxM } from 'typings/store'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { getFieldDefaultValueInput } from './Field'
+import { FieldTypes } from '@/common'
 
 const { TextArea } = Input
 const { Option } = Select
+const { Text } = Typography
+
+type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
+type ContentCtx = CtxM<{}, 'content'>
 
 // 不能设置默认值的类型
 const negativeTypes = ['File', 'Image', 'Array', 'Connect']
@@ -36,8 +42,8 @@ export const CreateFieldModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const ctx = useConcent('schema')
-  const contentCtx = useConcent('content')
+  const ctx = useConcent<{}, CtxM<{}, 'schema'>>('schema')
+  const contentCtx = useConcent<{}, CtxM<{}, 'content'>>('content')
   const { projectId } = useParams<any>()
   const [formValue, setFormValue] = useState<any>()
   const [connectSchema, setConnectSchema] = useState<SchemaV2>()
@@ -74,13 +80,13 @@ export const CreateFieldModal: React.FC<{
           ...field,
           order: fields.length,
           type: selectedField.type,
-        })
+        } as any)
       }
 
       // 编辑字段
       if (fieldAction === 'edit') {
         const index = fields.findIndex(
-          (_: any) => _.id === selectedField.id || _.name === selectedField.name
+          (_: any) => _.id === selectedField?.id || _.name === selectedField?.name
         )
 
         if (index > -1) {
@@ -92,12 +98,12 @@ export const CreateFieldModal: React.FC<{
       }
 
       // 更新 schema fields
-      await updateSchema(projectId, currentSchema?._id, {
+      await updateSchema(projectId, currentSchema?._id || '', {
         fields,
       })
 
-      ctx.dispatch('getSchemas', projectId)
-      contentCtx.dispatch('getContentSchemas', projectId)
+      ctx.mr.getSchemas(projectId)
+      contentCtx.mr.getContentSchemas(projectId)
 
       onClose()
     },
@@ -111,10 +117,17 @@ export const CreateFieldModal: React.FC<{
     }
   )
 
+  const fieldTypeName = FieldTypes.find((_) => _.type === selectedField.type)?.name
+
   const modalTitle =
-    fieldAction === 'create'
-      ? `添加【${selectedField?.name}】字段`
-      : `编辑【${selectedField?.displayName}】`
+    fieldAction === 'create' ? (
+      `添加【${selectedField?.name}】字段`
+    ) : (
+      <Space>
+        <Text>编辑【{selectedField?.displayName}】</Text>
+        <Text type="secondary">#{fieldTypeName}</Text>
+      </Space>
+    )
 
   useEffect(() => {
     if (selectedField?.connectResource) {
@@ -136,8 +149,8 @@ export const CreateFieldModal: React.FC<{
       onOk={() => onClose()}
       onCancel={() => onClose()}
     >
-      {fieldAction === 'create' && selectedField.desc && (
-        <Alert type="info" message={selectedField.desc} />
+      {fieldAction === 'create' && selectedField?.description && (
+        <Alert type="info" message={selectedField?.description} />
       )}
       <br />
       <Form
@@ -240,7 +253,7 @@ export const CreateFieldModal: React.FC<{
                   {fieldAction === 'edit' && (
                     <>
                       <br />
-                      <Typography.Text type="warning">关联多项与关联单项无法转换</Typography.Text>
+                      <Text type="warning">关联多项与关联单项无法转换</Text>
                     </>
                   )}
                 </Form.Item>
@@ -351,11 +364,11 @@ export const CreateFieldModal: React.FC<{
         <Form.Item>
           <div className="form-item">
             <Form.Item style={{ marginBottom: 0 }}>
-              <Typography.Text>是否必需</Typography.Text>
+              <Text>是否必需</Text>
               <Form.Item name="isRequired" valuePropName="checked" style={{ marginBottom: 0 }}>
                 <Switch />
               </Form.Item>
-              <Typography.Text type="secondary">在创建内容时，此此段是必需要填写的</Typography.Text>
+              <Text type="secondary">在创建内容时，此此段是必需要填写的</Text>
             </Form.Item>
           </div>
         </Form.Item>
@@ -363,11 +376,11 @@ export const CreateFieldModal: React.FC<{
         <Form.Item>
           <div className="form-item">
             <Form.Item style={{ marginBottom: 0 }}>
-              <Typography.Text>是否隐藏</Typography.Text>
+              <Text>是否隐藏</Text>
               <Form.Item name="isHidden" valuePropName="checked" style={{ marginBottom: 0 }}>
                 <Switch />
               </Form.Item>
-              <Typography.Text type="secondary">在展示内容时隐藏该字段</Typography.Text>
+              <Text type="secondary">在展示内容时隐藏该字段</Text>
             </Form.Item>
           </div>
         </Form.Item>
@@ -375,7 +388,7 @@ export const CreateFieldModal: React.FC<{
         <Form.Item>
           <div className="form-item">
             <Form.Item style={{ marginBottom: 0 }}>
-              <Typography.Text>设为排序字段</Typography.Text>
+              <Text>设为排序字段</Text>
               <Row align="middle">
                 <Col flex="1 1 auto">
                   <Form.Item noStyle name="isOrderField" valuePropName="checked">
@@ -397,7 +410,7 @@ export const CreateFieldModal: React.FC<{
                   )}
                 </Col>
               </Row>
-              <Typography.Text type="secondary">获取内容时根据此字段排序</Typography.Text>
+              <Text type="secondary">获取内容时根据此字段排序</Text>
             </Form.Item>
           </div>
         </Form.Item>
@@ -428,8 +441,8 @@ export const DeleteFieldModal: React.FC<{
   onClose: () => void
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent('schema')
-  const contentCtx = useConcent('content')
+  const ctx = useConcent<{}, Ctx>('schema')
+  const contentCtx = useConcent<{}, ContentCtx>('content')
   const [loading, setLoading] = useState(false)
 
   const {
@@ -462,8 +475,8 @@ export const DeleteFieldModal: React.FC<{
           })
           currentSchema.fields.splice(index, 1)
           message.success('删除字段成功')
-          ctx.dispatch('getSchemas', projectId)
-          contentCtx.dispatch('getContentSchemas', projectId)
+          ctx.mr.getSchemas(projectId)
+          contentCtx.mr.getContentSchemas(projectId)
         } catch (error) {
           message.error('删除字段失败')
         } finally {

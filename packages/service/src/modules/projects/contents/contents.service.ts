@@ -171,13 +171,17 @@ export class ContentsService {
         // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
         if (field?.type === 'Connect' && value) {
           // 多关联
-          if (Array.isArray(value) && typeof value?.[0] === 'object') {
-            return value.map((_) => _._id)
+          if (Array.isArray(value) && _.isObject(value?.[0])) {
+            return value.map((_) => (_?._id ? _._id : _))
           }
+
           // 单关联
-          if (!Array.isArray(value) && typeof value === 'object') {
-            return value._id
+          if (!Array.isArray(value) && _.isObject(value)) {
+            return (value as any)._id
           }
+
+          // value 为 null
+          return value
         }
 
         return value

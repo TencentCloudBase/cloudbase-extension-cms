@@ -1,4 +1,7 @@
 # CloudBase CMS
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <p align="center">
   <img src="./docs/assets/banner.png" alt="Logo">
@@ -12,7 +15,7 @@
     </a>
     <br />
     <br />
-    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">✨ 在线示例</a>
+    <a href="https://cms-demo-1252710547.tcloudbaseapp.com/#/login" target="_blank">✨ 在线示例（账号密码见微信群公告）</a>
     ·
     <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/issues">报告 Bug</a>
     ·
@@ -140,10 +143,26 @@ npm run deploy
 
 ## 在线交流
 
-如果你有任何的使用问题、建议，都可以加入群聊，与我们交流
+如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
 
-<img src="./docs/assets/group.jpg" width="200px" alt=""/>
+<div>
+  <img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
+  <img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
+</div>
 
 ## Contributors ✨
 
 等待你的贡献
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/chhpt"><img src="https://avatars2.githubusercontent.com/u/19288423?v=4" width="100px;" alt=""/><br /><sub><b>wuyiqing</b></sub></a><br /><a href="#infra-chhpt" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/commits?author=chhpt" title="Code">💻</a> <a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/commits?author=chhpt" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://www.zzkai.com"><img src="https://avatars0.githubusercontent.com/u/7334950?v=4" width="100px;" alt=""/><br /><sub><b>幻魂</b></sub></a><br /><a href="https://github.com/TencentCloudBase/cloudbase-extension-cms/commits?author=fantasticsoul" title="Code">💻</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->

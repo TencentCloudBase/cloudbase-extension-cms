@@ -194,7 +194,7 @@ export const ILazyImage: React.FC<{ src: string }> = ({ src }) => {
   }
 
   if (!/^cloud:\/\/\S+/.test(src)) {
-    return <img style={{ height: '120px', maxWidth: '200px' }} src={src} />
+    return <img style={{ maxHeight: '120px', maxWidth: '200px' }} src={src} />
   }
 
   const [imgUrl, setImgUrl] = useState('')
@@ -218,7 +218,7 @@ export const ILazyImage: React.FC<{ src: string }> = ({ src }) => {
     <Spin />
   ) : (
     <Space direction="vertical">
-      <img style={{ height: '120px', maxWidth: '200px' }} src={imgUrl} />
+      <img style={{ maxHeight: '120px', maxWidth: '200px' }} src={imgUrl} />
       {imgUrl && (
         <Space>
           <Button
