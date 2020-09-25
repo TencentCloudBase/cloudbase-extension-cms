@@ -67,7 +67,7 @@ CloudBase CMS 是云开发推出的，开源内容管理运营平台，提供了
 
 <table>
   <tr>
-    <td align="center"><a href="https://docs.cloudbase.net">
+    <td align="center"><a href="https://cloudbase.net">
       <img src="./docs/examples/cloudbase.png" width="100px;" alt=""/>
       <br /><sub><b>云开发</b></sub></a>
     </td>
