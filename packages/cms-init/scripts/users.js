@@ -15,37 +15,44 @@ module.exports = {
     const res = await manager.env.createLoginConfig('USERNAME', 'username')
     console.log('创建密码登录', res)
   },
-  // 创建管理员账号
-  async createAdministrator(context) {
-    const { administratorName, administratorPassword, config, db, manager } = context
-
-    return saveUser({
-      manager,
-      createTime: Date.now(),
-      username: administratorName,
-      password: administratorPassword,
-      roles: ['administrator'],
-      config,
-      db,
-      root: true,
-    })
+  async createUsers(context) {
+    // 不能并发执行
+    await createOperator(context)
+    await createAdministrator(context)
   },
-  // 创建运营人员账号
-  async createOperator(context) {
-    const { operatorName, operatorPassword, config, db, manager } = context
+}
 
-    if (!operatorName || !operatorPassword) return
+// 创建管理员账号
+async function createAdministrator(context) {
+  const { administratorName, administratorPassword, config, db, manager } = context
 
-    return saveUser({
-      manager,
-      createTime: Date.now(),
-      username: operatorName,
-      password: operatorPassword,
-      roles: ['content:administrator'],
-      config,
-      db,
-    })
-  },
+  return saveUser({
+    manager,
+    createTime: Date.now(),
+    username: administratorName,
+    password: administratorPassword,
+    roles: ['administrator'],
+    config,
+    db,
+    root: true,
+  })
+}
+
+// 创建运营人员账号
+async function createOperator(context) {
+  const { operatorName, operatorPassword, config, db, manager } = context
+
+  if (!operatorName || !operatorPassword) return
+
+  return saveUser({
+    manager,
+    createTime: Date.now(),
+    username: operatorName,
+    password: operatorPassword,
+    roles: ['content:administrator'],
+    config,
+    db,
+  })
 }
 
 // 保存用户
