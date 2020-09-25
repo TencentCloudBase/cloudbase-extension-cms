@@ -41,14 +41,14 @@ CloudBase CMS 是云开发推出的，开源内容管理运营平台，提供了
 
 ## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
 
-<div align="center">
-  <img src="./docs/assets/overview.png" width="500px" center/>
-</div>
+![](./docs/assets/schema.png)
+
+![](./docs/assets/overview.png)
 
 ## 技术栈
 
 - ❤️ React
-- ❤️ Node.js + Nest.js + [CloudBase](https://docs.cloudbase.net)
+- ❤️ Node.js + Nest.js + [CloudBase](https://cloudbase.net)
 - ❤️ TypeScript
 
 ## 🚀 快速开始
