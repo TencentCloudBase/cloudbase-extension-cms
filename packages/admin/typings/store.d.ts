@@ -1,5 +1,6 @@
 /**
  * concent store的类型描述文件
+ * @author: fantasticsoul
  */
 import {
   ICtx,
