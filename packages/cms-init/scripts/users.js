@@ -4,10 +4,15 @@ module.exports = {
     // 不能并发执行
     // 创建密码
     await enablePasswordLogin(context)
+    console.log(Date.now(), '开启用户名登录成功')
+    await sleep()
     // 创建用户
     await createOperator(context)
+    console.log(Date.now(), '创建运营人员成功')
+    await sleep()
     // 创建用户
     await createAdministrator(context)
+    console.log(Date.now(), '创建管理员成功')
   },
 }
 
@@ -106,4 +111,13 @@ async function saveUser({ createTime, username, password, roles, db, config, man
   }
 
   return collection.add(data)
+}
+
+// 等待 5s
+async function sleep() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, 5000)
+  })
 }
