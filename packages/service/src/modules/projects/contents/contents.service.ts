@@ -318,9 +318,12 @@ export class ContentsService {
     return where
   }
 
-  // 处理数据返回结果
+  /**
+   * 处理数据返回结果
+   * 将数据中的关联字段解析后返回
+   */
   private async transformConnectField(rawData: any[], connectFields: SchemaFieldV2[]) {
-    let data = rawData
+    let resData = rawData
     const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
@@ -333,19 +336,19 @@ export class ContentsService {
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaFieldV2) => {
       const { connectMany } = field
-      // 关联字段名
+      // 字段类型为关联的字段名
       const fieldName = field.name
 
       // 获取数据中所有的关联资源 Id
       let ids = []
       if (connectMany) {
         // 合并数组
-        ids = data
+        ids = resData
           .filter((record) => record[fieldName]?.length)
           .map((record) => record[fieldName])
           .reduce((ret, current) => [...ret, ...current], [])
       } else {
-        ids = data.map((record) => record[fieldName]).filter((_) => _)
+        ids = resData.map((record) => record[fieldName]).filter((_) => _)
       }
 
       // 集合名
@@ -359,7 +362,8 @@ export class ContentsService {
         .limit(1000)
         .get()
 
-      data = data.map((record) => {
+      // 修改 resData 中的关联字段
+      resData = resData.map((record) => {
         if (!record[fieldName]) return record
         let connectRecord
 
@@ -372,7 +376,10 @@ export class ContentsService {
         }
 
         if (connectMany) {
-          connectRecord = record[fieldName].map((id) => connectData.find((_) => _._id === id))
+          // id 数组
+          connectRecord = record[fieldName]?.length
+            ? record[fieldName]?.map((id) => connectData.find((_) => _._id === id))
+            : []
         } else {
           connectRecord = connectData.find((_) => _._id === record[fieldName])
         }
@@ -389,6 +396,6 @@ export class ContentsService {
 
     await Promise.all(promises)
 
-    return data
+    return resData
   }
 }
