@@ -96,14 +96,47 @@ async function saveUser({ createTime, username, password, roles, db, config, man
     root,
   }
 
-  // 注册用户
-  const { User } = await manager.user.createEndUser({
-    username,
-    password,
-  })
+  let UUId
+
+  try {
+    // 注册用户
+    const { User } = await manager.user.createEndUser({
+      username,
+      password,
+    })
+    UUId = User.UUId
+  } catch (e) {
+    console.log('创建用户出现错误', e.message)
+    // 用户名存在
+    if (e && e.message.indexOf('username exist')) {
+      console.log('查询存在的用户信息')
+      const { Users } = await manager.user.getEndUserList({
+        offset: 0,
+        limit: 100,
+      })
+
+      // 抛出错误
+      if (!Users || !Users.length) {
+        throw e
+      }
+
+      // 获取同名用户的 UUId
+      const existUser = Users.find((user) => user.UserName === username)
+      console.log('已存在用户', existUser)
+      // 修改用户信息
+      if (existUser) {
+        UUId = existUser.UUId
+        // 修改密码
+        await manager.user.modifyEndUser({
+          uuid: UUId,
+          password,
+        })
+      }
+    }
+  }
 
   // 添加 UUId 信息
-  data.uuid = User.UUId
+  data.uuid = UUId
 
   // 如果用户已经存在，则进行 update（有可能账号密码修改））
   if (dbRecord) {
