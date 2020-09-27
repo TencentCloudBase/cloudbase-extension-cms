@@ -41,6 +41,7 @@ export const calculateFieldWidth = (field: SchemaFieldV2) => {
     Image: 200,
     RichText: 150,
     Markdown: 150,
+    Connect: 250,
   }
 
   const { displayName, type } = field

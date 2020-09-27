@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Button, Input, Upload, message, Space, Progress, Spin, Empty } from 'antd'
 import { copyToClipboard, downloadFile, getTempFileURL, uploadFile } from '@/utils'
 import { CopyTwoTone, FileUnknownTwoTone, InboxOutlined } from '@ant-design/icons'
+import emptyImg from '@/assets/empty.svg'
 
 const { Dragger } = Upload
 
@@ -190,7 +191,7 @@ export const IUploader: React.FC<{
  */
 export const ILazyImage: React.FC<{ src: string }> = ({ src }) => {
   if (!src) {
-    return <Empty image="/img/empty.svg" imageStyle={{ height: '60px' }} description="未设定图片" />
+    return <Empty image={emptyImg} imageStyle={{ height: '60px' }} description="未设定图片" />
   }
 
   if (!/^cloud:\/\/\S+/.test(src)) {

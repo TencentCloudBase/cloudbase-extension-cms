@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { Typography, message, Space, Tag, Select } from 'antd'
+import { Typography, message, Tag, Select, Spin } from 'antd'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { getSchema } from '@/services/schema'
-import { getContents } from '@/services/content'
+import { getContents, Options } from '@/services/content'
 
 const { Option } = Select
-const { Text } = Typography
+const { Text, Paragraph } = Typography
 
 interface Doc {
   _id: string
@@ -34,13 +34,13 @@ export const IConnectRender: React.FC<{
   }
 
   return (
-    <Space>
+    <Paragraph style={{ maxWidth: '300px' }}>
       {value
         .filter((_: any) => _)
         .map((record: any, index: number) => (
           <Tag key={index}>{record?.[connectField]}</Tag>
         ))}
-    </Space>
+    </Paragraph>
   )
 }
 
@@ -60,9 +60,11 @@ export const IConnectEditor: React.FC<{
   // 加载关联的文档列表
   const [docs, setDocs] = useState<Doc[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchKey, setSearchKey] = useState('')
 
   useRequest(
     async () => {
+      setLoading(true)
       const { schemas } = ctx.state
       let schema = schemas.find((_: SchemaV2) => _._id === connectResource)
 
@@ -72,10 +74,18 @@ export const IConnectEditor: React.FC<{
         schema = data
       }
 
-      const { data } = await getContents(projectId, schema.collectionName, {
+      const fetchOptions: Options = {
         page: 1,
         pageSize: 1000,
-      })
+      }
+
+      if (searchKey) {
+        fetchOptions.fuzzyFilter = {
+          [connectField]: searchKey,
+        }
+      }
+
+      const { data } = await getContents(projectId, schema.collectionName, fetchOptions)
 
       setDocs(data)
       setLoading(false)
@@ -87,6 +97,8 @@ export const IConnectEditor: React.FC<{
         message.error(e.message || '获取数据错误')
         setLoading(false)
       },
+      refreshDeps: [searchKey],
+      debounceInterval: 500,
     }
   )
 
@@ -94,16 +106,22 @@ export const IConnectEditor: React.FC<{
 
   return (
     <Select<ISelectValue>
+      showSearch
       loading={loading}
-      disabled={loading}
       value={connectIds}
       onChange={onChange}
+      onSearch={setSearchKey}
+      filterOption={false}
       placeholder="关联字段"
-      style={{ width: '200px' }}
+      style={{ width: '240px' }}
+      disabled={loading && !searchKey}
       mode={connectMany ? 'multiple' : undefined}
+      notFoundContent={loading ? <Spin size="small" /> : null}
     >
       {loading ? (
-        <Option value="">加载中</Option>
+        <Option value="">
+          <Spin size="small" />
+        </Option>
       ) : docs?.length ? (
         docs?.map((doc) => (
           <Option value={doc._id} key={doc._id}>
