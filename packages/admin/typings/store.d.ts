@@ -1,7 +1,7 @@
 /**
  * concent store的类型描述文件
+ * @author: fantasticsoul
  */
-import * as moduleCst from '../base/constant/moduleName'
 import {
   ICtx,
   IAnyFnInObj,
