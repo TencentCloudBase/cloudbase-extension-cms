@@ -75,6 +75,7 @@ async function migrateSchemas(context, projectId) {
               stringMaxLength,
               connectField,
               connectResource,
+              connectMany
             } = field
 
             const newField = {
@@ -88,6 +89,7 @@ async function migrateSchemas(context, projectId) {
               defaultValue,
               connectField,
               connectResource,
+              connectMany,
               min: stringMinLength,
               max: stringMaxLength,
               order: index,

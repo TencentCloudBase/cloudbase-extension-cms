@@ -19,7 +19,7 @@ SourceUrl: https://github.com/TencentCloudBase/cloudbase-extension-cms
 ReleaseNotesUrl: https://github.com/TencentCloudBase/cloudbase-extension-cms/releases
 # @todo
 IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_world.svg
-IntroUrl: https://cloud.tencent.com/document/product/876/44547
+IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
   - Title: 2.0.0
