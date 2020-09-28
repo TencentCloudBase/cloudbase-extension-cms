@@ -101,6 +101,11 @@ const config: IConfig = {
           routes: [
             {
               exact: true,
+              path: '/:projectId/content/migrate',
+              component: './project/migrate',
+            },
+            {
+              exact: true,
               path: '/:projectId/content/:schemaId',
               component: './project/content/index',
             },

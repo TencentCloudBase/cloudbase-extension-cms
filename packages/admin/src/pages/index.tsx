@@ -26,7 +26,6 @@ import {
   Popover,
   Empty,
 } from 'antd'
-import moment from 'moment'
 import { useConcent } from 'concent'
 import { history, useRequest, useAccess } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
@@ -34,6 +33,7 @@ import { getProjects, createProject } from '@/services/project'
 import logo from '@/assets/logo.svg'
 import { getCmsNotices } from '@/services/notice'
 import './index.less'
+import { getFullDate } from '@/utils'
 
 setTwoToneColor('#0052d9')
 
@@ -232,7 +232,7 @@ export const NoticeRender: React.FC = () => {
         <Timeline mode="left">
           {notices.map((notice: any) => (
             <Timeline.Item key={notice._id} color="blue">
-              <h3>{moment(notice.noticeTime).format('YYYY-MM-DD')}</h3>
+              <h3>{getFullDate(notice.noticeTime)}</h3>
               <h3>{notice.noticeTitle}</h3>
               <p>{notice.noticeContent}</p>
             </Timeline.Item>

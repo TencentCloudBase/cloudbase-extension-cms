@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useState, useMemo } from 'react'
+import React, { useRef, useCallback, useState, useMemo, useEffect } from 'react'
 import { useConcent } from 'concent'
 import { useParams, history } from 'umi'
 import ProTable from '@ant-design/pro-table'
@@ -14,17 +14,27 @@ import {
   Upload,
   Progress,
   Alert,
+  Typography,
+  Select,
 } from 'antd'
 import { PlusOutlined, DeleteOutlined, FilterOutlined, InboxOutlined } from '@ant-design/icons'
-import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
+import {
+  getContents,
+  deleteContent,
+  batchDeleteContent,
+  createMigrateJobs,
+} from '@/services/content'
 import { random, uploadFile } from '@/utils'
 import { getTableColumns } from './columns'
 import { ContentTableSearch } from './SearchForm'
 import './index.less'
+import { getFullDate } from '@/utils/date'
 
 // 不能支持搜索的类型
 const negativeTypes = ['File', 'Image']
 const { Dragger } = Upload
+const { Title } = Typography
+const { Option } = Select
 
 /**
  * 内容展示表格
@@ -226,7 +236,7 @@ export const ContentTable: React.FC<{
           >
             新建
           </Button>,
-          <DataImport key="import" />,
+          <DataImport key="import" collectionName={currentSchema.collectionName} />,
         ]}
       />
     </>
@@ -236,13 +246,19 @@ export const ContentTable: React.FC<{
 /**
  * 导入数据
  */
-
-export const DataImport: React.FC<{}> = () => {
+export const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) => {
+  const { projectId } = useParams<any>()
   const [visible, setVisible] = useState(false)
-  const [dataType, setDataType] = useState<string>('')
-  const [fileList, setFileList] = useState<any[]>()
   const [percent, setPercent] = useState(0)
   const [uploading, setUploading] = useState(false)
+  const [dataType, setDataType] = useState<string>('')
+  const [conflictMode, setConflictMode] = useState('insert')
+
+  useEffect(() => {
+    if (!visible) {
+      setPercent(0)
+    }
+  }, [visible])
 
   return (
     <>
@@ -250,12 +266,17 @@ export const DataImport: React.FC<{}> = () => {
         overlay={
           <Menu
             onClick={({ key }) => {
+              if (key === 'record') {
+                history.push(`/${projectId}/content/migrate`)
+                return
+              }
               setDataType(key as string)
               setVisible(true)
             }}
           >
             <Menu.Item key="csv">通过 CSV 导入</Menu.Item>
             <Menu.Item key="json">通过 JSON 导入</Menu.Item>
+            <Menu.Item key="record">查看导入记录</Menu.Item>
           </Menu>
         }
         key="search"
@@ -263,53 +284,68 @@ export const DataImport: React.FC<{}> = () => {
         <Button type="primary">导入数据</Button>
       </Dropdown>
       <Modal
+        destroyOnClose
+        width={600}
         title="导入数据"
         footer={null}
         closable={true}
         visible={visible}
         onCancel={() => setVisible(false)}
       >
-        <Alert
-          message="JSON 数据不是数组，而是类似 JSON Lines，即各个记录对象之间使用 \n 分隔，而非逗号"
-          style={{ marginBottom: '10px' }}
-        />
-        <Alert message="CSV 格式的数据默认以第一行作为导入后的所有键名，余下的每一行则是与首行键名一一对应的键值记录" />
+        <Title level={4}>注意事项</Title>
+        {dataType === 'json' && (
+          <Alert
+            message="JSON 数据不是数组，而是类似 JSON Lines，即各个记录对象之间使用 \n 分隔，而非逗号"
+            style={{ marginBottom: '10px' }}
+          />
+        )}
+        {dataType === 'csv' && (
+          <Alert message="CSV 格式的数据默认以第一行作为导入后的所有键名，余下的每一行则是与首行键名一一对应的键值记录" />
+        )}
         <br />
+        <Title level={4}>冲突处理模式</Title>
+        <Select
+          defaultValue="insert"
+          onChange={setConflictMode}
+          style={{ width: '100%', marginBottom: '10px' }}
+        >
+          <Option value="insert">Insert（会在导入时总是插入新记录，出现 _id 冲突时会报错）</Option>
+          <Option value="upsert">
+            Upsert（会判断有无该条记录，如果有则更新记录，否则就插入一条新记录）
+          </Option>
+        </Select>
         <Dragger
           accept=".csv,.json"
-          fileList={fileList}
           listType="picture"
           beforeUpload={(file) => {
             setUploading(true)
             setPercent(0)
-            const fileName = `${random(32)}-${file.name}`
+            // 文件路径
+            const filePath = `data-import/${random(32)}-${file.name}`
             // 上传文件
             uploadFile(
               file,
               (percent) => {
                 setPercent(percent)
               },
-              fileName
-            ).then((fileUrl) => {
-              setFileList([
-                {
-                  uid: fileUrl,
-                  name: file.name,
-                  status: 'done',
-                },
-              ])
-              setVisible(false)
-              // TODO: 创建导入任务
-              console.log(fileName)
-              message.success('上传文件成功，数据导入中')
-            })
+              filePath
+            )
+              .then(() => createMigrateJobs(projectId, collectionName, filePath, conflictMode))
+              .then(() => {
+                setVisible(false)
+                message.success('上传文件成功，数据导入中')
+              })
+              .catch((e) => {
+                message.error(`导入文件失败：${e.message}`)
+                setVisible(false)
+              })
             return false
           }}
         >
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
-          <p className="ant-upload-text">点击或拖拽文件上传</p>
+          <p className="ant-upload-text">点击或拖拽上传文件，开始导入数据</p>
         </Dragger>
         {uploading && <Progress style={{ paddingTop: '10px' }} percent={percent} />}
       </Modal>

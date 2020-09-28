@@ -105,3 +105,30 @@ export async function updateContent(
     },
   })
 }
+
+export async function getMigrateJobs(projectId: string, page = 1, pageSize = 10) {
+  return tcbRequest(`/projects/${projectId}/migrate`, {
+    method: 'GET',
+    params: {
+      page,
+      pageSize,
+    },
+  })
+}
+
+export async function createMigrateJobs(
+  projectId: string,
+  collectionName: string,
+  filePath: string,
+  conflictMode: string
+) {
+  return tcbRequest(`/projects/${projectId}/migrate`, {
+    method: 'POST',
+    data: {
+      filePath,
+      projectId,
+      conflictMode,
+      collectionName,
+    },
+  })
+}
