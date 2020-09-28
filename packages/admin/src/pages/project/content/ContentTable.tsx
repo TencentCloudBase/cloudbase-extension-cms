@@ -1,16 +1,30 @@
-import { useParams, history } from 'umi'
+import React, { useRef, useCallback, useState, useMemo } from 'react'
 import { useConcent } from 'concent'
+import { useParams, history } from 'umi'
 import ProTable from '@ant-design/pro-table'
-import { Button, Modal, message, Space, Row, Col, Dropdown, Menu } from 'antd'
-import React, { useRef, useCallback } from 'react'
-import { PlusOutlined, DeleteOutlined, FilterOutlined } from '@ant-design/icons'
+import {
+  Button,
+  Modal,
+  message,
+  Space,
+  Row,
+  Col,
+  Dropdown,
+  Menu,
+  Upload,
+  Progress,
+  Alert,
+} from 'antd'
+import { PlusOutlined, DeleteOutlined, FilterOutlined, InboxOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
+import { random, uploadFile } from '@/utils'
 import { getTableColumns } from './columns'
-import { ContentTableSearch } from './components'
+import { ContentTableSearch } from './SearchForm'
 import './index.less'
 
 // 不能支持搜索的类型
 const negativeTypes = ['File', 'Image']
+const { Dragger } = Upload
 
 /**
  * 内容展示表格
@@ -88,19 +102,22 @@ export const ContentTable: React.FC<{
     [searchParams]
   )
 
-  const fieldMenu = (
-    <Menu
-      onClick={({ key }) => {
-        const field = currentSchema.fields.find((_) => _.name === key)
-        field && setSearchFields([...searchFields, field])
-      }}
-    >
-      {currentSchema?.fields
-        ?.filter((filed) => !negativeTypes.includes(filed.type))
-        .map((field) => (
-          <Menu.Item key={field.name}>{field.displayName}</Menu.Item>
-        ))}
-    </Menu>
+  const searchFieldMenu = useMemo(
+    () => (
+      <Menu
+        onClick={({ key }) => {
+          const field = currentSchema.fields.find((_) => _.name === key)
+          field && setSearchFields([...searchFields, field])
+        }}
+      >
+        {currentSchema?.fields
+          ?.filter((filed) => !negativeTypes.includes(filed.type))
+          .map((field) => (
+            <Menu.Item key={field.name}>{field.displayName}</Menu.Item>
+          ))}
+      </Menu>
+    ),
+    [currentSchema]
   )
 
   return (
@@ -183,7 +200,7 @@ export const ContentTable: React.FC<{
         ]}
         request={tableRequest}
         toolBarRender={() => [
-          <Dropdown overlay={fieldMenu} key="search">
+          <Dropdown overlay={searchFieldMenu} key="search">
             <Button type="primary">
               <FilterOutlined /> 增加检索
             </Button>
@@ -209,6 +226,7 @@ export const ContentTable: React.FC<{
           >
             新建
           </Button>,
+          <DataImport key="import" />,
         ]}
       />
     </>
@@ -216,7 +234,91 @@ export const ContentTable: React.FC<{
 }
 
 /**
- * Table 批量操作提醒
+ * 导入数据
+ */
+
+export const DataImport: React.FC<{}> = () => {
+  const [visible, setVisible] = useState(false)
+  const [dataType, setDataType] = useState<string>('')
+  const [fileList, setFileList] = useState<any[]>()
+  const [percent, setPercent] = useState(0)
+  const [uploading, setUploading] = useState(false)
+
+  return (
+    <>
+      <Dropdown
+        overlay={
+          <Menu
+            onClick={({ key }) => {
+              setDataType(key as string)
+              setVisible(true)
+            }}
+          >
+            <Menu.Item key="csv">通过 CSV 导入</Menu.Item>
+            <Menu.Item key="json">通过 JSON 导入</Menu.Item>
+          </Menu>
+        }
+        key="search"
+      >
+        <Button type="primary">导入数据</Button>
+      </Dropdown>
+      <Modal
+        title="导入数据"
+        footer={null}
+        closable={true}
+        visible={visible}
+        onCancel={() => setVisible(false)}
+      >
+        <Alert
+          message="JSON 数据不是数组，而是类似 JSON Lines，即各个记录对象之间使用 \n 分隔，而非逗号"
+          style={{ marginBottom: '10px' }}
+        />
+        <Alert message="CSV 格式的数据默认以第一行作为导入后的所有键名，余下的每一行则是与首行键名一一对应的键值记录" />
+        <br />
+        <Dragger
+          accept=".csv,.json"
+          fileList={fileList}
+          listType="picture"
+          beforeUpload={(file) => {
+            setUploading(true)
+            setPercent(0)
+            const fileName = `${random(32)}-${file.name}`
+            // 上传文件
+            uploadFile(
+              file,
+              (percent) => {
+                setPercent(percent)
+              },
+              fileName
+            ).then((fileUrl) => {
+              setFileList([
+                {
+                  uid: fileUrl,
+                  name: file.name,
+                  status: 'done',
+                },
+              ])
+              setVisible(false)
+              // TODO: 创建导入任务
+              console.log(fileName)
+              message.success('上传文件成功，数据导入中')
+            })
+            return false
+          }}
+        >
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined />
+          </p>
+          <p className="ant-upload-text">点击或拖拽文件上传</p>
+        </Dragger>
+        {uploading && <Progress style={{ paddingTop: '10px' }} percent={percent} />}
+      </Modal>
+    </>
+  )
+}
+
+/**
+ * Table 批量操作
  */
 const getTableAlertRender = (projectId: string, currentSchema: SchemaV2, tableRef: any) => ({
   intl,

@@ -102,13 +102,20 @@ export async function tcbRequest<T = any>(
 }
 
 // 上传文件
-export async function uploadFile(file: File, onProgress: (v: number) => void): Promise<string> {
+export async function uploadFile(
+  file: File,
+  onProgress: (v: number) => void,
+  fileName?: string
+): Promise<string> {
   const app = await getCloudBaseApp()
   const day = moment().format('YYYY-MM-DD')
 
+  // 文件名
+  const uploadFileName = fileName || `${random(32)}-${file.name}`
+
   const result = await app.uploadFile({
     filePath: file,
-    cloudPath: `cloudbase-cms/upload/${day}/${random(32)}-${file.name}`,
+    cloudPath: `cloudbase-cms/upload/${day}/${uploadFileName}`,
     onUploadProgress: (progressEvent: ProgressEvent) => {
       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
       onProgress(percentCompleted)

@@ -24,6 +24,9 @@ export const CollectionV2 = {
 
   // 定义的角色集合
   CustomUserRoles: 'tcb-ext-cms-user-roles',
+
+  // 数据导入导出的记录
+  DataMigrateTasks: 'tcb-ext-cms-data-migrate',
 }
 
 // 系统角色，无法修改

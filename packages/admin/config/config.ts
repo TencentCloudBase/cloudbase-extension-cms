@@ -107,7 +107,7 @@ const config: IConfig = {
             {
               exact: true,
               path: '/:projectId/content/:schemaId/edit',
-              component: './project/content/components/ContentEditor',
+              component: './project/content/ContentEditor',
             },
             {
               component: './project/content/index',
