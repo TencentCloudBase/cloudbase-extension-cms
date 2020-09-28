@@ -29,7 +29,14 @@ export default (): React.ReactElement => {
     <>
       <ProList<string>
         actions={[
-          <Button key="new" type="primary" onClick={() => setModalVisible(true)}>
+          <Button
+            key="new"
+            type="primary"
+            onClick={() => {
+              setSelectedUser(undefined)
+              setModalVisible(true)
+            }}
+          >
             <PlusOutlined /> 新建
           </Button>,
         ]}
