@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Space, Button, Row, Col, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
-import { calculateFieldWidth } from '../utils'
+import { calculateFieldWidth } from './utils'
 
 const { Option } = Select
 

@@ -1,10 +1,10 @@
-import moment from 'moment'
 import { request, history } from 'umi'
 import { message, notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
 import { codeMessage } from '@/constants'
 import { isDevEnv, random } from './tool'
 import defaultSettings from '../../config/defaultSettings'
+import { getFullDate } from './date'
 
 let app: any
 let auth: any
@@ -102,13 +102,20 @@ export async function tcbRequest<T = any>(
 }
 
 // 上传文件
-export async function uploadFile(file: File, onProgress: (v: number) => void): Promise<string> {
+export async function uploadFile(
+  file: File,
+  onProgress: (v: number) => void,
+  filePath?: string
+): Promise<string> {
   const app = await getCloudBaseApp()
-  const day = moment().format('YYYY-MM-DD')
+  const day = getFullDate()
+
+  // 文件名
+  const uploadFilePath = filePath || `upload/${day}/${random(32)}-${file.name}`
 
   const result = await app.uploadFile({
     filePath: file,
-    cloudPath: `cloudbase-cms/upload/${day}/${random(32)}-${file.name}`,
+    cloudPath: `cloudbase-cms/${uploadFilePath}`,
     onUploadProgress: (progressEvent: ProgressEvent) => {
       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
       onProgress(percentCompleted)

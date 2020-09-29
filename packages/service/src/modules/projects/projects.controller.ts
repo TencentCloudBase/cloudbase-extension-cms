@@ -64,7 +64,7 @@ export class ProjectsController {
     }
 
     const dbQuery = this.collection().where(filter)
-    const countRes = await dbQuery.count()
+    const { total } = await dbQuery.count()
 
     const { data } = await dbQuery
       .skip(Number(page - 1) * Number(pageSize))
@@ -73,7 +73,7 @@ export class ProjectsController {
 
     return {
       data,
-      total: countRes.total,
+      total,
     }
   }
 

@@ -92,7 +92,7 @@ Form:
           - size: l
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_DEPLOY_PATH}
     - Label:
-        Value: CMS 自定义域名（选填）
+        Value: HTTP 访问服务域名（选填）
       Attributes:
         - class: "tea-form-item"
       Input:
