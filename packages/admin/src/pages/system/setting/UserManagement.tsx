@@ -33,6 +33,7 @@ export default (): React.ReactElement => {
             key="new"
             type="primary"
             onClick={() => {
+              setUserAction('create')
               setSelectedUser(undefined)
               setModalVisible(true)
             }}
