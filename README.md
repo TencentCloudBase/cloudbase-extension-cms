@@ -75,6 +75,10 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
       <sub><b>Hi 头像</b></sub>
     </a>
     </td>
+    <td align="center"><a href="https://featwork.com/blog">
+      <img src="./docs/examples/featblog.png" width="100px;" alt=""/>
+      <br /><sub><b>轻博客</b></sub></a>
+    </td>
   </tr>
 </table>
 
