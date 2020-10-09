@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
+import { CtxM } from 'typings/store'
 import { createSchema, deleteSchema, updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from 'antd'
 
 const { TextArea } = Input
+type Ctx = CtxM<{}, 'schema'>
 
 export const SchemaModal: React.FC<{
   visible: boolean
@@ -13,7 +15,7 @@ export const SchemaModal: React.FC<{
   action?: 'edit' | 'create'
 }> = ({ visible, onClose, action, schema }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent('schema')
+  const ctx = useConcent<{}, Ctx>('schema')
 
   // 创建/更新模型
   const { run, loading } = useRequest(
@@ -43,7 +45,7 @@ export const SchemaModal: React.FC<{
       }
 
       onClose()
-      ctx.dispatch('getSchemas', projectId)
+      ctx.mr.getSchemas(projectId)
     },
     {
       manual: true,

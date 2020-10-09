@@ -56,8 +56,7 @@ export default (): React.ReactNode => {
   const [deleteFieldVisible, setDeleteFieldVisible] = useState(false)
 
   useEffect(() => {
-    // ctx.dispatch('getSchemas', projectId)
-    ctx.mr.getSchemas(projectId);
+    ctx.mr.getSchemas(projectId)
   }, [])
 
   const defaultSelectedMenu = currentSchema?._id ? [currentSchema._id] : []
@@ -184,6 +183,10 @@ export default (): React.ReactNode => {
                 </Col>
                 <Col flex="1 1 auto" />
               </Row>
+            ) : loading ? (
+              <div className="schema-empty">
+                <Spin tip="加载中" />
+              </div>
             ) : (
               <div className="schema-empty">
                 <Empty description="创建你的模型，开始使用 CMS">
