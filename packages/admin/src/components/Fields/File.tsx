@@ -1,186 +1,80 @@
-import React, { useEffect, useState } from 'react'
-import { Button, Input, Upload, message, Space, Progress } from 'antd'
-import { copyToClipboard, downloadFile, getTempFileURL, uploadFile } from '@/utils'
-import { CopyTwoTone, FileUnknownTwoTone, InboxOutlined } from '@ant-design/icons'
+import React from 'react'
+import { Space, Typography, List, Tooltip } from 'antd'
 
-const { Dragger } = Upload
+import { PaperClipOutlined } from '@ant-design/icons'
+import { FileAction } from './FileAction'
+
+const { Text } = Typography
 
 /**
  * 文件字段展示
  */
-export const IFileRender: React.FC<{ src: string }> = ({ src }) => {
-  if (!src) {
+export const IFileRender: React.FC<{ urls: string | string[]; isMultiple: boolean }> = ({
+  urls,
+  isMultiple,
+}) => {
+  if (!urls?.length) {
     return <span>空</span>
   }
 
-  if (!/^cloud:\/\/\S+/.test(src)) {
+  // 文件数组
+  if ((isMultiple && Array.isArray(urls)) || Array.isArray(urls)) {
+    // 存在不是 cloudId 的链接
+    const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
+
     return (
-      <>
-        <div style={{ marginBottom: '10px' }}>
-          <FileUnknownTwoTone style={{ fontSize: '32px' }} />
-        </div>
-        <Button
-          size="small"
-          onClick={() => {
-            copyToClipboard(src)
-              .then(() => {
-                message.success('复制到剪切板成功')
-              })
-              .catch(() => {
-                message.error('复制到剪切板成功')
-              })
-          }}
-        >
-          访问链接
-          <CopyTwoTone />
-        </Button>
-      </>
-    )
-  }
-
-  const [loading, setLoading] = useState(false)
-  const [downloadLoading, setDownloadLoading] = useState(false)
-
-  return (
-    <Space direction="vertical">
-      <div style={{ marginBottom: '10px' }}>
-        <FileUnknownTwoTone style={{ fontSize: '32px' }} />
-      </div>
-      <Space>
-        <Button
-          size="small"
-          loading={downloadLoading}
-          onClick={() => {
-            setDownloadLoading(true)
-            downloadFile(src).finally(() => {
-              setDownloadLoading(false)
-            })
-          }}
-        >
-          下载文件
-        </Button>
-        <Button
-          size="small"
-          loading={loading}
-          onClick={() => {
-            setLoading(true)
-            getTempFileURL(src)
-              .then((url) => {
-                copyToClipboard(url)
-                  .then(() => {
-                    message.success('复制到剪切板成功')
-                  })
-                  .catch(() => {
-                    message.error('复制到剪切板成功')
-                  })
-              })
-              .catch((e) => {
-                console.log(e)
-                console.log(e.message)
-                message.error(`获取图片链接失败 ${e.message}`)
-              })
-              .finally(() => {
-                setLoading(false)
-              })
-          }}
-        >
-          访问链接
-          <CopyTwoTone />
-        </Button>
-      </Space>
-    </Space>
-  )
-}
-
-/**
- * 文件、图片上传
- */
-export const IUploader: React.FC<{
-  type?: 'file' | 'image'
-  value?: string
-  onChange?: (v: string) => void
-}> = (props) => {
-  let { value: fileUrl, type, onChange = () => {} } = props
-
-  if (fileUrl && !/^cloud:\/\/\S+/.test(fileUrl)) {
-    return (
-      <>
-        <Input type="url" value={fileUrl} onChange={(e) => onChange(e.target.value)} />
-        {type === 'image' && <img style={{ height: '120px', marginTop: '10px' }} src={fileUrl} />}
-      </>
-    )
-  }
-
-  const [fileList, setFileList] = useState<any[]>()
-  const [percent, setPercent] = useState(0)
-  const [uploading, setUploading] = useState(false)
-
-  // 加载图片预览
-  useEffect(() => {
-    if (!fileUrl) {
-      return
-    }
-
-    if (type === 'file') {
-      let fileName = fileUrl?.split('/').pop() || ''
-      setFileList([
-        {
-          url: fileUrl,
-          uid: fileUrl,
-          name: fileName,
-          status: 'done',
-        },
-      ])
-      return
-    }
-
-    getTempFileURL(fileUrl)
-      .then((url: string) => {
-        setFileList([
-          {
-            url,
-            uid: fileUrl,
-            name: `已上传${type === 'file' ? '文件' : '图片'}`,
-            status: 'done',
-          },
-        ])
-      })
-      .catch((e) => {
-        message.error(`加载图片失败 ${e.message}`)
-      })
-  }, [fileUrl])
-
-  return (
-    <>
-      <Dragger
-        fileList={fileList}
-        listType={type === 'image' ? 'picture' : 'text'}
-        beforeUpload={(file) => {
-          setUploading(true)
-          setPercent(0)
-          // 上传文件
-          uploadFile(file, (percent) => {
-            setPercent(percent)
-          }).then((fileUrl) => {
-            onChange(fileUrl)
-            setFileList([
-              {
-                uid: fileUrl,
-                name: file.name,
-                status: 'done',
-              },
-            ])
-            message.success(`上传${type === 'file' ? '文件' : '图片'}成功`)
-          })
-          return false
+      <List
+        split={false}
+        dataSource={urls}
+        itemLayout="horizontal"
+        renderItem={(item, index) => {
+          const fileName = item?.split('/').pop() || ''
+          return (
+            <List.Item>
+              <PaperClipOutlined style={{ fontSize: '16px' }} /> &nbsp;
+              <Tooltip title={fileName}>
+                <Text ellipsis style={{ width: '80%' }}>
+                  {fileName}
+                </Text>
+              </Tooltip>
+              {!hasNoCloudLink && <FileAction type="file" cloudId={item} index={index} />}
+            </List.Item>
+          )
         }}
-      >
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">点击或拖拽{type === 'file' ? '文件' : '图片'}上传</p>
-      </Dragger>
-      {uploading && <Progress style={{ paddingTop: '10px' }} percent={percent} />}
-    </>
+      />
+    )
+  }
+
+  // 单文件
+  const fileUrl: string = urls as string
+  const fileName = fileUrl?.split('/').pop() || ''
+
+  if (!/^cloud:\/\/\S+/.test(fileUrl)) {
+    return (
+      <div>
+        <PaperClipOutlined style={{ fontSize: '16px' }} />
+        &nbsp;
+        <Tooltip title={fileName}>
+          <Text ellipsis style={{ width: '80%' }}>
+            {fileName}
+          </Text>
+        </Tooltip>
+      </div>
+    )
+  }
+
+  return (
+    <Space direction="vertical" style={{ width: '100%' }}>
+      <div>
+        <PaperClipOutlined style={{ fontSize: '16px' }} />
+        &nbsp;
+        <Tooltip title={fileName}>
+          <Text ellipsis style={{ width: '50%' }}>
+            {fileName}
+          </Text>
+        </Tooltip>
+      </div>
+      <FileAction type="file" cloudId={fileUrl} />
+    </Space>
   )
 }

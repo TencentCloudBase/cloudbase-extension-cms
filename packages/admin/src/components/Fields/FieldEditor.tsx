@@ -92,7 +92,7 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
  * 字段编辑器
  */
 export function getFieldEditor(field: SchemaFieldV2, key: number) {
-  const { name, type, min, max, enumElements } = field
+  const { name, type, min, max, enumElements, isMultiple } = field
 
   let FieldEditor: React.ReactNode
 
@@ -125,10 +125,10 @@ export function getFieldEditor(field: SchemaFieldV2, key: number) {
       FieldEditor = <IDatePicker type="DateTime" />
       break
     case 'Image':
-      FieldEditor = <IUploader type="image" />
+      FieldEditor = <IUploader type="image" field={field} />
       break
     case 'File':
-      FieldEditor = <IUploader type="file" />
+      FieldEditor = <IUploader type="file" field={field} />
       break
     case 'Enum':
       FieldEditor = (
@@ -237,16 +237,8 @@ export function getFieldFormItem(field: SchemaFieldV2, key: number) {
 
   // 弹性布局
   if (type === 'Markdown' || type === 'RichText') {
-    return (
-      <Col xs={24} sm={24} md={24} lg={24} xl={24} key={key}>
-        {FormItem}
-      </Col>
-    )
+    return FormItem
   }
 
-  return (
-    <Col xs={24} sm={24} md={12} lg={12} xl={12} xxl={12} key={key}>
-      {FormItem}
-    </Col>
-  )
+  return FormItem
 }

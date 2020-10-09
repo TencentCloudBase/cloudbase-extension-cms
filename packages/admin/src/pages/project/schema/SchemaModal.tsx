@@ -8,6 +8,9 @@ import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from
 const { TextArea } = Input
 type Ctx = CtxM<{}, 'schema'>
 
+/**
+ * 新建/更新模型
+ */
 export const SchemaModal: React.FC<{
   visible: boolean
   schema?: SchemaV2 | null
@@ -121,6 +124,9 @@ export const SchemaModal: React.FC<{
   )
 }
 
+/**
+ * 删除模型
+ */
 export const DeleteSchemaModal: React.FC<{
   visible: boolean
   onClose: () => void

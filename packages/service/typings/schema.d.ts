@@ -115,6 +115,9 @@ interface SchemaFieldV2 {
 
   // 枚举类型
   enumElements: { label: string; value: string }[]
+
+  // 允许多个值
+  isMultiple: boolean
 }
 
 // schema v1

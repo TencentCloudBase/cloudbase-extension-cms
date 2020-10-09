@@ -97,6 +97,12 @@ interface SchemaFieldV2 {
 
   // 关联多个
   connectMany: boolean
+
+  // 枚举类型
+  enumElements: { label: string; value: string }[]
+
+  // 允许多个值
+  isMultiple: boolean
 }
 
 // schema v1

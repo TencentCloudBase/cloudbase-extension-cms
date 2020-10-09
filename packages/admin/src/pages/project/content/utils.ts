@@ -44,7 +44,7 @@ export const calculateFieldWidth = (field: SchemaFieldV2) => {
     Connect: 250,
   }
 
-  const { displayName, type } = field
+  const { displayName, type, isMultiple } = field
   // 计算列宽度
   const nameWidth = displayName.length * 25
   let width
@@ -53,5 +53,10 @@ export const calculateFieldWidth = (field: SchemaFieldV2) => {
   } else {
     width = nameWidth > 150 ? nameWidth : 150
   }
+
+  if (isMultiple) {
+    width += 50
+  }
+
   return width
 }

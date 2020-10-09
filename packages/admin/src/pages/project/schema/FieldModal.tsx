@@ -21,6 +21,7 @@ import { CtxM } from 'typings/store'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { getFieldDefaultValueInput } from './Field'
 import { FieldTypes } from '@/common'
+import { random } from '@/utils'
 
 const { TextArea } = Input
 const { Option } = Select
@@ -30,10 +31,12 @@ type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 type ContentCtx = CtxM<{}, 'content'>
 
 // 不能设置默认值的类型
-const negativeTypes = ['File', 'Image', 'Array', 'Connect']
+const NoDefaultValueTypes = ['File', 'Image', 'Array', 'Connect']
 
 // 保留字段名
 const ReservedFieldNames = ['_id', '_createTime', '_updateTime', '_status']
+
+const AllowMultipleTypes = ['Image', 'File']
 
 /**
  * 添加字段
@@ -51,6 +54,7 @@ export const CreateFieldModal: React.FC<{
     state: { currentSchema, schemas, fieldAction, selectedField },
   } = ctx
 
+  // 添加字段
   const { run: createField, loading } = useRequest(
     async (fieldAttr: SchemaFieldV2) => {
       const existSameName = currentSchema?.fields?.find(
@@ -80,6 +84,7 @@ export const CreateFieldModal: React.FC<{
           ...field,
           order: fields.length,
           type: selectedField.type,
+          id: random(32),
         } as any)
       }
 
@@ -190,6 +195,7 @@ export const CreateFieldModal: React.FC<{
         >
           <Input placeholder="数据库字段名，如 title" />
         </Form.Item>
+
         {/^_/.test(formValue?.name) && (
           <Alert
             message="系统会使用 _ 开头的单词作为系统字段名，为了避免和系统字段冲突，建议您使用其他命名规则"
@@ -262,7 +268,7 @@ export const CreateFieldModal: React.FC<{
           </>
         )}
 
-        {negativeTypes.includes(selectedField?.type) ? null : (
+        {NoDefaultValueTypes.includes(selectedField?.type) ? null : (
           <Form.Item label="默认值" name="defaultValue">
             {getFieldDefaultValueInput(selectedField?.type)}
           </Form.Item>
@@ -358,6 +364,20 @@ export const CreateFieldModal: React.FC<{
                 )
               }}
             </Form.List>
+          </Form.Item>
+        )}
+
+        {AllowMultipleTypes.includes(selectedField.type) && (
+          <Form.Item>
+            <div className="form-item">
+              <Form.Item style={{ marginBottom: 0 }}>
+                <Text>允许多个内容</Text>
+                <Form.Item name="isMultiple" valuePropName="checked" style={{ marginBottom: 0 }}>
+                  <Switch />
+                </Form.Item>
+                <Text type="secondary">在创建内容时，允许创建多个内容，数据将以数组格式存储</Text>
+              </Form.Item>
+            </div>
           </Form.Item>
         )}
 

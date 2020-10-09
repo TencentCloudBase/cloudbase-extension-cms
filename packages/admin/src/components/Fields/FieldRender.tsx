@@ -8,7 +8,7 @@ import { calculateFieldWidth } from './utils'
  * 根据类型获取展示字段组件
  */
 export function getFieldRender(field: SchemaFieldV2) {
-  const { name, type } = field
+  const { name, type, isMultiple } = field
   const width = calculateFieldWidth(field)
 
   switch (type) {
@@ -90,8 +90,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => {
-        const data = record[name]
-        return <ILazyImage src={data} />
+        return <ILazyImage urls={record[name]} isMultiple={isMultiple} />
       }
     case 'File':
       return (
@@ -99,7 +98,9 @@ export function getFieldRender(field: SchemaFieldV2) {
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => <IFileRender src={record[name]} />
+      ): React.ReactNode | React.ReactNode[] => (
+        <IFileRender urls={record[name]} isMultiple={isMultiple} />
+      )
     case 'Array':
       return (
         text: React.ReactNode,
