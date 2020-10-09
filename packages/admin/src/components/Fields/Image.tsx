@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, message, Space, Spin, Empty } from 'antd'
+import { Button, message, Space, Spin, Empty, Image } from 'antd'
 import { copyToClipboard, downloadFile, getTempFileURL } from '@/utils'
 import { CopyTwoTone } from '@ant-design/icons'
 import emptyImg from '@/assets/empty.svg'
@@ -13,7 +13,7 @@ export const ILazyImage: React.FC<{ src: string }> = ({ src }) => {
   }
 
   if (!/^cloud:\/\/\S+/.test(src)) {
-    return <img style={{ maxHeight: '120px', maxWidth: '200px' }} src={src} />
+    return <Image height={120} style={{ maxHeight: '120px', maxWidth: '200px' }} src={src} />
   }
 
   const [imgUrl, setImgUrl] = useState('')
@@ -37,7 +37,7 @@ export const ILazyImage: React.FC<{ src: string }> = ({ src }) => {
     <Spin />
   ) : (
     <Space direction="vertical">
-      <img style={{ maxHeight: '120px', maxWidth: '200px' }} src={imgUrl} />
+      <Image height={120} style={{ maxHeight: '120px', maxWidth: '200px' }} src={imgUrl} />
       {imgUrl && (
         <Space>
           <Button
