@@ -249,7 +249,6 @@ export default (): React.ReactNode => {
         onClose={() => setDeleteSchmeaVisible(false)}
       />
       <CreateFieldModal visible={fieldVisible} onClose={() => setFieldVisible(false)} />
-
       <DeleteFieldModal visible={deleteFieldVisible} onClose={() => setDeleteFieldVisible(false)} />
     </PageContainer>
   )

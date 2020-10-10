@@ -73,8 +73,11 @@ export class UserController {
 
     body.createTime = dateToNumber()
 
+    // 不存储密码
+    const user = _.omit(body, ['password'])
+
     return this.cloudbaseService.collection(CollectionV2.Users).add({
-      ...body,
+      ...user,
       uuid: UUId,
     })
   }

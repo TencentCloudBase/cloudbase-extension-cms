@@ -30,13 +30,13 @@ export const FieldTypes = [
     type: 'DateTime',
     name: '日期与时间',
     icon: <i className="gg-calendar-dates" />,
-    desc: '包含日期和时间，如 2020-09-01 10:11:07',
+    description: '包含日期和时间，如 2020-09-01 10:11:07',
   },
   {
     type: 'Date',
     name: '日期',
     icon: <i className="gg-calendar-dates" />,
-    desc: '只包含日期，如 2020-09-01',
+    description: '只包含日期，如 2020-09-01',
   },
   // **颜色：Color**
   // 文件：File
@@ -95,6 +95,12 @@ export const FieldTypes = [
     type: 'Enum',
     name: '枚举',
     icon: <i className="gg-template" />,
+  },
+  {
+    type: 'Object',
+    name: 'JSON 对象',
+    icon: <i className="gg-list-tree" />,
+    description: '可以自由存储 JSON 对象和数组，非 JSON 字符串',
   },
   // 数组：`Array<Value>`
   // 内容关联（外键）：分组与搜索，多层弹窗？

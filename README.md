@@ -111,7 +111,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 
 <div align="center">
   <img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
-  <img src="https://main.qcloudimg.com/raw/f784fd2d9421c656732841a508be4066.jpg" height="300px" alt=""/>
+  <img src="https://main.qcloudimg.com/raw/a07b103a276b42fa727102e66c54f787.jpg" height="300px" alt=""/>
 </div>
 
 ## 🤝 贡献指南

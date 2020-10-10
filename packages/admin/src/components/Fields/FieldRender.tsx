@@ -3,6 +3,7 @@ import { Space, Tag, Typography } from 'antd'
 
 import { IConnectRender, IFileRender, ILazyImage } from '@/components/Fields'
 import { calculateFieldWidth } from './utils'
+import { IObjectRender } from './Object'
 
 /**
  * 根据类型获取展示字段组件
@@ -153,6 +154,13 @@ export function getFieldRender(field: SchemaFieldV2) {
       ): React.ReactNode | React.ReactNode[] => (
         <IConnectRender value={record[name]} field={field} />
       )
+    case 'Object':
+      return (
+        text: React.ReactNode,
+        record: any,
+        index: number,
+        action: any
+      ): React.ReactNode | React.ReactNode[] => <IObjectRender value={record[name]} />
     default:
       return (
         text: React.ReactNode,
