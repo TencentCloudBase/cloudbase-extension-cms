@@ -33,6 +33,11 @@ export async function getCloudBaseApp() {
 
 // 用户名密码登录
 export async function loginWithPassword(username: string, password: string) {
+  if (!auth) {
+    const app = await getCloudBaseApp()
+    auth = app.auth({ persistence: 'local' })
+  }
+
   // 登陆
   await auth.signInWithUsernameAndPassword(username, password)
 }
