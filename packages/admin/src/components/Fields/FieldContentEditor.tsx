@@ -93,7 +93,7 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
  * 字段编辑器
  */
 export function getFieldEditor(field: SchemaFieldV2, key: number) {
-  const { name, type, min, max, enumElements, isMultiple } = field
+  const { name, type, min, max, enumElements } = field
 
   let FieldEditor: React.ReactNode
 

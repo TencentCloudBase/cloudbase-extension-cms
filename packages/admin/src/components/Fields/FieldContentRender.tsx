@@ -1,9 +1,10 @@
 import React from 'react'
-import { Space, Tag, Typography } from 'antd'
-
+import { Space, Tag, Tooltip, Typography } from 'antd'
 import { IConnectRender, IFileRender, ILazyImage } from '@/components/Fields'
-import { calculateFieldWidth } from './utils'
 import { IObjectRender } from './Object'
+import { calculateFieldWidth } from './utils'
+
+const { Text } = Typography
 
 /**
  * 根据类型获取展示字段组件
@@ -20,9 +21,11 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width }}>
-          {text}
-        </Typography.Text>
+        <Tooltip title={text}>
+          <Text ellipsis style={{ width }}>
+            {text}
+          </Text>
+        </Tooltip>
       )
     case 'Text':
     case 'MultiLineString':
@@ -32,9 +35,11 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width }}>
-          {text}
-        </Typography.Text>
+        <Tooltip title={text}>
+          <Text ellipsis style={{ width }}>
+            {text}
+          </Text>
+        </Tooltip>
       )
     case 'Boolean':
       return (
@@ -43,7 +48,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => {
-        return <Typography.Text>{record[name] ? 'True' : 'False'}</Typography.Text>
+        return <Text>{record[name] ? 'True' : 'False'}</Text>
       }
     case 'Number':
       return (
@@ -53,7 +58,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         action: any
       ): React.ReactNode | React.ReactNode[] => {
         const num = typeof record[name] === 'undefined' ? '-' : record[name]
-        return <Typography.Text>{num} </Typography.Text>
+        return <Text>{num} </Text>
       }
     case 'Url':
       return (
@@ -72,14 +77,14 @@ export function getFieldRender(field: SchemaFieldV2) {
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => <Typography.Text>{text}</Typography.Text>
+      ): React.ReactNode | React.ReactNode[] => <Text>{text}</Text>
     case 'Tel':
       return (
         text: React.ReactNode,
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => <Typography.Text>{text}</Typography.Text>
+      ): React.ReactNode | React.ReactNode[] => <Text>{text}</Text>
     case 'Date':
       return undefined
     case 'DateTime':
@@ -128,9 +133,9 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width }}>
+        <Text ellipsis style={{ width }}>
           {text}
-        </Typography.Text>
+        </Text>
       )
 
     case 'RichText':
@@ -140,9 +145,9 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => (
-        <Typography.Text ellipsis style={{ width }}>
+        <Text ellipsis style={{ width }}>
           {text}
-        </Typography.Text>
+        </Text>
       )
 
     case 'Connect':

@@ -41,12 +41,12 @@ const AllowMultipleTypes = ['Image', 'File']
 /**
  * 添加字段
  */
-export const CreateFieldModal: React.FC<{
+export const FieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const ctx = useConcent<{}, CtxM<{}, 'schema'>>('schema')
-  const contentCtx = useConcent<{}, CtxM<{}, 'content'>>('content')
+  const ctx = useConcent<{}, Ctx>('schema')
+  const contentCtx = useConcent<{}, ContentCtx>('content')
   const { projectId } = useParams<any>()
   const [formValue, setFormValue] = useState<any>()
   const [connectSchema, setConnectSchema] = useState<SchemaV2>()
@@ -147,7 +147,7 @@ export const CreateFieldModal: React.FC<{
     <Modal
       centered
       destroyOnClose
-      width={600}
+      width={700}
       footer={null}
       visible={visible}
       title={modalTitle}
@@ -314,40 +314,7 @@ export const CreateFieldModal: React.FC<{
                 return (
                   <div>
                     {fields?.map((field, index) => {
-                      return (
-                        <Form.Item key={index}>
-                          <Form.Item
-                            noStyle
-                            name={[field.name, 'label']}
-                            validateTrigger={['onChange', 'onBlur']}
-                          >
-                            <Input
-                              placeholder="枚举元素展示别名，如 “已发布”"
-                              style={{ width: '43%' }}
-                            />
-                          </Form.Item>
-                          <Form.Item
-                            noStyle
-                            name={[field.name, 'value']}
-                            validateTrigger={['onChange', 'onBlur']}
-                          >
-                            <Input
-                              placeholder="枚举元素值，如 published"
-                              style={{
-                                marginLeft: '3%',
-                                width: '43%',
-                              }}
-                            />
-                          </Form.Item>
-                          <MinusCircleOutlined
-                            className="dynamic-delete-button"
-                            style={{ margin: '0 0 0 15px' }}
-                            onClick={() => {
-                              remove(field.name)
-                            }}
-                          />
-                        </Form.Item>
-                      )
+                      return <EnumListItem key={index} field={field} onRemove={remove} />
                     })}
                     <Form.Item>
                       <Button
@@ -454,59 +421,59 @@ export const CreateFieldModal: React.FC<{
 }
 
 /**
- * 删除字段
+ * 枚举值列表 Item
  */
-export const DeleteFieldModal: React.FC<{
-  visible: boolean
-  onClose: () => void
-}> = ({ visible, onClose }) => {
-  const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('schema')
-  const contentCtx = useConcent<{}, ContentCtx>('content')
-  const [loading, setLoading] = useState(false)
-
-  const {
-    state: { currentSchema, selectedField },
-  } = ctx
+const EnumListItem: React.FC<{ field: any; onRemove: (name: number) => void }> = ({
+  field,
+  onRemove,
+}) => {
+  const [enumValueType, setEnumValueType] = useState<string>('string')
 
   return (
-    <Modal
-      centered
-      destroyOnClose
-      visible={visible}
-      title={`删除【${selectedField?.displayName}】字段`}
-      okButtonProps={{
-        loading,
-      }}
-      onOk={async () => {
-        setLoading(true)
-        const fields: any[] = (currentSchema.fields || []).slice()
-        const index = fields.findIndex(
-          (_: any) => _.id === selectedField.id || _.name === selectedField.name
-        )
-
-        if (index > -1) {
-          fields.splice(index, 1)
-        }
-
-        try {
-          await updateSchema(projectId, currentSchema?._id, {
-            fields,
-          })
-          currentSchema.fields.splice(index, 1)
-          message.success('删除字段成功')
-          ctx.mr.getSchemas(projectId)
-          contentCtx.mr.getContentSchemas(projectId)
-        } catch (error) {
-          message.error('删除字段失败')
-        } finally {
-          onClose()
-          setLoading(false)
-        }
-      }}
-      onCancel={() => onClose()}
-    >
-      确认删除【{selectedField.displayName}（{selectedField?.name}）】字段吗？
-    </Modal>
+    <Form.Item>
+      <Form.Item noStyle name={[field.name, 'label']} validateTrigger={['onChange', 'onBlur']}>
+        <Input placeholder="枚举元素展示别名，如 “已发布”" style={{ width: '35%' }} />
+      </Form.Item>
+      {enumValueType === 'number' && (
+        <Form.Item noStyle name={[field.name, 'value']} validateTrigger={['onChange', 'onBlur']}>
+          <InputNumber
+            placeholder="枚举元素值，如 100"
+            style={{
+              width: '30%',
+              marginLeft: '2%',
+            }}
+          />
+        </Form.Item>
+      )}
+      {enumValueType === 'string' && (
+        <Form.Item noStyle name={[field.name, 'value']} validateTrigger={['onChange', 'onBlur']}>
+          <Input
+            placeholder="枚举元素值，如 published"
+            style={{
+              width: '30%',
+              marginLeft: '2%',
+            }}
+          />
+        </Form.Item>
+      )}
+      <Select
+        placeholder="元素值类型"
+        style={{
+          width: '20%',
+          marginLeft: '2%',
+        }}
+        onChange={(v: string) => setEnumValueType(v)}
+      >
+        <Option value="string">字符串</Option>
+        <Option value="number">数字</Option>
+      </Select>
+      <MinusCircleOutlined
+        className="dynamic-delete-button"
+        style={{ margin: '0 0 0 15px' }}
+        onClick={() => {
+          onRemove(field.name)
+        }}
+      />
+    </Form.Item>
   )
 }

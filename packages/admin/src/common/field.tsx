@@ -25,18 +25,23 @@ export const FieldTypes = [
     name: '布尔值',
     icon: <i className="gg-check" />,
   },
-  // 时间
   {
-    type: 'DateTime',
-    name: '日期与时间',
-    icon: <i className="gg-calendar-dates" />,
-    description: '包含日期和时间，如 2020-09-01 10:11:07',
+    type: 'Enum',
+    name: '枚举',
+    icon: <i className="gg-template" />,
   },
+  // 时间
   {
     type: 'Date',
     name: '日期',
     icon: <i className="gg-calendar-dates" />,
     description: '只包含日期，如 2020-09-01',
+  },
+  {
+    type: 'DateTime',
+    name: '日期与时间',
+    icon: <i className="gg-calendar-dates" />,
+    description: '包含日期和时间，如 2020-09-01 10:11:07',
   },
   // **颜色：Color**
   // 文件：File
@@ -90,11 +95,6 @@ export const FieldTypes = [
     type: 'Array',
     name: '数组',
     icon: <i className="gg-list" />,
-  },
-  {
-    type: 'Enum',
-    name: '枚举',
-    icon: <i className="gg-template" />,
   },
   {
     type: 'Object',

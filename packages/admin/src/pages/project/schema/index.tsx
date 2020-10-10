@@ -21,8 +21,9 @@ import { FieldTypes } from '@/common'
 import { PageContainer } from '@ant-design/pro-layout'
 import { CtxM } from 'typings/store'
 
-import { SchemaFieldRender } from './FieldRender'
-import { CreateFieldModal, DeleteFieldModal } from './FieldModal'
+import { DeleteFieldModal } from './Field'
+import { FieldEditorModal } from './FieldEditor'
+import { SchemaFieldRender } from './FieldItemRender'
 import { SchemaModal, DeleteSchemaModal } from './SchemaModal'
 import './index.less'
 
@@ -248,7 +249,7 @@ export default (): React.ReactNode => {
         visible={deleteSchemaVisible}
         onClose={() => setDeleteSchmeaVisible(false)}
       />
-      <CreateFieldModal visible={fieldVisible} onClose={() => setFieldVisible(false)} />
+      <FieldEditorModal visible={fieldVisible} onClose={() => setFieldVisible(false)} />
       <DeleteFieldModal visible={deleteFieldVisible} onClose={() => setDeleteFieldVisible(false)} />
     </PageContainer>
   )
