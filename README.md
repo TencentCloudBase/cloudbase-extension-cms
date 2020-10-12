@@ -110,7 +110,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
 
 <div align="center">
-  <img src="https://main.qcloudimg.com/raw/895ea84e9dd5beb4f489c4bbfcbc9507.jpg" height="300px" alt=""/>
+  <img src="https://main.qcloudimg.com/raw/a1b2a795f07a0fbaf56f29f52b47e2b9.jpg" height="300px" alt=""/>
   <img src="https://main.qcloudimg.com/raw/a07b103a276b42fa727102e66c54f787.jpg" height="300px" alt=""/>
 </div>
 

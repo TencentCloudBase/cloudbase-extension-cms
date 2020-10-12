@@ -38,13 +38,17 @@ SECRETKEY=xxx
 
 ```js
 window.TcbCmsConfig = {
-  // 路由模式
+  // 路由方式：hash 或 browser
   history: 'hash',
   // 环境 Id
   envId: 'envId',
-  // 云接入默认域名/自定义域名，不带 https 协议符
+  // 禁用通知
+  disableNotice: false,
+  // 禁用帮助按钮
+  disableHelpButton: false,
+  // 云接入默认域名/自定义域名 + 云接入路径，不带 https 协议符
   // https://console.cloud.tencent.com/tcb/env/access
-  cloudAccessPath: 'xxx.xx.tcloudbase.com/tcb-ext-cms-service',
+  cloudAccessPath: 'xxx-xxx.service.tcloudbase.com/tcb-ext-cms-service',
 }
 ```
 

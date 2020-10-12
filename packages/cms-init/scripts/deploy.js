@@ -26,6 +26,8 @@ module.exports = {
 
     // 写入静态网站配置
     await writeConfigJS(manager, envId, accessDomain, filterDeployPath)
+
+    console.log('====> 部署静态网站成功 <=====')
   },
 }
 
