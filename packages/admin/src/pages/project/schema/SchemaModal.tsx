@@ -11,7 +11,7 @@ type Ctx = CtxM<{}, 'schema'>
 /**
  * 新建/更新模型
  */
-export const SchemaModal: React.FC<{
+export const SchemaEditorModal: React.FC<{
   visible: boolean
   schema?: SchemaV2 | null
   onClose: () => void

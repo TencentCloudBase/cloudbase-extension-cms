@@ -1,0 +1,61 @@
+import React from 'react'
+import { useConcent } from 'concent'
+import { Card, Layout, List, message, Typography } from 'antd'
+import { FieldTypes } from '@/common'
+import { CtxM } from 'typings/store'
+
+const { Sider } = Layout
+type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
+
+export interface TableListItem {
+  key: number
+  name: string
+  status: string
+  updatedAt: number
+  createdAt: number
+  progress: number
+  money: number
+}
+
+const SchemaFieldPicker: React.FC<{ onCreateField: () => void }> = ({ onCreateField }) => {
+  const ctx = useConcent<{}, Ctx>('schema')
+  const {
+    state: { currentSchema },
+  } = ctx
+
+  return (
+    <Sider className="schema-sider" width="220">
+      <Typography.Title level={3} className="schema-sider-header">
+        模型类型
+      </Typography.Title>
+      <List
+        bordered={false}
+        dataSource={FieldTypes}
+        renderItem={(item) => (
+          <Card
+            hoverable
+            className="field-card"
+            onClick={() => {
+              if (!currentSchema) {
+                message.info('请选择需要编辑的模型')
+                return
+              }
+              ctx.setState({
+                fieldAction: 'create',
+                selectedField: item,
+              })
+              onCreateField()
+            }}
+          >
+            <List.Item className="item">
+              <span>{item.icon}</span>
+              <span>{item.name}</span>
+            </List.Item>
+          </Card>
+        )}
+      />
+    </Sider>
+  )
+}
+
+export default SchemaFieldPicker
