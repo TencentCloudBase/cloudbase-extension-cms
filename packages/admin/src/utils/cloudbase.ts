@@ -130,6 +130,7 @@ export async function uploadFile(
   return result.fileID
 }
 
+// 获取文件的临时访问链接
 export async function getTempFileURL(cloudId: string): Promise<string> {
   const app = await getCloudBaseApp()
   const result = await app.getTempFileURL({

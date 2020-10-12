@@ -3,13 +3,14 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import { Layout, Button, Space } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
+import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
 import { CtxM } from 'typings/store'
 
 import SchemaList from './SchemaList'
 import SchemaFiledList from './SchemaFiledList'
 import { SchemaEditorModal } from './SchemaModal'
+import { SchemaExportModal, SchemaImportModal } from './SchemaShare'
 
 import './index.less'
 
@@ -40,7 +41,11 @@ export default (): React.ReactNode => {
     setSchemaVisible(visible)
   }, [])
 
-  // 获取 Schema
+  // 原型导入导出
+  const [exportVisible, setExportVisible] = useState(false)
+  const [importVisible, setImportVisible] = useState(false)
+
+  // 获取 Schema 列表
   useEffect(() => {
     ctx.mr.getSchemas(projectId)
   }, [])
@@ -60,7 +65,14 @@ export default (): React.ReactNode => {
             <PlusOutlined />
             新建模型
           </Button>
-          <Button>导入模型</Button>
+          <Button type="primary" onClick={() => setExportVisible(true)}>
+            <ExportOutlined />
+            导出模型
+          </Button>
+          <Button type="primary" onClick={() => setImportVisible(true)}>
+            <ImportOutlined />
+            导入模型
+          </Button>
         </Space>
       }
     >
@@ -79,6 +91,8 @@ export default (): React.ReactNode => {
         visible={schemaVisible}
         onClose={() => setSchemaVisible(false)}
       />
+      <SchemaExportModal visible={exportVisible} onClose={() => setExportVisible(false)} />
+      <SchemaImportModal visible={importVisible} onClose={() => setImportVisible(false)} />
     </PageContainer>
   )
 }

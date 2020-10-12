@@ -28,7 +28,6 @@ import { random, uploadFile } from '@/utils'
 import { getTableColumns } from './columns'
 import { ContentTableSearch } from './SearchForm'
 import './index.less'
-import { getFullDate } from '@/utils/date'
 
 // 不能支持搜索的类型
 const negativeTypes = ['File', 'Image']

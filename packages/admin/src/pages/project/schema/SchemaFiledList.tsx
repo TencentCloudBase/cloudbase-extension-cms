@@ -1,10 +1,9 @@
-import { useParams } from 'umi'
 import { useConcent } from 'concent'
-
-import React, { useState, useEffect, useCallback } from 'react'
-import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
-import { Layout, Row, Col, Spin, Button, Empty, Space, Typography } from 'antd'
+import React, { useState, useCallback } from 'react'
+import { EditTwoTone, DeleteTwoTone, ExportOutlined } from '@ant-design/icons'
+import { Layout, Row, Col, Spin, Button, Empty, Space, Typography, message } from 'antd'
 import { CtxM } from 'typings/store'
+import { random, saveContentToFile } from '@/utils'
 
 import { DeleteFieldModal } from './Field'
 import { FieldEditorModal } from './FieldEditor'
@@ -26,25 +25,26 @@ export interface TableListItem {
   money: number
 }
 
+const iconStyle = {
+  fontSize: '16px',
+}
+
 const SchemaFieldList: React.FC<{
   onSchemaChange: (action: 'create' | 'edit', v: boolean) => void
 }> = ({ onSchemaChange }) => {
-  const { projectId } = useParams<any>()
   const ctx = useConcent<{}, Ctx>('schema')
   const {
     state: { currentSchema, loading },
   } = ctx
 
-  const [deleteSchemaVisible, setDeleteSchmeaVisible] = useState(false)
   // 新增字段
   const [fieldVisible, setFieldVisible] = useState(false)
   // 删除字段
   const [deleteFieldVisible, setDeleteFieldVisible] = useState(false)
+  // 删除原型
+  const [deleteSchemaVisible, setDeleteSchmeaVisible] = useState(false)
 
-  useEffect(() => {
-    ctx.mr.getSchemas(projectId)
-  }, [])
-
+  // 编辑字段
   const editFiled = useCallback((field: SchemaFieldV2) => {
     ctx.setState({
       fieldAction: 'edit',
@@ -52,6 +52,14 @@ const SchemaFieldList: React.FC<{
     })
     setFieldVisible(true)
   }, [])
+
+  // 导出 Schema 数据
+  const exportSchema = useCallback(() => {
+    const fileName = `schema-${currentSchema.collectionName}-${random(8)}.json`
+    const { fields, collectionName, displayName } = currentSchema
+    saveContentToFile(JSON.stringify([{ fields, collectionName, displayName }]), fileName)
+    message.success('原型导出成功！')
+  }, [currentSchema])
 
   return (
     <>
@@ -64,14 +72,15 @@ const SchemaFieldList: React.FC<{
                 <Typography.Title level={3}>{currentSchema.displayName}</Typography.Title>
                 <Space size="middle">
                   <EditTwoTone
-                    style={{ fontSize: '16px' }}
+                    style={iconStyle}
                     onClick={() => {
                       onSchemaChange('edit', true)
                     }}
                   />
-                  <DeleteTwoTone
-                    style={{ fontSize: '16px' }}
-                    onClick={() => setDeleteSchmeaVisible(true)}
+                  <DeleteTwoTone style={iconStyle} onClick={() => setDeleteSchmeaVisible(true)} />
+                  <ExportOutlined
+                    style={{ ...iconStyle, color: '#0052d9' }}
+                    onClick={exportSchema}
                   />
                 </Space>
               </Space>
