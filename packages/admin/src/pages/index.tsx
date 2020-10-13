@@ -123,7 +123,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
           <Col flex="2 1 auto" />
         </Row>
       </Content>
-      <Footer className="footer">CloudBase CMS 2.0.0</Footer>
+      <Footer className="footer">CloudBase CMS 2.1.0</Footer>
       <div className="help-btn">
         {window.TcbCmsConfig.disableHelpButton ? null : (
           <Popover

@@ -4,6 +4,7 @@ import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { getSchema } from '@/services/schema'
 import { getContents, Options } from '@/services/content'
+import { calculateFieldWidth } from './utils'
 
 const { Option } = Select
 const { Text, Paragraph } = Typography
@@ -19,6 +20,7 @@ type ISelectValue = string | string[]
 
 /**
  * 关联渲染
+ * TODO: 优化关联渲染
  */
 export const IConnectRender: React.FC<{
   value?: IConnectValue
@@ -26,15 +28,20 @@ export const IConnectRender: React.FC<{
 }> = (props) => {
   const { value, field } = props
   const { connectField, connectMany } = field
+  const width = calculateFieldWidth(field)
 
   if (!value || typeof value === 'string' || typeof value?.[0] === 'string') return <span>-</span>
 
   if (!connectMany) {
-    return <Text>{value[connectField]}</Text>
+    return (
+      <Text ellipsis style={{ width }}>
+        {value[connectField]}
+      </Text>
+    )
   }
 
   return (
-    <Paragraph style={{ maxWidth: '300px' }}>
+    <Paragraph style={{ width }}>
       {value
         .filter((_: any) => _)
         .map((record: any, index: number) => (

@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-06-15"
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.0.0
+Version: 2.1.0
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -22,13 +22,12 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.0.0
+  - Title: 2.1.0
     Content:
-      - 全新的 UI 交互设计，创造高效愉悦的使用体验
-      - 新增项目管理，支持内容资源隔离，企业级管理模式
-      - 全新的用户权限管理体系，基于自定义角色的资源级权限管理
-      - 全新的富文本编辑器，支持图片上传，带来新的使用体验
-      - 新增枚举、多行字符串等新类型
+      - 原型字段支持拖拽排序
+      - 图片、文件类型支持数组模式，可上传多个图片、文件
+      - 支持通过 CSV，JSON Line 导入数据到内容集合中
+      - 支持原型的导入、导出，易于分享，快速上手
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -124,3 +123,7 @@ Config:
   # 初始化脚本
   InstalledHook:
     - FunctionName: tcb-ext-cms-init
+EntryPoint:
+  - Label: 默认访问地址（未修改部署路径）
+    EntryType: HttpService
+    HttpPath: /tcb-cms/
