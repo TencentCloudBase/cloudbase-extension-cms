@@ -5,19 +5,16 @@ import emptyImg from '@/assets/empty.svg'
 import { FileAction } from './FileAction'
 
 /**
- * 图片懒加载
+ * 图片渲染组件，懒加载 + 轮播图
  */
-export const ILazyImage: React.FC<{ urls: string | string[]; isMultiple: boolean }> = ({
-  urls,
-  isMultiple,
-}) => {
+export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => {
   if (!urls?.length) {
     return <Empty image={emptyImg} imageStyle={{ height: '60px' }} description="未设定图片" />
   }
 
   // 轮播图
-  if ((isMultiple && Array.isArray(urls)) || Array.isArray(urls)) {
-    return <IMultiLazyImage urls={urls} />
+  if (Array.isArray(urls)) {
+    return <MultiImageRender urls={urls} />
   }
 
   if (!/^cloud:\/\/\S+/.test(urls)) {
@@ -51,7 +48,10 @@ export const ILazyImage: React.FC<{ urls: string | string[]; isMultiple: boolean
   )
 }
 
-const IMultiLazyImage: React.FC<{ urls: string[] }> = ({ urls }) => {
+/**
+ * 多个图片，使用轮播图展示
+ */
+const MultiImageRender: React.FC<{ urls: string[] }> = ({ urls }) => {
   const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
 
   if (hasNoCloudLink) {

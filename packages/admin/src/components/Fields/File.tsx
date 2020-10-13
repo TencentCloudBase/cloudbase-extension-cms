@@ -9,16 +9,13 @@ const { Text } = Typography
 /**
  * 文件字段展示
  */
-export const IFileRender: React.FC<{ urls: string | string[]; isMultiple: boolean }> = ({
-  urls,
-  isMultiple,
-}) => {
+export const IFileRender: React.FC<{ urls: string | string[] }> = ({ urls }) => {
   if (!urls?.length) {
     return <span>空</span>
   }
 
   // 文件数组
-  if ((isMultiple && Array.isArray(urls)) || Array.isArray(urls)) {
+  if (Array.isArray(urls)) {
     // 存在不是 cloudId 的链接
     const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
 

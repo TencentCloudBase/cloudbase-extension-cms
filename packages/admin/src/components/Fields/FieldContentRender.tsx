@@ -1,6 +1,6 @@
 import React from 'react'
 import { Space, Tag, Tooltip, Typography } from 'antd'
-import { IConnectRender, IFileRender, ILazyImage } from '@/components/Fields'
+import { IConnectRender, IFileRender, ImageRender } from '@/components/Fields'
 import { IObjectRender } from './Object'
 import { calculateFieldWidth } from './utils'
 
@@ -10,7 +10,7 @@ const { Text } = Typography
  * 根据类型获取展示字段组件
  */
 export function getFieldRender(field: SchemaFieldV2) {
-  const { name, type, isMultiple } = field
+  const { name, type } = field
   const width = calculateFieldWidth(field)
 
   switch (type) {
@@ -96,7 +96,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => {
-        return <ILazyImage urls={record[name]} isMultiple={isMultiple} />
+        return <ImageRender urls={record[name]} />
       }
     case 'File':
       return (
@@ -104,9 +104,7 @@ export function getFieldRender(field: SchemaFieldV2) {
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => (
-        <IFileRender urls={record[name]} isMultiple={isMultiple} />
-      )
+      ): React.ReactNode | React.ReactNode[] => <IFileRender urls={record[name]} />
     case 'Array':
       return (
         text: React.ReactNode,

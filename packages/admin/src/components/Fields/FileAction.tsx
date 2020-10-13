@@ -3,6 +3,9 @@ import { CopyTwoTone } from '@ant-design/icons'
 import { Button, message } from 'antd'
 import React, { useState } from 'react'
 
+/**
+ * 文件/图片通用下载、复制访问链接组件
+ */
 export const FileAction: React.FC<{
   index?: number
   cloudId: string

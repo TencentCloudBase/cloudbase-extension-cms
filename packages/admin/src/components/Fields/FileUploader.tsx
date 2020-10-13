@@ -6,7 +6,7 @@ import { PlusOutlined, InboxOutlined, MinusCircleOutlined } from '@ant-design/ic
 const { Dragger } = Upload
 
 /**
- * 文件、图片上传
+ * 文件、图片编辑组件
  */
 export const IUploader: React.FC<{
   field: SchemaFieldV2
@@ -18,7 +18,7 @@ export const IUploader: React.FC<{
   const tipText = type === 'file' ? '文件' : '图片'
   const { isMultiple, name } = field
 
-  // 多文件
+  // 数组模式
   if (isMultiple || Array.isArray(urls)) {
     return (
       <IMultipleUploader
@@ -117,6 +117,9 @@ export const IUploader: React.FC<{
   )
 }
 
+/**
+ * 多文件、图片编辑组件
+ */
 export const IMultipleUploader: React.FC<{
   type?: 'file' | 'image'
   value?: string[]
