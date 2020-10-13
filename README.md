@@ -85,6 +85,10 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
       <img src="./docs/examples/yami.png" width="100px;" alt=""/>
       <br /><sub><b>密鸭车服</b></sub>
     </td>
+    <td align="center"><a href="https://github.com/wforguo/wedding-app">
+      <img src="./docs/examples/wedding-app.jpeg" width="100px;" alt=""/>
+      <br /><sub><b>趣婚礼</b></sub></a>
+    </td>
   </tr>
 </table>
 
