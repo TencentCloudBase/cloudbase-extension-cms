@@ -1,7 +1,7 @@
 import { useConcent } from 'concent'
 import React, { useState, useCallback } from 'react'
 import { EditTwoTone, DeleteTwoTone, ExportOutlined } from '@ant-design/icons'
-import { Layout, Row, Col, Spin, Button, Empty, Space, Typography, message } from 'antd'
+import { Layout, Row, Col, Spin, Button, Empty, Space, Typography, message, Modal } from 'antd'
 import { CtxM } from 'typings/store'
 import { random, saveContentToFile } from '@/utils'
 
@@ -55,10 +55,18 @@ const SchemaFieldList: React.FC<{
 
   // 导出 Schema 数据
   const exportSchema = useCallback(() => {
-    const fileName = `schema-${currentSchema.collectionName}-${random(8)}.json`
-    const { fields, collectionName, displayName } = currentSchema
-    saveContentToFile(JSON.stringify([{ fields, collectionName, displayName }]), fileName)
-    message.success('原型导出成功！')
+    const modal = Modal.confirm({
+      title: '确认导出原型数据？',
+      onCancel: () => {
+        modal.destroy()
+      },
+      onOk: () => {
+        const fileName = `schema-${currentSchema.collectionName}-${random(8)}.json`
+        const { fields, collectionName, displayName } = currentSchema
+        saveContentToFile(JSON.stringify([{ fields, collectionName, displayName }]), fileName)
+        message.success('原型导出成功！')
+      },
+    })
   }, [currentSchema])
 
   return (

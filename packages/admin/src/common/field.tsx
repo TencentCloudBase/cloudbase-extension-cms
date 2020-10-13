@@ -100,7 +100,7 @@ export const FieldTypes = [
     type: 'Object',
     name: 'JSON 对象',
     icon: <i className="gg-list-tree" />,
-    description: '可以自由存储 JSON 对象和数组，非 JSON 字符串',
+    description: '可以自由存储类 JSON 对象和数组（非 JSON 字符串）',
   },
   // 数组：`Array<Value>`
   // 内容关联（外键）：分组与搜索，多层弹窗？
