@@ -1,5 +1,5 @@
 import { Spin } from 'antd'
-import React from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { history, Link, useRequest, matchPath, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
@@ -12,10 +12,10 @@ import {
   RocketTwoTone,
   setTwoToneColor,
 } from '@ant-design/icons'
-import { getContentSchemas } from '@/services/content'
 import { useConcent } from 'concent'
 import logo from '@/assets/logo.svg'
 import defaultSettings from '../../config/defaultSettings'
+import { ContentCtx } from 'typings/store'
 
 setTwoToneColor('#0052d9')
 
@@ -69,39 +69,41 @@ const layoutProps: BasicLayoutProps = {
 const Layout: React.FC<any> = (props) => {
   const access = useAccess()
   const { children, location } = props
-  const ctx = useConcent('content')
-  const { schemas } = ctx.state
+  const ctx = useConcent<{}, ContentCtx>('content')
+  const { schemas, loading } = ctx.state
 
-  // 加载 content 集合
-  const { loading } = useRequest(async () => {
+  // 加载 schema 集合
+  useEffect(() => {
+    // 匹配 Path，获取 projectId
     const match = matchPath<{ projectId?: string }>(history.location.pathname, {
       path: '/:projectId/*',
       exact: true,
       strict: false,
     })
 
+    // projectId 无效时，重定向到首页
     const { projectId = '' } = match?.params || {}
-
     if (projectId === ':projectId' || !projectId) {
       history.push('/home')
       return
     }
 
-    const res = await getContentSchemas(projectId)
-    // 设置 schemas 数据
-    ctx.setState({
-      schemas: res.data,
-    })
-    return res
-  })
+    ctx.mr.getContentSchemas(projectId)
+  }, [])
 
-  const contentChildMenus = schemas?.map((schema: SchemaV2) => ({
-    name: schema.displayName,
-    path: `/:projectId/content/${schema._id}`,
-  }))
+  const contentChildMenus = useMemo(
+    () =>
+      schemas?.map((schema: SchemaV2) => ({
+        name: schema.displayName,
+        path: `/:projectId/content/${schema._id}`,
+      })),
+    [schemas]
+  )
 
   return (
     <ProLayout
+      // 不自动折叠菜单
+      openKeys={false}
       location={location}
       menuContentRender={(_, dom) =>
         loading ? (
@@ -111,7 +113,7 @@ const Layout: React.FC<any> = (props) => {
               textAlign: 'center',
             }}
           >
-            <Spin tip="菜单加载中" />
+            <Spin tip="数据加载中" />
           </div>
         ) : (
           dom

@@ -1,18 +1,16 @@
 import { Empty, Button, Skeleton } from 'antd'
 import { history, useParams } from 'umi'
 import { useConcent } from 'concent'
-import { CtxM } from 'typings/store'
+import { ContentCtx } from 'typings/store'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useEffect, useState } from 'react'
 import { ContentTable } from './ContentTable'
 import './index.less'
 
-type Ctx = CtxM<{}, 'content'> // 属于 content 模块的实例上下文类型
-
 export default (): React.ReactNode => {
   const { schemaId, projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('content')
+  const ctx = useConcent<{}, ContentCtx>('content')
   const [contentLoading, setContentLoading] = useState(false)
 
   const {

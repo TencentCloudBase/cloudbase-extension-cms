@@ -5,16 +5,13 @@ import ProCard from '@ant-design/pro-card'
 import { Layout, Button, Space } from 'antd'
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
-import { CtxM } from 'typings/store'
+import { SchmeaCtx } from 'typings/store'
 
 import SchemaList from './SchemaList'
 import SchemaFiledList from './SchemaFiledList'
 import { SchemaEditorModal } from './SchemaModal'
 import { SchemaExportModal, SchemaImportModal } from './SchemaShare'
-
 import './index.less'
-
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 
 export interface TableListItem {
   key: number
@@ -28,7 +25,7 @@ export interface TableListItem {
 
 export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
   const {
     state: { currentSchema },
   } = ctx

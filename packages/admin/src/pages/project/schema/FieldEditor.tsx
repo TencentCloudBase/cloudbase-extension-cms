@@ -17,7 +17,7 @@ import {
   Typography,
   Alert,
 } from 'antd'
-import { CtxM } from 'typings/store'
+import { ContentCtx, SchmeaCtx } from 'typings/store'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { getFieldDefaultValueInput } from './Field'
 import { FieldTypes } from '@/common'
@@ -26,9 +26,6 @@ import { random } from '@/utils'
 const { TextArea } = Input
 const { Option } = Select
 const { Text } = Typography
-
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
-type ContentCtx = CtxM<{}, 'content'>
 
 // 不能设置默认值的类型
 const NoDefaultValueTypes = ['File', 'Image', 'Array', 'Connect']
@@ -45,7 +42,7 @@ export const FieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const { projectId } = useParams<any>()
   const [formValue, setFormValue] = useState<any>()
@@ -107,9 +104,9 @@ export const FieldEditorModal: React.FC<{
         fields,
       })
 
+      // 重新加载数据
       ctx.mr.getSchemas(projectId)
       contentCtx.mr.getContentSchemas(projectId)
-
       onClose()
     },
     {

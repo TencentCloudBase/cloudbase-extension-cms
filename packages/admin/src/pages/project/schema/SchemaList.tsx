@@ -1,9 +1,7 @@
 import React from 'react'
 import { useConcent } from 'concent'
 import { Menu, Row, Col, Spin } from 'antd'
-import { CtxM } from 'typings/store'
-
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
+import { SchmeaCtx } from 'typings/store'
 
 export interface TableListItem {
   key: number
@@ -16,7 +14,7 @@ export interface TableListItem {
 }
 
 const SchemaList: React.FC = () => {
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
   const {
     state: { currentSchema, schemas, loading },
   } = ctx

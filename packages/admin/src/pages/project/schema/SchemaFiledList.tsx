@@ -2,7 +2,7 @@ import { useConcent } from 'concent'
 import React, { useState, useCallback } from 'react'
 import { EditTwoTone, DeleteTwoTone, ExportOutlined } from '@ant-design/icons'
 import { Layout, Row, Col, Spin, Button, Empty, Space, Typography, message, Modal } from 'antd'
-import { CtxM } from 'typings/store'
+import { SchmeaCtx } from 'typings/store'
 import { random, saveContentToFile } from '@/utils'
 
 import { DeleteFieldModal } from './Field'
@@ -13,7 +13,6 @@ import SchemaFieldPicker from './SchemaFieldPicker'
 import './index.less'
 
 const { Content } = Layout
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 
 export interface TableListItem {
   key: number
@@ -32,7 +31,7 @@ const iconStyle = {
 const SchemaFieldList: React.FC<{
   onSchemaChange: (action: 'create' | 'edit', v: boolean) => void
 }> = ({ onSchemaChange }) => {
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
   const {
     state: { currentSchema, loading },
   } = ctx

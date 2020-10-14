@@ -24,7 +24,7 @@ import {
   batchDeleteContent,
   createMigrateJobs,
 } from '@/services/content'
-import { CtxM } from 'typings/store'
+import { ContentCtx } from 'typings/store'
 import { random, uploadFile } from '@/utils'
 import { ContentTableSearch } from './SearchForm'
 import { getTableColumns } from './columns'
@@ -36,8 +36,6 @@ const { Dragger } = Upload
 const { Title } = Typography
 const { Option } = Select
 
-type Ctx = CtxM<{}, 'content'> // 属于 content 模块的实例上下文类型
-
 /**
  * 内容展示表格
  */
@@ -45,7 +43,7 @@ export const ContentTable: React.FC<{
   currentSchema: SchemaV2
 }> = (props) => {
   const { currentSchema } = props
-  const ctx = useConcent<{}, Ctx>('content')
+  const ctx = useConcent<{}, ContentCtx>('content')
   const { projectId, schemaId } = useParams<any>()
 
   // 检索的字段

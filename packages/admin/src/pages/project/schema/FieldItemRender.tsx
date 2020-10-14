@@ -6,7 +6,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { updateSchema } from '@/services/schema'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import { CtxM } from 'typings/store'
+import { SchmeaCtx } from 'typings/store'
 
 export interface FieldType {
   icon: React.ReactNode
@@ -15,7 +15,6 @@ export interface FieldType {
 }
 
 const { Paragraph, Text, Title } = Typography
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 
 export const SchemaFieldRender: React.FC<{
   schema: SchemaV2
@@ -25,7 +24,7 @@ export const SchemaFieldRender: React.FC<{
   const { schema, actionRender, onFiledClick } = props
   const [sortLoading, setSortLoading] = useState(false)
   const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
 
   const { loading } = ctx.state
 

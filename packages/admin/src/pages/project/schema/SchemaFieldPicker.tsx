@@ -2,10 +2,9 @@ import React from 'react'
 import { useConcent } from 'concent'
 import { Card, Layout, List, message, Typography } from 'antd'
 import { FieldTypes } from '@/common'
-import { CtxM } from 'typings/store'
+import { SchmeaCtx } from 'typings/store'
 
 const { Sider } = Layout
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 
 export interface TableListItem {
   key: number
@@ -18,7 +17,7 @@ export interface TableListItem {
 }
 
 const SchemaFieldPicker: React.FC<{ onCreateField: () => void }> = ({ onCreateField }) => {
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
   const {
     state: { currentSchema },
   } = ctx

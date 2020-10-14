@@ -2,12 +2,10 @@ import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Modal, Typography, Upload, message, Checkbox, Space, Alert } from 'antd'
-import { CtxM } from 'typings/store'
+import { SchmeaCtx, ContentCtx } from 'typings/store'
 import { random, saveContentToFile } from '@/utils'
 import { InboxOutlined } from '@ant-design/icons'
 import { createSchema } from '@/services/schema'
-
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
 
 const { Title, Paragraph } = Typography
 const { Dragger } = Upload
@@ -20,7 +18,7 @@ export const SchemaExportModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
 
   const {
     state: { schemas },
@@ -70,8 +68,9 @@ export const SchemaExportModal: React.FC<{
       onOk={async () => {
         const exportSchemas = selectedSchemas.map((_: string) => {
           const schema = schemas.find((item) => item.collectionName === _) as SchemaV2
-          const { fields, collectionName, displayName } = schema
-          return { fields, collectionName, displayName }
+          // 关联字段记录了 schema 的 id，导出 schema 需要携带 _id
+          const { fields, collectionName, displayName, _id } = schema
+          return { fields, collectionName, displayName, _id }
         })
         const fileName = `schema-export-${random(8)}.json`
         saveContentToFile(JSON.stringify(exportSchemas), fileName)
@@ -104,7 +103,8 @@ export const SchemaImportModal: React.FC<{
   onClose: () => void
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
+  const contentCtx = useConcent<{}, ContentCtx>('content')
   const { schemas } = ctx.state
   const [loading, setLoading] = useState(false)
   const [importSchemas, setImportSchemas] = useState<Partial<SchemaV2>[]>([])
@@ -165,6 +165,7 @@ export const SchemaImportModal: React.FC<{
       await Promise.all(tasks)
       message.success('导入原型成功！')
       ctx.mr.getSchemas(projectId)
+      contentCtx.mr.getContentSchemas(projectId)
     } catch (error) {
       message.error('导入原型失败')
     } finally {

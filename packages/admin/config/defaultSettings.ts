@@ -11,6 +11,7 @@ export default {
   colorWeak: false,
   menu: {
     locale: false,
+    defaultOpenAll: true,
   },
   title: 'CloudBase CMS',
   pwa: false,

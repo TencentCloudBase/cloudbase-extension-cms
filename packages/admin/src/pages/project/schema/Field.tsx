@@ -4,7 +4,7 @@ import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
 import { Modal, message, Input, InputNumber } from 'antd'
 import { ISwitch, IDatePicker } from '@/components/Fields'
-import { CtxM } from 'typings/store'
+import { ContentCtx, SchmeaCtx } from 'typings/store'
 
 /**
  * 获取字段默认值的输入 JSX
@@ -23,9 +23,6 @@ export const getFieldDefaultValueInput = (type: string) => {
   }
 }
 
-type Ctx = CtxM<{}, 'schema'> // 属于schema模块的实例上下文类型
-type ContentCtx = CtxM<{}, 'content'>
-
 /**
  * 删除字段
  */
@@ -34,7 +31,7 @@ export const DeleteFieldModal: React.FC<{
   onClose: () => void
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const [loading, setLoading] = useState(false)
 

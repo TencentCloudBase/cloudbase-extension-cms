@@ -4,17 +4,15 @@ import { DeleteTwoTone } from '@ant-design/icons'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
 import { calculateFieldWidth } from './utils'
 import { useConcent } from 'concent'
-import { CtxM } from 'typings/store'
+import { ContentCtx } from 'typings/store'
 
 const { Option } = Select
-
-type Ctx = CtxM<{}, 'content'> // 属于 content 模块的实例上下文类型
 
 export const ContentTableSearch: React.FC<{
   schema: SchemaV2
   onSearch: (v: Record<string, any>) => void
 }> = ({ onSearch }) => {
-  const ctx = useConcent<{}, Ctx>('content')
+  const ctx = useConcent<{}, ContentCtx>('content')
   const { searchFields, searchParams } = ctx.state
 
   // 删除字段

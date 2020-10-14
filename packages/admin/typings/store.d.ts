@@ -1,7 +1,3 @@
-/**
- * concent store的类型描述文件
- * @author: fantasticsoul
- */
 import {
   ICtx,
   IAnyFnInObj,
@@ -141,3 +137,7 @@ export type CtxDeConn<P = {}, Conn extends Modules = MODULE_VOID, Se = {}, RefCu
 
 // ArrItemType
 export type ItemsType<Arr> = Arr extends ReadonlyArray<infer E> ? E : never
+
+export type SchmeaCtx = CtxM<{}, 'schema'>
+export type ContentCtx = CtxM<{}, 'content'>
+export type RoleCtx = CtxM<{}, 'role'> // 属于 role 模块的实例上下文类型

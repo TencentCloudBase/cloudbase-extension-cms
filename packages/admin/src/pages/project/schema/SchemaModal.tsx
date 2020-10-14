@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
-import { CtxM } from 'typings/store'
+import { SchmeaCtx } from 'typings/store'
 import { createSchema, deleteSchema, updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from 'antd'
 
 const { TextArea } = Input
-type Ctx = CtxM<{}, 'schema'>
 
 /**
  * 新建/更新模型
@@ -18,7 +17,8 @@ export const SchemaEditorModal: React.FC<{
   action?: 'edit' | 'create'
 }> = ({ visible, onClose, action, schema }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, Ctx>('schema')
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
+  const contentCtx = useConcent('content')
 
   // 创建/更新模型
   const { run, loading } = useRequest(
@@ -49,6 +49,7 @@ export const SchemaEditorModal: React.FC<{
 
       onClose()
       ctx.mr.getSchemas(projectId)
+      contentCtx.dispatch('getContentSchemas', projectId)
     },
     {
       manual: true,
