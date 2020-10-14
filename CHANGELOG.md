@@ -18,6 +18,9 @@
 
 ### ⚡ Improve
 
+- 文件展示优化
+- 图片支持缩放与预览
+- 优化数据表格展示
 - 优化代码类型定义 [#19](https://github.com/TencentCloudBase/cloudbase-extension-cms/pull/19) [@fantasticsoul](https://github.com/fantasticsoul)
 
 ## [2.0.0] - 2020-09-24

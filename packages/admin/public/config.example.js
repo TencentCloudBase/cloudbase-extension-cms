@@ -1,4 +1,6 @@
 window.TcbCmsConfig = {
+  // 可用区，默认上海
+  region: 'ap-shanghai',
   // 路由方式：hash 或 browser
   history: 'hash',
   // 环境 Id

@@ -41,6 +41,7 @@ async function writeConfigJS(manager, envId, accessDomain, dir) {
   await writeFile(
     '/tmp/config.js',
     `window.TcbCmsConfig = {
+    region: '${process.env.TENCENTCLOUD_REGION || 'ap-shanghai'}',
     history: 'hash',
     // 环境 Id
     envId: '${envId}',

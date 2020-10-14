@@ -14,6 +14,8 @@ export async function getCloudBaseApp() {
     const { envId } = window.TcbCmsConfig || {}
     app = window.cloudbase.init({
       env: envId,
+      // 默认可用区为上海
+      region: window.TcbCmsConfig.region || 'ap-shanghai',
     })
   }
 

@@ -30,8 +30,13 @@ interface Window {
   reloadAuthorized: () => void
   cloudbase: any
   TcbCmsConfig: {
+    // 可用区
+    region: string
+    // 路由模式
     history: 'hash' | 'browser'
+    // 环境 Id
     envId: string
+    // 云接入域名
     cloudAccessPath: string
     // 禁用帮助按钮
     disableHelpButton: boolean
