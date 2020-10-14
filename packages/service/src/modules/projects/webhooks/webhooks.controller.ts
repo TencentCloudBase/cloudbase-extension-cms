@@ -61,7 +61,7 @@ export class WebhooksController {
       action,
       options = {
         page: 1,
-        pageSize: 20,
+        pageSize: 10,
       },
     } = body
 

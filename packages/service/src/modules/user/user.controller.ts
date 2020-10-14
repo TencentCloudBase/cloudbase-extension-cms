@@ -32,7 +32,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get()
   async getUsers(@Query() query: { page?: number; pageSize?: number } = {}) {
-    const { page = 1, pageSize = 20 } = query
+    const { page = 1, pageSize = 10 } = query
 
     let { data, requestId } = await this.cloudbaseService
       .collection(CollectionV2.Users)

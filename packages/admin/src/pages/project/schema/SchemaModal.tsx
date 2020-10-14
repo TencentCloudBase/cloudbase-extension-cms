@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { CtxM } from 'typings/store'
@@ -138,10 +138,13 @@ export const DeleteSchemaModal: React.FC<{
   const [loading, setLoading] = useState(false)
   const [deleteCollection, setDeleteCollection] = useState(false)
 
+  useEffect(() => {
+    setDeleteCollection(false)
+  }, [visible])
+
   return (
     <Modal
       centered
-      destroyOnClose
       title="删除内容模型"
       visible={visible}
       onCancel={() => onClose()}

@@ -14,7 +14,7 @@ export class RoleController {
 
   @Get()
   async getUserRoles(@Query() query: { page?: number; pageSize?: number } = {}) {
-    const { page = 1, pageSize = 20 } = query
+    const { page = 1, pageSize = 10 } = query
 
     const { data, requestId } = await this.collection()
       .where({})

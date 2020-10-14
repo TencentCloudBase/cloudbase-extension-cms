@@ -218,22 +218,16 @@ const ResourceSelect: React.FC<{
   value?: any
   projectId: string
   onChange?: (v: any) => void
-  service: '*' | 'content' | 'schema' | 'webhook'
+  service: 'content' | 'schema' | 'webhook' | '*'
 }> = ({ projectId, service, value, onChange }) => {
   // 当服务类型为全部时，无法选择指定的资源
-
-  if (service === '*' || projectId === '*') {
-    return (
-      <Select mode="multiple" placeholder="资源" value={value} onChange={(v) => onChange?.(v)}>
-        <Select.Option value="*">全部</Select.Option>
-      </Select>
-    )
-  }
-
   const { data = [], loading } = useRequest(
     async () => {
-      let data = []
+      // 不加载数据
+      if (service === '*' || projectId === '*') return
 
+      // 加载数据
+      let data: any = []
       if (!service || !projectId) {
         return []
       }
@@ -254,6 +248,14 @@ const ResourceSelect: React.FC<{
       refreshDeps: [service, projectId],
     }
   )
+
+  if (service === '*' || projectId === '*') {
+    return (
+      <Select mode="multiple" placeholder="资源" value={value} onChange={(v) => onChange?.(v)}>
+        <Select.Option value="*">全部</Select.Option>
+      </Select>
+    )
+  }
 
   return (
     <Select

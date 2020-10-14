@@ -24,7 +24,26 @@ const state: ContentState = {
 export default {
   state,
   reducer: {
-    setSearchFields(fields: []) {
+    addSearchField(field: any, state: ContentState) {
+      const { searchFields } = state
+      return {
+        searchFields: searchFields.concat(field),
+      }
+    },
+    removeSearchField(field: any, state: ContentState) {
+      const { searchFields } = state
+      const index = searchFields.findIndex((_) => _.id === field.id)
+      searchFields.splice(index, 1)
+      return {
+        searchFields,
+      }
+    },
+    clearSearchField() {
+      return {
+        searchFields: [],
+      }
+    },
+    setSearchFields(fields: any[], state: ContentState) {
       return {
         searchFields: fields,
       }

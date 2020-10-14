@@ -101,7 +101,7 @@ export class SchemasController {
       .get()
 
     if (schema) {
-      throw new RecordExistException()
+      throw new RecordExistException(`系统中已存在绑定了此数据库 ${schema?.collectionName} 的原型`)
     }
 
     // 创建集合

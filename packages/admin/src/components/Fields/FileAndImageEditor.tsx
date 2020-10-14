@@ -8,25 +8,19 @@ const { Dragger } = Upload
 /**
  * 文件、图片编辑组件
  */
-export const IUploader: React.FC<{
+export const IFileAndImageEditor: React.FC<{
   field: SchemaFieldV2
-  type?: 'file' | 'image'
+  type: 'file' | 'image'
   value?: string | string[]
   onChange?: (v: string | string[]) => void
 }> = (props) => {
   let { value: urls, type, field, onChange = () => {} } = props
-  const tipText = type === 'file' ? '文件' : '图片'
   const { isMultiple, name } = field
 
   // 数组模式
   if (isMultiple || Array.isArray(urls)) {
     return (
-      <IMultipleUploader
-        type={type}
-        value={urls as string[]}
-        fieldName={name}
-        onChange={onChange}
-      />
+      <IMultipleEditor type={type} value={urls as string[]} fieldName={name} onChange={onChange} />
     )
   }
 
@@ -42,9 +36,21 @@ export const IUploader: React.FC<{
     )
   }
 
-  const [fileList, setFileList] = useState<any[]>([])
+  return <ISingleFileUploader type={type} fileUrl={fileUrl} onChange={onChange} />
+}
+
+/**
+ * 单文件、图片上传
+ */
+export const ISingleFileUploader: React.FC<{
+  type: 'file' | 'image'
+  fileUrl: string
+  onChange: (v: string | string[]) => void
+}> = ({ type, fileUrl, onChange }) => {
   const [percent, setPercent] = useState(0)
   const [uploading, setUploading] = useState(false)
+  const [fileList, setFileList] = useState<any[]>([])
+  const tipText = type === 'file' ? '文件' : '图片'
 
   // 加载图片预览
   useEffect(() => {
@@ -79,7 +85,7 @@ export const IUploader: React.FC<{
       .catch((e) => {
         message.error(`加载图片失败 ${e.message}`)
       })
-  }, [fileUrl])
+  }, [])
 
   return (
     <>
@@ -120,14 +126,13 @@ export const IUploader: React.FC<{
 /**
  * 多文件、图片编辑组件
  */
-export const IMultipleUploader: React.FC<{
-  type?: 'file' | 'image'
-  value?: string[]
+export const IMultipleEditor: React.FC<{
+  type: 'file' | 'image'
+  value: string[]
   fieldName: string
   onChange?: (v: string[]) => void
 }> = (props) => {
   let { value: urls = [], type, fieldName, onChange = () => {} } = props
-  const tipText = type === 'file' ? '文件' : '图片'
 
   // 转为数组
   if (!Array.isArray(urls) && typeof urls === 'string') {
@@ -176,9 +181,21 @@ export const IMultipleUploader: React.FC<{
     )
   }
 
-  const [fileList, setFileList] = useState<any[]>([])
+  return <IMultipleUploader type={type} urls={urls} onChange={onChange} />
+}
+
+/**
+ * 多文件、图片上传
+ */
+const IMultipleUploader: React.FC<{
+  type: 'file' | 'image'
+  urls: string[]
+  onChange: (v: string[]) => void
+}> = ({ type, urls, onChange }) => {
   const [percent, setPercent] = useState(0)
+  const [fileList, setFileList] = useState<any[]>([])
   const [uploading, setUploading] = useState(false)
+  const tipText = type === 'file' ? '文件' : '图片'
 
   // 加载图片预览
   useEffect(() => {
@@ -214,7 +231,7 @@ export const IMultipleUploader: React.FC<{
       .catch((e) => {
         message.error(`加载图片失败 ${e.message}`)
       })
-  }, [urls])
+  }, [])
 
   return (
     <>

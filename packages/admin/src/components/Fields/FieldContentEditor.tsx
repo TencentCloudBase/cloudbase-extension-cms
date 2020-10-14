@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { Spin, Form, Input, Switch, Button, Select, InputNumber } from 'antd'
 import { Rule } from 'antd/es/form'
-import { IConnectEditor, IDatePicker, IUploader } from '@/components/Fields'
+import { IConnectEditor, IDatePicker, IFileAndImageEditor } from '@/components/Fields'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { IObjectEditor } from './Object'
 
@@ -126,10 +126,10 @@ export function getFieldEditor(field: SchemaFieldV2, key: number) {
       FieldEditor = <IDatePicker type="DateTime" />
       break
     case 'Image':
-      FieldEditor = <IUploader type="image" field={field} />
+      FieldEditor = <IFileAndImageEditor type="image" field={field} />
       break
     case 'File':
-      FieldEditor = <IUploader type="file" field={field} />
+      FieldEditor = <IFileAndImageEditor type="file" field={field} />
       break
     case 'Enum':
       FieldEditor = (

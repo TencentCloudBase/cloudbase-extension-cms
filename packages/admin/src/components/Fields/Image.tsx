@@ -18,34 +18,10 @@ export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
   }
 
   if (!/^cloud:\/\/\S+/.test(urls)) {
-    return <Image style={{ maxHeight: '120px', maxWidth: '200px' }} src={urls} />
+    return <Image width="180px" src={urls} />
   }
 
-  const [imgUrl, setImgUrl] = useState('')
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getTempFileURL(urls)
-      .then((url) => {
-        setLoading(false)
-        setImgUrl(url)
-      })
-      .catch((e) => {
-        console.log(e)
-        console.log(e.message)
-        message.error(`获取图片链接失败 ${e.message}`)
-        setLoading(false)
-      })
-  }, [])
-
-  return loading ? (
-    <Spin />
-  ) : (
-    <Space direction="vertical">
-      <Image style={{ maxHeight: '120px', maxWidth: '200px' }} src={imgUrl} />
-      {imgUrl && <FileAction type="image" cloudId={urls} />}
-    </Space>
-  )
+  return <ICloudImage cloudIds={[urls]} />
 }
 
 /**
@@ -54,32 +30,42 @@ export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
 const MultiImageRender: React.FC<{ urls: string[] }> = ({ urls }) => {
   const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
 
+  // 存在非 CloudId 链接
   if (hasNoCloudLink) {
     return (
       <Carousel>
         {urls.map((url, index) => (
-          <Image src={url} key={index} style={{ maxHeight: '120px', maxWidth: '200px' }} />
+          <Image src={url} key={index} width="180px" />
         ))}
       </Carousel>
     )
   }
 
+  return <ICloudImage cloudIds={urls} />
+}
+
+/**
+ * 云存储图片加载渲染组件
+ */
+const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
   const [loading, setLoading] = useState(true)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [imgUrls, setImgUrls] = useState<string[]>([])
 
   useEffect(() => {
-    const tasks = urls.map(async (url) => getTempFileURL(url))
-
+    if (!cloudIds?.length) return
+    // 获取图片链接
+    const tasks = cloudIds.map(async (url) => getTempFileURL(url))
     Promise.all(tasks)
-      .then((resolvedUrls) => {
-        setImgUrls(resolvedUrls)
-        setLoading(false)
+      .then((httpUrls: string[]) => {
+        setImgUrls(httpUrls)
       })
       .catch((e) => {
         console.log(e)
         console.log(e.message)
         message.error(`获取图片链接失败 ${e.message}`)
+      })
+      .finally(() => {
         setLoading(false)
       })
   }, [])
@@ -88,17 +74,21 @@ const MultiImageRender: React.FC<{ urls: string[] }> = ({ urls }) => {
     <Spin />
   ) : (
     <Space direction="vertical" style={{ width: '100%' }}>
-      <Carousel
-        autoplay
-        afterChange={(current) => {
-          setCurrentSlide(current)
-        }}
-      >
-        {imgUrls.map((url, index) => (
-          <Image key={index} src={url} style={{ maxHeight: '120px', maxWidth: '100%' }} />
-        ))}
-      </Carousel>
-      <FileAction type="image" cloudId={urls[currentSlide]} />
+      {cloudIds?.length > 1 ? (
+        <Carousel
+          autoplay
+          afterChange={(current) => {
+            setCurrentSlide(current)
+          }}
+        >
+          {imgUrls.map((url, index) => (
+            <Image key={index} src={url} width="180px" />
+          ))}
+        </Carousel>
+      ) : (
+        <Image src={imgUrls?.[0]} width="180px" />
+      )}
+      <FileAction type="image" cloudId={cloudIds[currentSlide]} />
     </Space>
   )
 }

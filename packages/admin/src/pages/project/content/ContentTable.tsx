@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, useMemo, useEffect } from 'react'
 import { useConcent } from 'concent'
 import { useParams, history } from 'umi'
-import ProTable from '@ant-design/pro-table'
+import ProTable, { ProColumns } from '@ant-design/pro-table'
 import {
   Button,
   Modal,
@@ -24,9 +24,10 @@ import {
   batchDeleteContent,
   createMigrateJobs,
 } from '@/services/content'
+import { CtxM } from 'typings/store'
 import { random, uploadFile } from '@/utils'
-import { getTableColumns } from './columns'
 import { ContentTableSearch } from './SearchForm'
+import { getTableColumns } from './columns'
 import './index.less'
 
 // 不能支持搜索的类型
@@ -35,6 +36,8 @@ const { Dragger } = Upload
 const { Title } = Typography
 const { Option } = Select
 
+type Ctx = CtxM<{}, 'content'> // 属于 content 模块的实例上下文类型
+
 /**
  * 内容展示表格
  */
@@ -42,12 +45,11 @@ export const ContentTable: React.FC<{
   currentSchema: SchemaV2
 }> = (props) => {
   const { currentSchema } = props
-  const ctx = useConcent('content')
+  const ctx = useConcent<{}, Ctx>('content')
   const { projectId, schemaId } = useParams<any>()
 
   // 检索的字段
   const { searchFields, searchParams } = ctx.state
-  const setSearchFields = (fields: any[]) => ctx.dispatch('setSearchFields', fields)
 
   // table 引用
   const tableRef = useRef<{
@@ -57,8 +59,6 @@ export const ContentTable: React.FC<{
     reset: () => void
     clearSelected: () => void
   }>()
-
-  const columns = getTableColumns(currentSchema?.fields)
 
   // 表格数据请求
   const tableRequest = useCallback(
@@ -111,12 +111,18 @@ export const ContentTable: React.FC<{
     [searchParams]
   )
 
+  // 搜索字段下拉菜单
   const searchFieldMenu = useMemo(
     () => (
       <Menu
         onClick={({ key }) => {
           const field = currentSchema.fields.find((_) => _.name === key)
-          field && setSearchFields([...searchFields, field])
+          const fieldExist = searchFields?.find((_) => _.name === key)
+          if (fieldExist) {
+            message.error('字段已添加，请勿重复添加')
+            return
+          }
+          field && ctx.mr.addSearchField(field)
         }}
       >
         {currentSchema?.fields
@@ -126,6 +132,103 @@ export const ContentTable: React.FC<{
           ))}
       </Menu>
     ),
+    [currentSchema, searchFields]
+  )
+
+  // 缓存 Table Columns 配置
+  const memoTableColumns: ProColumns[] = useMemo(() => {
+    const columns = getTableColumns(currentSchema?.fields)
+
+    return [
+      ...columns,
+      {
+        title: '操作',
+        width: 150,
+        align: 'center',
+        fixed: 'right',
+        valueType: 'option',
+        render: (text, row: any) => [
+          <Button
+            size="small"
+            type="primary"
+            key="edit"
+            onClick={() => {
+              ctx.setState({
+                contentAction: 'edit',
+                selectedContent: row,
+              })
+
+              history.push(`/${projectId}/content/${schemaId}/edit`)
+            }}
+          >
+            编辑
+          </Button>,
+          <Button
+            danger
+            size="small"
+            key="delete"
+            type="primary"
+            onClick={() => {
+              const modal = Modal.confirm({
+                title: '确认删除此内容？',
+                onCancel: () => {
+                  modal.destroy()
+                },
+                onOk: async () => {
+                  try {
+                    await deleteContent(projectId, currentSchema.collectionName, row._id)
+                    tableRef?.current?.reloadAndRest()
+                    message.success('删除内容成功')
+                  } catch (error) {
+                    message.error('删除内容失败')
+                  }
+                },
+              })
+            }}
+          >
+            删除
+          </Button>,
+        ],
+      },
+    ]
+  }, [currentSchema])
+
+  // 表格多选操作
+  const tableAlerRender = useMemo(() => getTableAlertRender(projectId, currentSchema, tableRef), [
+    currentSchema,
+  ])
+
+  // 表格 ToolBar
+  const toolBarRender = useMemo(
+    () => [
+      <Dropdown overlay={searchFieldMenu} key="search">
+        <Button type="primary">
+          <FilterOutlined /> 增加检索
+        </Button>
+      </Dropdown>,
+      <Button
+        key="button"
+        type="primary"
+        icon={<PlusOutlined />}
+        disabled={!currentSchema.fields?.length}
+        onClick={() => {
+          if (!currentSchema?._id) {
+            message.error('请选择需要创建的内容类型！')
+            return
+          }
+
+          ctx.setState({
+            contentAction: 'create',
+            selectedContent: null,
+          })
+
+          history.push(`/${projectId}/content/${schemaId}/edit`)
+        }}
+      >
+        新建
+      </Button>,
+      <DataImport key="import" collectionName={currentSchema.collectionName} />,
+    ],
     [currentSchema]
   )
 
@@ -133,9 +236,6 @@ export const ContentTable: React.FC<{
     <>
       <ContentTableSearch
         schema={currentSchema}
-        searchFields={searchFields}
-        searchValues={searchParams}
-        setSearchFields={setSearchFields}
         onSearch={(params) => {
           ctx.setState({
             searchParams: params,
@@ -145,98 +245,21 @@ export const ContentTable: React.FC<{
       />
       <ProTable
         rowKey="_id"
+        defaultData={[]}
         rowSelection={{}}
-        tableAlertRender={getTableAlertRender(projectId, currentSchema, tableRef)}
+        tableAlertRender={tableAlerRender}
         search={false}
         actionRef={tableRef}
         dateFormatter="string"
         scroll={{ x: 1000 }}
         pagination={{
+          defaultPageSize: 10,
           showSizeChanger: true,
           pageSizeOptions: ['10', '20', '30', '50'],
         }}
-        columns={[
-          ...columns,
-          {
-            title: '操作',
-            width: 150,
-            align: 'center',
-            fixed: 'right',
-            valueType: 'option',
-            render: (text, row: any) => [
-              <Button
-                size="small"
-                type="primary"
-                key="edit"
-                onClick={() => {
-                  ctx.setState({
-                    contentAction: 'edit',
-                    selectedContent: row,
-                  })
-
-                  history.push(`/${projectId}/content/${schemaId}/edit`)
-                }}
-              >
-                编辑
-              </Button>,
-              <Button
-                danger
-                size="small"
-                key="delete"
-                type="primary"
-                onClick={() => {
-                  const modal = Modal.confirm({
-                    title: '确认删除此内容？',
-                    onCancel: () => {
-                      modal.destroy()
-                    },
-                    onOk: async () => {
-                      try {
-                        await deleteContent(projectId, currentSchema.collectionName, row._id)
-                        tableRef?.current?.reloadAndRest()
-                        message.success('删除内容成功')
-                      } catch (error) {
-                        message.error('删除内容失败')
-                      }
-                    },
-                  })
-                }}
-              >
-                删除
-              </Button>,
-            ],
-          },
-        ]}
+        columns={memoTableColumns}
         request={tableRequest}
-        toolBarRender={() => [
-          <Dropdown overlay={searchFieldMenu} key="search">
-            <Button type="primary">
-              <FilterOutlined /> 增加检索
-            </Button>
-          </Dropdown>,
-          <Button
-            key="button"
-            type="primary"
-            icon={<PlusOutlined />}
-            disabled={!currentSchema.fields?.length}
-            onClick={() => {
-              if (!currentSchema?._id) {
-                message.error('请选择需要创建的内容类型！')
-                return
-              }
-
-              ctx.setState({
-                contentAction: 'create',
-                selectedContent: null,
-              })
-
-              history.push(`/${projectId}/content/${schemaId}/edit`)
-            }}
-          >
-            新建
-          </Button>,
-          <DataImport key="import" collectionName={currentSchema.collectionName} />,
-        ]}
+        toolBarRender={() => toolBarRender}
       />
     </>
   )

@@ -1,25 +1,26 @@
-import React from 'react'
-import { Form, Space, Button, Row, Col, Input, Switch, InputNumber, Select } from 'antd'
+import React, { useCallback } from 'react'
+import { Form, Space, Button, Row, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
 import { calculateFieldWidth } from './utils'
+import { useConcent } from 'concent'
+import { CtxM } from 'typings/store'
 
 const { Option } = Select
 
+type Ctx = CtxM<{}, 'content'> // 属于 content 模块的实例上下文类型
+
 export const ContentTableSearch: React.FC<{
   schema: SchemaV2
-  searchFields: SchemaFieldV2[]
-  searchValues: any
   onSearch: (v: Record<string, any>) => void
-  setSearchFields: (fields: SchemaFieldV2[]) => void
-}> = ({ schema, onSearch, searchFields, searchValues = {}, setSearchFields }) => {
+}> = ({ onSearch }) => {
+  const ctx = useConcent<{}, Ctx>('content')
+  const { searchFields, searchParams } = ctx.state
+
   // 删除字段
-  const deleteField = (field: SchemaFieldV2) => {
-    const index = searchFields.findIndex((_) => _.id === field.id)
-    const fields = searchFields.slice(0)
-    fields.splice(index, 1)
-    setSearchFields(fields)
-  }
+  const deleteField = useCallback((field: SchemaFieldV2) => {
+    ctx.mr.removeSearchField(field)
+  }, [])
 
   return (
     <div>
@@ -27,37 +28,35 @@ export const ContentTableSearch: React.FC<{
         <Form
           name="basic"
           layout="inline"
-          initialValues={searchValues}
-          onFinish={(v: any) => onSearch(v)}
+          initialValues={searchParams}
           style={{ marginTop: '15px' }}
+          onFinish={(v: any) => onSearch(v)}
         >
           <Row>
             {searchFields.map((field, index) => (
-              <Space key={index} align="center" style={{ marginRight: '15px' }}>
+              <Space
+                key={index}
+                align="center"
+                style={{ marginRight: '15px', marginBottom: '10px' }}
+              >
                 {getSearchFieldItem(field, index)}
                 <DeleteTwoTone onClick={() => deleteField(field)} style={{ marginLeft: '-15px' }} />
               </Space>
             ))}
-          </Row>
-          <Row>
-            <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
-              <Form.Item>
-                <Space>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      setSearchFields([])
-                      onSearch({})
-                    }}
-                  >
-                    重置
-                  </Button>
-                  <Button type="primary" htmlType="submit">
-                    搜索
-                  </Button>
-                </Space>
-              </Form.Item>
-            </Col>
+            <Space style={{ marginBottom: '10px' }}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  ctx.mr.clearSearchField()
+                  onSearch({})
+                }}
+              >
+                重置
+              </Button>
+              <Button type="primary" htmlType="submit">
+                搜索
+              </Button>
+            </Space>
           </Row>
         </Form>
       ) : null}
