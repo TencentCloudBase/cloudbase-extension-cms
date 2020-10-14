@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { message, Space, Spin, Empty, Image, Carousel } from 'antd'
-import { getTempFileURL } from '@/utils'
+import { batchGetTempFileURL } from '@/utils'
 import emptyImg from '@/assets/empty.svg'
 import { FileAction } from './FileAction'
 
@@ -55,9 +55,9 @@ const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
   useEffect(() => {
     if (!cloudIds?.length) return
     // 获取图片链接
-    const tasks = cloudIds.map(async (url) => getTempFileURL(url))
-    Promise.all(tasks)
-      .then((httpUrls: string[]) => {
+    batchGetTempFileURL(cloudIds)
+      .then((ret) => {
+        const httpUrls = ret.map((_) => _.tempFileURL)
         setImgUrls(httpUrls)
       })
       .catch((e) => {
@@ -77,6 +77,9 @@ const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
       {cloudIds?.length > 1 ? (
         <Carousel
           autoplay
+          dots={{
+            className: 'carousel-dots',
+          }}
           afterChange={(current) => {
             setCurrentSlide(current)
           }}

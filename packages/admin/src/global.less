@@ -1,6 +1,8 @@
 @import '~antd/es/style/themes/default.less';
 @import '~css.gg/icons/all.css';
 
+@primary-color: #0052d9;
+
 html,
 body,
 #root {
@@ -90,5 +92,12 @@ h4.ant-typography {
 
   .ant-pro-table-alert {
     padding: 0;
+  }
+
+  // 覆盖走马灯默认样式
+  .carousel-dots.slick-dots {
+    li button {
+      background: @primary-color;
+    }
   }
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Input, Upload, message, Form, Progress } from 'antd'
-import { getTempFileURL, uploadFile } from '@/utils'
+import { batchGetTempFileURL, getTempFileURL, uploadFile } from '@/utils'
 import { PlusOutlined, InboxOutlined, MinusCircleOutlined } from '@ant-design/icons'
 
 const { Dragger } = Upload
@@ -14,18 +14,23 @@ export const IFileAndImageEditor: React.FC<{
   value?: string | string[]
   onChange?: (v: string | string[]) => void
 }> = (props) => {
-  let { value: urls, type, field, onChange = () => {} } = props
+  let { value: cloudIds, type, field, onChange = () => {} } = props
   const { isMultiple, name } = field
 
   // 数组模式
-  if (isMultiple || Array.isArray(urls)) {
+  if (isMultiple || Array.isArray(cloudIds)) {
     return (
-      <IMultipleEditor type={type} value={urls as string[]} fieldName={name} onChange={onChange} />
+      <IMultipleEditor
+        type={type}
+        value={cloudIds as string[]}
+        fieldName={name}
+        onChange={onChange}
+      />
     )
   }
 
   // 单文件
-  const fileUrl: string = urls as string
+  const fileUrl: string = cloudIds as string
   if (fileUrl && !/^cloud:\/\/\S+/.test(fileUrl)) {
     // 单链接
     return (
@@ -132,15 +137,15 @@ export const IMultipleEditor: React.FC<{
   fieldName: string
   onChange?: (v: string[]) => void
 }> = (props) => {
-  let { value: urls = [], type, fieldName, onChange = () => {} } = props
+  let { value: cloudIds = [], type, fieldName, onChange = () => {} } = props
 
   // 转为数组
-  if (!Array.isArray(urls) && typeof urls === 'string') {
-    urls = [urls]
+  if (!Array.isArray(cloudIds) && typeof cloudIds === 'string') {
+    cloudIds = [cloudIds]
   }
 
-  const notCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
-
+  // 存在非 CloudId 的链接
+  const notCloudLink = cloudIds.some((cloudId) => cloudId && !/^cloud:\/\/\S+/.test(cloudId))
   if (notCloudLink) {
     return (
       <Form.List name={fieldName}>
@@ -181,7 +186,7 @@ export const IMultipleEditor: React.FC<{
     )
   }
 
-  return <IMultipleUploader type={type} urls={urls} onChange={onChange} />
+  return <IMultipleUploader type={type} cloudIds={cloudIds} onChange={onChange} />
 }
 
 /**
@@ -189,9 +194,9 @@ export const IMultipleEditor: React.FC<{
  */
 const IMultipleUploader: React.FC<{
   type: 'file' | 'image'
-  urls: string[]
+  cloudIds: string[]
   onChange: (v: string[]) => void
-}> = ({ type, urls, onChange }) => {
+}> = ({ type, cloudIds, onChange }) => {
   const [percent, setPercent] = useState(0)
   const [fileList, setFileList] = useState<any[]>([])
   const [uploading, setUploading] = useState(false)
@@ -199,16 +204,16 @@ const IMultipleUploader: React.FC<{
 
   // 加载图片预览
   useEffect(() => {
-    if (!urls?.length) {
+    if (!cloudIds?.length) {
       return
     }
 
     if (type === 'file') {
-      const fileList = urls.map((url: string) => {
-        let fileName = url?.split('/').pop() || ''
+      const fileList = cloudIds.map((cloudId: string) => {
+        let fileName = cloudId?.split('/').pop() || ''
         return {
-          url,
-          uid: url,
+          url: cloudId,
+          uid: cloudId,
           name: fileName,
           status: 'done',
         }
@@ -217,12 +222,23 @@ const IMultipleUploader: React.FC<{
       return
     }
 
-    const tasks = urls.map(async (url) => getTempFileURL(url))
-    Promise.all(tasks)
-      .then((resolvedUrls) => {
-        const fileList = resolvedUrls.map((url) => ({
-          url,
-          uid: url,
+    // 当全部 cloudId 已经转换成临时访问链接时，不重新获取
+    if (cloudIds.length <= fileList.length) {
+      const isGotAllUrls = cloudIds.every((cloudId) =>
+        fileList.find((file) => file.uid === cloudId && file.url !== file.uid)
+      )
+      if (isGotAllUrls) {
+        return
+      }
+    }
+
+    // 获取临时访问链接
+    batchGetTempFileURL(cloudIds)
+      .then((results) => {
+        console.log(results)
+        const fileList = results.map(({ tempFileURL, fileID }) => ({
+          url: tempFileURL,
+          uid: fileID,
           name: `已上传${tipText}`,
           status: 'done',
         }))
@@ -231,26 +247,32 @@ const IMultipleUploader: React.FC<{
       .catch((e) => {
         message.error(`加载图片失败 ${e.message}`)
       })
-  }, [])
+  }, [cloudIds])
 
   return (
     <>
       <Dragger
         fileList={fileList}
         listType={type === 'image' ? 'picture' : 'text'}
+        onRemove={(file) => {
+          const newFileList = fileList.filter((_) => _.uid !== file.uid)
+          const urls = newFileList.map((file) => file.uid)
+          onChange(urls)
+          setFileList(newFileList)
+        }}
         beforeUpload={(file) => {
           setUploading(true)
           setPercent(0)
           // 上传文件
           uploadFile(file, (percent) => {
             setPercent(percent)
-          }).then((fileUrl) => {
-            onChange([...urls, fileUrl])
+          }).then((cloudId) => {
+            onChange([...cloudIds, cloudId])
             // 添加图片
             setFileList([
               ...fileList,
               {
-                uid: fileUrl,
+                uid: cloudId,
                 name: file.name,
                 status: 'done',
               },

@@ -146,6 +146,31 @@ export async function getTempFileURL(cloudId: string): Promise<string> {
   return result.fileList[0].tempFileURL
 }
 
+/**
+ * 批量获取文件临时访问链接
+ */
+export async function batchGetTempFileURL(
+  cloudIds: string[]
+): Promise<
+  {
+    fileID: string
+    tempFileURL: string
+  }[]
+> {
+  const app = await getCloudBaseApp()
+  const result = await app.getTempFileURL({
+    fileList: cloudIds,
+  })
+
+  result.fileList.forEach((ret: any) => {
+    if (ret.code !== 'SUCCESS') {
+      throw new Error(ret.code)
+    }
+  })
+
+  return result.fileList
+}
+
 // 下载文件
 export async function downloadFile(cloudId: string) {
   const app = await getCloudBaseApp()
