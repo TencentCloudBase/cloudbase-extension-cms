@@ -235,7 +235,6 @@ const IMultipleUploader: React.FC<{
     // 获取临时访问链接
     batchGetTempFileURL(cloudIds)
       .then((results) => {
-        console.log(results)
         const fileList = results.map(({ tempFileURL, fileID }) => ({
           url: tempFileURL,
           uid: fileID,

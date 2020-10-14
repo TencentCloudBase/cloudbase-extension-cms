@@ -76,7 +76,6 @@ const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
     <Space direction="vertical" style={{ width: '100%' }}>
       {cloudIds?.length > 1 ? (
         <Carousel
-          autoplay
           dots={{
             className: 'carousel-dots',
           }}

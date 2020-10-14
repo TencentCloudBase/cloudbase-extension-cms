@@ -309,10 +309,13 @@ export class ContentsService {
           return
         }
 
-        where[key] = db.RegExp({
-          options: 'ig',
-          regexp: String(fuzzyFilter[key]),
-        })
+        // fuzzyFilter[key] 可能为空
+        where[key] = fuzzyFilter[key]
+          ? db.RegExp({
+              options: 'ig',
+              regexp: String(fuzzyFilter[key]),
+            })
+          : fuzzyFilter[key]
       })
 
     return where
