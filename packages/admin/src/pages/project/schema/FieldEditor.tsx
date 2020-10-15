@@ -168,6 +168,14 @@ export const FieldEditorModal: React.FC<{
           setFormValue(v)
         }}
         onFinish={(v: any) => {
+          // 格式化为对象
+          if (selectedField?.type === 'Object') {
+            try {
+              v.defaultValue = JSON.parse(v.defaultValue)
+            } catch (error) {
+              // ignore
+            }
+          }
           createField(v)
         }}
       >
@@ -266,7 +274,29 @@ export const FieldEditorModal: React.FC<{
         )}
 
         {NoDefaultValueTypes.includes(selectedField?.type) ? null : (
-          <Form.Item label="默认值" name="defaultValue">
+          <Form.Item
+            label="默认值"
+            name="defaultValue"
+            rules={
+              selectedField?.type === 'Object'
+                ? [
+                    {
+                      validator: (_, value) => {
+                        try {
+                          const json = JSON.parse(value)
+                          if (typeof json !== 'object') {
+                            return Promise.reject('非法的 JSON 字符串')
+                          }
+                          return Promise.resolve()
+                        } catch (error) {
+                          return Promise.reject('非法的 JSON 字符串')
+                        }
+                      },
+                    },
+                  ]
+                : []
+            }
+          >
             {getFieldDefaultValueInput(selectedField?.type)}
           </Form.Item>
         )}

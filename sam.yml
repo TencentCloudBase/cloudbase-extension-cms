@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-06-15"
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.1.0
+Version: 2.1.1
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -19,9 +19,10 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.1.0
+  - Title: 2.1.1
     Content:
       - 原型字段支持拖拽排序
+      - 支持 JSON 对象类型
       - 图片、文件类型支持数组模式，可上传多个图片、文件
       - 支持通过 CSV，JSON Line 导入数据到内容集合中
       - 支持原型的导入、导出，易于分享，快速上手
@@ -42,7 +43,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-service
-      CodeUri: extension://bbed4bae581149a7b99df80a63373bd3.zip
+      CodeUri: extension://eb14cd4e90b741f9acda5edea7637cab.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -56,7 +57,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-init
-      CodeUri: extension://0418077cf29d4d308b4119e5bceb86b4.zip
+      CodeUri: extension://138aff66849b47d5a9a1e0920fc0cbcc.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -108,7 +109,13 @@ Resources:
     Type: CloudBase::FlexDB
     Properties:
       CollectionName: tcb-ext-cms-user-roles
-      Description: CMS 系统系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）
+      Description: CMS 系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）
+      AclTag: ADMINONLY
+  MigrateDB:
+    Type: CloudBase::FlexDB
+    Properties:
+      CollectionName: tcb-ext-cms-data-migrate
+      Description: CMS 导入、导出数据行为、状态记录（请不要手动修改）
       AclTag: ADMINONLY
   # 开通静态托管
   StaticStore:
