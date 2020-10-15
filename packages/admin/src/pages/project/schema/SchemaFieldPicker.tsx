@@ -25,7 +25,7 @@ const SchemaFieldPicker: React.FC<{ onCreateField: () => void }> = ({ onCreateFi
   return (
     <Sider className="schema-sider" width="220">
       <Typography.Title level={3} className="schema-sider-header">
-        模型类型
+        内容类型
       </Typography.Title>
       <List
         bordered={false}

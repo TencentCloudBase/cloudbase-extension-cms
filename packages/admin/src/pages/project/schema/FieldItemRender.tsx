@@ -6,7 +6,7 @@ import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautif
 import { updateSchema } from '@/services/schema'
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
-import { SchmeaCtx } from 'typings/store'
+import { ContentCtx, SchmeaCtx } from 'typings/store'
 
 export interface FieldType {
   icon: React.ReactNode
@@ -25,6 +25,7 @@ export const SchemaFieldRender: React.FC<{
   const [sortLoading, setSortLoading] = useState(false)
   const { projectId } = useParams<any>()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
+  const contentCtx = useConcent<{}, ContentCtx>('content')
 
   const { loading } = ctx.state
 
@@ -63,7 +64,9 @@ export const SchemaFieldRender: React.FC<{
     await updateSchema(projectId, schema?._id, {
       fields: resortedFields,
     })
+    // 重新加载数据
     ctx.mr.getSchemas(projectId)
+    contentCtx.mr.getContentSchemas(projectId)
     setSortLoading(false)
   }
 

@@ -4,17 +4,18 @@
 
 ### 🚀 Features
 
-- 原型字段支持拖拽排序
+- 模型字段支持拖拽排序
+- 支持模型的导入、导出
+- 新增 JSON 对象内容类型
 - 图片、文件类型支持数组模式，可上传多个图片、文件
 - 支持通过 CSV，JSON Line 导入数据到内容集合中
-- 支持原型的导入、导出，易于分享，快速上手
 
 ### 🐛 Fix
 
-- 修复新增用户弹窗，新建按钮错误显示问题，表单信息未销毁的问题 [#29](https://github.com/TencentCloudBase/cloudbase-extension-cms/pull/29) [@geeeeeeeeeek](https://github.com/geeeeeeeeeek)
 - 修复关联数据搜索异常的问题
-- 修复管理字段迁移的问题
+- 修复版本升级字段迁移的问题
 - 修复其他已知问题
+- 修复新增用户弹窗，新建按钮错误显示问题，表单信息未销毁的问题 [#29](https://github.com/TencentCloudBase/cloudbase-extension-cms/pull/29) [@geeeeeeeeeek](https://github.com/geeeeeeeeeek)
 
 ### ⚡ Improve
 
