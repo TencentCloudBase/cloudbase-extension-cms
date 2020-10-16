@@ -44,7 +44,6 @@
     "css.gg": "^2.0.0",
     "moment": "^2.27.0",
     "omit.js": "^2.0.2",
-    "qs": "^6.9.0",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.13.1",

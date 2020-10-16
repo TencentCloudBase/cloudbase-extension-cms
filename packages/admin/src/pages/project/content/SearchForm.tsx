@@ -8,7 +8,7 @@ import { ContentCtx } from 'typings/store'
 
 const { Option } = Select
 
-export const ContentTableSearch: React.FC<{
+const ContentTableSearchForm: React.FC<{
   schema: SchemaV2
   onSearch: (v: Record<string, any>) => void
 }> = ({ onSearch }) => {
@@ -63,9 +63,9 @@ export const ContentTableSearch: React.FC<{
 }
 
 /**
- * 字段编辑
+ * 生成搜索字段输入组件
  */
-export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
+const getSearchFieldItem = (field: SchemaFieldV2, key: number) => {
   const { name, type, min, max, displayName, enumElements } = field
   const width = calculateFieldWidth(field)
 
@@ -157,3 +157,5 @@ export function getSearchFieldItem(field: SchemaFieldV2, key: number) {
 
   return FormItem
 }
+
+export default ContentTableSearchForm

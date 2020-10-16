@@ -1,6 +1,6 @@
 import { Spin } from 'antd'
 import React, { useEffect, useMemo } from 'react'
-import { history, Link, useRequest, matchPath, useAccess } from 'umi'
+import { history, Link, matchPath, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
 import ProLayout, { MenuDataItem, BasicLayoutProps } from '@ant-design/pro-layout'
