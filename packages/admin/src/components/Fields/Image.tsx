@@ -4,6 +4,13 @@ import { batchGetTempFileURL } from '@/utils'
 import emptyImg from '@/assets/empty.svg'
 import { FileAction } from './FileAction'
 
+const DefaultHeight = '60px'
+const DefaultWidth = '200px'
+
+const ImageContainerStyle = {
+  overflow: 'hidden',
+}
+
 /**
  * 图片渲染组件，懒加载 + 轮播图
  */
@@ -18,7 +25,9 @@ export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
   }
 
   if (!/^cloud:\/\/\S+/.test(urls)) {
-    return <Image width="180px" src={urls} />
+    return (
+      <Image width={DefaultWidth} height={DefaultHeight} style={ImageContainerStyle} src={urls} />
+    )
   }
 
   return <ICloudImage cloudIds={[urls]} />
@@ -35,7 +44,13 @@ const MultiImageRender: React.FC<{ urls: string[] }> = ({ urls }) => {
     return (
       <Carousel>
         {urls.map((url, index) => (
-          <Image src={url} key={index} width="180px" />
+          <Image
+            src={url}
+            key={index}
+            width={DefaultWidth}
+            height={DefaultHeight}
+            style={ImageContainerStyle}
+          />
         ))}
       </Carousel>
     )
@@ -84,11 +99,22 @@ const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
           }}
         >
           {imgUrls.map((url, index) => (
-            <Image key={index} src={url} width="180px" />
+            <Image
+              key={index}
+              src={url}
+              width={DefaultWidth}
+              height={DefaultHeight}
+              style={ImageContainerStyle}
+            />
           ))}
         </Carousel>
       ) : (
-        <Image src={imgUrls?.[0]} width="180px" />
+        <Image
+          src={imgUrls?.[0]}
+          width={DefaultWidth}
+          height={DefaultHeight}
+          style={ImageContainerStyle}
+        />
       )}
       <FileAction type="image" cloudId={cloudIds[currentSlide]} />
     </Space>
