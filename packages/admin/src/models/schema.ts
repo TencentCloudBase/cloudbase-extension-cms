@@ -1,30 +1,57 @@
 import { IActionCtx } from 'concent'
 import { getSchemas } from '@/services/schema'
 
+type Action = 'create' | 'edit'
+
 interface SchemaState {
   currentSchema: SchemaV2
   loading: boolean
   schemas: SchemaV2[]
+  // 编辑原型的弹窗
+  schemaEditVisible: boolean
+  schemaEditAction: Action
+
   fieldAction: 'create' | 'edit'
+  // 选择编辑的字段
   selectedField: {
     type: string
     name: string
     icon: React.ReactNode
     desc: string
   } & SchemaFieldV2
+  // 删除字段弹窗
+  deleteFieldVisible: boolean
+  // 编辑字段弹窗
+  editFieldVisible: boolean
 }
 
 const state: SchemaState = {
   currentSchema: {} as any,
   loading: false,
   schemas: [],
+  schemaEditVisible: false,
+  schemaEditAction: 'create',
   fieldAction: 'create',
   selectedField: {} as any,
+  deleteFieldVisible: false,
+  editFieldVisible: false,
 }
 
 export default {
   state,
   reducer: {
+    createSchema() {
+      return {
+        schemaEditAction: 'create',
+        schemaEditVisible: true,
+      }
+    },
+    editSchema() {
+      return {
+        schemaEditAction: 'edit',
+        schemaEditVisible: true,
+      }
+    },
     async getSchemas(projectId: string, state: SchemaState, ctx: IActionCtx) {
       ctx.setState({
         loading: true,

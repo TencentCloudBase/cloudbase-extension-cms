@@ -1,5 +1,5 @@
 import { useParams } from 'umi'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import { Layout, Button, Space } from 'antd'
@@ -7,10 +7,10 @@ import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
 import { SchmeaCtx } from 'typings/store'
 
-import SchemaList from './SchemaList'
-import SchemaFiledList from './SchemaFiledList'
-import { SchemaEditorModal } from './SchemaModal'
-import { SchemaExportModal, SchemaImportModal } from './SchemaShare'
+import { SchemaExportModal, SchemaImportModal } from './components/SchemaShare'
+import SchemaContent from './components/SchmeaContent'
+import SchemaMenuList from './SchemaMenuList'
+import SchemaEditor from './SchemaEditor'
 import './index.less'
 
 export interface TableListItem {
@@ -26,17 +26,6 @@ export interface TableListItem {
 export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
-  const {
-    state: { currentSchema },
-  } = ctx
-
-  // 编辑 Schema
-  const [schemaVisible, setSchemaVisible] = useState(false)
-  const [schemaAction, setSchemaAction] = useState<'create' | 'edit'>('create')
-  const onSchemaChange = useCallback((action: 'edit' | 'create', visible: boolean) => {
-    setSchemaAction(action)
-    setSchemaVisible(visible)
-  }, [])
 
   // 原型导入导出
   const [exportVisible, setExportVisible] = useState(false)
@@ -55,8 +44,7 @@ export default (): React.ReactNode => {
           <Button
             type="primary"
             onClick={() => {
-              setSchemaVisible(true)
-              setSchemaAction('create')
+              ctx.mr.createSchema()
             }}
           >
             <PlusOutlined />
@@ -75,19 +63,14 @@ export default (): React.ReactNode => {
     >
       <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
         <ProCard colSpan="220px" className="card-left" style={{ marginBottom: 0 }}>
-          <SchemaList />
+          <SchemaMenuList />
         </ProCard>
         <Layout className="schema-layout">
-          <SchemaFiledList onSchemaChange={onSchemaChange} />
+          <SchemaContent />
         </Layout>
       </ProCard>
 
-      <SchemaEditorModal
-        action={schemaAction}
-        schema={currentSchema}
-        visible={schemaVisible}
-        onClose={() => setSchemaVisible(false)}
-      />
+      <SchemaEditor />
       <SchemaExportModal visible={exportVisible} onClose={() => setExportVisible(false)} />
       <SchemaImportModal visible={importVisible} onClose={() => setImportVisible(false)} />
     </PageContainer>

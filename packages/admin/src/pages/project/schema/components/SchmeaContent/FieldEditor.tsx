@@ -38,7 +38,7 @@ const AllowMultipleTypes = ['Image', 'File']
 /**
  * 添加字段
  */
-export const FieldEditorModal: React.FC<{
+const FieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
@@ -519,3 +519,5 @@ const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: numb
     </Form.Item>
   )
 }
+
+export default FieldEditorModal

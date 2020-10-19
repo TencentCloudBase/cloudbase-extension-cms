@@ -29,7 +29,7 @@ const GlobalHeaderRight: React.FC<{}> = () => {
   return (
     <Space className={className}>
       <Tooltip title="使用文档">
-        <a href="https://docs.cloudbase.net" target="_blank">
+        <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">
           <QuestionCircleOutlined />
         </a>
       </Tooltip>

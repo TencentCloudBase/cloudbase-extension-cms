@@ -16,7 +16,7 @@ export interface TableListItem {
   money: number
 }
 
-const SchemaFieldPicker: React.FC<{ onCreateField: () => void }> = ({ onCreateField }) => {
+const SchemaFieldPicker: React.FC = () => {
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const {
     state: { currentSchema },
@@ -42,8 +42,8 @@ const SchemaFieldPicker: React.FC<{ onCreateField: () => void }> = ({ onCreateFi
               ctx.setState({
                 fieldAction: 'create',
                 selectedField: item,
+                editFieldVisible: true,
               })
-              onCreateField()
             }}
           >
             <List.Item className="item">

@@ -1,31 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { SchmeaCtx } from 'typings/store'
-import { createSchema, deleteSchema, updateSchema } from '@/services/schema'
-import { Modal, Form, message, Input, Space, Button, Checkbox, Typography } from 'antd'
+import { createSchema, updateSchema } from '@/services/schema'
+import { Modal, Form, message, Input, Space, Button, Typography } from 'antd'
 
 const { TextArea } = Input
 
 /**
  * 新建/更新模型
  */
-export const SchemaEditorModal: React.FC<{
-  visible: boolean
-  schema?: SchemaV2 | null
-  onClose: () => void
-  action?: 'edit' | 'create'
-}> = ({ visible, onClose, action, schema }) => {
+const SchemaEditor: React.FC = () => {
   const { projectId } = useParams<any>()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent('content')
+  const { schemaEditAction, schemaEditVisible, currentSchema } = ctx.state
+
+  const onClose = () =>
+    ctx.setState({
+      schemaEditVisible: false,
+    })
+
+  const actionTip = schemaEditAction === 'create' ? '创建' : '更新'
 
   // 创建/更新模型
   const { run, loading } = useRequest(
     async (data: SchemaV2) => {
       const { displayName, collectionName, description } = data
 
-      if (action === 'create') {
+      if (schemaEditAction === 'create') {
         await createSchema(projectId, {
           displayName,
           collectionName,
@@ -33,9 +36,9 @@ export const SchemaEditorModal: React.FC<{
         })
       }
 
-      if (schema && action === 'edit') {
+      if (currentSchema && schemaEditAction === 'edit') {
         const diffData = Object.keys(data)
-          .filter((key) => schema[key] !== data[key])
+          .filter((key) => currentSchema[key] !== data[key])
           .reduce(
             (ret, key) => ({
               ...ret,
@@ -44,7 +47,7 @@ export const SchemaEditorModal: React.FC<{
             {}
           )
 
-        await updateSchema(projectId, schema?._id, diffData)
+        await updateSchema(projectId, currentSchema?._id, diffData)
       }
 
       onClose()
@@ -53,8 +56,8 @@ export const SchemaEditorModal: React.FC<{
     },
     {
       manual: true,
-      onError: () => message.error(`${action === 'create' ? '创建' : '更新'}模型失败`),
-      onSuccess: () => message.success(`${action === 'create' ? '创建' : '更新'}模型成功`),
+      onError: () => message.error(`${actionTip}模型失败`),
+      onSuccess: () => message.success(`${actionTip}模型成功`),
     }
   )
 
@@ -64,17 +67,17 @@ export const SchemaEditorModal: React.FC<{
       destroyOnClose
       footer={null}
       width={600}
-      visible={visible}
+      visible={schemaEditVisible}
       onOk={() => onClose()}
       onCancel={() => onClose()}
-      title={`${action === 'create' ? '创建' : '更新'}模型`}
+      title={`${actionTip}模型`}
     >
       <Form
         name="basic"
         layout="vertical"
         labelAlign="left"
         labelCol={{ span: 6 }}
-        initialValues={action === 'edit' ? schema || {} : undefined}
+        initialValues={schemaEditAction === 'edit' ? currentSchema || {} : undefined}
         onFinish={(v: any) => {
           run(v)
         }}
@@ -91,7 +94,7 @@ export const SchemaEditorModal: React.FC<{
           label="数据库名"
           name="collectionName"
           help={
-            action === 'edit' && (
+            schemaEditAction === 'edit' && (
               <Typography.Text type="danger">
                 更改数据库名会自动重命名原数据库（危险操作！仅管理员可操作！）
               </Typography.Text>
@@ -116,7 +119,7 @@ export const SchemaEditorModal: React.FC<{
           <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>
             <Button onClick={() => onClose()}>取消</Button>
             <Button type="primary" htmlType="submit" loading={loading}>
-              {action === 'create' ? '创建' : '更新'}
+              {actionTip}
             </Button>
           </Space>
         </Form.Item>
@@ -125,57 +128,4 @@ export const SchemaEditorModal: React.FC<{
   )
 }
 
-/**
- * 删除模型
- */
-export const DeleteSchemaModal: React.FC<{
-  visible: boolean
-  onClose: () => void
-}> = ({ visible, onClose }) => {
-  const { projectId } = useParams<any>()
-  const ctx = useConcent('schema')
-  const contentCtx = useConcent('content')
-  const { currentSchema = {} } = ctx.state
-  const [loading, setLoading] = useState(false)
-  const [deleteCollection, setDeleteCollection] = useState(false)
-
-  useEffect(() => {
-    setDeleteCollection(false)
-  }, [visible])
-
-  return (
-    <Modal
-      centered
-      title="删除内容模型"
-      visible={visible}
-      onCancel={() => onClose()}
-      okButtonProps={{
-        loading,
-      }}
-      onOk={async () => {
-        try {
-          setLoading(true)
-          await deleteSchema(projectId, currentSchema._id, deleteCollection)
-          message.success('删除内容模型成功！')
-          ctx.dispatch('getSchemas', projectId)
-          contentCtx.dispatch('getContentSchemas', projectId)
-        } catch (error) {
-          message.error('删除内容模型失败！')
-        } finally {
-          onClose()
-          setLoading(false)
-        }
-      }}
-    >
-      <Space direction="vertical">
-        <Typography.Text>确认删【{currentSchema?.displayName}】内容模型？</Typography.Text>
-        <Checkbox
-          checked={deleteCollection}
-          onChange={(e) => setDeleteCollection(e.target.checked)}
-        >
-          同时删除数据表（警告：删除后数据无法找回）
-        </Checkbox>
-      </Space>
-    </Modal>
-  )
-}
+export default SchemaEditor

@@ -72,7 +72,7 @@ export const SchemaFieldRender: React.FC<{
 
   return (
     <div>
-      <SystemField />
+      <SchemaSystemField />
       <Spin tip="加载中" spinning={loading || sortLoading}>
         <DragDropContext onDragEnd={handleDragSort}>
           <Droppable droppableId="droppable">
@@ -151,7 +151,7 @@ const SYSTEM_FIELDS = [
   },
 ]
 
-export const SystemField: React.FC = () => {
+export const SchemaSystemField: React.FC = () => {
   const [showSystemField, setShowSystemField] = useState(false)
 
   return (

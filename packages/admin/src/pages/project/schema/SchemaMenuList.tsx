@@ -13,7 +13,10 @@ export interface TableListItem {
   money: number
 }
 
-const SchemaList: React.FC = () => {
+/**
+ * 展示模型列表
+ */
+const SchemaMenuList: React.FC = () => {
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const {
     state: { currentSchema, schemas, loading },
@@ -33,7 +36,6 @@ const SchemaList: React.FC = () => {
       defaultSelectedKeys={defaultSelectedMenu}
       onClick={({ key }) => {
         const schema = schemas.find((item: any) => item._id === key)
-
         ctx.setState({
           currentSchema: schema,
         })
@@ -50,4 +52,4 @@ const SchemaList: React.FC = () => {
   )
 }
 
-export default SchemaList
+export default SchemaMenuList
