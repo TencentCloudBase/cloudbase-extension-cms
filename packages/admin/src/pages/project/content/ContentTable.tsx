@@ -9,7 +9,6 @@ import { ContentCtx } from 'typings/store'
 import DataImport from './DataImport'
 import ContentTableSearchForm from './SearchForm'
 import { getTableColumns } from './columns'
-import './index.less'
 
 // 不能支持搜索的类型
 const negativeTypes = ['File', 'Image']

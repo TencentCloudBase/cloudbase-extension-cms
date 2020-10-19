@@ -176,6 +176,7 @@ export const SchemaImportModal: React.FC<{
 
   return (
     <Modal
+      centered
       destroyOnClose
       title="导入原型"
       closable={true}

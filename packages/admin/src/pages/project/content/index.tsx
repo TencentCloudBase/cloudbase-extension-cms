@@ -6,7 +6,6 @@ import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useEffect, useState } from 'react'
 import { ContentTable } from './ContentTable'
-import './index.less'
 
 export default (): React.ReactNode => {
   const { schemaId, projectId } = useParams<any>()
@@ -30,7 +29,6 @@ export default (): React.ReactNode => {
 
   return (
     <PageContainer
-      className="page-container"
       content={
         // 渲染内容描述
         <div
@@ -40,7 +38,7 @@ export default (): React.ReactNode => {
         />
       }
     >
-      <ProCard className="content-card" style={{ marginBottom: 0 }}>
+      <ProCard style={{ marginBottom: 0 }}>
         {currentSchema ? (
           contentLoading ? (
             <Skeleton active />
@@ -59,7 +57,7 @@ export default (): React.ReactNode => {
             </Empty>
           )
         ) : (
-          <div className="content-empty">
+          <div className="flex justify-center">
             <Empty
               description={
                 <>

@@ -15,7 +15,6 @@ import {
 import { InboxOutlined } from '@ant-design/icons'
 import { createMigrateJobs } from '@/services/content'
 import { random, uploadFile } from '@/utils'
-import './index.less'
 
 const { Dragger } = Upload
 const { Title } = Typography
@@ -62,6 +61,7 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
         <Button type="primary">导入数据</Button>
       </Dropdown>
       <Modal
+        centered
         destroyOnClose
         width={600}
         title="导入数据"
@@ -123,7 +123,7 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
           <p className="ant-upload-drag-icon">
             <InboxOutlined />
           </p>
-          <p className="ant-upload-text">点击或拖拽上传文件，开始导入数据</p>
+          <p>点击或拖拽上传文件，开始导入数据</p>
         </Dragger>
         {uploading && <Progress style={{ paddingTop: '10px' }} percent={percent} />}
       </Modal>

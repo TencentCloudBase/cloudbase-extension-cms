@@ -6,13 +6,14 @@ import ProjectInfo from './ProjectInfo'
 
 const { TabPane } = Tabs
 
-const TabPaneContent: React.SFC = ({ children }) => (
+const TabPaneContent: React.FC = ({ children }) => (
   <Row>
     <Col flex="1 1 auto" />
     <Col flex="0 0 600px">{children}</Col>
     <Col flex="1 1 auto" />
   </Row>
 )
+
 export default (): React.ReactNode => {
   return (
     <PageContainer>

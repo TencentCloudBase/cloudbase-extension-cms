@@ -60,8 +60,8 @@ export const SchemaEditorModal: React.FC<{
 
   return (
     <Modal
-      destroyOnClose
       centered
+      destroyOnClose
       footer={null}
       width={600}
       visible={visible}

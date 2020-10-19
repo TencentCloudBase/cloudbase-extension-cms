@@ -156,6 +156,12 @@ const config: IConfig = {
   manifest: {
     basePath: '/',
   },
+  extraPostCSSPlugins: [
+    // eslint-disable-next-line
+    require('postcss-import'),
+    // eslint-disable-next-line
+    require('tailwindcss'),
+  ],
 }
 
 // webpack chunk 合并

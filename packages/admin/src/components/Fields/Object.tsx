@@ -51,6 +51,7 @@ export const IObjectEditor: React.FC<{
         }}
       />
       <Modal
+        centered
         footer={null}
         title="JSON 对象快捷输入"
         visible={visible}
@@ -120,7 +121,7 @@ export const IObjectRender: React.FC<{
           查看
         </Button>
       </Space>
-      <Modal title="JSON 对象" visible={visible} onCancel={() => setVisible(false)}>
+      <Modal centered title="JSON 对象" visible={visible} onCancel={() => setVisible(false)}>
         <ReactJson
           name={false}
           src={value}

@@ -55,6 +55,7 @@ const SchemaFieldList: React.FC<{
   // 导出 Schema 数据
   const exportSchema = useCallback(() => {
     const modal = Modal.confirm({
+      centered: true,
       title: '确认导出原型数据？',
       onCancel: () => {
         modal.destroy()

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useRequest, useParams, history } from 'umi'
 import { getProject, updateProject, deleteProject } from '@/services/project'
 import { Divider, Button, Space, Typography, Form, Input, Skeleton, Modal, message } from 'antd'
-import './index.less'
 
 interface Project {
   _id: string
@@ -44,12 +43,11 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
         删除项目
       </Button>
       <Modal
-        visible={modalVisible}
+        centered
         title="删除项目"
+        visible={modalVisible}
         onCancel={() => setModalVisible(false)}
-        onOk={() => {
-          run()
-        }}
+        onOk={() => run()}
         okButtonProps={{
           loading,
           disabled: projectName !== project.name,

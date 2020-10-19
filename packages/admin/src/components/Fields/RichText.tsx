@@ -69,7 +69,13 @@ export const CustomUploader: React.FC<{
       <button type="button" data-title="媒体上传" className="control-item button">
         <FileImageTwoTone className="bfi-list" onClick={() => setVisible(true)} />
       </button>
-      <Modal closable={true} visible={visible} footer={null} onCancel={() => setVisible(false)}>
+      <Modal
+        centered
+        closable={true}
+        visible={visible}
+        footer={null}
+        onCancel={() => setVisible(false)}
+      >
         <Dragger
           fileList={fileList}
           listType="picture"

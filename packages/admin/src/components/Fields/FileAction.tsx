@@ -21,7 +21,7 @@ export const FileAction: React.FC<{
   downloadLoading = typeof index === 'undefined' ? downloadLoading : downloadLoading === index
 
   return (
-    <div>
+    <div className="flex justify-center">
       <Button
         type="link"
         size="small"
