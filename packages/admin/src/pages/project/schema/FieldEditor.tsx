@@ -42,11 +42,12 @@ export const FieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
+  const { projectId } = useParams<any>()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
-  const { projectId } = useParams<any>()
   const [formValue, setFormValue] = useState<any>()
   const [connectSchema, setConnectSchema] = useState<SchemaV2>()
+
   const {
     state: { currentSchema, schemas, fieldAction, selectedField },
   } = ctx
@@ -136,6 +137,10 @@ export const FieldEditorModal: React.FC<{
       const schema = schemas.find((_: SchemaV2) => _._id === selectedField.connectResource)
       setConnectSchema(schema)
     }
+
+    if (selectedField) {
+      setFormValue(selectedField)
+    }
   }, [selectedField])
 
   const isFieldNameReserved = ReservedFieldNames.includes(formValue?.name)
@@ -148,6 +153,7 @@ export const FieldEditorModal: React.FC<{
       footer={null}
       visible={visible}
       title={modalTitle}
+      maskClosable={false}
       onOk={() => onClose()}
       onCancel={() => onClose()}
     >
@@ -341,7 +347,14 @@ export const FieldEditorModal: React.FC<{
                 return (
                   <div>
                     {fields?.map((field, index) => {
-                      return <EnumListItem key={index} field={field} onRemove={remove} />
+                      return (
+                        <EnumListItem
+                          key={index}
+                          field={field}
+                          onRemove={remove}
+                          formValue={formValue}
+                        />
+                      )
                     })}
                     <Form.Item>
                       <Button
@@ -450,11 +463,12 @@ export const FieldEditorModal: React.FC<{
 /**
  * 枚举值列表 Item
  */
-const EnumListItem: React.FC<{ field: any; onRemove: (name: number) => void }> = ({
-  field,
-  onRemove,
-}) => {
-  const [enumValueType, setEnumValueType] = useState<string>('string')
+const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: number) => void }> = (
+  props
+) => {
+  const { field, formValue, onRemove } = props
+  const index = field.key || field.fieldKey
+  const enumValueType = formValue?.enumElements?.[index]?.type || 'string'
 
   return (
     <Form.Item>
@@ -483,17 +497,18 @@ const EnumListItem: React.FC<{ field: any; onRemove: (name: number) => void }> =
           />
         </Form.Item>
       )}
-      <Select
-        placeholder="元素值类型"
-        style={{
-          width: '20%',
-          marginLeft: '2%',
-        }}
-        onChange={(v: string) => setEnumValueType(v)}
-      >
-        <Option value="string">字符串</Option>
-        <Option value="number">数字</Option>
-      </Select>
+      <Form.Item noStyle name={[field.name, 'type']} validateTrigger={['onChange']}>
+        <Select
+          placeholder="元素值类型"
+          style={{
+            width: '20%',
+            marginLeft: '2%',
+          }}
+        >
+          <Option value="string">字符串</Option>
+          <Option value="number">数字</Option>
+        </Select>
+      </Form.Item>
       <MinusCircleOutlined
         className="dynamic-delete-button"
         style={{ margin: '0 0 0 15px' }}

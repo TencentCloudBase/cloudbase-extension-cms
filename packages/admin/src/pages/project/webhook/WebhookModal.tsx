@@ -174,7 +174,6 @@ export const WebhookModal: React.FC<{
               return (
                 <div>
                   {fields?.map((field, index) => {
-                    console.log(field)
                     return (
                       <Form.Item key={index}>
                         <Form.Item
