@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { message, Space, Spin, Empty, Image, Carousel } from 'antd'
+import { message, Space, Spin, Empty, Image, Carousel, Button, Modal } from 'antd'
 import { batchGetTempFileURL } from '@/utils'
 import emptyImg from '@/assets/empty.svg'
 import { FileAction } from './FileAction'
@@ -21,7 +21,14 @@ export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
 
   // 轮播图
   if (Array.isArray(urls)) {
-    return <MultiImageRender urls={urls} />
+    const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
+
+    // 存在非 CloudId 链接
+    if (hasNoCloudLink) {
+      return <MultipleImage urls={urls} />
+    }
+
+    return <ICloudImage cloudIds={urls} />
   }
 
   if (!/^cloud:\/\/\S+/.test(urls)) {
@@ -34,38 +41,11 @@ export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
 }
 
 /**
- * 多个图片，使用轮播图展示
- */
-const MultiImageRender: React.FC<{ urls: string[] }> = ({ urls }) => {
-  const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
-
-  // 存在非 CloudId 链接
-  if (hasNoCloudLink) {
-    return (
-      <Carousel>
-        {urls.map((url, index) => (
-          <Image
-            src={url}
-            key={index}
-            width={DefaultWidth}
-            height={DefaultHeight}
-            style={ImageContainerStyle}
-          />
-        ))}
-      </Carousel>
-    )
-  }
-
-  return <ICloudImage cloudIds={urls} />
-}
-
-/**
  * 云存储图片加载渲染组件
  */
 const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
   const [loading, setLoading] = useState(true)
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [imgUrls, setImgUrls] = useState<string[]>([])
+  const [urls, setImgUrls] = useState<string[]>([])
 
   useEffect(() => {
     if (!cloudIds?.length) return
@@ -85,38 +65,70 @@ const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
       })
   }, [])
 
-  return loading ? (
-    <Spin />
-  ) : (
-    <Space direction="vertical" style={{ width: '100%' }}>
-      {cloudIds?.length > 1 ? (
-        <Carousel
-          dots={{
-            className: 'carousel-dots',
-          }}
-          afterChange={(current) => {
-            setCurrentSlide(current)
-          }}
-        >
-          {imgUrls.map((url, index) => (
-            <Image
-              key={index}
-              src={url}
-              width={DefaultWidth}
-              height={DefaultHeight}
-              style={ImageContainerStyle}
-            />
-          ))}
-        </Carousel>
-      ) : (
+  return loading ? <Spin /> : <MultipleImage urls={urls} cloudIds={cloudIds} />
+}
+
+// 多图片展示展示
+const MultipleImage: React.FC<{ urls: string[]; cloudIds?: string[] }> = ({ urls, cloudIds }) => {
+  const [visible, setVisible] = useState(false)
+  const [currentSlide, setCurrentSlide] = useState(0)
+
+  if (urls?.length === 1) {
+    return (
+      <Space direction="vertical">
         <Image
-          src={imgUrls?.[0]}
+          src={urls?.[0]}
           width={DefaultWidth}
           height={DefaultHeight}
           style={ImageContainerStyle}
         />
-      )}
-      <FileAction type="image" cloudId={cloudIds[currentSlide]} />
-    </Space>
+        {cloudIds?.length && <FileAction type="image" cloudId={cloudIds[currentSlide]} />}
+      </Space>
+    )
+  }
+
+  return (
+    <>
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <Image
+          src={urls?.[0]}
+          width={DefaultWidth}
+          height={DefaultHeight}
+          style={ImageContainerStyle}
+        />
+        <Button size="small" type="link" onClick={() => setVisible(true)}>
+          查看更多
+        </Button>
+      </Space>
+      <Modal
+        title="图片"
+        visible={visible}
+        footer={null}
+        width={700}
+        onCancel={() => setVisible(false)}
+      >
+        <Space direction="vertical" style={{ width: '100%' }}>
+          <Carousel
+            dots={{
+              className: 'carousel-dots',
+            }}
+            afterChange={(current) => {
+              setCurrentSlide(current)
+            }}
+          >
+            {urls.map((url, index) => (
+              <Image
+                key={index}
+                src={url}
+                width="100%"
+                className="modal-image"
+                style={ImageContainerStyle}
+              />
+            ))}
+          </Carousel>
+          {cloudIds?.length && <FileAction type="image" cloudId={cloudIds[currentSlide]} />}
+        </Space>
+      </Modal>
+    </>
   )
 }
