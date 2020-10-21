@@ -41,9 +41,9 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 
 ## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
 
-![](./docs/assets/schema.png)
+![](https://main.qcloudimg.com/raw/9fde303ac81a3d3028552f73337726ee.png)
 
-![](./docs/assets/overview.png)
+![](https://main.qcloudimg.com/raw/feb1a82b40ab99dd131add674c82fd2d.png)
 
 ## 技术栈
 
@@ -98,6 +98,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 
 | 功能                             | 状态      | 发布版本 |
 | -------------------------------- | --------- | -------- |
+| 支持 Open API                    | 👷 进行中 |          |
 | 支持云应用部署                   | 👷 进行中 |          |
 | 支持云应用部署                   | 🏹 设计中 |          |
 | 提供更简单的部署方法：CI 部署    | 🏹 设计中 |          |
