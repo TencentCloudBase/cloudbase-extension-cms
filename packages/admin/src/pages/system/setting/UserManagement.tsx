@@ -27,71 +27,79 @@ export default (): React.ReactElement => {
 
   return (
     <>
-      <ProList<string>
-        actions={[
-          <Button
-            key="new"
-            type="primary"
-            onClick={() => {
-              setUserAction('create')
-              setSelectedUser(undefined)
-              setModalVisible(true)
-            }}
-          >
-            <PlusOutlined /> 新建
-          </Button>,
-        ]}
-        rowKey="id"
-        dataSource={data}
-        renderItem={(item: any) => ({
-          title: <Typography.Title level={4}>{item.username}</Typography.Title>,
-          actions: [
+      <ProList<any>
+        toolBarRender={() => {
+          return [
             <Button
-              size="small"
-              key="edit"
+              key="new"
               type="primary"
-              disabled={item?.root}
               onClick={() => {
-                setUserAction('edit')
-                setSelectedUser(item)
+                setUserAction('create')
+                setSelectedUser(undefined)
                 setModalVisible(true)
               }}
             >
-              编辑
+              <PlusOutlined /> 新建
             </Button>,
-            <Button
-              danger
-              size="small"
-              key="delete"
-              type="primary"
-              disabled={item?.root}
-              onClick={() => {
-                Modal.confirm({
-                  title: `确认删除用户 ${item.username} ？`,
-                  onOk: async () => {
-                    await deleteUser(item._id)
-                    setReload(reload + 1)
-                  },
-                })
-              }}
-            >
-              删除
-            </Button>,
-          ],
-          description: (
-            <div>
-              {item.roles?.map((roleId: any, index: number) => {
-                const role = roles?.find((_: any) => _._id === roleId)
+          ]
+        }}
+        rowKey="id"
+        dataSource={data}
+        metas={{
+          title: {
+            render: (dom, item) => <Typography.Title level={4}>{item.username}</Typography.Title>,
+          },
+          actions: {
+            render: (dom, item) => [
+              <Button
+                size="small"
+                key="edit"
+                type="primary"
+                disabled={item?.root}
+                onClick={() => {
+                  setUserAction('edit')
+                  setSelectedUser(item)
+                  setModalVisible(true)
+                }}
+              >
+                编辑
+              </Button>,
+              <Button
+                danger
+                size="small"
+                key="delete"
+                type="primary"
+                disabled={item?.root}
+                onClick={() => {
+                  Modal.confirm({
+                    title: `确认删除用户 ${item.username} ？`,
+                    onOk: async () => {
+                      await deleteUser(item._id)
+                      setReload(reload + 1)
+                    },
+                  })
+                }}
+              >
+                删除
+              </Button>,
+            ],
+          },
+          description: {
+            render: (dom, item) => (
+              <div>
+                {item.roles?.map((roleId: any, index: number) => {
+                  const role = roles?.find((_: any) => _._id === roleId)
 
-                return (
-                  <Tag key={index} color="#2575e6">
-                    {role?.roleName}
-                  </Tag>
-                )
-              })}
-            </div>
-          ),
-        })}
+                  return (
+                    <Tag key={index} color="#2575e6">
+                      {role?.roleName}
+                    </Tag>
+                  )
+                })}
+              </div>
+            ),
+          },
+        }}
       />
       <CreateUserModal
         visible={modalVisible}

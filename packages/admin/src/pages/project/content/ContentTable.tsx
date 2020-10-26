@@ -151,7 +151,7 @@ export const ContentTable: React.FC<{
                 onOk: async () => {
                   try {
                     await deleteContent(projectId, currentSchema.collectionName, row._id)
-                    tableRef?.current?.reloadAndRest()
+                    tableRef?.current?.reload()
                     message.success('删除内容成功')
                   } catch (error) {
                     message.error('删除内容失败')
@@ -225,6 +225,7 @@ export const ContentTable: React.FC<{
           ctx.setState({
             searchParams: params,
           })
+          replaceHistory(1, 10)
           tableRef?.current?.reload(true)
         }}
       />
@@ -239,15 +240,7 @@ export const ContentTable: React.FC<{
         pagination={{
           ...pagination,
           onChange: (current = 1, pageSize = 10) => {
-            const { pathname, query } = history.location
-            history.replace({
-              path: pathname,
-              query: {
-                ...query,
-                pageSize,
-                current,
-              },
-            })
+            replaceHistory(current, pageSize)
           },
         }}
         columns={memoTableColumns}
@@ -294,7 +287,7 @@ const getTableAlertRender = (projectId: string, currentSchema: SchemaV2, tableRe
                 try {
                   const ids = selectedRows.map((_: any) => _._id)
                   await batchDeleteContent(projectId, currentSchema.collectionName, ids)
-                  tableRef?.current?.reloadAndRest()
+                  tableRef?.current?.reload()
                   message.success('删除内容成功')
                 } catch (error) {
                   message.error('删除内容失败')
@@ -308,4 +301,19 @@ const getTableAlertRender = (projectId: string, currentSchema: SchemaV2, tableRe
       </Col>
     </Row>
   )
+}
+
+/**
+ * 修改、添加 URL 中的 pageSize 和 current 参数
+ */
+const replaceHistory = (current = 1, pageSize = 10) => {
+  const { pathname, query } = history.location
+  history.replace({
+    path: pathname,
+    query: {
+      ...query,
+      pageSize,
+      current,
+    },
+  })
 }

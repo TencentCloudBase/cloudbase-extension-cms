@@ -19,8 +19,8 @@ export default (): React.ReactElement => {
   }
 
   return (
-    <ProList<string>
-      actions={[
+    <ProList<any>
+      toolBarRender={() => [
         <Button
           key="new"
           type="primary"
@@ -38,49 +38,57 @@ export default (): React.ReactElement => {
       ]}
       rowKey="id"
       dataSource={data}
-      renderItem={(item: any) => ({
-        title: (
-          <Typography.Title level={4} style={{ marginBottom: 0 }}>
-            {item.roleName}
-          </Typography.Title>
-        ),
-        subTitle: item.type === 'system' && <Tag color="#2575e6">系统</Tag>,
-        actions: [
-          <Button
-            size="small"
-            key="edit"
-            type="primary"
-            onClick={() => {
-              ctx.setState({
-                roleAction: 'edit',
-                selectedRole: item,
-              })
-              history.push('/settings/role/edit')
-            }}
-          >
-            编辑
-          </Button>,
-          <Button
-            danger
-            size="small"
-            key="delete"
-            type="primary"
-            disabled={item.type === 'system' || item.noDelete}
-            onClick={() => {
-              Modal.confirm({
-                title: `确认删除角色【${item.roleName}】？`,
-                onOk: async () => {
-                  await deleteUserRole(item._id)
-                  setReload(reload + 1)
-                },
-              })
-            }}
-          >
-            删除
-          </Button>,
-        ],
-        description: <div>{item.description}</div>,
-      })}
+      metas={{
+        title: {
+          render: (dom, item) => (
+            <Typography.Title level={4} style={{ marginBottom: 0 }}>
+              {item.roleName}
+            </Typography.Title>
+          ),
+        },
+        subTitle: {
+          render: (dom, item) => item.type === 'system' && <Tag color="#2575e6">系统</Tag>,
+        },
+        actions: {
+          render: (dom, item) => [
+            <Button
+              size="small"
+              key="edit"
+              type="primary"
+              onClick={() => {
+                ctx.setState({
+                  roleAction: 'edit',
+                  selectedRole: item,
+                })
+                history.push('/settings/role/edit')
+              }}
+            >
+              编辑
+            </Button>,
+            <Button
+              danger
+              size="small"
+              key="delete"
+              type="primary"
+              disabled={item.type === 'system' || item.noDelete}
+              onClick={() => {
+                Modal.confirm({
+                  title: `确认删除角色【${item.roleName}】？`,
+                  onOk: async () => {
+                    await deleteUserRole(item._id)
+                    setReload(reload + 1)
+                  },
+                })
+              }}
+            >
+              删除
+            </Button>,
+          ],
+        },
+        description: {
+          render: (dom, item) => <div>{item.description}</div>,
+        },
+      }}
     />
   )
 }

@@ -2,7 +2,7 @@ import React from 'react'
 import { useParams, useRequest, history } from 'umi'
 import { useConcent } from 'concent'
 import { Form, message, Space, Button, Row, Col, Input } from 'antd'
-import { createContent, updateContent } from '@/services/content'
+import { createContent, setContent } from '@/services/content'
 import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
@@ -28,7 +28,7 @@ const ContentEditor: React.FC = () => {
       }
 
       if (contentAction === 'edit') {
-        await updateContent(projectId, schema?.collectionName, selectedContent._id, payload)
+        await setContent(projectId, schema?.collectionName, selectedContent._id, payload)
       }
     },
     {

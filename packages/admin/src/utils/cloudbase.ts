@@ -57,7 +57,7 @@ export async function logout() {
 export async function tcbRequest<T = any>(
   url: string,
   options: RequestOptionsInit & { skipErrorHandler?: boolean } = {}
-) {
+): Promise<T> {
   if (url === '/auth/login' && !isDevEnv()) {
     return request<T>(url, options)
   }

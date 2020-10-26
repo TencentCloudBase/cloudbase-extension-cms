@@ -85,7 +85,7 @@ export async function batchDeleteContent(projectId: string, resource: string, id
   })
 }
 
-export async function updateContent(
+export async function setContent(
   projectId: string,
   resource: string,
   id: string,
@@ -101,7 +101,7 @@ export async function updateContent(
           _id: id,
         },
       },
-      action: 'updateOne',
+      action: 'setOne',
     },
   })
 }

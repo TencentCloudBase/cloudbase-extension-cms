@@ -24,6 +24,7 @@ import { WebhooksService } from '../webhooks/webhooks.service'
 const validActions = [
   'getOne',
   'getMany',
+  'setOne',
   'createOne',
   'updateOne',
   'updateMany',

@@ -195,6 +195,80 @@ export class ContentsService {
     })
   }
 
+  // 替换更新一条记录
+  async setOne(
+    resource: string,
+    options: { filter: { _id: string }; payload: Record<string, any> }
+  ) {
+    const { filter, payload } = options
+    const collection = this.cloudbaseService.collection(resource)
+
+    if (!filter?._id) {
+      throw new BadRequestException('Id 不存在，更新失败！')
+    }
+
+    // 查询记录是否存在
+    let {
+      data: [record],
+    } = await collection.where(filter).limit(1).get()
+
+    if (!record) {
+      throw new RecordNotExistException('文档不存在')
+    }
+
+    let updateData = payload
+
+    if (resource !== CollectionV2.Webhooks) {
+      // 查询 schema 信息
+      const {
+        data: [schema],
+      } = await this.collection(CollectionV2.Schemas)
+        .where({
+          collectionName: resource,
+        })
+        .get()
+
+      if (!schema) {
+        throw new RecordNotExistException('原型记录不存在')
+      }
+
+      updateData = _.mapValues(updateData, (value, key) => {
+        const field = schema.fields.find((item) => item.name === key)
+
+        // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
+        if (field?.type === 'Connect' && value) {
+          // 多关联
+          if (Array.isArray(value) && _.isObject(value?.[0])) {
+            return value.map((_) => (_?._id ? _._id : _))
+          }
+
+          // 单关联
+          if (!Array.isArray(value) && _.isObject(value)) {
+            return (value as any)._id
+          }
+
+          // value 为 null
+          return value
+        }
+
+        return value
+      })
+    }
+
+    // 不能更新 _id
+    const doc = _.omit(
+      {
+        ...record,
+        ...updateData,
+        _updateTime: dateToNumber(),
+      },
+      '_id'
+    )
+
+    // 替换记录
+    return collection.doc(record._id).set(doc)
+  }
+
   async updateMany(
     resource: string,
     options: {

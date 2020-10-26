@@ -1,19 +1,8 @@
 import { tcbRequest } from '@/utils'
 
-export interface Project {
-  _id: string
-
-  name: string
-
-  description: string
-
-  // project cover image url
-  cover?: string
-}
-
 export async function getProject(id: string) {
   return tcbRequest<{
-    data: Project[]
+    data: Project
   }>(`/projects/${id}`, {
     method: 'GET',
   })

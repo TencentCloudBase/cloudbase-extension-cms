@@ -104,7 +104,6 @@ export default (): React.ReactElement => {
         layout="vertical"
         labelAlign="left"
         initialValues={project}
-        labelCol={{ span: 6 }}
         onFinish={(v = {}) => {
           run(v)
         }}
