@@ -52,20 +52,23 @@ export const getCloudBaseManager = (): CloudBase => {
 }
 
 export const getUserFromCredential = async (credential: string, origin: string) => {
+  const envId = getEnvIdString()
+  const region = process.env.TENCENTCLOUD_REGION || 'ap-shanghai'
   const accessToken = credential.replace(/\/@@\/.*/g, '')
+
   const { data: res } = await Axios({
     method: 'POST',
-    url: `https://cms-demo.ap-shanghai.tcb-api.tencentcloudapi.com/web?env=cms-demo`,
+    url: `https://${envId}.${region}.tcb-api.tencentcloudapi.com/web?env=${envId}`,
     headers: {
       origin,
-      'content-type': 'application/json;charset=UTF-8',
+      'content-type': 'application/json',
       'x-sdk-version': '@cloudbase/js-sdk/1.3.4-alpha.0',
-      'x-tcb-region': 'ap-shanghai',
+      'x-tcb-region': region,
     },
     data: {
       action: 'auth.getUserInfo',
       dataVersion: '2020-01-10',
-      env: 'cms-demo',
+      env: envId,
       access_token: accessToken,
     },
   })
