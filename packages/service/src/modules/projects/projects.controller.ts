@@ -31,6 +31,9 @@ export class Project {
 
   // 项目封面图
   cover?: string
+
+  // 是否开启 Api 访问
+  enableApiAccess: boolean
 }
 
 @Controller('projects')
