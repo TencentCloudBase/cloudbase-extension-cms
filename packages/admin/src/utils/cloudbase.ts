@@ -45,12 +45,14 @@ export async function loginWithPassword(username: string, password: string) {
 }
 
 export function getAuthHeader() {
-  const { envId } = window.TcbCmsConfig || {}
-  app = window.cloudbase.init({
-    env: envId,
-    // 默认可用区为上海
-    region: window.TcbCmsConfig.region || 'ap-shanghai',
-  })
+  if (!app) {
+    const { envId } = window.TcbCmsConfig || {}
+    app = window.cloudbase.init({
+      env: envId,
+      // 默认可用区为上海
+      region: window.TcbCmsConfig.region || 'ap-shanghai',
+    })
+  }
 
   const auth = app.auth()
   return auth.getAuthHeader()

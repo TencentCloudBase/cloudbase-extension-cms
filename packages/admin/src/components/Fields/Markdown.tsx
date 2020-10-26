@@ -11,6 +11,7 @@ export const MarkdownEditor: React.FC<{
   const { value, key = 'default', onChange = (...args: any) => {} } = props
 
   const authHeader = getAuthHeader()
+
   useEffect(() => {
     // eslint-disable-next-line
     new VditorX(`${key}-editor`, {
@@ -34,7 +35,7 @@ export const MarkdownEditor: React.FC<{
         enable: false,
       },
     })
-  }, [authHeader])
+  }, [authHeader?.['x-cloudbase-credentials']])
 
   return <div id={`${key}-editor`} />
 }
