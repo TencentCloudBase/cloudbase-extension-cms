@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import VditorX from 'vditor'
 import 'vditor/dist/index.css'
-import { isDevEnv } from '@/utils'
+import { getAuthHeader, isDevEnv } from '@/utils'
 
 export const MarkdownEditor: React.FC<{
   value?: any
@@ -10,6 +10,7 @@ export const MarkdownEditor: React.FC<{
 }> = (props) => {
   const { value, key = 'default', onChange = (...args: any) => {} } = props
 
+  const authHeader = getAuthHeader()
   useEffect(() => {
     // eslint-disable-next-line
     new VditorX(`${key}-editor`, {
@@ -18,6 +19,7 @@ export const MarkdownEditor: React.FC<{
         onChange(text)
       },
       upload: {
+        headers: authHeader,
         url: isDevEnv()
           ? '/api/v1.0/upload'
           : `https://${window.TcbCmsConfig.cloudAccessPath}/api/v1.0/upload`,
@@ -32,7 +34,7 @@ export const MarkdownEditor: React.FC<{
         enable: false,
       },
     })
-  }, [])
+  }, [authHeader])
 
   return <div id={`${key}-editor`} />
 }

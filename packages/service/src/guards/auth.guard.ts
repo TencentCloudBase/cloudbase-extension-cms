@@ -1,5 +1,6 @@
+import config from '@/config'
 import { CollectionV2 } from '@/constants'
-import { getCloudBaseApp, isDevEnv } from '@/utils'
+import { getCloudBaseApp, getUserFromCredential, isDevEnv } from '@/utils'
 import cloudbase from '@cloudbase/node-sdk'
 import {
   CanActivate,
@@ -50,9 +51,19 @@ export class GlobalAuthGuard implements CanActivate {
     // 目前只在云函数中能自动获取用户身份信息
     const app = getCloudBaseApp()
     const { TCB_UUID } = cloudbase.getCloudbaseContext()
-    const { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
+    let { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
 
-    console.log(userInfo)
+    // 根据 credential 信息获取用户身份
+    if (request.path === `${config.globalPrefix}/upload`) {
+      const { headers } = request
+      const credentials = headers['x-cloudbase-credentials'] as string
+      if (credentials) {
+        const user = await getUserFromCredential(credentials, headers['origin'])
+        if (user) {
+          userInfo = user
+        }
+      }
+    }
 
     // 未登录用户
     if (!userInfo?.username) {
