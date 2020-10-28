@@ -467,8 +467,7 @@ const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: numb
   props
 ) => {
   const { field, formValue, onRemove } = props
-  const index = field.key || field.fieldKey
-  const enumValueType = formValue?.enumElements?.[index]?.type || 'string'
+  const enumValueType = formValue?.enumElements?.[field.name]?.type || 'string'
 
   return (
     <Form.Item>
