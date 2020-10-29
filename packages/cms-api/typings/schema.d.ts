@@ -119,4 +119,7 @@ interface Project {
 
   // 是否开启 Api 访问
   enableApiAccess: boolean
+
+  // api 访问路径
+  apiAccessPath: string
 }

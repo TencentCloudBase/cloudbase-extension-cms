@@ -1,6 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { useRequest, useParams, history } from 'umi'
-import { getProject, updateProject, deleteProject } from '@/services/project'
+import _ from 'lodash'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { useRequest, useParams } from 'umi'
+import { getProject, updateProject } from '@/services/project'
 import {
   Divider,
   Button,
@@ -15,9 +16,11 @@ import {
   Checkbox,
 } from 'antd'
 import { getSchemas } from '@/services/schema'
-import { schema } from '@/models'
 
-const ApiAccessPath: React.FC<{ project: Project }> = ({ project }) => {
+const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
+  project,
+  onReload,
+}) => {
   const { projectId } = useParams<any>()
   const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace('tcb-ext-cms-service', '')
   const initialValues = useMemo(
@@ -27,7 +30,7 @@ const ApiAccessPath: React.FC<{ project: Project }> = ({ project }) => {
     [project]
   )
 
-  // 开启/关闭 API 访问
+  // 设置 API 访问路径
   const { loading, run: changeApiPath } = useRequest(
     async (v: { path: string }) => {
       try {
@@ -35,6 +38,7 @@ const ApiAccessPath: React.FC<{ project: Project }> = ({ project }) => {
           apiAccessPath: v?.path,
         })
         message.success('API 访问路径设置成功！')
+        onReload()
       } catch (e) {
         message.error(`更新失败 ${e.message}`)
       }
@@ -57,10 +61,23 @@ const ApiAccessPath: React.FC<{ project: Project }> = ({ project }) => {
           changeApiPath(v)
         }}
       >
+        {!initialValues.path && (
+          <Alert
+            type="warning"
+            message="请设定 API 访问路径，否则无法使用 API 访问"
+            style={{ marginBottom: '10px' }}
+          />
+        )}
         <Form.Item
           label="使用 RESTful API 时的基础访问路径"
           name="path"
-          rules={[{ required: true, message: '请输入 API 访问的路径！' }]}
+          rules={[
+            { required: true, message: '请输入 API 访问的路径！' },
+            {
+              pattern: /^(?!\/).*$/,
+              message: '路径无需以 / 开头',
+            },
+          ]}
         >
           <Input
             addonBefore={`https://${accessDomain}`}
@@ -78,26 +95,45 @@ const ApiAccessPath: React.FC<{ project: Project }> = ({ project }) => {
   )
 }
 
-const ApiPermission: React.FC<{ project: Project }> = () => {
-  const { projectId } = useParams<any>()
-  const [modalVisible, setModalVisible] = useState(false)
-  const [projectName, setProjectName] = useState('')
-  const { data: schemas } = useRequest(() => getSchemas(projectId))
+const modifyArray = (collections: string[] = [], collection: string, add: boolean) => {
+  // 过滤空集合
+  const ret = collections.filter((_) => _ && _ !== collection)
+  console.log(collection)
+  add ? ret.push(collection) : _.remove(ret, (_) => _ === collection)
+  console.log(ret)
+  return ret
+}
 
-  // // 删除项目
-  // const { run, loading } = useRequest(
-  //   async () => {
-  //     await deleteProject(projectId)
-  //     setModalVisible(false)
-  //     message.success('删除项目成功')
-  //     setTimeout(() => {
-  //       history.push('/home')
-  //     }, 2000)
-  //   },
-  //   {
-  //     manual: true,
-  //   }
-  // )
+const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
+  project,
+  onReload,
+}) => {
+  const { projectId } = useParams<any>()
+  const { data: schemas } = useRequest(() => getSchemas(projectId))
+  const [readableCollections, setReadableCollections] = useState<string[]>([])
+  const [modifiableCollections, setModifiableCollections] = useState<string[]>([])
+
+  const { run: changePermission, loading } = useRequest(
+    async () => {
+      await updateProject(projectId, {
+        readableCollections,
+        modifiableCollections,
+      })
+      onReload()
+    },
+    {
+      manual: true,
+      onSuccess: () => message.success('保存成功'),
+      onError: (e) => message.error(`保存失败: ${e.message}`),
+    }
+  )
+
+  useEffect(() => {
+    if (project?._id) {
+      setReadableCollections(project.readableCollections || [])
+      setModifiableCollections(project.modifiableCollections || [])
+    }
+  }, [project])
 
   return (
     <>
@@ -106,55 +142,46 @@ const ApiPermission: React.FC<{ project: Project }> = () => {
         <div key={index} className="mb-5">
           <Space>
             <span>{schema.displayName}</span>
-            <Checkbox onChange={() => {}}>允许访问</Checkbox>
-            <Checkbox onChange={() => {}}>允许修改</Checkbox>
+            <Checkbox
+              checked={readableCollections?.includes(schema.collectionName)}
+              onChange={(e) => {
+                setReadableCollections(
+                  modifyArray(readableCollections, schema.collectionName, e.target.checked)
+                )
+              }}
+            >
+              允许访问
+            </Checkbox>
+            <Checkbox
+              checked={modifiableCollections?.includes(schema.collectionName)}
+              onChange={(e) =>
+                setModifiableCollections(
+                  modifyArray(modifiableCollections, schema.collectionName, e.target.checked)
+                )
+              }
+            >
+              允许修改
+            </Checkbox>
           </Space>
         </div>
       ))}
 
-      <Button
-        danger
-        type="primary"
-        onClick={() => {
-          setModalVisible(true)
-        }}
-      >
-        删除项目
+      <Button type="primary" loading={loading} onClick={changePermission}>
+        保存
       </Button>
-      {/* <Modal
-        centered
-        title="删除项目"
-        visible={modalVisible}
-        onCancel={() => setModalVisible(false)}
-        onOk={() => run()}
-        okButtonProps={{
-          loading,
-          disabled: projectName !== project.name,
-        }}
-      >
-        <Space direction="vertical">
-          <Typography.Paragraph strong>
-            删除项目会删除项目中的内容模型及 Webhooks 等数据
-          </Typography.Paragraph>
-          <Typography.Paragraph strong>
-            删除项目是不能恢复的，您确定要删除此项目吗？
-            如果您想继续，请在下面的方框中输入此项目的名称：
-            <Typography.Text strong mark>
-              {project.name}
-            </Typography.Text>
-          </Typography.Paragraph>
-          <Input value={projectName} onChange={(e) => setProjectName(e.target.value)} />
-        </Space>
-      </Modal> */}
     </>
   )
 }
 
 export default (): React.ReactElement => {
   const { projectId } = useParams<any>()
-  const [reload, setReload] = useState(0)
+  const [reloadFlag, setReloadFlag] = useState(0)
+  // 重新加载 project 信息
+  const reload = useCallback(() => setReloadFlag(reloadFlag + 1), [reloadFlag])
+
+  // 重新获取数据
   const { data: project, loading } = useRequest(() => getProject(projectId), {
-    refreshDeps: [reload],
+    refreshDeps: [reloadFlag],
   })
 
   // 开启/关闭 API 访问
@@ -165,7 +192,7 @@ export default (): React.ReactElement => {
           enableApiAccess: v,
         })
         message.success(`${v ? '开启' : '关闭'} API 访问成功！`)
-        setReload(reload + 1)
+        reload()
       } catch (e) {
         message.error(`更新失败 ${e.message}`)
       }
@@ -183,7 +210,7 @@ export default (): React.ReactElement => {
   if (!project?.enableApiAccess) {
     return (
       <>
-        <Alert type="info" message="此项目未开启 API 访问" className="mb-5" />
+        <Alert type="info" message="此项目未开启 API 访问" style={{ marginBottom: '10px' }} />
         <Space>
           <Switch
             loading={changeLoading}
@@ -207,9 +234,9 @@ export default (): React.ReactElement => {
         <span>启用 API 访问</span>
       </Space>
       <Divider />
-      <ApiAccessPath project={project} />
+      <ApiAccessPath project={project} onReload={reload} />
       <Divider />
-      <ApiPermission project={project} />
+      <ApiPermission project={project} onReload={reload} />
     </>
   )
 }

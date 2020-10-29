@@ -17,28 +17,14 @@ import { UnauthorizedOperation, RecordExistException } from '@/common'
 import { CloudBaseService } from '@/services'
 import { CollectionV2 } from '@/constants'
 import { dateToNumber } from '@/utils'
-
-export class Project {
-  _id: string
-
-  @IsNotEmpty()
-  name: string
-
-  @IsNotEmpty()
-  customId: string
-
-  description: string
-
-  // 项目封面图
-  cover?: string
-
-  // 是否开启 Api 访问
-  enableApiAccess: boolean
-}
+import { ProjectsService } from './projects.service'
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly cloudbaseService: CloudBaseService) {}
+  constructor(
+    private readonly cloudbaseService: CloudBaseService,
+    private readonly projectsService: ProjectsService
+  ) {}
 
   @Get(':id')
   async getProject(@Param('id') id: string, @Request() req: AuthRequest) {
@@ -109,7 +95,46 @@ export class ProjectsController {
   // 系统管理员才能更新项目
   @Patch(':id')
   @UseGuards(PermissionGuard('project', ['administrator']))
-  async updateProject(@Param('id') id: string, @Body() payload: Partial<Project>) {
+  async updateProject(@Param('id') id: string, @Body() payload: Partial<Project> = {}) {
+    const { enableApiAccess, apiAccessPath } = payload
+    // 项目信息
+    const {
+      data: [project],
+    } = await this.collection().doc(id).get()
+
+    // 开启、关闭 API 访问
+    if (typeof enableApiAccess === 'boolean') {
+      // 开启 API 访问，且已存在 API 访问路径，则恢复 API 访问路径
+      if (enableApiAccess && project.apiAccessPath) {
+        await this.projectsService.createApiAccessPath(`/${project.apiAccessPath}`)
+      }
+
+      if (enableApiAccess === false) {
+        await this.projectsService.disableApiAccess(`/${project.apiAccessPath}`)
+      }
+    }
+
+    // API 访问路径
+    if (typeof apiAccessPath !== 'undefined') {
+      // 检查路径是否已被其他项目绑定
+      const {
+        data: [existProject],
+      } = await this.collection()
+        .where({
+          apiAccessPath,
+        })
+        .get()
+
+      // 其他项目已经绑定了此路径
+      if (existProject) {
+        if (existProject?._id !== id) {
+          throw new RecordExistException('路径已被其他项目绑定，请更换路径后重试')
+        }
+      } else {
+        await this.projectsService.createApiAccessPath(`/${apiAccessPath}`)
+      }
+    }
+
     return this.collection().doc(id).update(payload)
   }
 

@@ -10,7 +10,13 @@ export const getEnvIdString = (): string => {
   return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
 }
 
+let nodeApp
+let managerApp
+
 export const getCloudBaseApp = () => {
+  if (nodeApp) {
+    return nodeApp
+  }
   // envId 为 symbol 值
   const envId = getEnvIdString()
 
@@ -27,11 +33,14 @@ export const getCloudBaseApp = () => {
   }
 
   const app = cloudbase.init(options)
-
+  nodeApp = app
   return app
 }
 
 export const getCloudBaseManager = (): CloudBase => {
+  if (managerApp) {
+    return managerApp
+  }
   const envId = getEnvIdString()
 
   let options: ICloudBaseConfig = {
@@ -47,6 +56,7 @@ export const getCloudBaseManager = (): CloudBase => {
   }
 
   const manager = new CloudBase(options)
+  managerApp = manager
 
   return manager
 }

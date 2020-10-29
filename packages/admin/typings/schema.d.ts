@@ -113,3 +113,28 @@ type SchemaFieldType =
   | 'Enum'
   | 'Object'
   | 'Text'
+
+interface Project {
+  _id: string
+
+  name: string
+
+  customId: string
+
+  description: string
+
+  // 项目封面图
+  cover?: string
+
+  // 是否开启 Api 访问
+  enableApiAccess: boolean
+
+  // api 访问路径
+  apiAccessPath: string
+
+  // 可读集合
+  readableCollections: string[]
+
+  // 可修改的集合
+  modifiableCollections: string[]
+}
