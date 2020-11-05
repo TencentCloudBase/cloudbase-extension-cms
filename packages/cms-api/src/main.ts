@@ -1,6 +1,5 @@
 import helmet from 'helmet'
 import express from 'express'
-import bodyParser from 'body-parser'
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express'
@@ -23,14 +22,13 @@ export async function bootstrap() {
   // Security
   app.use(helmet())
 
+  app.setGlobalPrefix('/api')
+
   // 参数校验
   app.useGlobalPipes(new ValidationPipe())
 
   // 登录校验
   app.useGlobalGuards(new GlobalAuthGuard())
-
-  // 请求 body 大小限制
-  app.use(bodyParser.raw({ limit: '50mb' }))
 
   // 超时时间
   app.useGlobalInterceptors(new TimeoutInterceptor(config.timeout))

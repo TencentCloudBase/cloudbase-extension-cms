@@ -122,4 +122,10 @@ interface Project {
 
   // api 访问路径
   apiAccessPath: string
+
+  // 可读集合
+  readableCollections: string[]
+
+  // 可修改的集合
+  modifiableCollections: string[]
 }

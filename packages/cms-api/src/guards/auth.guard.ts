@@ -1,5 +1,5 @@
 import { Collection } from '@/constants'
-import { getCloudBaseApp, isDevEnv } from '@/utils'
+import { getCloudBaseApp } from '@/utils'
 import {
   CanActivate,
   HttpStatus,
@@ -13,9 +13,6 @@ import { Request } from 'express'
 export class GlobalAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthRequest & Request>()
-    if (isDevEnv()) {
-      return true
-    }
 
     // 数据库集合名
     const collectionName = request.params?.collectionName
@@ -34,15 +31,17 @@ export class GlobalAuthGuard implements CanActivate {
     if (!collection) {
       throw new HttpException(
         {
-          code: 'NOT_FOUND',
-          message: '你访问的集合不存在',
+          code: 'NOT_FOUND_IN_CMS',
+          message: '你访问的集合不在 CMS 中',
         },
         HttpStatus.FORBIDDEN
       )
     }
 
     // 查询项目
-    const { data: project }: { data: Project } = await db
+    const {
+      data: [project],
+    }: { data: Project[] } = await db
       .collection(Collection.Projects)
       .doc(collection.projectId)
       .get()
@@ -51,7 +50,7 @@ export class GlobalAuthGuard implements CanActivate {
       throw new HttpException(
         {
           code: 'NOT_FOUND',
-          message: '你访问的集合对应的项目已被删除，无法继续访问',
+          message: '项目不存在，无法访问',
         },
         HttpStatus.FORBIDDEN
       )
@@ -62,7 +61,7 @@ export class GlobalAuthGuard implements CanActivate {
       throw new HttpException(
         {
           code: 'NOT_FOUND',
-          message: '此项目未开启 API 访问',
+          message: 'API 访问未开启',
         },
         HttpStatus.FORBIDDEN
       )
