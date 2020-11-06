@@ -131,7 +131,7 @@ export class ApiService {
       // 获取数据中所有的关联资源 Id
       let ids = []
       if (connectMany) {
-        // 合并数组
+        // 合并 id 记录
         ids = resData
           .filter((record) => record[fieldName]?.length)
           .map((record) => record[fieldName])
