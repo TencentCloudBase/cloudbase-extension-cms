@@ -1,6 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common'
-import { CloudBase } from '@cloudbase/node-sdk/lib/cloudbase'
-import { CollectionReference } from '@cloudbase/database'
+import { CloudBase, Database } from '@cloudbase/node-sdk'
 import { getCloudBaseApp } from '@/utils'
 
 @Injectable()
@@ -15,7 +14,7 @@ export class CloudBaseService {
     return this.app.database()
   }
 
-  collection(collection: string): CollectionReference {
+  collection(collection: string): Database.CollectionReference {
     return this.app.database().collection(collection)
   }
 
