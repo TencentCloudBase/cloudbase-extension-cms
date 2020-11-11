@@ -81,7 +81,7 @@ Resources:
     Type: CloudBase::FlexDB
     Properties:
       CollectionName: tcb-ext-cms-schemas
-      Description: CMS 系统内容模型数据（请不需要手动修改）
+      Description: CMS 系统内容模型数据（请不要手动修改）
       AclTag: ADMINONLY
   # 系统用户数据集合
   UsersDB:
