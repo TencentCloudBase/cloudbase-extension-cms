@@ -6,10 +6,16 @@ import locale from 'antd/es/date-picker/locale/zh_CN'
 
 export const IDatePicker: React.FC<{
   type?: string
-  value?: string
+  value?: string | number
   onChange?: (v: string | number) => void
 }> = (props) => {
   let { type, value, onChange = () => {} } = props
+
+  // Unix Timestamp 秒级时间
+  const isUnixTimestamp = String(value)?.length === 10 && !isNaN(Number(value))
+  if (isUnixTimestamp) {
+    value = Number(value) * 1000
+  }
 
   return (
     <DatePicker
@@ -17,7 +23,14 @@ export const IDatePicker: React.FC<{
       value={value ? moment(value) : null}
       showTime={type === 'DateTime'}
       format={type === 'DateTime' ? 'YYYY-MM-DD HH:mm:ss' : 'YYYY-MM-DD'}
-      onChange={(_, v) => onChange(moment(v).valueOf())}
+      onChange={(_, v) => {
+        // Unix Timestamp 也按照原格式存储
+        if (isUnixTimestamp) {
+          onChange(moment(v).unix())
+        } else {
+          onChange(moment(v).valueOf())
+        }
+      }}
     />
   )
 }
