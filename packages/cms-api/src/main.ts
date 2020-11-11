@@ -6,18 +6,19 @@ import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express
 import { AppModule } from './app.module'
 import { GlobalAuthGuard } from './guards/auth.guard'
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
-
 import { AllExceptionsFilter } from './exceptions.filter'
-import config from './config'
+import { ConfigService } from '@nestjs/config'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
-const port = process.env.PORT || 5001
+const port = process.env.SERVER_PORT || 5001
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, adapter, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'],
   })
+
+  const config = app.get(ConfigService)
 
   // Security
   app.use(helmet())
@@ -25,13 +26,21 @@ export async function bootstrap() {
   app.setGlobalPrefix('/api')
 
   // 参数校验
-  app.useGlobalPipes(new ValidationPipe())
+  app.useGlobalPipes(
+    // 将参数转换为 DTO 定义的类型
+    new ValidationPipe({
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      },
+    })
+  )
 
   // 登录校验
   app.useGlobalGuards(new GlobalAuthGuard())
 
   // 超时时间
-  app.useGlobalInterceptors(new TimeoutInterceptor(config.timeout))
+  app.useGlobalInterceptors(new TimeoutInterceptor(config.get('RES_TIMEOUT')))
 
   // 错误处理
   app.useGlobalFilters(new AllExceptionsFilter())
@@ -60,6 +69,6 @@ export async function bootstrap() {
 
 if (process.env.NODE_ENV === 'development') {
   bootstrap().then(() => {
-    console.log(`App listen on http://localhost:${port}`)
+    console.log(`\n> 🚀 App listen on http://localhost:${port}`)
   })
 }

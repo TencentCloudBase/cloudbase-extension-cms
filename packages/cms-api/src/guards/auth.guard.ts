@@ -67,6 +67,17 @@ export class GlobalAuthGuard implements CanActivate {
       )
     }
 
+    // 是否开启 API 访问
+    if (!project.apiAccessPath) {
+      throw new HttpException(
+        {
+          code: 'NOT_FOUND',
+          message: 'API 访问路径未设置',
+        },
+        HttpStatus.FORBIDDEN
+      )
+    }
+
     return true
   }
 }

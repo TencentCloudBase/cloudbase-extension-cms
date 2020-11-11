@@ -1,11 +1,12 @@
-import Axios from 'axios'
+import _ from 'lodash'
+import Axios, { AxiosRequestConfig } from 'axios'
 import querystring from 'querystring'
 import { sign } from '@cloudbase/signature-nodejs'
 import { Collection } from '@/constants'
 import { CloudBaseService } from '@/services'
 import { Injectable } from '@nestjs/common'
-import { getCredential, getEnvIdString } from '@/utils'
-import { RecordExistException } from '@/common'
+import { cloudIdToUrl, getCredential, getEnvIdString } from '@/utils'
+import { CmsException, RecordExistException } from '@/common'
 
 interface IQuery extends NodeJS.Dict<number | string> {
   limit?: number
@@ -25,9 +26,9 @@ export class ApiService {
    */
   async getMergedQuery(collectionName: string, query: IQuery) {
     // 调用 api 传入的 query
-    let { limit, skip, fields = '', sort = '' } = query
-    sort = JSON.parse(sort) || {}
-    fields = JSON.parse(fields) || {}
+    let { limit, skip, fields, sort } = query
+    sort = sort ? JSON.parse(sort) : {}
+    fields = fields ? JSON.parse(fields) : {}
 
     // 获取 doc 原型信息
     const {
@@ -80,7 +81,7 @@ export class ApiService {
   /**
    * 对数据库查询的数据进行处理
    */
-  async transformResData(resData: any[], collectionName: string) {
+  async parseResData(resData: any[], collectionName: string) {
     if (!resData?.length) {
       return []
     }
@@ -102,6 +103,22 @@ export class ApiService {
     const connectFields = docSchema.fields.filter((field) => field.type === 'Connect')
     if (connectFields?.length) {
       formatData = await this.transformConnectField(resData, connectFields)
+    }
+
+    // 将返回结果中的 cloudId 转换成 url
+    const cloudIdFields = docSchema.fields.filter((field) => ['Image', 'File'].includes(field.type))
+    if (cloudIdFields?.length) {
+      formatData = formatData.map((item) => {
+        cloudIdFields.forEach((field) => {
+          const fieldName = field.name
+          if (Array.isArray(item[fieldName])) {
+            item[fieldName] = _.map(item[fieldName], cloudIdToUrl)
+          } else {
+            item[fieldName] = cloudIdToUrl(item[fieldName])
+          }
+        })
+        return item
+      })
     }
 
     return formatData
@@ -207,17 +224,26 @@ export class ApiService {
     const qs = querystring.stringify(query)
     const url = `https://tcb-api.tencentcloudapi.com/api/v2/envs/${envId}/databases/${collectionName}/documents:${action}?${qs}`
 
-    // 请求
-    const { data: res } = await Axios({
+    const requestOptions: AxiosRequestConfig = {
       method: 'POST',
       url: url,
       headers: {
         'X-CloudBase-Authorization': authorization,
-        'X-CloudBase-SessionToken': sessionToken,
         'X-CloudBase-TimeStamp': timestamp,
       },
       data,
-    })
+    }
+
+    // 临时秘钥调用
+    sessionToken && (requestOptions.headers['X-CloudBase-SessionToken'] = sessionToken)
+
+    // 请求
+    const { data: res } = await Axios(requestOptions)
+
+    // 请求出现错误
+    if (res.code) {
+      throw new CmsException('OPEN_API_ERROR', `${res.code}: ${res.message}`)
+    }
 
     return res
   }

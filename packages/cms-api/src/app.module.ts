@@ -12,7 +12,7 @@ import { GlobalModule } from './global.module'
     GlobalModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
+      envFilePath: process.env.NODE_ENV === 'development' ? ['.env', '.env.local'] : '.env',
     }),
   ],
   controllers: [AppController],

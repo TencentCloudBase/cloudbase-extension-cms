@@ -14,6 +14,8 @@ interface SystemResponse {
   }
 }
 
+const BaseHelpText = '异常，查看帮助文档：https://docs.cloudbase.net/cms/intro.html'
+
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
@@ -56,7 +58,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           ...error,
           path: request.url,
         },
-        helpText: '异常',
+        helpText: BaseHelpText,
       })
     } catch (e) {
       // 解析错误异常
@@ -68,7 +70,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
           message: '服务异常',
           path: request.url,
         },
-        helpText: '异常',
+        helpText: BaseHelpText,
       })
     }
   }

@@ -44,3 +44,41 @@ export const getCloudBaseApp = () => {
 
   return app
 }
+
+export function cloudIdToUrl(cloudId: string) {
+  if (!cloudId) {
+    return ''
+  }
+
+  // 非 cloudId
+  if (!/^cloud:\/\//.test(cloudId)) {
+    return cloudId
+  }
+
+  // cloudId: cloud://cms-demo.636d-cms-demo-1252710547/cloudbase-cms/upload/2020-09-15/Psa3R3NA4rubCd_R-favicon.png
+  let link = cloudId.replace('cloud://', '')
+  // 文件路径
+  const index = link.indexOf('/')
+  // envId.bucket
+  const prefix = link.slice(0, index)
+  // [envId, bucket]
+  const splitPrefix = prefix.split('.')
+
+  // path 路径
+  const path = link.slice(index + 1)
+
+  let envId
+  let trimBucket
+  if (splitPrefix.length === 1) {
+    trimBucket = splitPrefix[0]
+  } else if (splitPrefix.length === 2) {
+    envId = splitPrefix[0]
+    trimBucket = splitPrefix[1]
+  }
+
+  if (envId) {
+    envId = envId.trim()
+  }
+
+  return `//${trimBucket}.tcb.qcloud.la/${path}`
+}

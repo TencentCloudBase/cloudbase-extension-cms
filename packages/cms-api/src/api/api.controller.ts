@@ -14,21 +14,25 @@ import {
 import { CloudBaseService } from '@/services'
 import { ApiService } from './api.service'
 import { Collection } from '@/constants'
-import { IsJSON, IsNumber } from 'class-validator'
+import { IsJSON, IsNumber, IsOptional } from 'class-validator'
 import { ActionGuard } from '@/guards/action.guard'
 
 class IQuery {
+  @IsOptional()
   @IsNumber()
-  limit: number
+  limit?: number
 
+  @IsOptional()
   @IsNumber()
-  skip: number
+  skip?: number
 
+  @IsOptional()
   @IsJSON()
-  fields: string
+  fields?: string
 
+  @IsOptional()
   @IsJSON()
-  sort: string
+  sort?: string
 }
 
 /**
@@ -36,6 +40,7 @@ class IQuery {
  * 1. hiddenInApi 的字段要在返回值中隐藏
  * 2. 批量查询时，order 字段要处理
  * 3. 返回值中的关联字段要转换成对应的数据
+ * 4. 返回值中的 cloudId 转换成 https 链接，注意数组
  */
 @Controller('/v1.0')
 export class ApiController {
@@ -75,7 +80,7 @@ export class ApiController {
     // 查询数据
     const { data } = await dbQuery.get()
     // 处理返回值
-    const [doc] = await this.apiService.transformResData(data, collectionName)
+    const [doc] = await this.apiService.parseResData(data, collectionName)
 
     return {
       // doc 不存在时，返回 null
@@ -103,7 +108,7 @@ export class ApiController {
       query: apiQuery,
     })
 
-    res.data = await this.apiService.transformResData(res.data, collectionName)
+    res.data = await this.apiService.parseResData(res.data, collectionName)
 
     return { ...res, total: countRes.total }
   }
@@ -134,7 +139,7 @@ export class ApiController {
       query: apiQuery,
     })
 
-    res.data = await this.apiService.transformResData(res.data, collectionName)
+    res.data = await this.apiService.parseResData(res.data, collectionName)
 
     return {
       ...res,
