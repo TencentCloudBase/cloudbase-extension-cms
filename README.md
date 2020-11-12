@@ -101,9 +101,9 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 | 支持 Open API                    | 👷 进行中 |          |
 | 支持默认排序字段                 | 👷 进行中 |          |
 | 支持云应用部署                   | 👷 进行中 |          |
-| 支持云应用部署                   | 🏹 设计中 |          |
-| 提供更简单的部署方法：CI 部署    | 🏹 设计中 |          |
+| 支持以微前端的模式嵌入系统       | 🏹 设计中 |          |
 | 提供项目模板，支持从模板创建项目 | 🏹 设计中 |          |
+| 支持操作记录                     | 🏹 设计中 |          |
 | 支持 GraphQL                     | ⏳ 规划中 |          |
 | 内容表字段索引支持               | ⏳ 规划中 |          |
 | 定时任务 ⇒ 统计报表              | ⏳ 规划中 |          |
@@ -123,7 +123,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
 
 <div align="center">
-  <img src="https://main.qcloudimg.com/raw/ff00e826c67c80605498655e230e2242.jpg" height="300px" alt=""/>
+  <img src="https://main.qcloudimg.com/raw/84884ed405375ce80cd6cd6ae35939d4.jpg" height="300px" alt=""/>
   <img src="https://main.qcloudimg.com/raw/a07b103a276b42fa727102e66c54f787.jpg" height="300px" alt=""/>
 </div>
 
