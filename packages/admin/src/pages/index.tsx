@@ -58,25 +58,31 @@ export default (): React.ReactNode => {
       {data?.length ? (
         <Row gutter={[36, 36]}>
           {data.map((project: any, index: any) => (
-            <Col flex="0 0 224px" key={index}>
+            <Col flex="0 0 214px" key={index}>
               <Card
                 hoverable
+                bordered={false}
                 onClick={() => {
                   ctx.setState({
                     currentProject: project,
                   })
                   history.push(`/${project._id}/home`)
                 }}
+                style={{ borderRadius: '5px' }}
               >
                 <div
-                  className="project"
+                  className="w-full flex flex-col items-center mt-12"
                   onClick={() => {
                     history.push('/home')
                   }}
                 >
                   <div className="project-logo">{project.name.slice(0, 2)}</div>
-                  <Tooltip title={project.name}>
-                    <Typography.Title ellipsis level={4} className="project-title">
+                  <Tooltip title={project.description}>
+                    <Typography.Title
+                      level={4}
+                      ellipsis={{ rows: 2, expandable: false }}
+                      className="mt-4 max-w-80 text-center"
+                    >
                       {project.name}
                     </Typography.Title>
                   </Tooltip>
@@ -123,7 +129,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
           <Col flex="2 1 auto" />
         </Row>
       </Content>
-      <Footer className="footer">CloudBase CMS 2.1.2</Footer>
+      <Footer className="text-center">CloudBase CMS 2.1.2</Footer>
       <div className="help-btn">
         {window.TcbCmsConfig.disableHelpButton ? null : (
           <Popover
@@ -256,16 +262,21 @@ export const CreateProject: React.FC<{
         </Col>
       </Row>
       <Row gutter={[36, 40]}>
-        <Col flex="0 0 224px">
+        <Col flex="0 0 214px">
           <Card
             hoverable
+            bordered={false}
+            style={{ borderRadius: '5px' }}
             onClick={() => {
               setModalVisible(true)
             }}
           >
-            <div className="project" onClick={() => {}}>
+            <div
+              className="w-full flex flex-col items-center justify-start mt-12"
+              onClick={() => {}}
+            >
               <PlusSquareTwoTone style={{ fontSize: '60px' }} />
-              <Typography.Title level={4} className="project-title">
+              <Typography.Title level={4} className="mt-5">
                 创建新项目
               </Typography.Title>
             </div>
