@@ -16,7 +16,7 @@ const ContentEditor: React.FC = () => {
     state: { schemas },
   } = ctx
 
-  const schema: SchemaV2 = schemas?.find((item: SchemaV2) => item._id === schemaId)
+  const schema: Schema = schemas?.find((item: Schema) => item._id === schemaId)
 
   // 表单初始值
   const initialValues = getInitialValues(contentAction, schema, selectedContent)
@@ -102,7 +102,7 @@ const ContentEditor: React.FC = () => {
   )
 }
 
-const getInitialValues = (action: string, schema: SchemaV2, selectedContent: any) => {
+const getInitialValues = (action: string, schema: Schema, selectedContent: any) => {
   const initialValues =
     action === 'create'
       ? schema?.fields?.reduce((prev, field) => {

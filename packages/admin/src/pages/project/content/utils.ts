@@ -1,5 +1,5 @@
 // 格式化搜索参数
-export const formatSearchData = (schema: SchemaV2, params: Record<string, any>) => {
+export const formatSearchData = (schema: Schema, params: Record<string, any>) => {
   const { fields } = schema
 
   return Object.keys(params).reduce((ret, key) => {
@@ -30,7 +30,7 @@ export const formatSearchData = (schema: SchemaV2, params: Record<string, any>) 
   }, {})
 }
 
-export const calculateFieldWidth = (field: SchemaFieldV2) => {
+export const calculateFieldWidth = (field: SchemaField) => {
   const TypeWidthMap = {
     String: 150,
     MultiLineString: 150,

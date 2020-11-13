@@ -21,7 +21,7 @@ const SchemaFields: React.FC = () => {
   } = ctx
 
   // 编辑字段
-  const editFiled = useCallback((field: SchemaFieldV2) => {
+  const editFiled = useCallback((field: SchemaField) => {
     ctx.setState({
       fieldAction: 'edit',
       selectedField: field,

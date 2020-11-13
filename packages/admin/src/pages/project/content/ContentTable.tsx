@@ -17,7 +17,7 @@ const negativeTypes = ['File', 'Image']
  * 内容展示表格
  */
 export const ContentTable: React.FC<{
-  currentSchema: SchemaV2
+  currentSchema: Schema
 }> = (props) => {
   const { currentSchema } = props
   const ctx = useConcent<{}, ContentCtx>('content')
@@ -48,9 +48,7 @@ export const ContentTable: React.FC<{
       // 搜索参数
       const fuzzyFilter = searchParams
         ? Object.keys(searchParams)
-            .filter((key) =>
-              currentSchema.fields?.some((field: SchemaFieldV2) => field.name === key)
-            )
+            .filter((key) => currentSchema.fields?.some((field: SchemaField) => field.name === key))
             .reduce(
               (prev, key) => ({
                 ...prev,
@@ -254,7 +252,7 @@ export const ContentTable: React.FC<{
 /**
  * Table 批量操作
  */
-const getTableAlertRender = (projectId: string, currentSchema: SchemaV2, tableRef: any) => ({
+const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef: any) => ({
   intl,
   selectedRowKeys,
   selectedRows,

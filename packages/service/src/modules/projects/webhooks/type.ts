@@ -1,5 +1,5 @@
 import { Method } from 'axios'
-import { SchemaV2 } from '../schemas/types'
+import { Schema } from '../schemas/types'
 
 export interface Webhook {
   _id: string
@@ -12,7 +12,7 @@ export interface Webhook {
 
   event: string[]
 
-  collections: SchemaV2[]
+  collections: Schema[]
 
   headers: { key: string; value: string }[]
 }

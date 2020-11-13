@@ -55,7 +55,7 @@ function getValidateRule(type: string) {
   return rule
 }
 
-const getRules = (field: SchemaFieldV2): Rule[] => {
+const getRules = (field: SchemaField): Rule[] => {
   const { isRequired, displayName, min, max, type } = field
 
   const rules: Rule[] = []
@@ -92,7 +92,7 @@ const getRules = (field: SchemaFieldV2): Rule[] => {
 /**
  * 字段编辑器
  */
-export function getFieldEditor(field: SchemaFieldV2, key: number) {
+export function getFieldEditor(field: SchemaField, key: number) {
   const { name, type, min, max, enumElements } = field
 
   let FieldEditor: React.ReactNode
@@ -209,7 +209,7 @@ export function getFieldEditor(field: SchemaFieldV2, key: number) {
 /**
  * 字段编辑表单
  */
-export function getFieldFormItem(field: SchemaFieldV2, key: number) {
+export function getFieldFormItem(field: SchemaField, key: number) {
   const rules = getRules(field)
   const { name, type, description, displayName } = field
 

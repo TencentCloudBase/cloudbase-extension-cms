@@ -2,7 +2,7 @@ import { IActionCtx } from 'concent'
 import { getContentSchemas } from '@/services/content'
 
 interface ContentState {
-  schemas: SchemaV2[]
+  schemas: Schema[]
   loading: boolean
   contentAction: 'create' | 'edit'
   selectedContent: any

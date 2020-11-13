@@ -24,7 +24,7 @@ type ISelectValue = string | string[]
  */
 export const IConnectRender: React.FC<{
   value?: IConnectValue
-  field: SchemaFieldV2
+  field: SchemaField
 }> = (props) => {
   const { value, field } = props
   const { connectField, connectMany } = field
@@ -56,7 +56,7 @@ export const IConnectRender: React.FC<{
  */
 export const IConnectEditor: React.FC<{
   value?: IConnectValue
-  field: SchemaFieldV2
+  field: SchemaField
   onChange?: (v: string | string[]) => void
 }> = (props) => {
   const { projectId } = useParams<any>()
@@ -73,7 +73,7 @@ export const IConnectEditor: React.FC<{
     async () => {
       setLoading(true)
       const { schemas } = ctx.state
-      let schema = schemas.find((_: SchemaV2) => _._id === connectResource)
+      let schema = schemas.find((_: Schema) => _._id === connectResource)
 
       // 后台获取 Schema
       if (!schema) {

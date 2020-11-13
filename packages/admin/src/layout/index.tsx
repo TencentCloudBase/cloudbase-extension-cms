@@ -93,7 +93,7 @@ const Layout: React.FC<any> = (props) => {
 
   const contentChildMenus = useMemo(
     () =>
-      schemas?.map((schema: SchemaV2) => ({
+      schemas?.map((schema: Schema) => ({
         name: schema.displayName,
         path: `/:projectId/content/${schema._id}`,
       })),

@@ -9,7 +9,7 @@ const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
 /**
  * 获取表格 column 渲染配置
  */
-export const getTableColumns = (fields: SchemaFieldV2[] = []): ProColumns[] => {
+export const getTableColumns = (fields: SchemaField[] = []): ProColumns[] => {
   const columns: ProColumns[] = fields
     ?.filter((_) => _)
     .map((field) => {

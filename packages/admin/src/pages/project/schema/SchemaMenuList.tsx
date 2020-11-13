@@ -41,7 +41,7 @@ const SchemaMenuList: React.FC = () => {
         })
       }}
     >
-      {schemas.map((item: SchemaV2) => (
+      {schemas.map((item: Schema) => (
         <Menu.Item key={item._id}>{item.displayName}</Menu.Item>
       ))}
     </Menu>

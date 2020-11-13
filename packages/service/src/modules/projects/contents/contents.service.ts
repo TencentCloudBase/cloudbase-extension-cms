@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { dateToNumber } from '@/utils'
 import { CollectionV2 } from '@/constants'
-import { SchemaV2, SchemaFieldV2 } from '../schemas/types'
+import { Schema, SchemaField } from '../schemas/types'
 import { BadRequestException, RecordNotExistException } from '@/common'
 
 @Injectable()
@@ -41,7 +41,7 @@ export class ContentsService {
 
     const {
       data: [schema],
-    }: { data: SchemaV2[] } = await this.cloudbaseService
+    }: { data: Schema[] } = await this.cloudbaseService
       .collection(CollectionV2.Schemas)
       .where({
         collectionName: resource,
@@ -351,7 +351,7 @@ export class ContentsService {
   /**
    * 处理字段搜索
    */
-  private handleFuzzySearch(fuzzyFilter: Record<string, any>, schema: SchemaV2) {
+  private handleFuzzySearch(fuzzyFilter: Record<string, any>, schema: Schema) {
     const { db } = this.cloudbaseService
     const $ = db.command
     const where = {}
@@ -399,7 +399,7 @@ export class ContentsService {
    * 处理数据返回结果
    * 将数据中的关联字段解析后返回
    */
-  private async transformConnectField(rawData: any[], connectFields: SchemaFieldV2[]) {
+  private async transformConnectField(rawData: any[], connectFields: SchemaField[]) {
     let resData = rawData
     const $ = this.cloudbaseService.db.command
 
@@ -411,7 +411,7 @@ export class ContentsService {
       .get()
 
     // 转换 data 中的关联 field
-    const transformDataByField = async (field: SchemaFieldV2) => {
+    const transformDataByField = async (field: SchemaField) => {
       const { connectMany } = field
       // 字段类型为关联的字段名
       const fieldName = field.name

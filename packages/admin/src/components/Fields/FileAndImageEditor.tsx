@@ -9,7 +9,7 @@ const { Dragger } = Upload
  * 文件、图片编辑组件
  */
 export const IFileAndImageEditor: React.FC<{
-  field: SchemaFieldV2
+  field: SchemaField
   type: 'file' | 'image'
   value?: string | string[]
   onChange?: (v: string | string[]) => void

@@ -17,9 +17,9 @@ export interface FieldType {
 const { Paragraph, Text, Title } = Typography
 
 export const SchemaFieldRender: React.FC<{
-  schema: SchemaV2
-  onFiledClick: (filed: SchemaFieldV2) => void
-  actionRender: (field: SchemaFieldV2) => React.ReactNode
+  schema: Schema
+  onFiledClick: (filed: SchemaField) => void
+  actionRender: (field: SchemaField) => React.ReactNode
 }> = (props) => {
   const { schema, actionRender, onFiledClick } = props
   const [sortLoading, setSortLoading] = useState(false)

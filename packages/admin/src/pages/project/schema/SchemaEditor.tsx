@@ -25,7 +25,7 @@ const SchemaEditor: React.FC = () => {
 
   // 创建/更新模型
   const { run, loading } = useRequest(
-    async (data: SchemaV2) => {
+    async (data: Schema) => {
       const { displayName, collectionName, description } = data
 
       if (schemaEditAction === 'create') {

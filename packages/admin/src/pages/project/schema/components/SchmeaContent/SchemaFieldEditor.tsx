@@ -46,7 +46,7 @@ const SchemaFieldEditorModal: React.FC<{
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const [formValue, setFormValue] = useState<any>()
-  const [connectSchema, setConnectSchema] = useState<SchemaV2>()
+  const [connectSchema, setConnectSchema] = useState<Schema>()
 
   const {
     state: { currentSchema, schemas, fieldAction, selectedField },
@@ -54,9 +54,9 @@ const SchemaFieldEditorModal: React.FC<{
 
   // 添加字段
   const { run: createField, loading } = useRequest(
-    async (fieldAttr: SchemaFieldV2) => {
+    async (fieldAttr: SchemaField) => {
       const existSameName = currentSchema?.fields?.find(
-        (_: SchemaFieldV2) => _.name === fieldAttr.name
+        (_: SchemaField) => _.name === fieldAttr.name
       )
 
       if (existSameName && fieldAction === 'create') {
@@ -134,7 +134,7 @@ const SchemaFieldEditorModal: React.FC<{
 
   useEffect(() => {
     if (selectedField?.connectResource) {
-      const schema = schemas.find((_: SchemaV2) => _._id === selectedField.connectResource)
+      const schema = schemas.find((_: Schema) => _._id === selectedField.connectResource)
       setConnectSchema(schema)
     }
 
@@ -168,7 +168,7 @@ const SchemaFieldEditorModal: React.FC<{
         initialValues={fieldAction === 'edit' ? selectedField : {}}
         onValuesChange={(changed, v) => {
           if (changed.connectResource) {
-            const schema = schemas.find((_: SchemaV2) => _._id === v.connectResource)
+            const schema = schemas.find((_: Schema) => _._id === v.connectResource)
             setConnectSchema(schema)
           }
           setFormValue(v)
@@ -232,7 +232,7 @@ const SchemaFieldEditorModal: React.FC<{
                   rules={[{ required: true, message: '请选择关联内容！' }]}
                 >
                   <Select style={{ width: 200 }}>
-                    {schemas?.map((schema: SchemaV2) => (
+                    {schemas?.map((schema: Schema) => (
                       <Option value={schema._id} key={schema._id}>
                         {schema.displayName}
                       </Option>
@@ -246,7 +246,7 @@ const SchemaFieldEditorModal: React.FC<{
                 >
                   <Select style={{ width: 200 }} placeholder="关联字段">
                     {connectSchema?.fields?.length ? (
-                      connectSchema.fields?.map((field: SchemaFieldV2) => (
+                      connectSchema.fields?.map((field: SchemaField) => (
                         <Option value={field.name} key={field.name}>
                           {field.displayName}
                         </Option>

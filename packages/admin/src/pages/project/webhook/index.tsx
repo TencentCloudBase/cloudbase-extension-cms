@@ -15,7 +15,7 @@ interface Webhook {
   url: string
   method: string
   event: string[]
-  collections: (SchemaV2 | '*')[]
+  collections: (Schema | '*')[]
   headers: { key: string; value: string }[]
 }
 

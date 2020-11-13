@@ -9,14 +9,14 @@ import { ContentCtx } from 'typings/store'
 const { Option } = Select
 
 const ContentTableSearchForm: React.FC<{
-  schema: SchemaV2
+  schema: Schema
   onSearch: (v: Record<string, any>) => void
 }> = ({ onSearch }) => {
   const ctx = useConcent<{}, ContentCtx>('content')
   const { searchFields, searchParams } = ctx.state
 
   // 删除字段
-  const deleteField = useCallback((field: SchemaFieldV2) => {
+  const deleteField = useCallback((field: SchemaField) => {
     ctx.mr.removeSearchField(field)
   }, [])
 
@@ -65,7 +65,7 @@ const ContentTableSearchForm: React.FC<{
 /**
  * 生成搜索字段输入组件
  */
-const getSearchFieldItem = (field: SchemaFieldV2, key: number) => {
+const getSearchFieldItem = (field: SchemaField, key: number) => {
   const { name, type, min, max, displayName, enumElements } = field
   const width = calculateFieldWidth(field)
 

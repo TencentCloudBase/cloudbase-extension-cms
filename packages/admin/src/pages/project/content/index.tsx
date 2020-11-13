@@ -16,7 +16,7 @@ export default (): React.ReactNode => {
     state: { schemas },
   } = ctx
 
-  const currentSchema = schemas?.find((item: SchemaV2) => item._id === schemaId)
+  const currentSchema = schemas?.find((item: Schema) => item._id === schemaId)
 
   // HACK: 切换模型时卸载 Table，强制重新加载数据
   // 直接 Reset 表格并加载数据，会保留上一个模型的列，效果不好

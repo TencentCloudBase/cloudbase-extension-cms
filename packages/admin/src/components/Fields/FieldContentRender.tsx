@@ -9,7 +9,7 @@ const { Text } = Typography
 /**
  * 根据类型获取展示字段组件
  */
-export function getFieldRender(field: SchemaFieldV2) {
+export function getFieldRender(field: SchemaField) {
   const { name, type } = field
   const width = calculateFieldWidth(field)
 

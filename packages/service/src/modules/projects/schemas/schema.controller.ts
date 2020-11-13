@@ -21,7 +21,7 @@ import { CloudBaseService } from '@/services'
 import { CmsException, RecordExistException, RecordNotExistException } from '@/common'
 import { SchemasService } from './schema.service'
 import { SchemaTransfromPipe } from './schema.pipe'
-import { SchemaV2 } from './types'
+import { Schema } from './types'
 
 class SchemaQuery {
   page?: number
@@ -88,7 +88,7 @@ export class SchemasController {
   @Post()
   async createSchema(
     @Param('projectId') projectId,
-    @Body(new SchemaTransfromPipe('create')) body: SchemaV2
+    @Body(new SchemaTransfromPipe('create')) body: Schema
   ) {
     // 检查同名集合是否存在，全局范围，不同项目不允许存在同名的集合
     const {
@@ -120,7 +120,7 @@ export class SchemasController {
   @Patch(':schemaId')
   async updateSchema(
     @Param() params,
-    @Body(new SchemaTransfromPipe('update')) payload: SchemaV2,
+    @Body(new SchemaTransfromPipe('update')) payload: Schema,
     @Request() req: AuthRequest
   ) {
     const { projectId, schemaId } = params

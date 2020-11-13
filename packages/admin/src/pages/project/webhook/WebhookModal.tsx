@@ -67,7 +67,7 @@ export const WebhookModal: React.FC<{
   )
 
   // 加载数据库集合
-  const { data: schemas = [], loading: schemaLoading } = useRequest<{ data: SchemaV2[] }>(() =>
+  const { data: schemas = [], loading: schemaLoading } = useRequest<{ data: Schema[] }>(() =>
     getSchemas(projectId)
   )
 

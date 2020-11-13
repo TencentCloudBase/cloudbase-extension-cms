@@ -67,7 +67,7 @@ export const SchemaExportModal: React.FC<{
       title="选择导出需要导出的原型"
       onOk={async () => {
         const exportSchemas = selectedSchemas.map((_: string) => {
-          const schema = schemas.find((item) => item.collectionName === _) as SchemaV2
+          const schema = schemas.find((item) => item.collectionName === _) as Schema
           // 关联字段记录了 schema 的 id，导出 schema 需要携带 _id
           const { fields, collectionName, displayName, _id } = schema
           return { fields, collectionName, displayName, _id }
@@ -107,7 +107,7 @@ export const SchemaImportModal: React.FC<{
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const { schemas } = ctx.state
   const [loading, setLoading] = useState(false)
-  const [importSchemas, setImportSchemas] = useState<Partial<SchemaV2>[]>([])
+  const [importSchemas, setImportSchemas] = useState<Partial<Schema>[]>([])
 
   // 读取、校验导入文件
   const onUpload = useCallback(

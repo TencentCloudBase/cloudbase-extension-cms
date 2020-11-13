@@ -4,9 +4,9 @@ import { getSchemas } from '@/services/schema'
 type Action = 'create' | 'edit'
 
 interface SchemaState {
-  currentSchema: SchemaV2
+  currentSchema: Schema
   loading: boolean
-  schemas: SchemaV2[]
+  schemas: Schema[]
   // 编辑原型的弹窗
   schemaEditVisible: boolean
   schemaEditAction: Action
@@ -18,7 +18,7 @@ interface SchemaState {
     name: string
     icon: React.ReactNode
     desc: string
-  } & SchemaFieldV2
+  } & SchemaField
   // 删除字段弹窗
   deleteFieldVisible: boolean
   // 编辑字段弹窗

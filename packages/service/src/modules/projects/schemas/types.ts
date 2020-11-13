@@ -1,6 +1,6 @@
 import { IsNotEmpty } from 'class-validator'
 
-export class SchemaFieldV2 {
+export class SchemaField {
   id: string
 
   // 字段类型
@@ -68,7 +68,7 @@ export class SchemaFieldV2 {
   enumElements: { label: string; value: string }[]
 }
 
-export class SchemaV2 {
+export class Schema {
   _id: string
 
   displayName: string
@@ -77,7 +77,7 @@ export class SchemaV2 {
 
   projectId: string
 
-  fields: SchemaFieldV2[]
+  fields: SchemaField[]
 
   description: string
 
