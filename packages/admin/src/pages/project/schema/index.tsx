@@ -62,14 +62,17 @@ export default (): React.ReactNode => {
       }
     >
       <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
+        {/* 原型菜单 */}
         <ProCard colSpan="220px" className="card-left" style={{ marginBottom: 0 }}>
           <SchemaMenuList />
         </ProCard>
+        {/* 原型字段 */}
         <Layout className="schema-layout">
           <SchemaContent />
         </Layout>
       </ProCard>
 
+      {/* 编辑弹窗 */}
       <SchemaEditor />
       <SchemaExportModal visible={exportVisible} onClose={() => setExportVisible(false)} />
       <SchemaImportModal visible={importVisible} onClose={() => setImportVisible(false)} />

@@ -86,9 +86,6 @@ interface SchemaFieldV2 {
   // 样式属性
   style: {}
 
-  // 枚举类型的值
-  enumElements: { label: string; value: string }[]
-
   // 连接字段
   connectField: string
 

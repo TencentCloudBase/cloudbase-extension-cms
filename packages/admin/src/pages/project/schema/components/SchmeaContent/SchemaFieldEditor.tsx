@@ -38,7 +38,7 @@ const AllowMultipleTypes = ['Image', 'File']
 /**
  * 添加字段
  */
-const FieldEditorModal: React.FC<{
+const SchemaFieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
@@ -341,37 +341,55 @@ const FieldEditorModal: React.FC<{
         )}
 
         {selectedField.type === 'Enum' && (
-          <Form.Item label="枚举类型">
-            <Form.List name="enumElements">
-              {(fields, { add, remove }) => {
-                return (
-                  <div>
-                    {fields?.map((field, index) => {
-                      return (
-                        <EnumListItem
-                          key={index}
-                          field={field}
-                          onRemove={remove}
-                          formValue={formValue}
-                        />
-                      )
-                    })}
-                    <Form.Item>
-                      <Button
-                        type="dashed"
-                        onClick={() => {
-                          add()
-                        }}
-                        style={{ width: '60%' }}
-                      >
-                        <PlusOutlined /> 添加枚举元素
-                      </Button>
-                    </Form.Item>
-                  </div>
-                )
-              }}
-            </Form.List>
-          </Form.Item>
+          <>
+            <Form.Item
+              label="枚举元素类型"
+              name="enumElementType"
+              validateTrigger={['onChange']}
+              rules={[
+                {
+                  required: true,
+                  message: '请选择枚举元素类型！',
+                },
+              ]}
+            >
+              <Select placeholder="元素值类型">
+                <Option value="string">字符串</Option>
+                <Option value="number">数字</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item label="枚举元素">
+              <Form.List name="enumElements">
+                {(fields, { add, remove }) => {
+                  return (
+                    <div>
+                      {fields?.map((field, index) => {
+                        return (
+                          <EnumListItem
+                            key={index}
+                            field={field}
+                            onRemove={remove}
+                            formValue={formValue}
+                          />
+                        )
+                      })}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => {
+                            add()
+                          }}
+                          style={{ width: '60%' }}
+                        >
+                          <PlusOutlined /> 添加枚举元素
+                        </Button>
+                      </Form.Item>
+                    </div>
+                  )
+                }}
+              </Form.List>
+            </Form.Item>
+          </>
         )}
 
         {AllowMultipleTypes.includes(selectedField.type) && (
@@ -467,19 +485,19 @@ const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: numb
   props
 ) => {
   const { field, formValue, onRemove } = props
-  const enumValueType = formValue?.enumElements?.[field.name]?.type || 'string'
+  const enumValueType = formValue?.enumElementType || 'string'
 
   return (
     <Form.Item>
       <Form.Item noStyle name={[field.name, 'label']} validateTrigger={['onChange', 'onBlur']}>
-        <Input placeholder="枚举元素展示别名，如 “已发布”" style={{ width: '35%' }} />
+        <Input placeholder="枚举元素展示别名，如 “已发布”" style={{ width: '45%' }} />
       </Form.Item>
       {enumValueType === 'number' && (
         <Form.Item noStyle name={[field.name, 'value']} validateTrigger={['onChange', 'onBlur']}>
           <InputNumber
             placeholder="枚举元素值，如 100"
             style={{
-              width: '30%',
+              width: '45%',
               marginLeft: '2%',
             }}
           />
@@ -490,24 +508,12 @@ const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: numb
           <Input
             placeholder="枚举元素值，如 published"
             style={{
-              width: '30%',
+              width: '45%',
               marginLeft: '2%',
             }}
           />
         </Form.Item>
       )}
-      <Form.Item noStyle name={[field.name, 'type']} validateTrigger={['onChange']}>
-        <Select
-          placeholder="元素值类型"
-          style={{
-            width: '20%',
-            marginLeft: '2%',
-          }}
-        >
-          <Option value="string">字符串</Option>
-          <Option value="number">数字</Option>
-        </Select>
-      </Form.Item>
       <MinusCircleOutlined
         className="dynamic-delete-button"
         style={{ margin: '0 0 0 15px' }}
@@ -519,4 +525,4 @@ const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: numb
   )
 }
 
-export default FieldEditorModal
+export default SchemaFieldEditorModal

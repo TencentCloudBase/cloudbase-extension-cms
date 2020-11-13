@@ -8,7 +8,7 @@ import { updateSchema } from '@/services/schema'
 /**
  * 删除字段
  */
-const FieldDeleteModal: React.FC<{
+const SchemaFieldDeleteModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
@@ -63,4 +63,4 @@ const FieldDeleteModal: React.FC<{
   )
 }
 
-export default FieldDeleteModal
+export default SchemaFieldDeleteModal

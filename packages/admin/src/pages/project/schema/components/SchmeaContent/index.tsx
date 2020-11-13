@@ -4,8 +4,8 @@ import { Layout, Row, Col, Spin, Button, Empty, Space, Typography } from 'antd'
 import { SchmeaCtx } from 'typings/store'
 
 import SchemaToolbar from './SchemaToolbar'
-import FieldEditorModal from './FieldEditor'
-import FieldDeleteModal from './FieldDelete'
+import SchemaFieldEditorModal from './SchemaFieldEditor'
+import SchemaFieldDeleteModal from './SchemaFieldDelete'
 import SchemaFieldPicker from './SchemaFieldPicker'
 import SchemaFields from './SchemaFields'
 
@@ -63,14 +63,18 @@ const SchemaContent: React.FC = () => {
           </div>
         )}
       </Content>
+
+      {/* 右侧字段类型列表 */}
       <SchemaFieldPicker />
 
-      <FieldEditorModal
+      {/* 添加字段 */}
+      <SchemaFieldEditorModal
         visible={editFieldVisible}
         onClose={() => ctx.setState({ editFieldVisible: false })}
       />
 
-      <FieldDeleteModal
+      {/* 删除字段 */}
+      <SchemaFieldDeleteModal
         visible={deleteFieldVisible}
         onClose={() => ctx.setState({ deleteFieldVisible: false })}
       />
