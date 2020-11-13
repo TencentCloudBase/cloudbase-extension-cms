@@ -59,11 +59,17 @@ interface SchemaField {
   // 关联多个
   connectMany: boolean
 
-  // 枚举类型
+  // 枚举
+  // 枚举元素的类型
+  enumElementType: 'string' | 'number'
+  // 所有枚举元素
   enumElements: { label: string; value: string }[]
 
   // 允许多个值
   isMultiple: boolean
+
+  // 图片、文件存储链接的形式，cloudId 或 https 形式，默认为 true，
+  isCloudId: boolean
 }
 
 interface Schema {

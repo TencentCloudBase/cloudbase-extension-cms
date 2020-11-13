@@ -4,10 +4,10 @@ import { Layout, Row, Col, Spin, Button, Empty, Space, Typography } from 'antd'
 import { SchmeaCtx } from 'typings/store'
 
 import SchemaToolbar from './SchemaToolbar'
-import SchemaFieldEditorModal from './SchemaFieldEditor'
+import SchemaFieldEditorModal from '../components/SchemaFieldEditor'
 import SchemaFieldDeleteModal from './SchemaFieldDelete'
 import SchemaFieldPicker from './SchemaFieldPicker'
-import SchemaFields from './SchemaFields'
+import SchemaFieldList from './SchemaFieldList'
 
 const { Content } = Layout
 
@@ -39,7 +39,7 @@ const SchemaContent: React.FC = () => {
                 <SchemaToolbar />
               </Space>
               <Content>
-                <SchemaFields />
+                <SchemaFieldList />
               </Content>
             </Col>
             <Col flex="1 1 auto" />

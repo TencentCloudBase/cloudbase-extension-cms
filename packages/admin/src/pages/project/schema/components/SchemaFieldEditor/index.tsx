@@ -36,7 +36,7 @@ const ReservedFieldNames = ['_id', '_createTime', '_updateTime', '_status']
 const AllowMultipleTypes = ['Image', 'File']
 
 /**
- * 添加字段
+ * 添加字段，字段编辑弹窗
  */
 const SchemaFieldEditorModal: React.FC<{
   visible: boolean
