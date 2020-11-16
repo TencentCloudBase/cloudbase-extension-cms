@@ -143,14 +143,15 @@ export async function uploadFile(
     },
   })
 
+  // 文件 id
   return result.fileID
 }
 
 // 获取文件的临时访问链接
-export async function getTempFileURL(cloudId: string): Promise<string> {
+export async function getTempFileURL(fileId: string): Promise<string> {
   const app = await getCloudBaseApp()
   const result = await app.getTempFileURL({
-    fileList: [cloudId],
+    fileList: [fileId],
   })
 
   if (result.fileList[0].code !== 'SUCCESS') {
@@ -164,7 +165,7 @@ export async function getTempFileURL(cloudId: string): Promise<string> {
  * 批量获取文件临时访问链接
  */
 export async function batchGetTempFileURL(
-  cloudIds: string[]
+  fileIds: string[]
 ): Promise<
   {
     fileID: string
@@ -173,7 +174,7 @@ export async function batchGetTempFileURL(
 > {
   const app = await getCloudBaseApp()
   const result = await app.getTempFileURL({
-    fileList: cloudIds,
+    fileList: fileIds,
   })
 
   result.fileList.forEach((ret: any) => {
@@ -186,12 +187,62 @@ export async function batchGetTempFileURL(
 }
 
 // 下载文件
-export async function downloadFile(cloudId: string) {
+export async function downloadFile(fileId: string) {
   const app = await getCloudBaseApp()
 
   const result = await app.downloadFile({
-    fileID: cloudId,
+    fileID: fileId,
   })
 
-  console.log('下载文件', cloudId, result)
+  console.log('下载文件', fileId, result)
+}
+
+export const isFileId = (v: string) => /^cloud:\/\/\S+/.test(v)
+
+export const getFileNameFromUrl = (url: string) => {
+  try {
+    const urlObj = new URL(url)
+    const pathname = urlObj.pathname || ''
+    return pathname.split('/').pop()
+  } catch (error) {
+    return ''
+  }
+}
+
+export function fileIdToUrl(fileId: string) {
+  if (!fileId) {
+    return ''
+  }
+
+  // 非 fileId
+  if (!/^cloud:\/\//.test(fileId)) {
+    return fileId
+  }
+
+  // cloudId: cloud://cms-demo.636d-cms-demo-1252710547/cloudbase-cms/upload/2020-09-15/Psa3R3NA4rubCd_R-favicon.png
+  let link = fileId.replace('cloud://', '')
+  // 文件路径
+  const index = link.indexOf('/')
+  // envId.bucket
+  const prefix = link.slice(0, index)
+  // [envId, bucket]
+  const splitPrefix = prefix.split('.')
+
+  // path 路径
+  const path = link.slice(index + 1)
+
+  let envId
+  let trimBucket
+  if (splitPrefix.length === 1) {
+    trimBucket = splitPrefix[0]
+  } else if (splitPrefix.length === 2) {
+    envId = splitPrefix[0]
+    trimBucket = splitPrefix[1]
+  }
+
+  if (envId) {
+    envId = envId.trim()
+  }
+
+  return `https://${trimBucket}.tcb.qcloud.la/${path}`
 }

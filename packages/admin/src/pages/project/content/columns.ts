@@ -1,6 +1,6 @@
 import { ProColumns } from '@ant-design/pro-table'
 import { getFieldRender } from '@/components/Fields'
-import { calculateFieldWidth } from './utils'
+import { calculateFieldWidth } from '@/utils'
 
 type DateTime = 'dateTime' | 'date' | 'textarea'
 

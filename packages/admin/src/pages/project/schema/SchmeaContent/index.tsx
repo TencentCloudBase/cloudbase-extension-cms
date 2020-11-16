@@ -4,7 +4,7 @@ import { Layout, Row, Col, Spin, Button, Empty, Space, Typography } from 'antd'
 import { SchmeaCtx } from 'typings/store'
 
 import SchemaToolbar from './SchemaToolbar'
-import SchemaFieldEditorModal from '../components/SchemaFieldEditor'
+import { SchemaFieldEditorModal } from '../components'
 import SchemaFieldDeleteModal from './SchemaFieldDelete'
 import SchemaFieldPicker from './SchemaFieldPicker'
 import SchemaFieldList from './SchemaFieldList'

@@ -1,17 +1,18 @@
-import { copyToClipboard, downloadFile, getTempFileURL } from '@/utils'
+import { copyToClipboard, downloadFile, getTempFileURL, isFileId } from '@/utils'
 import { CopyTwoTone } from '@ant-design/icons'
 import { Button, message } from 'antd'
 import React, { useState } from 'react'
 
 /**
  * 文件/图片通用下载、复制访问链接组件
+ * fileUri 可能是 fileId 或 https
  */
 export const FileAction: React.FC<{
   index?: number
-  cloudId: string
+  fileUri: string
   type: 'file' | 'image'
 }> = (props) => {
-  const { index, cloudId, type } = props
+  const { index, fileUri, type } = props
   const tipText = type === 'file' ? '文件' : '图片'
 
   let [copyLoading, setCopyLoading] = useState<number | boolean>(false)
@@ -22,33 +23,36 @@ export const FileAction: React.FC<{
 
   return (
     <div className="flex justify-center">
-      <Button
-        type="link"
-        size="small"
-        loading={downloadLoading as boolean}
-        onClick={() => {
-          if (typeof index === 'undefined') {
-            setDownloadLoading(true)
-          } else {
-            setDownloadLoading(index)
-          }
+      {/* https 链接暂时不支持下载 */}
+      {isFileId(fileUri) && (
+        <Button
+          type="link"
+          size="small"
+          loading={downloadLoading as boolean}
+          onClick={() => {
+            if (typeof index === 'undefined') {
+              setDownloadLoading(true)
+            } else {
+              setDownloadLoading(index)
+            }
 
-          downloadFile(cloudId)
-            .then(() => {
-              message.success(`下载${tipText}成功`)
-            })
-            .catch((e) => {
-              console.log(e)
-              console.log(e.message)
-              message.error(`下载${tipText}失败 ${e.message}`)
-            })
-            .finally(() => {
-              setDownloadLoading(false)
-            })
-        }}
-      >
-        下载{tipText}
-      </Button>
+            downloadFile(fileUri)
+              .then(() => {
+                message.success(`下载${tipText}成功`)
+              })
+              .catch((e) => {
+                console.log(e)
+                console.log(e.message)
+                message.error(`下载${tipText}失败 ${e.message}`)
+              })
+              .finally(() => {
+                setDownloadLoading(false)
+              })
+          }}
+        >
+          下载{tipText}
+        </Button>
+      )}
       <Button
         type="link"
         size="small"
@@ -60,7 +64,18 @@ export const FileAction: React.FC<{
             setCopyLoading(index)
           }
 
-          getTempFileURL(cloudId)
+          if (!isFileId(fileUri)) {
+            copyToClipboard(fileUri)
+              .then(() => {
+                message.success('复制到剪切板成功')
+              })
+              .catch(() => {
+                message.error('复制到剪切板成功')
+              })
+            return
+          }
+
+          getTempFileURL(fileUri)
             .then((url) => {
               copyToClipboard(url)
                 .then(() => {

@@ -1,8 +1,9 @@
 interface SchemaField {
+  // 32 位 Id，需要手动生成
   id: string
 
   // 字段类型
-  type: string
+  type: SchemaFieldType
 
   // 展示标题
   displayName: string
@@ -68,8 +69,11 @@ interface SchemaField {
   // 允许多个值
   isMultiple: boolean
 
-  // 图片、文件存储链接的形式，cloudId 或 https 形式，默认为 true，
-  isCloudId: boolean
+  // 图片、文件存储链接的形式，fileId 或 https 形式，默认为 true，
+  resourceLinkType: 'fileId' | 'https'
+
+  // 时间存储格式
+  dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date'
 }
 
 interface Schema {
@@ -89,3 +93,23 @@ interface Schema {
 
   _updateTime: number
 }
+
+type SchemaFieldType =
+  | 'String'
+  | 'MultiLineString'
+  | 'Number'
+  | 'Boolean'
+  | 'DateTime'
+  | 'Date'
+  | 'File'
+  | 'Image'
+  | 'Email'
+  | 'Tel'
+  | 'Url'
+  | 'RichText'
+  | 'Markdown'
+  | 'Connect'
+  | 'Array'
+  | 'Enum'
+  | 'Object'
+  | 'Text'

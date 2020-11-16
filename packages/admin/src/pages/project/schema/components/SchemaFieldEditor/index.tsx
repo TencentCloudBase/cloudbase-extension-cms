@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { updateSchema } from '@/services/schema'
@@ -13,18 +13,15 @@ import {
   Space,
   Button,
   Select,
-  InputNumber,
   Typography,
   Alert,
 } from 'antd'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
-import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
-import { getFieldDefaultValueInput } from './Field'
+import { getFieldDefaultValueInput, getFieldFormItem } from './Field'
 import { FieldTypes } from '@/common'
-import { random } from '@/utils'
+import { formatTimeByType, isDateType, isResourceType, random } from '@/utils'
 
 const { TextArea } = Input
-const { Option } = Select
 const { Text } = Typography
 
 // 不能设置默认值的类型
@@ -33,12 +30,10 @@ const NoDefaultValueTypes = ['File', 'Image', 'Array', 'Connect']
 // 保留字段名
 const ReservedFieldNames = ['_id', '_createTime', '_updateTime', '_status']
 
-const AllowMultipleTypes = ['Image', 'File']
-
 /**
  * 添加字段，字段编辑弹窗
  */
-const SchemaFieldEditorModal: React.FC<{
+export const SchemaFieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
@@ -52,9 +47,11 @@ const SchemaFieldEditorModal: React.FC<{
     state: { currentSchema, schemas, fieldAction, selectedField },
   } = ctx
 
-  // 添加字段
+  // 新增字段
+  // 编辑字段
   const { run: createField, loading } = useRequest(
     async (fieldAttr: SchemaField) => {
+      // 判断是否存在同名字段
       const existSameName = currentSchema?.fields?.find(
         (_: SchemaField) => _.name === fieldAttr.name
       )
@@ -120,8 +117,10 @@ const SchemaFieldEditorModal: React.FC<{
     }
   )
 
+  // 字段类型的名称
   const fieldTypeName = FieldTypes.find((_) => _.type === selectedField.type)?.name
 
+  // 弹窗标题
   const modalTitle =
     fieldAction === 'create' ? (
       `添加【${selectedField?.name}】字段`
@@ -132,6 +131,7 @@ const SchemaFieldEditorModal: React.FC<{
       </Space>
     )
 
+  // 编辑字段
   useEffect(() => {
     if (selectedField?.connectResource) {
       const schema = schemas.find((_: Schema) => _._id === selectedField.connectResource)
@@ -143,7 +143,22 @@ const SchemaFieldEditorModal: React.FC<{
     }
   }, [selectedField])
 
+  // 是否是系统保留字段
   const isFieldNameReserved = ReservedFieldNames.includes(formValue?.name)
+
+  // 类型特定的属性
+  const SpecificAttributeFormItem = getFieldFormItem(selectedField?.type, {
+    schemas,
+    connectSchema,
+    selectedField,
+    fieldAction,
+    formValue,
+  })
+
+  // 新建字段时，form 的初始值
+  const InitailValues: any = useMemo(() => getFormInitailValues(fieldAction, selectedField), [
+    selectedField,
+  ])
 
   return (
     <Modal
@@ -165,16 +180,17 @@ const SchemaFieldEditorModal: React.FC<{
         name="basic"
         layout="vertical"
         labelCol={{ span: 6 }}
-        initialValues={fieldAction === 'edit' ? selectedField : {}}
+        initialValues={InitailValues}
         onValuesChange={(changed, v) => {
           if (changed.connectResource) {
             const schema = schemas.find((_: Schema) => _._id === v.connectResource)
             setConnectSchema(schema)
           }
+
           setFormValue(v)
         }}
         onFinish={(v: any) => {
-          // 格式化为对象
+          // 格式化 Object 为对象
           if (selectedField?.type === 'Object') {
             try {
               v.defaultValue = JSON.parse(v.defaultValue)
@@ -182,6 +198,12 @@ const SchemaFieldEditorModal: React.FC<{
               // ignore
             }
           }
+
+          // 格式化默认时间，与 dateFormatType 保持一致
+          if (v.dateFormatType && v.defaultValue) {
+            v.defaultValue = formatTimeByType(v.defaultValue, v.dateFormatType)
+          }
+
           createField(v)
         }}
       >
@@ -222,63 +244,6 @@ const SchemaFieldEditorModal: React.FC<{
           <TextArea placeholder="字段描述，如博客文章标题" />
         </Form.Item>
 
-        {selectedField?.type === 'Connect' && (
-          <>
-            <Form.Item label="关联">
-              <Space>
-                <Form.Item
-                  label="关联的内容"
-                  name="connectResource"
-                  rules={[{ required: true, message: '请选择关联内容！' }]}
-                >
-                  <Select style={{ width: 200 }}>
-                    {schemas?.map((schema: Schema) => (
-                      <Option value={schema._id} key={schema._id}>
-                        {schema.displayName}
-                      </Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  label="关联的字段"
-                  name="connectField"
-                  rules={[{ required: true, message: '请选择关联内容字段！' }]}
-                >
-                  <Select style={{ width: 200 }} placeholder="关联字段">
-                    {connectSchema?.fields?.length ? (
-                      connectSchema.fields?.map((field: SchemaField) => (
-                        <Option value={field.name} key={field.name}>
-                          {field.displayName}
-                        </Option>
-                      ))
-                    ) : (
-                      <Option value="" key={selectedField.name} disabled>
-                        空
-                      </Option>
-                    )}
-                  </Select>
-                </Form.Item>
-              </Space>
-            </Form.Item>
-            <Form.Item>
-              <div className="form-item">
-                <Form.Item name="connectMany" valuePropName="checked" style={{ marginBottom: 0 }}>
-                  <Switch disabled={fieldAction === 'edit'} />
-                </Form.Item>
-                <Form.Item style={{ marginBottom: 0 }}>
-                  <span>是否关联多项（支持选择多个关联文档）</span>
-                  {fieldAction === 'edit' && (
-                    <>
-                      <br />
-                      <Text type="warning">关联多项与关联单项无法转换</Text>
-                    </>
-                  )}
-                </Form.Item>
-              </div>
-            </Form.Item>
-          </>
-        )}
-
         {NoDefaultValueTypes.includes(selectedField?.type) ? null : (
           <Form.Item
             label="默认值"
@@ -303,108 +268,14 @@ const SchemaFieldEditorModal: React.FC<{
                 : []
             }
           >
-            {getFieldDefaultValueInput(selectedField?.type)}
+            {getFieldDefaultValueInput(selectedField?.type, {
+              dateFormatType: formValue?.dateFormatType,
+            })}
           </Form.Item>
         )}
 
-        {['String', 'MultiLineString', 'Number'].includes(selectedField.type) && (
-          <Form.Item style={{ marginBottom: 0 }}>
-            <Row gutter={[24, 0]}>
-              <Col flex="1 1 auto">
-                <Form.Item
-                  label={selectedField.type === 'Number' ? '最小值' : '最小长度'}
-                  name="min"
-                >
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    placeholder={
-                      selectedField.type === 'Number' ? '最小值，如 1' : '最小长度，如 1'
-                    }
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex="1 1 auto">
-                <Form.Item
-                  label={selectedField.type === 'Number' ? '最大值' : '最大长度'}
-                  name="max"
-                >
-                  <InputNumber
-                    style={{ width: '100%' }}
-                    placeholder={
-                      selectedField.type === 'Number' ? '最大值，如 1000' : '最大长度，如 1000'
-                    }
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form.Item>
-        )}
-
-        {selectedField.type === 'Enum' && (
-          <>
-            <Form.Item
-              label="枚举元素类型"
-              name="enumElementType"
-              validateTrigger={['onChange']}
-              rules={[
-                {
-                  required: true,
-                  message: '请选择枚举元素类型！',
-                },
-              ]}
-            >
-              <Select placeholder="元素值类型">
-                <Option value="string">字符串</Option>
-                <Option value="number">数字</Option>
-              </Select>
-            </Form.Item>
-            <Form.Item label="枚举元素">
-              <Form.List name="enumElements">
-                {(fields, { add, remove }) => {
-                  return (
-                    <div>
-                      {fields?.map((field, index) => {
-                        return (
-                          <EnumListItem
-                            key={index}
-                            field={field}
-                            onRemove={remove}
-                            formValue={formValue}
-                          />
-                        )
-                      })}
-                      <Form.Item>
-                        <Button
-                          type="dashed"
-                          onClick={() => {
-                            add()
-                          }}
-                          style={{ width: '60%' }}
-                        >
-                          <PlusOutlined /> 添加枚举元素
-                        </Button>
-                      </Form.Item>
-                    </div>
-                  )
-                }}
-              </Form.List>
-            </Form.Item>
-          </>
-        )}
-
-        {AllowMultipleTypes.includes(selectedField.type) && (
-          <Form.Item>
-            <div className="form-item">
-              <Form.Item style={{ marginBottom: 0 }}>
-                <Text>允许多个内容</Text>
-                <Form.Item name="isMultiple" valuePropName="checked" style={{ marginBottom: 0 }}>
-                  <Switch />
-                </Form.Item>
-                <Text type="secondary">在创建内容时，允许创建多个内容，数据将以数组格式存储</Text>
-              </Form.Item>
-            </div>
-          </Form.Item>
-        )}
+        {/* 特定字段的特殊属性 */}
+        {SpecificAttributeFormItem}
 
         <Form.Item>
           <div className="form-item">
@@ -479,50 +350,35 @@ const SchemaFieldEditorModal: React.FC<{
 }
 
 /**
- * 枚举值列表 Item
+ * 获取表单初始值
  */
-const EnumListItem: React.FC<{ field: any; formValue: any; onRemove: (name: number) => void }> = (
-  props
-) => {
-  const { field, formValue, onRemove } = props
-  const enumValueType = formValue?.enumElementType || 'string'
+const getFormInitailValues = (action: 'edit' | 'create', field: SchemaField) => {
+  const type = field.type
 
-  return (
-    <Form.Item>
-      <Form.Item noStyle name={[field.name, 'label']} validateTrigger={['onChange', 'onBlur']}>
-        <Input placeholder="枚举元素展示别名，如 “已发布”" style={{ width: '45%' }} />
-      </Form.Item>
-      {enumValueType === 'number' && (
-        <Form.Item noStyle name={[field.name, 'value']} validateTrigger={['onChange', 'onBlur']}>
-          <InputNumber
-            placeholder="枚举元素值，如 100"
-            style={{
-              width: '45%',
-              marginLeft: '2%',
-            }}
-          />
-        </Form.Item>
-      )}
-      {enumValueType === 'string' && (
-        <Form.Item noStyle name={[field.name, 'value']} validateTrigger={['onChange', 'onBlur']}>
-          <Input
-            placeholder="枚举元素值，如 published"
-            style={{
-              width: '45%',
-              marginLeft: '2%',
-            }}
-          />
-        </Form.Item>
-      )}
-      <MinusCircleOutlined
-        className="dynamic-delete-button"
-        style={{ margin: '0 0 0 15px' }}
-        onClick={() => {
-          onRemove(field.name)
-        }}
-      />
-    </Form.Item>
-  )
+  if (action === 'edit') {
+    if (isDateType(type) && !field.dateFormatType) {
+      field.dateFormatType = 'timestamp-ms'
+    }
+
+    if (isResourceType(type) && !field.resourceLinkType) {
+      field.resourceLinkType = 'fileId'
+    }
+
+    return field
+  }
+
+  const createInitialValues: any = {}
+  if (type === 'Enum') {
+    createInitialValues.enumElementType = 'string'
+  }
+
+  if (type === 'Date' || type === 'DateTime') {
+    createInitialValues.dateFormatType = 'timestamp-ms'
+  }
+
+  if (type === 'File' || type === 'Image') {
+    createInitialValues.resourceLinkType = 'fileId'
+  }
+
+  return createInitialValues
 }
-
-export default SchemaFieldEditorModal

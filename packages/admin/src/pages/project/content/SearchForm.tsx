@@ -2,9 +2,9 @@ import React, { useCallback } from 'react'
 import { Form, Space, Button, Row, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
-import { calculateFieldWidth } from './utils'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
+import { calculateFieldWidth } from '@/utils'
 
 const { Option } = Select
 
@@ -103,14 +103,14 @@ const getSearchFieldItem = (field: SchemaField, key: number) => {
     case 'Date':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <IDatePicker type="Date" />
+          <IDatePicker type="Date" dateFormatType={field.dateFormatType} />
         </Form.Item>
       )
       break
     case 'DateTime':
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <IDatePicker type="DateTime" />
+          <IDatePicker type="DateTime" dateFormatType={field.dateFormatType} />
         </Form.Item>
       )
       break

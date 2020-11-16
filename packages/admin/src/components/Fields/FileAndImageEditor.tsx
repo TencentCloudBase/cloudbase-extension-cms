@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Input, Upload, message, Form, Progress } from 'antd'
-import { batchGetTempFileURL, getTempFileURL, uploadFile } from '@/utils'
-import { PlusOutlined, InboxOutlined, MinusCircleOutlined } from '@ant-design/icons'
+import { Upload, message, Progress } from 'antd'
+import {
+  isFileId,
+  uploadFile,
+  fileIdToUrl,
+  getTempFileURL,
+  getFileNameFromUrl,
+  batchGetTempFileURL,
+} from '@/utils'
+import { InboxOutlined } from '@ant-design/icons'
 
 const { Dragger } = Upload
 
@@ -12,36 +19,34 @@ export const IFileAndImageEditor: React.FC<{
   field: SchemaField
   type: 'file' | 'image'
   value?: string | string[]
+  resourceLinkType?: 'https' | 'fileId'
   onChange?: (v: string | string[]) => void
 }> = (props) => {
-  let { value: cloudIds, type, field, onChange = () => {} } = props
-  const { isMultiple, name } = field
+  let { value: links, type, field, onChange = () => {}, resourceLinkType = 'fileId' } = props
+  const { isMultiple } = field
 
-  // 数组模式
-  if (isMultiple || Array.isArray(cloudIds)) {
+  // 数组模式，多文件
+  if (isMultiple || Array.isArray(links)) {
     return (
       <IMultipleEditor
         type={type}
-        value={cloudIds as string[]}
-        fieldName={name}
         onChange={onChange}
+        fileUris={links as string[]}
+        resourceLinkType={resourceLinkType}
       />
     )
   }
 
   // 单文件
-  const fileUrl: string = cloudIds as string
-  if (fileUrl && !/^cloud:\/\/\S+/.test(fileUrl)) {
-    // 单链接
-    return (
-      <>
-        <Input type="url" value={fileUrl} onChange={(e) => onChange(e.target.value)} />
-        {type === 'image' && <img style={{ height: '120px', marginTop: '10px' }} src={fileUrl} />}
-      </>
-    )
-  }
-
-  return <ISingleFileUploader type={type} fileUrl={fileUrl} onChange={onChange} />
+  const fileUri: string = links as string
+  return (
+    <ISingleFileUploader
+      type={type}
+      fileUri={fileUri}
+      onChange={onChange}
+      resourceLinkType={resourceLinkType}
+    />
+  )
 }
 
 /**
@@ -49,9 +54,10 @@ export const IFileAndImageEditor: React.FC<{
  */
 export const ISingleFileUploader: React.FC<{
   type: 'file' | 'image'
-  fileUrl: string
+  fileUri: string
   onChange: (v: string | string[]) => void
-}> = ({ type, fileUrl, onChange }) => {
+  resourceLinkType: 'fileId' | 'https'
+}> = ({ type, fileUri, onChange, resourceLinkType }) => {
   const [percent, setPercent] = useState(0)
   const [uploading, setUploading] = useState(false)
   const [fileList, setFileList] = useState<any[]>([])
@@ -59,30 +65,46 @@ export const ISingleFileUploader: React.FC<{
 
   // 加载图片预览
   useEffect(() => {
-    if (!fileUrl) {
+    if (!fileUri) {
       return
     }
 
+    // 文件名
+    const fileName = getFileNameFromUrl(fileUri)
+
+    // 文件，不加载预览
     if (type === 'file') {
-      let fileName = fileUrl?.split('/').pop() || ''
       setFileList([
         {
-          url: fileUrl,
-          uid: fileUrl,
-          name: fileName,
+          url: fileUri,
+          uid: fileUri,
+          name: fileName || `已上传${tipText}`,
           status: 'done',
         },
       ])
       return
     }
 
-    getTempFileURL(fileUrl)
+    // 非 fileId，无需加载预览
+    if (!isFileId(fileUri)) {
+      return setFileList([
+        {
+          url: fileUri,
+          uid: fileUri,
+          name: fileName || `已上传${tipText}`,
+          status: 'done',
+        },
+      ])
+    }
+
+    // 获取临时链接
+    getTempFileURL(fileUri)
       .then((url: string) => {
         setFileList([
           {
             url,
-            uid: fileUrl,
-            name: `已上传${tipText}`,
+            uid: fileUri,
+            name: fileName || `已上传${tipText}`,
             status: 'done',
           },
         ])
@@ -103,12 +125,13 @@ export const ISingleFileUploader: React.FC<{
           // 上传文件
           uploadFile(file, (percent) => {
             setPercent(percent)
-          }).then((fileUrl) => {
-            onChange(fileUrl)
+          }).then((fileId: string) => {
+            // 保存链接
+            onChange(resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId))
             // 添加图片
             setFileList([
               {
-                uid: fileUrl,
+                uid: fileId,
                 name: file.name,
                 status: 'done',
               },
@@ -129,91 +152,52 @@ export const ISingleFileUploader: React.FC<{
 }
 
 /**
- * 多文件、图片编辑组件
- */
-export const IMultipleEditor: React.FC<{
-  type: 'file' | 'image'
-  value: string[]
-  fieldName: string
-  onChange?: (v: string[]) => void
-}> = (props) => {
-  let { value: cloudIds = [], type, fieldName, onChange = () => {} } = props
-
-  // 转为数组
-  if (!Array.isArray(cloudIds) && typeof cloudIds === 'string') {
-    cloudIds = [cloudIds]
-  }
-
-  // 存在非 CloudId 的链接
-  const notCloudLink = cloudIds.some((cloudId) => cloudId && !/^cloud:\/\/\S+/.test(cloudId))
-  if (notCloudLink) {
-    return (
-      <Form.List name={fieldName}>
-        {(fields, { add, remove }) => {
-          return (
-            <div>
-              {fields?.map((field, index) => {
-                return (
-                  <Form.Item key={index}>
-                    <Form.Item {...field} noStyle validateTrigger={['onChange', 'onBlur']}>
-                      <Input style={{ width: 'calc(100% - 50px)' }} />
-                    </Form.Item>
-                    <MinusCircleOutlined
-                      className="dynamic-delete-button"
-                      style={{ width: '50px' }}
-                      onClick={() => {
-                        remove(field.name)
-                      }}
-                    />
-                  </Form.Item>
-                )
-              })}
-              <Form.Item>
-                <Button
-                  type="dashed"
-                  onClick={() => {
-                    add()
-                  }}
-                  style={{ width: 'calc(100% - 50px)' }}
-                >
-                  <PlusOutlined /> 添加链接
-                </Button>
-              </Form.Item>
-            </div>
-          )
-        }}
-      </Form.List>
-    )
-  }
-
-  return <IMultipleUploader type={type} cloudIds={cloudIds} onChange={onChange} />
-}
-
-/**
  * 多文件、图片上传
  */
-const IMultipleUploader: React.FC<{
+const IMultipleEditor: React.FC<{
+  fileUris: string[]
   type: 'file' | 'image'
-  cloudIds: string[]
+  resourceLinkType: 'fileId' | 'https'
   onChange: (v: string[]) => void
-}> = ({ type, cloudIds, onChange }) => {
+}> = (props) => {
+  let { fileUris = [], type, onChange = () => {}, resourceLinkType = 'fileId' } = props
   const [percent, setPercent] = useState(0)
   const [fileList, setFileList] = useState<any[]>([])
   const [uploading, setUploading] = useState(false)
   const tipText = type === 'file' ? '文件' : '图片'
 
+  // 如果为 multiple 模式，但是 fileUris 为字符串，则转为数组
+  if (!Array.isArray(fileUris) && typeof fileUris === 'string') {
+    fileUris = [fileUris]
+  }
+
   // 加载图片预览
   useEffect(() => {
-    if (!cloudIds?.length) {
+    if (!fileUris?.length) {
       return
     }
 
-    if (type === 'file') {
-      const fileList = cloudIds.map((cloudId: string) => {
-        let fileName = cloudId?.split('/').pop() || ''
+    // 当全部 fileId 已经转换成临时访问链接时，不重新获取
+    if (fileUris.length <= fileList.length) {
+      const isGotAllUrls = fileUris.every((fileUri) =>
+        fileList.find((file) => file.uid === fileUri && file.url !== file.uid)
+      )
+      if (isGotAllUrls) {
+        return
+      }
+    }
+
+    // 全部为 http 链接
+    const isAllHttp = fileUris.every((link) => !isFileId(link))
+
+    // 文件不加载预览
+    // 全部为 http 链接，不用转换
+    if (isAllHttp || type === 'file') {
+      const fileList = fileUris.map((fileUri: string) => {
+        const fileName = getFileNameFromUrl(fileUri)
         return {
-          url: cloudId,
-          uid: cloudId,
+          url: fileUri,
+          uid: fileUri,
           name: fileName,
           status: 'done',
         }
@@ -222,31 +206,36 @@ const IMultipleUploader: React.FC<{
       return
     }
 
-    // 当全部 cloudId 已经转换成临时访问链接时，不重新获取
-    if (cloudIds.length <= fileList.length) {
-      const isGotAllUrls = cloudIds.every((cloudId) =>
-        fileList.find((file) => file.uid === cloudId && file.url !== file.uid)
-      )
-      if (isGotAllUrls) {
-        return
-      }
-    }
+    // 可能存在 fileId 和 http 混合的情况
+    const fileIds = fileUris.filter((fileUri) => isFileId(fileUri))
 
     // 获取临时访问链接
-    batchGetTempFileURL(cloudIds)
+    batchGetTempFileURL(fileIds)
       .then((results) => {
-        const fileList = results.map(({ tempFileURL, fileID }) => ({
-          url: tempFileURL,
-          uid: fileID,
-          name: `已上传${tipText}`,
-          status: 'done',
-        }))
+        // 拼接结果和 http 链接
+        const fileList = fileUris.map((fileUri: string) => {
+          const fileName = getFileNameFromUrl(fileUri)
+          let fileUrl: string = fileUri
+          if (isFileId(fileUri)) {
+            // eslint-disable-next-line
+            const ret = results.find((_) => _.fileID === fileUri)
+            fileUrl = ret?.tempFileURL || ''
+          }
+
+          return {
+            url: fileUrl,
+            uid: fileUri,
+            name: fileName || `已上传${tipText}`,
+            status: 'done',
+          }
+        })
+
         setFileList(fileList)
       })
       .catch((e) => {
-        message.error(`加载图片失败 ${e.message}`)
+        message.error(`获取图片链接失败 ${e.message}`)
       })
-  }, [cloudIds])
+  }, [fileUris])
 
   return (
     <>
@@ -265,13 +254,15 @@ const IMultipleUploader: React.FC<{
           // 上传文件
           uploadFile(file, (percent) => {
             setPercent(percent)
-          }).then((cloudId) => {
-            onChange([...cloudIds, cloudId])
+          }).then((fileId: string) => {
+            // 返回值
+            const resourceLink = resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId)
+            onChange([...fileUris, resourceLink])
             // 添加图片
             setFileList([
               ...fileList,
               {
-                uid: cloudId,
+                uid: fileId,
                 name: file.name,
                 status: 'done',
               },

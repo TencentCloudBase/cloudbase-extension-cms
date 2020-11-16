@@ -1,22 +1,5 @@
-type SchemaFieldType =
-  | 'String'
-  | 'MultiLineString'
-  | 'Number'
-  | 'Boolean'
-  | 'DateTime'
-  | 'Date'
-  | 'File'
-  | 'Image'
-  | 'Email'
-  | 'Tel'
-  | 'Url'
-  | 'RichText'
-  | 'Markdown'
-  | 'Connect'
-  | 'Array'
-  | 'Enum'
-
 interface SchemaField {
+  // 32 位 Id，需要手动生成
   id: string
 
   // 字段类型
@@ -77,11 +60,20 @@ interface SchemaField {
   // 关联多个
   connectMany: boolean
 
-  // 枚举类型
+  // 枚举
+  // 枚举元素的类型
+  enumElementType: 'string' | 'number'
+  // 所有枚举元素
   enumElements: { label: string; value: string }[]
 
   // 允许多个值
   isMultiple: boolean
+
+  // 图片、文件存储链接的形式，fileId 或 https 形式，默认为 true，
+  resourceLinkType: 'fileId' | 'https'
+
+  // 时间存储格式
+  dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date'
 }
 
 interface Schema {
@@ -100,7 +92,23 @@ interface Schema {
   _creatTime: number
 
   _updateTime: number
-
-  // Schema 协议版本 v2
-  _version: '2.0'
 }
+
+type SchemaFieldType =
+  | 'String'
+  | 'MultiLineString'
+  | 'Number'
+  | 'Boolean'
+  | 'DateTime'
+  | 'Date'
+  | 'File'
+  | 'Image'
+  | 'Email'
+  | 'Tel'
+  | 'Url'
+  | 'RichText'
+  | 'Markdown'
+  | 'Connect'
+  | 'Array'
+  | 'Enum'
+  | 'Object'

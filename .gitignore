@@ -36,6 +36,3 @@ lerna-debug.log*
 config/config.json
 .env.local
 .eslintcache
-
-yarn.lock
-package-lock.json

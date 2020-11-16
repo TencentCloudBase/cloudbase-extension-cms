@@ -120,16 +120,20 @@ export function getFieldEditor(field: SchemaField, key: number) {
       FieldEditor = <Input style={{ width: '100%' }} />
       break
     case 'Date':
-      FieldEditor = <IDatePicker type="Date" />
+      FieldEditor = <IDatePicker type="Date" dateFormatType={field.dateFormatType} />
       break
     case 'DateTime':
-      FieldEditor = <IDatePicker type="DateTime" />
+      FieldEditor = <IDatePicker type="DateTime" dateFormatType={field.dateFormatType} />
       break
     case 'Image':
-      FieldEditor = <IFileAndImageEditor type="image" field={field} />
+      FieldEditor = (
+        <IFileAndImageEditor type="image" field={field} resourceLinkType={field.resourceLinkType} />
+      )
       break
     case 'File':
-      FieldEditor = <IFileAndImageEditor type="file" field={field} />
+      FieldEditor = (
+        <IFileAndImageEditor type="file" field={field} resourceLinkType={field.resourceLinkType} />
+      )
       break
     case 'Enum':
       FieldEditor = (
@@ -237,11 +241,6 @@ export function getFieldFormItem(field: SchemaField, key: number) {
           {FieldEditor}
         </Form.Item>
       )
-  }
-
-  // 弹性布局
-  if (type === 'Markdown' || type === 'RichText') {
-    return FormItem
   }
 
   return FormItem

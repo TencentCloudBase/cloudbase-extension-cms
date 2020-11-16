@@ -1,24 +1,35 @@
 import React from 'react'
-import { Space, Typography, List, Tooltip } from 'antd'
-
+import { Typography, List, Tooltip, Popover, Space } from 'antd'
 import { PaperClipOutlined } from '@ant-design/icons'
+import { isFileId, calculateFieldWidth } from '@/utils'
 import { FileAction } from './FileAction'
 
 const { Text } = Typography
 
+let fileNameStyle = {
+  width: '80%',
+}
+
 /**
  * 文件字段展示
  */
-export const IFileRender: React.FC<{ urls: string | string[] }> = ({ urls }) => {
+export const IFileRender: React.FC<{ urls: string | string[]; displayName: string }> = ({
+  urls,
+  displayName,
+}) => {
   if (!urls?.length) {
     return <span>空</span>
   }
 
+  const width = calculateFieldWidth({
+    displayName,
+    type: 'File',
+  })
+
+  fileNameStyle.width = `${width - 30}px`
+
   // 文件数组
   if (Array.isArray(urls)) {
-    // 存在不是 cloudId 的链接
-    const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
-
     return (
       <List
         split={false}
@@ -28,13 +39,14 @@ export const IFileRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
           const fileName = item?.split('/').pop() || ''
           return (
             <List.Item>
-              <PaperClipOutlined style={{ fontSize: '16px' }} /> &nbsp;
-              <Tooltip title={fileName}>
-                <Text ellipsis style={{ width: '80%' }}>
-                  {fileName}
-                </Text>
-              </Tooltip>
-              {!hasNoCloudLink && <FileAction type="file" cloudId={item} index={index} />}
+              <Space>
+                <PaperClipOutlined style={{ fontSize: '16px' }} />
+                <Popover content={<FileAction type="file" fileUri={item} index={index} />}>
+                  <Text ellipsis style={fileNameStyle}>
+                    {fileName}
+                  </Text>
+                </Popover>
+              </Space>
             </List.Item>
           )
         }}
@@ -46,32 +58,27 @@ export const IFileRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
   const fileUrl: string = urls as string
   const fileName = fileUrl?.split('/').pop() || ''
 
-  if (!/^cloud:\/\/\S+/.test(fileUrl)) {
+  if (!isFileId(fileUrl)) {
     return (
-      <div>
+      <Space>
         <PaperClipOutlined style={{ fontSize: '16px' }} />
-        &nbsp;
         <Tooltip title={fileName}>
-          <Text ellipsis style={{ width: '80%' }}>
+          <Text ellipsis style={fileNameStyle}>
             {fileName}
           </Text>
         </Tooltip>
-      </div>
+      </Space>
     )
   }
 
   return (
-    <Space direction="vertical" style={{ width: '100%' }}>
-      <div>
-        <PaperClipOutlined style={{ fontSize: '16px' }} />
-        &nbsp;
-        <Tooltip title={fileName}>
-          <Text ellipsis style={{ width: '50%' }}>
-            {fileName}
-          </Text>
-        </Tooltip>
-      </div>
-      <FileAction type="file" cloudId={fileUrl} />
+    <Space>
+      <PaperClipOutlined style={{ fontSize: '16px' }} />
+      <Popover content={<FileAction type="file" fileUri={fileUrl} />}>
+        <Text ellipsis style={fileNameStyle}>
+          {fileName}
+        </Text>
+      </Popover>
     </Space>
   )
 }

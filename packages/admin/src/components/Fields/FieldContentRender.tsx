@@ -1,8 +1,8 @@
 import React from 'react'
 import { Space, Tag, Tooltip, Typography } from 'antd'
 import { IConnectRender, IFileRender, ImageRender } from '@/components/Fields'
+import { calculateFieldWidth } from '@/utils'
 import { IObjectRender } from './Object'
-import { calculateFieldWidth } from './utils'
 
 const { Text } = Typography
 
@@ -10,7 +10,7 @@ const { Text } = Typography
  * 根据类型获取展示字段组件
  */
 export function getFieldRender(field: SchemaField) {
-  const { name, type } = field
+  const { name, type, displayName } = field
   const width = calculateFieldWidth(field)
 
   switch (type) {
@@ -104,7 +104,9 @@ export function getFieldRender(field: SchemaField) {
         record: any,
         index: number,
         action: any
-      ): React.ReactNode | React.ReactNode[] => <IFileRender urls={record[name]} />
+      ): React.ReactNode | React.ReactNode[] => (
+        <IFileRender urls={record[name]} displayName={displayName} />
+      )
     case 'Array':
       return (
         text: React.ReactNode,

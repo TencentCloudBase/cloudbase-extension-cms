@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { message, Space, Spin, Empty, Image, Carousel, Button, Modal } from 'antd'
-import { batchGetTempFileURL } from '@/utils'
+import { batchGetTempFileURL, isFileId } from '@/utils'
 import emptyImg from '@/assets/empty.svg'
 import { FileAction } from './FileAction'
 
@@ -21,43 +21,56 @@ export const ImageRender: React.FC<{ urls: string | string[] }> = ({ urls }) => 
 
   // 轮播图
   if (Array.isArray(urls)) {
-    const hasNoCloudLink = urls.some((url) => url && !/^cloud:\/\/\S+/.test(url))
-
-    // 存在非 CloudId 链接
-    if (hasNoCloudLink) {
-      return <MultipleImage urls={urls} />
-    }
-
-    return <ICloudImage cloudIds={urls} />
+    return <ICloudImage fileUris={urls} />
   }
 
-  if (!/^cloud:\/\/\S+/.test(urls)) {
+  // 单个图片
+  const fileUri = urls as string
+  if (!isFileId(fileUri)) {
     return (
-      <Image width={DefaultWidth} height={DefaultHeight} style={ImageContainerStyle} src={urls} />
+      <Image
+        src={fileUri}
+        width={DefaultWidth}
+        height={DefaultHeight}
+        style={ImageContainerStyle}
+      />
     )
   }
 
-  return <ICloudImage cloudIds={[urls]} />
+  return <ICloudImage fileUris={[urls]} />
 }
 
 /**
  * 云存储图片加载渲染组件
  */
-const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
+const ICloudImage: React.FC<{ fileUris: string[] }> = ({ fileUris }) => {
   const [loading, setLoading] = useState(true)
   const [urls, setImgUrls] = useState<string[]>([])
 
   useEffect(() => {
-    if (!cloudIds?.length) return
-    // 获取图片链接
-    batchGetTempFileURL(cloudIds)
-      .then((ret) => {
-        const httpUrls = ret.map((_) => _.tempFileURL)
-        setImgUrls(httpUrls)
+    if (!fileUris?.length) return
+
+    // 可能存在 fileId 和 http 混合的情况
+    const fileIds = fileUris.filter((fileUri) => isFileId(fileUri))
+
+    // 获取临时访问链接
+    batchGetTempFileURL(fileIds)
+      .then((results) => {
+        // 拼接结果和 http 链接
+        const imgUrls = fileUris.map((fileUri: string) => {
+          let fileUrl: string = fileUri
+          if (isFileId(fileUri)) {
+            // eslint-disable-next-line
+            const ret = results.find((_) => _.fileID === fileUri)
+            fileUrl = ret?.tempFileURL || ''
+          }
+
+          return fileUrl
+        })
+        setImgUrls(imgUrls)
       })
       .catch((e) => {
         console.log(e)
-        console.log(e.message)
         message.error(`获取图片链接失败 ${e.message}`)
       })
       .finally(() => {
@@ -65,11 +78,11 @@ const ICloudImage: React.FC<{ cloudIds: string[] }> = ({ cloudIds }) => {
       })
   }, [])
 
-  return loading ? <Spin /> : <MultipleImage urls={urls} cloudIds={cloudIds} />
+  return loading ? <Spin /> : <MultipleImage urls={urls} fileUris={fileUris} />
 }
 
 // 多图片展示展示
-const MultipleImage: React.FC<{ urls: string[]; cloudIds?: string[] }> = ({ urls, cloudIds }) => {
+const MultipleImage: React.FC<{ urls: string[]; fileUris?: string[] }> = ({ urls, fileUris }) => {
   const [visible, setVisible] = useState(false)
   const [currentSlide, setCurrentSlide] = useState(0)
 
@@ -82,7 +95,7 @@ const MultipleImage: React.FC<{ urls: string[]; cloudIds?: string[] }> = ({ urls
           height={DefaultHeight}
           style={ImageContainerStyle}
         />
-        {cloudIds?.length && <FileAction type="image" cloudId={cloudIds[currentSlide]} />}
+        {fileUris?.length && <FileAction type="image" fileUri={fileUris[currentSlide]} />}
       </Space>
     )
   }
@@ -126,7 +139,7 @@ const MultipleImage: React.FC<{ urls: string[]; cloudIds?: string[] }> = ({ urls
               />
             ))}
           </Carousel>
-          {cloudIds?.length && <FileAction type="image" cloudId={cloudIds[currentSlide]} />}
+          {fileUris?.length && <FileAction type="image" fileUri={fileUris[currentSlide]} />}
         </Space>
       </Modal>
     </>
