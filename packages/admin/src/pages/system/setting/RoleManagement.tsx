@@ -70,7 +70,7 @@ export default (): React.ReactElement => {
               size="small"
               key="delete"
               type="primary"
-              disabled={item.type === 'system' || item.noDelete}
+              disabled={item.type === 'system'}
               onClick={() => {
                 Modal.confirm({
                   title: `确认删除角色【${item.roleName}】？`,

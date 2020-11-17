@@ -32,8 +32,9 @@ import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import logo from '@/assets/logo.svg'
 import { getCmsNotices } from '@/services/notice'
-import './index.less'
 import { getFullDate } from '@/utils'
+import './index.less'
+import pkg from '../../package.json'
 
 setTwoToneColor('#0052d9')
 
@@ -129,7 +130,9 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
           <Col flex="2 1 auto" />
         </Row>
       </Content>
-      <Footer className="text-center">CloudBase CMS 2.1.2</Footer>
+      <Footer className="text-center">CloudBase CMS {pkg.version}</Footer>
+
+      {/* 悬浮按钮 */}
       <div className="help-btn">
         {window.TcbCmsConfig.disableHelpButton ? null : (
           <Popover

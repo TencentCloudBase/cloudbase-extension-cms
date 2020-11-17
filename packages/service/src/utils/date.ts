@@ -37,6 +37,9 @@ export const formatPayloadDate = async (payload: Object | Object[], collectionNa
     })
     .get()
 
+  // Webhook 直接返回
+  if (!schema) return payload
+
   const dateFields = schema.fields.filter(
     (field) => isDateType(field.type) && field.dateFormatType === 'date'
   )

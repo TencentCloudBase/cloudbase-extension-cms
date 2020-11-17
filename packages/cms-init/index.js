@@ -5,7 +5,6 @@ const cloudbase = require('@cloudbase/node-sdk')
 const userJobs = require('./scripts/users')
 const deployJobs = require('./scripts/deploy')
 const migrateJobs = require('./scripts/migrate')
-const roleJobs = require('./scripts/role')
 
 module.exports.main = async (event, context) => {
   const envId = context.namespace || process.env.SCF_NAMESPACE
@@ -34,8 +33,6 @@ module.exports.main = async (event, context) => {
     ...deployJobs,
     // V1 迁移
     ...migrateJobs,
-    // 创建角色
-    ...roleJobs,
   }
 
   // 注入全局的上下文
