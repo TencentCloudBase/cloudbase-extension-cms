@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import { dateToNumber } from '@/utils'
+import { dateToNumber, formatPayloadDate } from '@/utils'
 import { CollectionV2 } from '@/constants'
 import { Schema, SchemaField } from '../schemas/types'
 import { BadRequestException, RecordNotExistException } from '@/common'
@@ -150,6 +150,7 @@ export class ContentsService {
     }
 
     let updateData = _.omit(payload, '_id')
+    updateData = await formatPayloadDate(updateData, resource)
 
     if (resource !== CollectionV2.Webhooks) {
       // 查询 schema 信息
@@ -216,7 +217,7 @@ export class ContentsService {
       throw new RecordNotExistException('文档不存在')
     }
 
-    let updateData = payload
+    let updateData = await formatPayloadDate(payload, resource)
 
     if (resource !== CollectionV2.Webhooks) {
       // 查询 schema 信息
@@ -269,37 +270,16 @@ export class ContentsService {
     return collection.doc(record._id).set(doc)
   }
 
-  async updateMany(
-    resource: string,
-    options: {
-      filter: { ids?: string[] }
-      payload: Record<string, any>
-    }
-  ) {
-    const { filter = {}, payload } = options
-    const db = this.cloudbaseService.db
-    const collection = this.cloudbaseService.collection(resource)
-
-    const data = _.omit(payload, '_id')
-
-    return collection
-      .where({
-        _id: db.command.in(filter.ids),
-      })
-      .update({
-        ...data,
-        _updateTime: dateToNumber(),
-      })
-  }
-
   async createOne(
     resource: string,
     options: {
       payload?: Record<string, any>
     }
   ) {
-    const { payload } = options
+    let { payload } = options
     const collection = this.cloudbaseService.collection(resource)
+
+    payload = await formatPayloadDate(payload, resource)
 
     const data = {
       ...payload,

@@ -14,7 +14,7 @@ export const formatTimeByType = (v: string, type?: 'timestamp-ms' | 'timestamp-s
   }
 
   if (type === 'date') {
-    formatDate = new Date(v).toString()
+    formatDate = moment(v).toJSON()
   }
 
   return formatDate

@@ -1,5 +1,9 @@
+import { CollectionV2 } from '@/constants'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
+import _ from 'lodash'
+import { getCloudBaseApp } from './cloudbase'
+import { isDateType } from './field'
 
 dayjs.locale('zh-cn')
 
@@ -18,4 +22,37 @@ export const dateToNumber = (date?: string) => {
 export const getFullDate = (date?: string) => {
   // 毫秒
   return dayjs(date).format('YYYY-MM-DD')
+}
+
+// 格式化 data 中的时间类型
+export const formatPayloadDate = async (payload: Object | Object[], collectionName: string) => {
+  const app = getCloudBaseApp()
+  const {
+    data: [schema],
+  }: { data: Schema[] } = await app
+    .database()
+    .collection(CollectionV2.Schemas)
+    .where({
+      collectionName,
+    })
+    .get()
+
+  const dateFields = schema.fields.filter(
+    (field) => isDateType(field.type) && field.dateFormatType === 'date'
+  )
+
+  if (Array.isArray(payload)) {
+    return payload.map((record) => {
+      dateFields.forEach((field) => {
+        record[field.name] = new Date(record[field.name])
+      })
+      return record
+    })
+  }
+
+  dateFields.forEach((field) => {
+    payload[field.name] = dayjs(payload[field.name]).toDate()
+  })
+
+  return payload
 }

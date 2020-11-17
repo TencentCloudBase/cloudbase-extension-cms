@@ -172,6 +172,7 @@ export async function batchGetTempFileURL(
     tempFileURL: string
   }[]
 > {
+  if (!fileIds?.length) return []
   const app = await getCloudBaseApp()
   const result = await app.getTempFileURL({
     fileList: fileIds,

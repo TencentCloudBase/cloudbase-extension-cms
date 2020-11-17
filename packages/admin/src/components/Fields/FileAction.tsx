@@ -72,6 +72,9 @@ export const FileAction: React.FC<{
               .catch(() => {
                 message.error('复制到剪切板成功')
               })
+              .finally(() => {
+                setCopyLoading(false)
+              })
             return
           }
 

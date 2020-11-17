@@ -23,6 +23,7 @@ const EventMap = {
   create: '创建内容',
   delete: '删除内容',
   update: '更新内容',
+  // 兼容 v1
   updateMany: '更新内容[批量]',
   deleteMany: '删除内容[批量]',
 }
