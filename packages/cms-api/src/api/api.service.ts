@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import Axios, { AxiosRequestConfig } from 'axios'
 import querystring from 'querystring'
+import { EJSON } from 'bson'
+import Axios, { AxiosRequestConfig } from 'axios'
 import { sign } from '@cloudbase/signature-nodejs'
 import { Collection } from '@/constants'
 import { CloudBaseService } from '@/services'
@@ -231,21 +232,34 @@ export class ApiService {
         'X-CloudBase-Authorization': authorization,
         'X-CloudBase-TimeStamp': timestamp,
       },
-      data,
+      data: EJSON.stringify(data),
     }
 
     // 临时秘钥调用
     sessionToken && (requestOptions.headers['X-CloudBase-SessionToken'] = sessionToken)
 
     // 请求
-    const { data: res } = await Axios(requestOptions)
+    let { data: queryRes } = await Axios(requestOptions)
 
-    // 请求出现错误
-    if (res.code) {
-      throw new CmsException('OPEN_API_ERROR', `${res.code}: ${res.message}`)
+    console.log(queryRes)
+
+    // 扁平化返回值
+    queryRes = _.assign(_.pick(queryRes, ['requestId']), {
+      ...queryRes.data,
+    })
+
+    // 返回 list 中默认为 BSON 字符串，使用 BSON 解析为对象
+    if (queryRes?.list) {
+      queryRes.data = queryRes.list.map((item) => EJSON.parse(item))
+      _.unset(queryRes, ['list'])
     }
 
-    return res
+    // 请求出现错误
+    if (queryRes.code) {
+      throw new CmsException('OPEN_API_ERROR', `${queryRes.code}: ${queryRes.message}`)
+    }
+
+    return queryRes
   }
 
   /**

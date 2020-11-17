@@ -10,6 +10,7 @@ import {
   Patch,
   Put,
   UseGuards,
+  CacheKey,
 } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { ApiService } from './api.service'
@@ -78,11 +79,13 @@ export class ApiController {
     }
 
     // 查询数据
-    const { data } = await dbQuery.get()
+    const { data, requestId } = await dbQuery.get()
+
     // 处理返回值
     const [doc] = await this.apiService.parseResData(data, collectionName)
 
     return {
+      requestId,
       // doc 不存在时，返回 null
       data: doc || null,
     }
@@ -95,22 +98,22 @@ export class ApiController {
     const apiQuery = await this.apiService.getMergedQuery(collectionName, query as any)
 
     // 查询数据
-    const res = await this.apiService.callOpenApi({
+    let findRes = await this.apiService.callOpenApi({
       collectionName,
       action: 'find',
       query: apiQuery,
     })
 
     // 查询 total 的值
-    const { data: countRes } = await this.apiService.callOpenApi({
+    const { total } = await this.apiService.callOpenApi({
       collectionName,
       action: 'count',
       query: apiQuery,
     })
 
-    res.data = await this.apiService.parseResData(res.data, collectionName)
+    findRes.data = await this.apiService.parseResData(findRes.data, collectionName)
 
-    return { ...res, total: countRes.total }
+    return { total, ...findRes }
   }
 
   /**
@@ -125,7 +128,7 @@ export class ApiController {
   ) {
     const apiQuery = await this.apiService.getMergedQuery(collectionName, query as any)
 
-    const countRes = await this.apiService.callOpenApi({
+    const { total } = await this.apiService.callOpenApi({
       collectionName,
       action: 'count',
       data: payload,
@@ -143,7 +146,7 @@ export class ApiController {
 
     return {
       ...res,
-      total: countRes.total,
+      total: total,
     }
   }
 

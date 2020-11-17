@@ -1,3 +1,13 @@
 {
-  "cSpell.words": ["Droppable", "braft", "envid", "secretid", "sider", "tinymce", "vditor"]
+  "cSpell.words": [
+    "Droppable",
+    "EJSON",
+    "braft",
+    "bson",
+    "envid",
+    "secretid",
+    "sider",
+    "tinymce",
+    "vditor"
+  ]
 }

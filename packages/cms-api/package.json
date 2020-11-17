@@ -12,13 +12,14 @@
     "debug": "nest start --debug --watch"
   },
   "dependencies": {
-    "@cloudbase/node-sdk": "^2.4.0-beta",
+    "@cloudbase/node-sdk": "^2.4.0",
     "@cloudbase/signature-nodejs": "^1.1.0",
     "@nestjs/common": "^7.3.2",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.3.2",
     "@nestjs/platform-express": "^7.3.2",
     "axios": "^0.19.2",
+    "bson": "^4.2.0",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
     "debug": "^4.1.1",
