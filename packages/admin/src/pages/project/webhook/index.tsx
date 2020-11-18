@@ -108,8 +108,8 @@ const columns: ProColumns<Webhook>[] = WebhookColumns.map((item) => ({
 export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
   const [modalVisible, setModalVisible] = useState(false)
-  const [webhookAction, setWebhookAction] = useState<'create' | 'edit'>('create')
   const [selectedWebhook, setSelectedWebhook] = useState<Webhook>()
+  const [webhookAction, setWebhookAction] = useState<'create' | 'edit'>('create')
 
   const tableRef = useRef<{
     reload: (resetPageIndex?: boolean) => void
@@ -242,6 +242,7 @@ export default (): React.ReactNode => {
           开发中
         </TabPane> */}
       </Tabs>
+
       <WebhookModal
         visible={modalVisible}
         action={webhookAction}

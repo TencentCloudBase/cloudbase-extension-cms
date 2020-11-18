@@ -46,7 +46,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         error = httpRes.error
       } else {
         console.error('服务异常，响应：', httpRes)
-
         error = {
           code: 'SYS_ERR',
           message: exception?.message || '服务异常',

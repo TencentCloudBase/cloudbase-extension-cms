@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { IsNotEmpty } from 'class-validator'
 import {
   Controller,
   Post,
@@ -95,8 +94,11 @@ export class ProjectsController {
   // 系统管理员才能更新项目
   @Patch(':id')
   @UseGuards(PermissionGuard('project', ['administrator']))
-  async updateProject(@Param('id') id: string, @Body() payload: Partial<Project> = {}) {
-    const { enableApiAccess, apiAccessPath } = payload
+  async updateProject(
+    @Param('id') id: string,
+    @Body() payload: Partial<Project> & { keepApiPath?: boolean } = {}
+  ) {
+    const { enableApiAccess, apiAccessPath, keepApiPath } = payload
     // 项目信息
     const {
       data: [project],
@@ -110,7 +112,7 @@ export class ProjectsController {
       }
 
       if (enableApiAccess === false) {
-        await this.projectsService.disableApiAccess(`/${project.apiAccessPath}`)
+        await this.projectsService.deleteApiAccessPath(`/${project.apiAccessPath}`)
       }
     }
 
@@ -131,7 +133,13 @@ export class ProjectsController {
           throw new RecordExistException('路径已被其他项目绑定，请更换路径后重试')
         }
       } else {
+        // 创建新的路径
         await this.projectsService.createApiAccessPath(`/${apiAccessPath}`)
+
+        // 删除已有路径
+        if (!keepApiPath) {
+          await this.projectsService.deleteApiAccessPath(`/${project.apiAccessPath}`)
+        }
       }
     }
 

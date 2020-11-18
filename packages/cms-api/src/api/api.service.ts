@@ -225,6 +225,17 @@ export class ApiService {
     const qs = querystring.stringify(query)
     const url = `https://tcb-api.tencentcloudapi.com/api/v2/envs/${envId}/databases/${collectionName}/documents:${action}?${qs}`
 
+    const body: any = {}
+
+    // BSON 序列化请求数据
+    if (data?.data) {
+      body.data = EJSON.stringify(data.data, { relaxed: false })
+    }
+
+    if (data?.query) {
+      body.query = EJSON.stringify(data.query, { relaxed: false })
+    }
+
     const requestOptions: AxiosRequestConfig = {
       method: 'POST',
       url: url,
@@ -232,7 +243,7 @@ export class ApiService {
         'X-CloudBase-Authorization': authorization,
         'X-CloudBase-TimeStamp': timestamp,
       },
-      data: EJSON.stringify(data),
+      data: body,
     }
 
     // 临时秘钥调用
@@ -240,8 +251,6 @@ export class ApiService {
 
     // 请求
     let { data: queryRes } = await Axios(requestOptions)
-
-    console.log(queryRes)
 
     // 扁平化返回值
     queryRes = _.assign(_.pick(queryRes, ['requestId']), {

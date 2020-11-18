@@ -66,27 +66,13 @@ export const FileAction: React.FC<{
 
           if (!isFileId(fileUri)) {
             copyToClipboard(fileUri)
-              .then(() => {
-                message.success('复制到剪切板成功')
-              })
-              .catch(() => {
-                message.error('复制到剪切板成功')
-              })
-              .finally(() => {
-                setCopyLoading(false)
-              })
+            setCopyLoading(false)
             return
           }
 
           getTempFileURL(fileUri)
             .then((url) => {
               copyToClipboard(url)
-                .then(() => {
-                  message.success('复制到剪切板成功')
-                })
-                .catch(() => {
-                  message.error('复制到剪切板成功')
-                })
             })
             .catch((e) => {
               console.log(e)

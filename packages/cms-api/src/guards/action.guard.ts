@@ -4,10 +4,17 @@ import { getCloudBaseApp } from '@/utils'
 import { CanActivate, Injectable, ExecutionContext, mixin } from '@nestjs/common'
 import { Request } from 'express'
 
+// 映射 action 和对应的权限控制字段
+const ACTION_MAP = {
+  read: 'readableCollections',
+  modify: 'modifiableCollections',
+  delete: 'deletableCollections',
+}
+
 @Injectable()
 export class MixinActionGuard implements CanActivate {
   // 操作
-  protected readonly action: 'read' | 'modify'
+  protected readonly action: 'read' | 'modify' | 'delete'
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<AuthRequest & Request>()
@@ -38,19 +45,16 @@ export class MixinActionGuard implements CanActivate {
       throw new CmsException(ErrorCode.ServerError, 'Missing Action')
     }
 
-    if (this.action === 'read' && !project?.readableCollections?.includes(collectionName)) {
-      throw new UnauthorizedOperation('你没有权限访问此数据')
-    }
-
-    if (this.action === 'modify' && !project?.modifiableCollections?.includes(collectionName)) {
-      throw new UnauthorizedOperation('你没有权限修改此数据')
+    // 校验 action 是否允许
+    if (!project?.[ACTION_MAP[this.action]]?.includes(collectionName)) {
+      throw new UnauthorizedOperation()
     }
 
     return true
   }
 }
 
-export const ActionGuard = (action: 'read' | 'modify') => {
+export const ActionGuard = (action: 'read' | 'modify' | 'delete') => {
   const guard = mixin(
     class extends MixinActionGuard {
       protected readonly action = action

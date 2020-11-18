@@ -23,8 +23,6 @@ export async function bootstrap() {
   // Security
   app.use(helmet())
 
-  app.setGlobalPrefix('/api')
-
   // 参数校验
   app.useGlobalPipes(
     // 将参数转换为 DTO 定义的类型

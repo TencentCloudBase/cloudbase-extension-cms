@@ -1,28 +1,42 @@
 import _ from 'lodash'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useRequest, useParams } from 'umi'
+import { useSetState } from 'react-use'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getProject, updateProject } from '@/services/project'
 import {
   Divider,
   Button,
   Space,
-  Typography,
   Form,
   Input,
   message,
   Switch,
-  Skeleton,
   Alert,
+  Skeleton,
   Checkbox,
+  Modal,
+  Typography,
 } from 'antd'
+import { copyToClipboard } from '@/utils'
 import { getSchemas } from '@/services/schema'
+import { CopyOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+
+const { Text } = Typography
 
 const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
   project,
   onReload,
 }) => {
-  const { projectId } = useParams<any>()
   const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace('tcb-ext-cms-service', '')
+  const { projectId } = useParams<any>()
+  const [state, setState] = useSetState({
+    apiPath: '',
+    modalVisible: false,
+  })
+  // 修改 api 路径，保留原路径
+  const [keepApiPath, setKeepApiPath] = useState(false)
+
+  // 从 project 中读取信息
   const initialValues = useMemo(
     () => ({
       path: project.apiAccessPath,
@@ -31,21 +45,19 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
   )
 
   // 设置 API 访问路径
-  const { loading, run: changeApiPath } = useRequest(
-    async (v: { path: string }) => {
-      try {
-        await updateProject(projectId, {
-          apiAccessPath: v?.path,
-        })
-        message.success('API 访问路径设置成功！')
-        onReload()
-      } catch (e) {
-        message.error(`更新失败 ${e.message}`)
-      }
+  const { loading, run: setApiPath } = useRequest(
+    async (projectId: string, path: string) => {
+      await updateProject(projectId, {
+        keepApiPath,
+        apiAccessPath: path,
+      })
+      message.success('API 访问路径设置成功！')
+      onReload()
     },
     {
       manual: true,
-      refreshDeps: [projectId],
+      refreshDeps: [projectId, keepApiPath],
+      onError: (e) => message.error(`更新失败 ${e.message}`),
     }
   )
 
@@ -58,7 +70,15 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
         labelAlign="left"
         initialValues={initialValues}
         onFinish={(v = {}) => {
-          changeApiPath(v)
+          // API 路径已经存在，需要删除原路径，要警告
+          if (project.apiAccessPath) {
+            setState({
+              apiPath: v?.path,
+              modalVisible: true,
+            })
+          } else {
+            setApiPath(projectId, v?.path)
+          }
         }}
       >
         {!initialValues.path && (
@@ -91,16 +111,45 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
           </Button>
         </Form.Item>
       </Form>
+      <Modal
+        okButtonProps={{ loading }}
+        visible={state.modalVisible}
+        onCancel={() =>
+          setState({
+            modalVisible: false,
+          })
+        }
+        onOk={async () => setApiPath(projectId, state.apiPath)}
+      >
+        <p>
+          <Space>
+            <ExclamationCircleOutlined style={{ fontSize: '24px', color: '#faad14' }} />
+            <Text strong className="text-lg">
+              警告
+            </Text>
+          </Space>
+        </p>
+        修改路径将会删除原服务路径，会导致原服务路径无法访问，是否确认修改？
+        <br />
+        <br />
+        <Checkbox
+          onChange={(e) => {
+            setKeepApiPath(e.target.checked)
+          }}
+          checked={keepApiPath}
+        >
+          保留原 API 路径
+        </Checkbox>
+      </Modal>
     </>
   )
 }
 
+// 修改权限标志数组
 const modifyArray = (collections: string[] = [], collection: string, add: boolean) => {
   // 过滤空集合
   const ret = collections.filter((_) => _ && _ !== collection)
-  console.log(collection)
   add ? ret.push(collection) : _.remove(ret, (_) => _ === collection)
-  console.log(ret)
   return ret
 }
 
@@ -108,16 +157,20 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
   project,
   onReload,
 }) => {
+  const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace('tcb-ext-cms-service', '')
   const { projectId } = useParams<any>()
   const { data: schemas } = useRequest(() => getSchemas(projectId))
   const [readableCollections, setReadableCollections] = useState<string[]>([])
   const [modifiableCollections, setModifiableCollections] = useState<string[]>([])
+  const [deletableCollections, setDeletableCollections] = useState<string[]>([])
 
+  // 保存修改
   const { run: changePermission, loading } = useRequest(
     async () => {
       await updateProject(projectId, {
         readableCollections,
         modifiableCollections,
+        deletableCollections,
       })
       onReload()
     },
@@ -132,8 +185,16 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
     if (project?._id) {
       setReadableCollections(project.readableCollections || [])
       setModifiableCollections(project.modifiableCollections || [])
+      setDeletableCollections(project.deletableCollections || [])
     }
   }, [project])
+
+  const initialValues = useMemo(
+    () => ({
+      path: project.apiAccessPath,
+    }),
+    [project]
+  )
 
   return (
     <>
@@ -162,6 +223,27 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
             >
               允许修改
             </Checkbox>
+            <Checkbox
+              checked={deletableCollections?.includes(schema.collectionName)}
+              onChange={(e) =>
+                setDeletableCollections(
+                  modifyArray(deletableCollections, schema.collectionName, e.target.checked)
+                )
+              }
+            >
+              允许删除
+            </Checkbox>
+            <Button
+              type="link"
+              onClick={() =>
+                copyToClipboard(
+                  `https://${accessDomain}${initialValues.path}/v1.0/${schema.collectionName}`
+                )
+              }
+            >
+              复制访问链接
+              <CopyOutlined className="ml-2" />
+            </Button>
           </Space>
         </div>
       ))}
@@ -191,7 +273,7 @@ export default (): React.ReactElement => {
         await updateProject(projectId, {
           enableApiAccess: v,
         })
-        message.success(`${v ? '开启' : '关闭'} API 访问成功！`)
+        message.success(`${v ? '启用' : '关闭'} API 访问成功！`)
         reload()
       } catch (e) {
         message.error(`更新失败 ${e.message}`)
@@ -225,13 +307,14 @@ export default (): React.ReactElement => {
 
   return (
     <>
+      <Typography.Title level={3}>API 访问</Typography.Title>
       <Space>
         <Switch
           loading={changeLoading}
           checked={project?.enableApiAccess}
           onChange={changeApiAccess}
         />
-        <span>启用 API 访问</span>
+        <span>API 访问已{project.enableApiAccess ? '开启' : '关闭'}</span>
       </Space>
       <Divider />
       <ApiAccessPath project={project} onReload={reload} />

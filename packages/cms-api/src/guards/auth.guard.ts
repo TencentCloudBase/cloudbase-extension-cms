@@ -31,8 +31,10 @@ export class GlobalAuthGuard implements CanActivate {
     if (!collection) {
       throw new HttpException(
         {
-          code: 'NOT_FOUND_IN_CMS',
-          message: '你访问的集合不在 CMS 中',
+          error: {
+            code: 'NOT_FOUND_IN_CMS',
+            message: '你访问的集合不存在',
+          },
         },
         HttpStatus.FORBIDDEN
       )
@@ -49,8 +51,10 @@ export class GlobalAuthGuard implements CanActivate {
     if (!project) {
       throw new HttpException(
         {
-          code: 'NOT_FOUND',
-          message: '项目不存在，无法访问',
+          error: {
+            code: 'NOT_FOUND',
+            message: '项目不存在，无法访问',
+          },
         },
         HttpStatus.FORBIDDEN
       )
@@ -60,8 +64,10 @@ export class GlobalAuthGuard implements CanActivate {
     if (!project.enableApiAccess) {
       throw new HttpException(
         {
-          code: 'NOT_FOUND',
-          message: 'API 访问未开启',
+          error: {
+            code: 'NOT_FOUND',
+            message: 'API 访问未开启',
+          },
         },
         HttpStatus.FORBIDDEN
       )
@@ -71,8 +77,7 @@ export class GlobalAuthGuard implements CanActivate {
     if (!project.apiAccessPath) {
       throw new HttpException(
         {
-          code: 'NOT_FOUND',
-          message: 'API 访问路径未设置',
+          error: { code: 'NOT_FOUND', message: 'API 访问路径未设置' },
         },
         HttpStatus.FORBIDDEN
       )

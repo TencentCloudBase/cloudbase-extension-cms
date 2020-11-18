@@ -1,37 +1,18 @@
-import { CollectionV2 } from '@/constants'
-import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
-import _ from 'lodash'
 import { getCloudBaseApp } from './cloudbase'
-import { isDateType } from './field'
 
-dayjs.locale('zh-cn')
-
-export const dateToNumber = (date?: string) => {
-  // 毫秒
-  const unixTime = dayjs(date).valueOf()
-
-  if (isNaN(unixTime)) {
-    throw new Error(`Invalid Date Type: ${date}`)
-  }
-
-  return unixTime
-}
-
-// 获取 2020-08-08 格式的时间
-export const getFullDate = (date?: string) => {
-  // 毫秒
-  return dayjs(date).format('YYYY-MM-DD')
-}
+export const isDateType = (type: string): boolean => type === 'Date' || type === 'DateTime'
 
 // 格式化 data 中的时间类型
-export const formatPayloadDate = async (payload: Object | Object[], collectionName: string) => {
+export const formatPayloadDate = async (
+  payload: Object | Object[],
+  collectionName: string
+): Promise<Object | Object[]> => {
   const app = getCloudBaseApp()
   const {
     data: [schema],
   }: { data: Schema[] } = await app
     .database()
-    .collection(CollectionV2.Schemas)
+    .collection('tcb-ext-cms-schemas')
     .where({
       collectionName,
     })
@@ -57,7 +38,7 @@ export const formatPayloadDate = async (payload: Object | Object[], collectionNa
   }
 
   dateFields.forEach((field) => {
-    payload[field.name] = dayjs(payload[field.name]).toDate()
+    payload[field.name] = new Date(payload[field.name])
   })
 
   return payload

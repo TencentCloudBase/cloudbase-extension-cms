@@ -70,6 +70,20 @@ Resources:
           CMS_OPERATOR_PASS_WORD: ""
           CMS_DEPLOY_PATH: "/tcb-cms/"
       Role: TCB_QcsRole
+  # Restful api 函数
+  RestfulApiFUNCTION:
+    Type: CloudBase::Function
+    Properties:
+      FunctionName: tcb-ext-cms-api
+      CodeUri: extension://c0d6b82d14284defaa8d6a69af9bb0ce.zip
+      InstallDependency: true
+      Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
+      MemorySize: 256
+      Timeout: 15
+      HttpPath: /tcb-ext-cms-api
+      Runtime: Nodejs10.15
+      Handler: index.main
+      Role: TCB_QcsRole
   ProjectDB:
     Type: CloudBase::FlexDB
     Properties:

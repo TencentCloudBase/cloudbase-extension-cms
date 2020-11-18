@@ -10,13 +10,13 @@ import {
   Patch,
   Put,
   UseGuards,
-  CacheKey,
 } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { ApiService } from './api.service'
 import { Collection } from '@/constants'
 import { IsJSON, IsNumber, IsOptional } from 'class-validator'
 import { ActionGuard } from '@/guards/action.guard'
+import { formatPayloadDate } from '@/utils/date'
 
 class IQuery {
   @IsOptional()
@@ -36,12 +36,21 @@ class IQuery {
   sort?: string
 }
 
+class IPayload {
+  @IsOptional()
+  data?: Object | Object[]
+
+  @IsOptional()
+  query?: Object
+}
+
 /**
  * 查询 doc 处理说明
  * 1. hiddenInApi 的字段要在返回值中隐藏
  * 2. 批量查询时，order 字段要处理
  * 3. 返回值中的关联字段要转换成对应的数据
  * 4. 返回值中的 cloudId 转换成 https 链接，注意数组
+ * 5. 请求中的时间字符串要做转换
  */
 @Controller('/v1.0')
 export class ApiController {
@@ -154,18 +163,20 @@ export class ApiController {
   @UseGuards(ActionGuard('modify'))
   @Post(':collectionName')
   async createDocument(@Param('collectionName') collectionName: string, @Body() payload) {
-    return this.collection(collectionName).add(payload)
+    const formatDoc = await formatPayloadDate(payload.data, collectionName)
+    return this.collection(collectionName).add(formatDoc)
   }
 
-  // 更新文档
+  // 更新单个文档
   @UseGuards(ActionGuard('modify'))
   @Patch(':collectionName/:docId')
   async updateDocument(
     @Param() params: { collectionName: string; docId: string },
-    @Body() payload: any
+    @Body() payload: IPayload
   ) {
     const { docId, collectionName } = params
-    return this.collection(collectionName).doc(docId).update(payload)
+    const formatDoc = await formatPayloadDate(payload.data, collectionName)
+    return this.collection(collectionName).doc(docId).update(formatDoc)
   }
 
   // 批量更新文档
@@ -173,7 +184,7 @@ export class ApiController {
   @Patch(':collectionName')
   async patchUpdateDocuments(
     @Param('collectionName') collectionName: string,
-    @Body() payload: any
+    @Body() payload: IPayload
   ) {
     return this.apiService.callOpenApi({
       collectionName,
@@ -185,13 +196,16 @@ export class ApiController {
   // 替换文档
   @UseGuards(ActionGuard('modify'))
   @Put(':collectionName/:docId')
-  async setDocument(@Param() params: { collectionName: string; docId: string }, @Body() payload) {
+  async setDocument(
+    @Param() params: { collectionName: string; docId: string },
+    @Body() payload: IPayload
+  ) {
     const { collectionName, docId } = params
-    return this.collection(collectionName).doc(docId).set(payload)
+    return this.collection(collectionName).doc(docId).set(payload.data)
   }
 
   // 删除指定文档
-  @UseGuards(ActionGuard('modify'))
+  @UseGuards(ActionGuard('delete'))
   @Delete(':collectionName/:docId')
   async deleteDocument(@Param() params: { collectionName: string; docId: string }) {
     const { collectionName, docId } = params
@@ -199,9 +213,12 @@ export class ApiController {
   }
 
   // 批量删除文档
-  @UseGuards(ActionGuard('modify'))
+  @UseGuards(ActionGuard('delete'))
   @Delete(':collectionName')
-  async batchDeleteDocument(@Param('collectionName') collectionName: string, @Body() payload) {
+  async batchDeleteDocument(
+    @Param('collectionName') collectionName: string,
+    @Body() payload: IPayload
+  ) {
     return this.apiService.callOpenApi({
       collectionName,
       action: 'deleteMany',

@@ -4,7 +4,7 @@ import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class ProjectsService {
-  async disableApiAccess(path: string) {
+  async deleteApiAccessPath(path: string) {
     const manager = getCloudBaseManager()
     // 查询 apiId
     const {

@@ -25,7 +25,10 @@ export async function createProject(payload: { name: string; description: string
   })
 }
 
-export async function updateProject(id: string, payload: Partial<Project>) {
+export async function updateProject(
+  id: string,
+  payload: Partial<Project> & { keepApiPath?: boolean }
+) {
   return tcbRequest<{
     data: Project[]
   }>(`/projects/${id}`, {

@@ -113,7 +113,7 @@ type SchemaFieldType =
   | 'Enum'
   | 'Object'
 
-  interface Project {
+interface Project {
   _id: string
 
   name: string
@@ -136,4 +136,7 @@ type SchemaFieldType =
 
   // 可修改的集合
   modifiableCollections: string[]
+
+  // 可删除的集合
+  deletableCollections: string[]
 }
