@@ -87,6 +87,7 @@ export const WebhookModal: React.FC<{
       centered
       width={700}
       footer={null}
+      destroyOnClose
       title={`${actionText} Webhook`}
       visible={visible}
       onOk={() => onClose()}

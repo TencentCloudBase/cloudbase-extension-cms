@@ -5,8 +5,6 @@ import {
   Get,
   Query,
   Param,
-  Delete,
-  Patch,
   Request,
   UseGuards,
   Controller,
@@ -142,7 +140,6 @@ export class ContentsController {
         actionRes: res,
         actionOptions: options,
       })
-      console.log('Webhook 触发成功！')
     } catch (error) {
       console.log('Webhook 触发失败', error)
     }

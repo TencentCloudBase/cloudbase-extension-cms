@@ -49,11 +49,12 @@ export class WebhooksService {
     const webhookEvent = action.replace('One', '').replace('Many', '')
 
     // 查询满足的 webhook
-    const { data: webhooks } = await this.cloudbaseService
+    let { data: webhooks } = await this.cloudbaseService
       .collection(CollectionV2.Webhooks)
       .where({
         projectId,
-        event: $.or($.elemMatch($.eq('*')), $.elemMatch($.eq(webhookEvent))),
+        // TODO: SDK 解析 Bug，待修复
+        // event: $.or($.elemMatch($.eq('*')), $.elemMatch($.eq(webhookEvent))),
         collections: $.or(
           $.elemMatch($.eq('*')),
           $.elemMatch({
@@ -61,11 +62,18 @@ export class WebhooksService {
           })
         ),
       })
+      .limit(1000)
       .get()
 
+    // 手动过滤
+    webhooks = webhooks.filter((_) => _.event?.includes('*') || _.event?.includes(webhookEvent))
+
     if (!webhooks?.length) {
+      console.log('没有符合条件的 Webhook')
       return
     }
+
+    console.log('Webhook 获取成功', webhooks)
 
     const executions = webhooks.map(async (webhook: Webhook) => {
       const { method, url, headers = [] } = webhook
@@ -104,5 +112,7 @@ export class WebhooksService {
 
     // TODO: 隔离处理，不影响请求
     await Promise.all(executions)
+
+    console.log('Webhook 触发成功！')
   }
 }
