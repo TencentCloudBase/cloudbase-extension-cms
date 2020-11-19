@@ -57,7 +57,6 @@
           "name": "tcb-ext-cms-api",
           "entry": "app.js",
           "projectPath": "./packages/cms-api",
-          "path": "/tcb-ext-cms-api",
           "functionOptions": {
             "timeout": 15,
             "envVariables": {
