@@ -27,7 +27,7 @@ export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
 
-  // 原型导入导出
+  // 模型导入导出
   const [exportVisible, setExportVisible] = useState(false)
   const [importVisible, setImportVisible] = useState(false)
 
@@ -62,11 +62,11 @@ export default (): React.ReactNode => {
       }
     >
       <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
-        {/* 原型菜单 */}
+        {/* 模型菜单 */}
         <ProCard colSpan="220px" className="card-left" style={{ marginBottom: 0 }}>
           <SchemaMenuList />
         </ProCard>
-        {/* 原型字段 */}
+        {/* 模型字段 */}
         <Layout className="schema-layout">
           <SchemaContent />
         </Layout>

@@ -7,7 +7,7 @@ interface SchemaState {
   currentSchema: Schema
   loading: boolean
   schemas: Schema[]
-  // 编辑原型的弹窗
+  // 编辑模型的弹窗
   schemaEditVisible: boolean
   schemaEditAction: Action
 

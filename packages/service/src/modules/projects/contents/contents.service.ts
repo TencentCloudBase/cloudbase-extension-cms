@@ -163,7 +163,7 @@ export class ContentsService {
         .get()
 
       if (!schema) {
-        throw new RecordNotExistException('原型记录不存在')
+        throw new RecordNotExistException('模型记录不存在')
       }
 
       updateData = _.mapValues(updateData, (value, key) => {
@@ -230,7 +230,7 @@ export class ContentsService {
         .get()
 
       if (!schema) {
-        throw new RecordNotExistException('原型记录不存在')
+        throw new RecordNotExistException('模型记录不存在')
       }
 
       updateData = _.mapValues(updateData, (value, key) => {

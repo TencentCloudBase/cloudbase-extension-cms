@@ -64,7 +64,7 @@ export const SchemaExportModal: React.FC<{
     <Modal
       centered
       visible={visible}
-      title="选择导出需要导出的原型"
+      title="选择导出需要导出的模型"
       onOk={async () => {
         const exportSchemas = selectedSchemas.map((_: string) => {
           const schema = schemas.find((item) => item.collectionName === _) as Schema
@@ -74,7 +74,7 @@ export const SchemaExportModal: React.FC<{
         })
         const fileName = `schema-export-${random(8)}.json`
         saveContentToFile(JSON.stringify(exportSchemas), fileName)
-        message.success('导出原型成功！')
+        message.success('导出模型成功！')
       }}
       okButtonProps={{
         disabled: !selectedSchemas?.length,
@@ -89,7 +89,7 @@ export const SchemaExportModal: React.FC<{
           <CheckboxGroup options={schemaOptions} value={selectedSchemas} onChange={onCheckChange} />
         </Space>
       ) : (
-        <span>无可导出原型</span>
+        <span>无可导出模型</span>
       )}
     </Modal>
   )
@@ -140,7 +140,7 @@ export const SchemaImportModal: React.FC<{
 
           if (conflict) {
             message.error(
-              '导入原型集合名和已有原型集合名存在冲突，无法导入，请修改冲突后重新导入！'
+              '导入模型集合名和已有模型集合名存在冲突，无法导入，请修改冲突后重新导入！'
             )
             return
           }
@@ -157,17 +157,17 @@ export const SchemaImportModal: React.FC<{
     [schemas]
   )
 
-  // 创建原型
+  // 创建模型
   const onImportData = useCallback(async () => {
     setLoading(true)
     try {
       const tasks = importSchemas.map(async (schema) => await createSchema(projectId, schema))
       await Promise.all(tasks)
-      message.success('导入原型成功！')
+      message.success('导入模型成功！')
       ctx.mr.getSchemas(projectId)
       contentCtx.mr.getContentSchemas(projectId)
     } catch (error) {
-      message.error('导入原型失败')
+      message.error('导入模型失败')
     } finally {
       onClose()
     }
@@ -178,7 +178,7 @@ export const SchemaImportModal: React.FC<{
     <Modal
       centered
       destroyOnClose
-      title="导入原型"
+      title="导入模型"
       closable={true}
       visible={visible}
       onCancel={() => onClose()}
@@ -199,7 +199,7 @@ export const SchemaImportModal: React.FC<{
       <br />
       {importSchemas.length ? (
         <>
-          <Paragraph>共计 {importSchemas.length} 个原型</Paragraph>
+          <Paragraph>共计 {importSchemas.length} 个模型</Paragraph>
           {importSchemas.map((schema, index) => (
             <Paragraph key={index}>
               模型名称：{schema.displayName}，数据库名：{schema.collectionName}，共计{' '}
@@ -207,7 +207,7 @@ export const SchemaImportModal: React.FC<{
             </Paragraph>
           ))}
           <Alert
-            message="请确认导入原型集合名与已有原型集合名不存在冲突，否则会导入失败！"
+            message="请确认导入模型集合名与已有模型集合名不存在冲突，否则会导入失败！"
             type="warning"
           />
         </>

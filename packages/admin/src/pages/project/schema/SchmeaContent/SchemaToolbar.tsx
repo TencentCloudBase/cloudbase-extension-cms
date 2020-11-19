@@ -27,14 +27,14 @@ const SchemaEdit: React.FC = () => {
     state: { currentSchema },
   } = ctx
 
-  // 删除原型
+  // 删除模型
   const [deleteSchemaVisible, setDeleteSchmeaVisible] = useState(false)
 
   // 导出 Schema 数据
   const exportSchema = useCallback(() => {
     const modal = Modal.confirm({
       centered: true,
-      title: '确认导出原型数据？',
+      title: '确认导出模型数据？',
       onCancel: () => {
         modal.destroy()
       },
@@ -42,7 +42,7 @@ const SchemaEdit: React.FC = () => {
         const fileName = `schema-${currentSchema.collectionName}-${random(8)}.json`
         const { fields, collectionName, displayName } = currentSchema
         saveContentToFile(JSON.stringify([{ fields, collectionName, displayName }]), fileName)
-        message.success('原型导出成功！')
+        message.success('模型导出成功！')
       },
     })
   }, [currentSchema])

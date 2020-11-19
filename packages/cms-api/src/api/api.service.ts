@@ -31,7 +31,7 @@ export class ApiService {
     sort = sort ? JSON.parse(sort) : {}
     fields = fields ? JSON.parse(fields) : {}
 
-    // 获取 doc 原型信息
+    // 获取 doc 模型信息
     const {
       data: [docSchema],
     }: { data: Schema[] } = await this.cloudbaseService
@@ -42,7 +42,7 @@ export class ApiService {
       .get()
 
     if (!docSchema) {
-      throw new RecordExistException('内容原型不存在，查询错误！')
+      throw new RecordExistException('内容模型不存在，查询错误！')
     }
 
     // Schema 中的默认排序字段
@@ -89,7 +89,7 @@ export class ApiService {
 
     let formatData = resData
 
-    // 获取数据原型
+    // 获取数据模型
     const {
       data: [docSchema],
     }: { data: Schema[] } = await this.cloudbaseService

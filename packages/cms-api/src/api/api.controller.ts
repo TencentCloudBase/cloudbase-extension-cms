@@ -65,7 +65,7 @@ export class ApiController {
   async getDocument(@Param() params: { collectionName: string; docId: string }) {
     const { collectionName, docId } = params
 
-    // 获取数据原型
+    // 获取数据模型
     const {
       data: [docSchema],
     }: { data: Schema[] } = await this.collection(Collection.Schemas)
