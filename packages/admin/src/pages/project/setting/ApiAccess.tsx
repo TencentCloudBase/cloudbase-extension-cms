@@ -239,17 +239,19 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
             >
               允许删除
             </Checkbox>
-            <Button
-              type="link"
-              onClick={() =>
-                copyToClipboard(
-                  `https://${accessDomain}${initialValues.path}/v1.0/${schema.collectionName}`
-                )
-              }
-            >
-              复制访问链接
-              <CopyOutlined className="ml-2" />
-            </Button>
+            {initialValues.path && (
+              <Button
+                type="link"
+                onClick={() =>
+                  copyToClipboard(
+                    `https://${accessDomain}${initialValues.path}/v1.0/${schema.collectionName}`
+                  )
+                }
+              >
+                复制访问链接
+                <CopyOutlined className="ml-2" />
+              </Button>
+            )}
           </Space>
         </div>
       ))}
@@ -298,6 +300,7 @@ export default (): React.ReactElement => {
   if (!project?.enableApiAccess) {
     return (
       <>
+        <Typography.Title level={3}>API 访问</Typography.Title>
         <Alert type="info" message="此项目未开启 API 访问" style={{ marginBottom: '10px' }} />
         <Space>
           <Switch

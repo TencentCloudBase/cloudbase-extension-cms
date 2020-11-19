@@ -111,7 +111,7 @@ export class ProjectsController {
         await this.projectsService.createApiAccessPath(`/${project.apiAccessPath}`)
       }
 
-      if (enableApiAccess === false) {
+      if (enableApiAccess === false && project.apiAccessPath) {
         await this.projectsService.deleteApiAccessPath(`/${project.apiAccessPath}`)
       }
     }

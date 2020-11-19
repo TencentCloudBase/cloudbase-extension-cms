@@ -36,7 +36,7 @@
     "@ant-design/pro-list": "1.0.9",
     "@ant-design/pro-table": "2.9.3",
     "@umijs/hooks": "^1.9.3",
-    "antd": "4.7.3",
+    "antd": "4.8.4",
     "braft-editor": "^2.3.9",
     "braft-utils": "^3.0.12",
     "classnames": "^2.2.6",

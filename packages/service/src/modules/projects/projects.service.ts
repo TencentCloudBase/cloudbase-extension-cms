@@ -13,6 +13,9 @@ export class ProjectsService {
       path,
     })
 
+    // API 可能已被删除
+    if (!accessPath) return
+
     // 根据 apiId 删除
     await manager.access.deleteAccess({
       apiId: accessPath.APIId,
