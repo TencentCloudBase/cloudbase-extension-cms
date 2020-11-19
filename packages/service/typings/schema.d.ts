@@ -73,7 +73,7 @@ interface SchemaField {
   resourceLinkType: 'fileId' | 'https'
 
   // 时间存储格式
-  dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date'
+  dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
 }
 
 interface Schema {

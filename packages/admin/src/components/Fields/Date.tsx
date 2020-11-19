@@ -10,7 +10,7 @@ export const IDatePicker: React.FC<{
   value?: string | number
   style?: React.CSSProperties
   onChange?: (v: string | number) => void
-  dateFormatType?: 'timestamp-ms' | 'timestamp-s' | 'date'
+  dateFormatType?: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
 }> = (props) => {
   let { type, value, onChange = () => {}, dateFormatType } = props
 
@@ -35,7 +35,7 @@ export const IDatePicker: React.FC<{
         }
 
         // 格式化时间
-        const formatDate: number | string = formatTimeByType(v, dateFormatType)
+        const formatDate: number | string = formatTimeByType(v, dateFormatType, type)
         onChange(formatDate)
       }}
     />

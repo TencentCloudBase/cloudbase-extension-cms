@@ -27,7 +27,7 @@ const ObjectInput: React.FC<{
 export const getFieldDefaultValueInput = (
   type: string,
   options: {
-    dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date'
+    dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
   }
 ) => {
   const { dateFormatType } = options
@@ -97,7 +97,8 @@ export function getFieldFormItem(
           <Select placeholder="时间存储格式">
             <Option value="timestamp-ms">Unix Timestamp 毫秒</Option>
             <Option value="timestamp-s">Unix Timestamp 秒</Option>
-            <Option value="date">Date</Option>
+            <Option value="date">Date 对象</Option>
+            <Option value="string">时间字符串</Option>
           </Select>
         </Form.Item>
       )
