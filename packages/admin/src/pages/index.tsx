@@ -57,7 +57,7 @@ export default (): React.ReactNode => {
         </Col>
       </Row>
       {data?.length ? (
-        <Row gutter={[36, 36]}>
+        <Row gutter={[36, 36]}  justify='space-between'>
           {data.map((project: any, index: any) => (
             <Col flex="0 0 214px" key={index}>
               <Card
@@ -117,8 +117,8 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
       </Header>
       <Content className="content">
         <Row>
-          <Col flex="2 1 auto" />
-          <Col flex="1 1 auto">
+          <Col flex="1 1 auto" />
+          <Col flex="3 1 auto">
             {loading ? (
               <div style={{ minWidth: '600px' }}>
                 <Skeleton active />
@@ -127,7 +127,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
               children
             )}
           </Col>
-          <Col flex="2 1 auto" />
+          <Col flex="1 1 auto" />
         </Row>
       </Content>
       <Footer className="text-center">CloudBase CMS {pkg.version}</Footer>
