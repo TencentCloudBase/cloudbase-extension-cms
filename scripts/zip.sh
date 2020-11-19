@@ -3,7 +3,8 @@
 # 根路径
 __ABS_PATH__="$(pwd)"
 
-# 拷贝静态托管网站
+# 将静态托管网站 Build 的代码拷贝到 cms-init 函数中
+# 使用 cms-init 函数上传
 cd "$__ABS_PATH__/packages/cms-init"
 rm -rf build
 mkdir build
@@ -27,6 +28,7 @@ zipFunction() {
 
 zipFunction service
 zipFunction cms-init
+zipFunction cms-api
 
 cd $__ABS_PATH__
 rm -rf packages/cms-init/build
