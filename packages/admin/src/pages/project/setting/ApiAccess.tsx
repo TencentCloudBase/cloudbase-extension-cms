@@ -17,8 +17,9 @@ import {
   Modal,
   Typography,
 } from 'antd'
+import { useConcent } from 'concent'
+import { ContentCtx } from 'typings/store'
 import { copyToClipboard } from '@/utils'
-import { getSchemas } from '@/services/schema'
 import { CopyOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
@@ -121,14 +122,14 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
         }
         onOk={async () => setApiPath(projectId, state.apiPath)}
       >
-        <p>
+        <div>
           <Space>
             <ExclamationCircleOutlined style={{ fontSize: '24px', color: '#faad14' }} />
             <Text strong className="text-lg">
               警告
             </Text>
           </Space>
-        </p>
+        </div>
         修改路径将会删除原服务路径，会导致原服务路径无法访问，是否确认修改？
         <br />
         <br />
@@ -159,7 +160,12 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
 }) => {
   const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace('tcb-ext-cms-service', '')
   const { projectId } = useParams<any>()
-  const { data: schemas } = useRequest(() => getSchemas(projectId))
+  // 使用 content module 的数据，获取 layout 时，必然被加载、刷新
+  const {
+    state: { schemas },
+  } = useConcent<{}, ContentCtx>('content')
+  console.log(schemas)
+
   const [readableCollections, setReadableCollections] = useState<string[]>([])
   const [modifiableCollections, setModifiableCollections] = useState<string[]>([])
   const [deletableCollections, setDeletableCollections] = useState<string[]>([])

@@ -131,6 +131,9 @@ export class ProjectsController {
       if (existProject) {
         if (existProject?._id !== id) {
           throw new RecordExistException('路径已被其他项目绑定，请更换路径后重试')
+        } else {
+          // 再次创建，确保创建成功
+          await this.projectsService.createApiAccessPath(`/${apiAccessPath}`)
         }
       } else {
         // 创建新的路径
