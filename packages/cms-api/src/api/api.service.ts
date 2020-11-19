@@ -112,6 +112,8 @@ export class ApiService {
       formatData = formatData.map((item) => {
         cloudIdFields.forEach((field) => {
           const fieldName = field.name
+          // 值不存在
+          if (typeof item[fieldName] === 'undefined') return
           if (Array.isArray(item[fieldName])) {
             item[fieldName] = _.map(item[fieldName], cloudIdToUrl)
           } else {
