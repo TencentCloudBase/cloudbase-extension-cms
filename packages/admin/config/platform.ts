@@ -12,7 +12,7 @@ const platformConfig: IConfig = {
   define: {
     WX_MP,
     CMS_TITLE: name,
-    ICON_PATH: WX_MP ? 'icon.png' : 'icon.svg',
+    ICON_PATH: WX_MP ? 'icon-wx.svg' : 'icon.svg',
   },
   layout: {
     name: name,

@@ -222,7 +222,7 @@ export function fileIdToUrl(fileId: string) {
     return fileId
   }
 
-  // cloudId: cloud://cms-demo.636d-cms-demo-1252710547/cloudbase-cms/upload/2020-09-15/Psa3R3NA4rubCd_R-favicon.png
+  // cloudId: cloud://cms-demo.636d-cms-demo-1252710547/cloudbase-cms/upload/2020-09-15/Psa3R3NA4rubCd_R-favicon-wx.svg
   let link = fileId.replace('cloud://', '')
   // 文件路径
   const index = link.indexOf('/')
