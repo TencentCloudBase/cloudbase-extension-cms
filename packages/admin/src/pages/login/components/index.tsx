@@ -108,7 +108,6 @@ const Login: LoginType = (props) => {
 }
 
 Login.Tab = LoginTab
-
 Login.Username = LoginItem.Username
 Login.Password = LoginItem.Password
 Login.Mobile = LoginItem.Mobile

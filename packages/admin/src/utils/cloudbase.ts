@@ -2,8 +2,8 @@ import { request, history } from 'umi'
 import { message, notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
 import { codeMessage } from '@/constants'
-import { isDevEnv, random } from './tool'
 import defaultSettings from '../../config/defaultSettings'
+import { isDevEnv, random } from './tool'
 import { getFullDate } from './date'
 
 let app: any
@@ -83,8 +83,10 @@ export async function tcbRequest<T = any>(
   const { method, params, data } = options
   const app = await getCloudBaseApp()
 
+  const functionName = WX_MP ? 'wx-ext-cms-service' : 'tcb-ext-cms-service'
+
   const res = await app.callFunction({
-    name: 'tcb-ext-cms-service',
+    name: functionName,
     data: {
       path: `${defaultSettings.globalPrefix}${url}`,
       httpMethod: method,

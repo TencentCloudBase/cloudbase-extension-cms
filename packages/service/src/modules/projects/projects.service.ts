@@ -1,4 +1,5 @@
 import { RecordExistException } from '@/common'
+import { Functions } from '@/constants'
 import { getCloudBaseManager } from '@/utils'
 import { Injectable } from '@nestjs/common'
 
@@ -32,7 +33,7 @@ export class ProjectsService {
       path,
     })
 
-    if (accessPath && accessPath.Name !== 'tcb-ext-cms-api') {
+    if (accessPath && accessPath.Name !== Functions.API) {
       throw new RecordExistException('此路径已被其他云函数绑定，请更换路径后重试')
     }
 
@@ -40,7 +41,7 @@ export class ProjectsService {
     try {
       await manager.access.createAccess({
         path,
-        name: 'tcb-ext-cms-api',
+        name: Functions.API,
       })
     } catch (e) {
       if (e.code === 'InvalidParameter.APICreated') {

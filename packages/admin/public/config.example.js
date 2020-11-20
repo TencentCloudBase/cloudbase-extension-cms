@@ -12,4 +12,18 @@ window.TcbCmsConfig = {
   // 云接入默认域名/自定义域名 + 云接入路径，不带 https 协议符
   // https://console.cloud.tencent.com/tcb/env/access
   cloudAccessPath: 'xxx-xxx.service.tcloudbase.com/tcb-ext-cms-service',
+  // 微信小程序 Id
+  mpAppId: 'xx',
+  // CMS 文案配置
+  cmsTitle: 'CloudBase CMS',
+  // Logo 图片
+  cmsLogo: '',
+  // 文档链接
+  cmsDocLink: '',
+  // 帮助链接
+  cmsHelpLink: '',
+  // 产品官网链接
+  officialSiteLink: '',
+  // 产品名
+  appName: '',
 }

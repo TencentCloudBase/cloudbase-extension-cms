@@ -1,6 +1,7 @@
 import React from 'react'
 import { history } from 'umi'
 import logo from '@/assets/logo.svg'
+import { getCmsConfig } from '@/utils'
 
 const HeaderTitle: React.SFC<{ collapsed: boolean }> = (props) => (
   <a
@@ -11,7 +12,7 @@ const HeaderTitle: React.SFC<{ collapsed: boolean }> = (props) => (
     }}
   >
     <img src={logo} alt="logo" style={{ height: '35px', width: '35px' }} />
-    <h1>{props.collapsed ? null : 'CloudBase CMS'}</h1>
+    <h1>{props.collapsed ? null : getCmsConfig('cmsTitle')}</h1>
   </a>
 )
 

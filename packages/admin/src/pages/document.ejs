@@ -4,15 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="keywords" content="cms,内容管理系统,cloudbase cms, CloudBase CMS" />
+  <meta name="keywords" content="cms,内容管理（CMS）,cloudbase cms, CloudBase CMS" />
   <meta name="description"
     content="
     An out-of-box UI solution for enterprise applications as a React boilerplate." />
   <meta name="description" content="打造云端一体化数据运营平台" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-  <title>CloudBase CMS</title>
-  <link rel="icon" href="<%= context.config.publicPath +'icon.svg'%>"
+  <title>内容管理（CMS）</title>
+  <link rel="icon"
+    href="<%= context.config.publicPath + context.config.iconPath%>"
     type="image/x-icon" />
   <script src="<%= context.config.publicPath +'config.js'%>"></script>
   <script
@@ -192,8 +193,8 @@
         }
       }
     </style>
-    <img src="<%= context.config.publicPath +'icon.svg'%>" alt="logo"
-      width="196" />
+    <img src="<%= context.config.publicPath + context.config.define.ICON_PATH%>"
+      alt="logo" width="196" />
     <div class="page-loading-warp">
       <div class="ant-spin ant-spin-lg ant-spin-spinning">
         <span class="ant-spin-dot ant-spin-dot-spin"><i
@@ -203,10 +204,10 @@
       </div>
     </div>
     <div style="display: flex; justify-content: center; align-items: center;">
-      <img src="<%= context.config.publicPath +'icon.svg'%>" width="32"
-        style="margin-right: 8px;" />
+      <img src="<%= context.config.publicPath + context.config.define.ICON_PATH%>"
+        width="32" style="margin-right: 8px;" />
       <h1 style="margin-bottom: 0;">
-        CloudBase CMS
+        <%= context.config.define.CMS_TITLE %> 
       </h1>
     </div>
   </div>

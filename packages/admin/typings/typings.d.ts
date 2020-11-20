@@ -20,6 +20,34 @@ interface GAFieldsObject {
   eventValue?: number
   nonInteraction?: boolean
 }
+interface ITcbCmsConfing {
+  // 可用区
+  region: string
+  // 路由模式
+  history: 'hash' | 'browser'
+  // 环境 Id
+  envId: string
+  // 云接入域名
+  cloudAccessPath: string
+  // 禁用帮助按钮
+  disableHelpButton: boolean
+  // 禁用通知提示
+  disableNotice: boolean
+  // 微信小程序 AppId
+  mpAppId: string
+  // CMS 文案配置
+  cmsTitle: string
+  // Logo 图片
+  cmsLogo: string
+  // 文档链接
+  cmsDocLink: string
+  // 帮助链接
+  cmsHelpLink: string
+  // 产品官网链接
+  officialSiteLink: string
+  // 产品名
+  appName: string
+}
 
 interface Window {
   ga: (
@@ -29,25 +57,14 @@ interface Window {
   ) => void
   reloadAuthorized: () => void
   cloudbase: any
-  TcbCmsConfig: {
-    // 可用区
-    region: string
-    // 路由模式
-    history: 'hash' | 'browser'
-    // 环境 Id
-    envId: string
-    // 云接入域名
-    cloudAccessPath: string
-    // 禁用帮助按钮
-    disableHelpButton: boolean
-    // 禁用通知提示
-    disableNotice: boolean
-  }
+  TcbCmsConfig: ITcbCmsConfing
   tinymce: any
   // 禁用帮助按钮
 }
 
 declare let ga: Function
+
+declare const WX_MP: boolean
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。

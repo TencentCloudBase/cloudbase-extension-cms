@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { useRequest, history } from 'umi'
 import ProList from '@ant-design/pro-list'
+import { useConcent } from 'concent'
 import { getUserRoles, deleteUserRole } from '@/services/role'
 import { Button, Tag, Modal, Skeleton, Typography } from 'antd'
-import { useConcent } from 'concent'
 import { PlusOutlined } from '@ant-design/icons'
 
 export default (): React.ReactElement => {

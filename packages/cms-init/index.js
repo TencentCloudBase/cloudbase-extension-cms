@@ -7,6 +7,8 @@ const deployJobs = require('./scripts/deploy')
 const migrateJobs = require('./scripts/migrate')
 
 module.exports.main = async (event, context) => {
+  // 兼容小程序
+  const RESOURCE_PREFIX = process.env.WX_MP ? 'wx-ext-cms' : 'tcb-ext-cms'
   const envId = context.namespace || process.env.SCF_NAMESPACE
   const app = cloudbase.init({
     env: envId,
@@ -24,6 +26,8 @@ module.exports.main = async (event, context) => {
     CMS_DEPLOY_PATH: deployPath,
     // 服务自定义域名
     ACCESS_DOMAIN: accessDomain,
+    // 微信小程序 AppID
+    WX_MP_APP_ID: mpAppId,
   } = process.env
 
   const jobs = {
@@ -47,9 +51,9 @@ module.exports.main = async (event, context) => {
     }),
     config: {
       envId,
-      contentsCollectionName: 'tcb-ext-cms-contents',
-      usersCollectionName: 'tcb-ext-cms-users',
-      rolesCollectionName: 'tcb-ext-cms-user-roles',
+      contentsCollectionName: `${RESOURCE_PREFIX}-contents`,
+      usersCollectionName: `${RESOURCE_PREFIX}-users`,
+      rolesCollectionName: `${RESOURCE_PREFIX}-user-roles`,
     },
     administratorName,
     administratorPassword,
@@ -57,6 +61,7 @@ module.exports.main = async (event, context) => {
     operatorPassword,
     deployPath,
     accessDomain,
+    mpAppId,
   }
 
   return runJobs(jobs, ctx)

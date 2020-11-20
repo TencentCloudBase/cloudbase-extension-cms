@@ -1,14 +1,11 @@
 module.exports = {
   extends: ['alloy', 'alloy/react', 'alloy/typescript'],
   env: {
-    // Your environments (which contains several predefined global variables)
-    //
-    // browser: true,
-    // node: true,
-    // mocha: true,
-    // jest: true,
+    browser: true,
+    node: true,
   },
   globals: {
+    WX_MP: true,
     REACT_APP_ENV: true,
     ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: true,
   },

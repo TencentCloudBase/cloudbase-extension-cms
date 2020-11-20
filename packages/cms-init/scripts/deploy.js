@@ -8,9 +8,8 @@ const exec = util.promisify(require('child_process').exec)
 module.exports = {
   // 部署静态资源
   async deployStatic(context) {
-    const { config, deployPath = '/tcb-cms/', manager, accessDomain = '' } = context
+    const { deployPath = '/tcb-cms/', manager } = context
     const filterDeployPath = deployPath.replace(/^\//, '')
-    const { envId } = config
 
     try {
       await exec('cp -r build /tmp')
@@ -25,14 +24,17 @@ module.exports = {
     }
 
     // 写入静态网站配置
-    await writeConfigJS(manager, envId, accessDomain, filterDeployPath)
+    await writeConfigJS(manager, filterDeployPath, context)
 
     console.log('====> 部署静态网站成功 <=====')
   },
 }
 
 // 写入配置信息
-async function writeConfigJS(manager, envId, accessDomain, dir) {
+async function writeConfigJS(manager, dir, context) {
+  const { config, accessDomain = '', mpAppId } = context
+  const { envId } = config
+
   // 获取默认的自定义域名
   const { DefaultDomain } = await manager.access.getDomainList()
 
@@ -48,6 +50,7 @@ async function writeConfigJS(manager, envId, accessDomain, dir) {
     // 云接入默认域名/自定义域名，不带 https 协议符
     // https://console.cloud.tencent.com/tcb/env/access
     cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
+    mpAppId: '${mpAppId}',
 }`
   )
 

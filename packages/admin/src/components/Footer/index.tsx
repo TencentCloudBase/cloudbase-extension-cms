@@ -1,15 +1,16 @@
 import React from 'react'
 import { GithubOutlined } from '@ant-design/icons'
 import { DefaultFooter } from '@ant-design/pro-layout'
+import { getCmsConfig } from '@/utils'
 
 export default () => (
   <DefaultFooter
-    copyright="2020 云开发"
+    copyright={`2020 ${getCmsConfig('appName')}`}
     links={[
       {
-        key: 'CloudBase CMS',
-        title: 'CloudBase CMS',
-        href: 'https://cloudbase.net',
+        key: getCmsConfig('cmsTitle'),
+        title: getCmsConfig('cmsTitle'),
+        href: getCmsConfig('officialSiteLink'),
         blankTarget: true,
       },
       {
@@ -19,9 +20,9 @@ export default () => (
         blankTarget: true,
       },
       {
-        key: 'CloudBase',
-        title: 'CloudBase',
-        href: 'https://cloudbase.net',
+        key: getCmsConfig('appName'),
+        title: getCmsConfig('appName'),
+        href: getCmsConfig('officialSiteLink'),
         blankTarget: true,
       },
     ]}

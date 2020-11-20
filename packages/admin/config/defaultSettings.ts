@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import { Settings as LayoutSettings } from '@ant-design/pro-layout'
+import platformConfig from './platform'
 
 export default {
   navTheme: 'light',
@@ -13,7 +14,7 @@ export default {
     locale: false,
     defaultOpenAll: true,
   },
-  title: 'CloudBase CMS',
+  title: platformConfig.title,
   pwa: false,
   iconfontUrl: '',
   // 请求 prefix

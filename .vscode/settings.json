@@ -5,6 +5,7 @@
     "braft",
     "bson",
     "envid",
+    "metas",
     "secretid",
     "sider",
     "tinymce",

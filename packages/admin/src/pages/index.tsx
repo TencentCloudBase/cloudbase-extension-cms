@@ -30,7 +30,7 @@ import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import logo from '@/assets/logo.svg'
 import { getCmsNotices } from '@/services/notice'
-import { getFullDate } from '@/utils'
+import { getCmsConfig, getFullDate } from '@/utils'
 import './index.less'
 import pkg from '../../package.json'
 
@@ -105,7 +105,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
       <Header className="header">
         <div className="left">
           <img className="logo" src={logo} alt="logo" />
-          <h1 className="title">CloudBase CMS</h1>
+          <h1 className="title">{getCmsConfig('cmsTitle')}</h1>
         </div>
         <div className="right">
           {window.TcbCmsConfig.disableNotice ? null : <NoticeRender />}
@@ -122,7 +122,10 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
           children
         )}
       </Content>
-      <Footer className="text-center">CloudBase CMS {pkg.version}</Footer>
+      <Footer className="text-center">
+        {getCmsConfig('cmsTitle')}
+        {pkg.version}
+      </Footer>
 
       {/* 悬浮按钮 */}
       <div className="help-btn">
@@ -133,12 +136,12 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
             content={
               <Space>
                 <Button type="primary">
-                  <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">
+                  <a href={getCmsConfig('cmsDocLink')} target="_blank">
                     文档
                   </a>
                 </Button>
                 <Button type="primary">
-                  <a href="https://support.qq.com/products/148793" target="_blank">
+                  <a href={getCmsConfig('cmsHelpLink')} target="_blank">
                     反馈
                   </a>
                 </Button>
@@ -154,7 +157,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
   )
 }
 
-const startTimeKey = 'noticeStartTime'
+const START_TIME_KEY = 'noticeStartTime'
 
 export const NoticeRender: React.FC = () => {
   const [noticeVisible, setNoticeVisible] = useState(false)
@@ -170,12 +173,12 @@ export const NoticeRender: React.FC = () => {
     // 更新未读消息数量
     setUnreadNoticeCount(0)
     // 使用最新消息的时间作为开始时间戳
-    localStorage.setItem(startTimeKey, new Date(notices[0]?.noticeTime).getTime().toString())
+    localStorage.setItem(START_TIME_KEY, new Date(notices[0]?.noticeTime).getTime().toString())
   }
 
   // 获取未读消息
   const getNotices = async () => {
-    let startTime = parseInt(localStorage.getItem(startTimeKey) || '0', 10)
+    let startTime = parseInt(localStorage.getItem(START_TIME_KEY) || '0', 10)
     if (isNaN(startTime)) {
       // 默认拉取过去2个月的未读消息
       startTime = Date.now() - 1000 * 60 * 60 * 24 * 60

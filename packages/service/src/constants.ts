@@ -1,25 +1,37 @@
-// V2 集合名
+// 云函数、数据库等资源命名前缀
+export const RESOURCE_PREFIX = process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'
+
+/**
+ * 数据库
+ */
 export const CollectionV2 = {
   // 项目集合
-  Projects: 'tcb-ext-cms-projects',
+  Projects: `${RESOURCE_PREFIX}-projects`,
 
   // 内容模型集合
-  Schemas: 'tcb-ext-cms-schemas',
+  Schemas: `${RESOURCE_PREFIX}-schemas`,
 
   // Webhooks 集合
-  Webhooks: 'tcb-ext-cms-webhooks',
+  Webhooks: `${RESOURCE_PREFIX}-webhooks`,
 
   // 系统设置
-  Settings: 'tcb-ext-cms-settings',
+  Settings: `${RESOURCE_PREFIX}-settings`,
 
   // 用户集合
-  Users: 'tcb-ext-cms-users',
+  Users: `${RESOURCE_PREFIX}-users`,
 
   // 定义的角色集合
-  CustomUserRoles: 'tcb-ext-cms-user-roles',
+  CustomUserRoles: `${RESOURCE_PREFIX}-user-roles`,
 
   // 数据导入导出的记录
-  DataMigrateTasks: 'tcb-ext-cms-data-migrate',
+  DataMigrateTasks: `${RESOURCE_PREFIX}-data-migrate`,
+}
+
+/**
+ * 函数
+ */
+export const Functions = {
+  API: `${RESOURCE_PREFIX}-api`,
 }
 
 // 系统角色，无法修改
@@ -70,14 +82,3 @@ export const SystemUserRoles: UserRole[] = [
     type: 'system',
   },
 ]
-
-// 公开角色，即未登录的用户可访问的资源
-export const PublicRole = {
-  _id: 'public',
-  roleName: '公开用户',
-  description: '未登录的用户允许访问的资源',
-  // 默认为空
-  permissions: [],
-  // 不允许删除
-  delete: false,
-}
