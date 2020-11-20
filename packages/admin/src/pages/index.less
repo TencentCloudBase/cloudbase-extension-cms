@@ -59,7 +59,9 @@
   }
 
   .content {
-    padding: 30px 0;
+    margin: 48px auto;
+    width: 90%;
+    max-width: 850px;
 
     .empty-tip {
       display: flex;
@@ -68,26 +70,33 @@
       margin-bottom: 20px;
     }
   }
-}
 
-.project {
-  &-desc {
-    max-width: 100px;
-    height: 30px;
-  }
+  .project {
+    &-cards {
+      display: grid;
+      gap: 40px;
+      grid-template-columns: repeat(auto-fill, 180px);
+      margin-bottom: 60px;
+    }
 
-  &-logo {
-    background-color: #262f3e;
-    color: rgb(255, 255, 255);
-    font-size: 32px;
-    line-height: 80px;
-    text-align: center;
-    font-weight: 600;
-    width: 80px;
-    height: 80px;
-    min-height: 80px;
-    min-width: 80px;
-    display: block;
-    border-radius: 8px;
+    &-desc {
+      max-width: 100px;
+      height: 30px;
+    }
+
+    &-logo {
+      background-color: #262f3e;
+      color: rgb(255, 255, 255);
+      font-size: 32px;
+      line-height: 80px;
+      text-align: center;
+      font-weight: 600;
+      width: 80px;
+      height: 80px;
+      min-height: 80px;
+      min-width: 80px;
+      display: block;
+      border-radius: 8px;
+    }
   }
 }

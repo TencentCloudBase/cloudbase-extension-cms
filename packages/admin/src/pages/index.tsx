@@ -51,17 +51,14 @@ export default (): React.ReactNode => {
 
   return (
     <HomePage loading={loading}>
-      <Row gutter={[24, 40]}>
-        <Col>
-          <Typography.Title level={3}>我的项目</Typography.Title>
-        </Col>
-      </Row>
-      {data?.length ? (
-        <Row gutter={[36, 36]}>
-          {data.map((project: any, index: any) => (
-            <Col flex="0 0 214px" key={index}>
+      <Typography.Title level={3}>我的项目</Typography.Title>
+      <div className="project-cards mt-10">
+        {data?.length ? (
+          <>
+            {data.map((project: any, index: any) => (
               <Card
                 hoverable
+                key={index}
                 bordered={false}
                 onClick={() => {
                   ctx.setState({
@@ -89,14 +86,16 @@ export default (): React.ReactNode => {
                   </Tooltip>
                 </div>
               </Card>
-            </Col>
-          ))}
-        </Row>
-      ) : (
-        <div className="empty-tip">
-          <Empty description="项目为空，请先创建项目后再操作" />
-        </div>
-      )}
+            ))}
+          </>
+        ) : (
+          <div className="empty-tip">
+            <Empty description="项目为空，请先创建项目后再操作" />
+          </div>
+        )}
+      </div>
+
+      {/* 新项目创建 */}
       {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
     </HomePage>
   )
@@ -115,20 +114,15 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
           <AvatarDropdown />
         </div>
       </Header>
+
       <Content className="content">
-        <Row>
-          <Col flex="2 1 auto" />
-          <Col flex="1 1 auto">
-            {loading ? (
-              <div style={{ minWidth: '600px' }}>
-                <Skeleton active />
-              </div>
-            ) : (
-              children
-            )}
-          </Col>
-          <Col flex="2 1 auto" />
-        </Row>
+        {loading ? (
+          <div style={{ minWidth: '600px' }}>
+            <Skeleton active />
+          </div>
+        ) : (
+          children
+        )}
       </Content>
       <Footer className="text-center">CloudBase CMS {pkg.version}</Footer>
 
@@ -259,33 +253,24 @@ export const CreateProject: React.FC<{
 
   return (
     <>
-      <Row gutter={[0, 40]}>
-        <Col>
-          <Typography.Title level={3}>新建项目</Typography.Title>
-        </Col>
-      </Row>
-      <Row gutter={[36, 40]}>
-        <Col flex="0 0 214px">
-          <Card
-            hoverable
-            bordered={false}
-            style={{ borderRadius: '5px' }}
-            onClick={() => {
-              setModalVisible(true)
-            }}
-          >
-            <div
-              className="w-full flex flex-col items-center justify-start mt-12"
-              onClick={() => {}}
-            >
-              <PlusSquareTwoTone style={{ fontSize: '60px' }} />
-              <Typography.Title level={4} className="mt-5">
-                创建新项目
-              </Typography.Title>
-            </div>
-          </Card>
-        </Col>
-      </Row>
+      <Typography.Title level={3}>新建项目</Typography.Title>
+      <div className="project-cards mt-10">
+        <Card
+          hoverable
+          bordered={false}
+          style={{ borderRadius: '5px' }}
+          onClick={() => {
+            setModalVisible(true)
+          }}
+        >
+          <div className="w-full flex flex-col items-center justify-start mt-12" onClick={() => {}}>
+            <PlusSquareTwoTone style={{ fontSize: '60px' }} />
+            <Typography.Title level={4} className="mt-5">
+              创建新项目
+            </Typography.Title>
+          </div>
+        </Card>
+      </div>
       <CreateProjectModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
