@@ -57,7 +57,7 @@ export default (): React.ReactNode => {
         </Col>
       </Row>
       {data?.length ? (
-        <Row gutter={[36, 36]}>
+        <Row gutter={[36, 36]} className="project-container">
           {data.map((project: any, index: any) => (
             <Col flex="0 0 214px" key={index}>
               <Card
