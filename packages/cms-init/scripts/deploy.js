@@ -32,7 +32,7 @@ module.exports = {
 
 // 写入配置信息
 async function writeConfigJS(manager, dir, context) {
-  const { config, accessDomain = '', mpAppId } = context
+  let { config, accessDomain = '', mpAppID } = context
   const { envId } = config
 
   // 获取默认的自定义域名
@@ -40,19 +40,30 @@ async function writeConfigJS(manager, dir, context) {
 
   accessDomain = accessDomain.replace('https://', '').replace('http://', '').replace(/\/$/, '')
 
-  await writeFile(
-    '/tmp/config.js',
-    `window.TcbCmsConfig = {
+  let configFileContent = `window.TcbCmsConfig = {
     region: '${process.env.TENCENTCLOUD_REGION || 'ap-shanghai'}',
     history: 'hash',
     // 环境 Id
     envId: '${envId}',
     // 云接入默认域名/自定义域名，不带 https 协议符
     // https://console.cloud.tencent.com/tcb/env/access
-    cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
-    mpAppId: '${mpAppId}',
-}`
-  )
+    cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',`
+
+  // 微信小程序 Id
+  console.log('微信 AppID', mpAppID)
+  if (mpAppID) {
+    configFileContent += `mpAppID: '${mpAppID}',
+    cmsTitle: '内容管理（CMS）',
+    cmsLogo: './icon-wx.svg',
+    cmsDocLink: 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html',
+    cmsHelpLink: 'https://developers.weixin.qq.com/community/develop/question',
+    officialSiteLink: 'https://mp.weixin.qq.com/cgi-bin/wx',
+    appName: '微信小程序云开发',`
+  }
+
+  configFileContent += `}`
+
+  await writeFile('/tmp/config.js', configFileContent)
 
   return deployHostingFile(manager, '/tmp/config.js', path.join(dir, 'config.js'))
 }

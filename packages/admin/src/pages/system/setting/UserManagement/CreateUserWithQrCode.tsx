@@ -52,7 +52,7 @@ export default ({
         >
           <Form.Item
             label="用户微信号"
-            name="wechat"
+            name="username"
             rules={[
               {
                 required: true,
@@ -60,7 +60,7 @@ export default ({
               },
             ]}
           >
-            <Input placeholder="请输入需要添加用户的微信号" />
+            <Input placeholder="请输入需要添加用户的微信号" disabled={action === 'edit'} />
           </Form.Item>
           <Form.Item
             label="用户角色"

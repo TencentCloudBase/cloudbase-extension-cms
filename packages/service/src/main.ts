@@ -22,7 +22,7 @@ const port = process.env.PORT || 5000
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, adapter, {
-    logger: ['error', 'warn', 'debug'],
+    logger: ['error', 'warn'],
   })
 
   // Security

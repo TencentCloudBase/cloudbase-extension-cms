@@ -34,7 +34,7 @@ interface ITcbCmsConfing {
   // 禁用通知提示
   disableNotice: boolean
   // 微信小程序 AppId
-  mpAppId: string
+  mpAppID: string
   // CMS 文案配置
   cmsTitle: string
   // Logo 图片

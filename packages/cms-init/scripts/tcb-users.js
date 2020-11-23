@@ -1,4 +1,7 @@
 /* eslint-disable */
+/**
+ * TCB 侧新建用户
+ */
 module.exports = {
   async createUsers(context) {
     // 不能并发执行
@@ -34,13 +37,13 @@ async function enablePasswordLogin(context) {
 
 // 创建管理员账号
 async function createAdministrator(context) {
-  const { administratorName, administratorPassword, config, db, manager } = context
+  const { adminUsername, adminPassword, config, db, manager } = context
 
   return saveUser({
     manager,
     createTime: Date.now(),
-    username: administratorName,
-    password: administratorPassword,
+    username: adminUsername,
+    password: adminPassword,
     roles: ['administrator'],
     config,
     db,
@@ -50,14 +53,14 @@ async function createAdministrator(context) {
 
 // 创建运营人员账号
 async function createOperator(context) {
-  const { operatorName, operatorPassword, config, db, manager } = context
+  const { operatorUsername, operatorPassword, config, db, manager } = context
 
-  if (!operatorName || !operatorPassword) return
+  if (!operatorUsername || !operatorPassword) return
 
   return saveUser({
     manager,
     createTime: Date.now(),
-    username: operatorName,
+    username: operatorUsername,
     password: operatorPassword,
     roles: ['content:administrator'],
     config,

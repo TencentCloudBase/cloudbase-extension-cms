@@ -13,7 +13,7 @@ window.TcbCmsConfig = {
   // https://console.cloud.tencent.com/tcb/env/access
   cloudAccessPath: 'xxx-xxx.service.tcloudbase.com/tcb-ext-cms-service',
   // 微信小程序 Id
-  mpAppId: 'xx',
+  mpAppID: 'xx',
   // CMS 文案配置
   cmsTitle: 'CloudBase CMS',
   // Logo 图片

@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "lerna run dev",
-    "build": "lerna run build",
+    "build": "lerna run build --stream",
+    "build:wx": "cross-env WX_MP=true lerna run build --stream",
     "setup": "lerna bootstrap",
     "prettier": "prettier -c --write \"**/*.{ts,tsx,js,jsx,json}\"",
     "lint-staged": "lint-staged",
@@ -15,7 +16,9 @@
     "deploy": "tcb framework deploy",
     "postdeploy": "tcb fn invoke cms-init",
     "preext:zip": "rm -rf build && mkdir build && npm run build",
-    "ext:zip": "bash ./scripts/zip.sh"
+    "preext:zip-wx": "rm -rf build && mkdir build && npm run build:wx",
+    "ext:zip": "bash ./scripts/zip.sh",
+    "ext:zip-wx": "bash ./scripts/zip.sh"
   },
   "husky": {
     "hooks": {
@@ -31,6 +34,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^3.7.0",
     "@typescript-eslint/parser": "^3.7.0",
+    "cross-env": "^7.0.2",
     "eslint": "^7.5.0",
     "eslint-config-alloy": "^3.7.4",
     "eslint-formatter-pretty": "^4.0.0",

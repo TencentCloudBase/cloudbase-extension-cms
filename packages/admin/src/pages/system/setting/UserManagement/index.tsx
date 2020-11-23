@@ -33,7 +33,7 @@ export default (): React.ReactElement => {
     return <Skeleton active />
   }
 
-  const CreateUserModal = window.TcbCmsConfig.mpAppId
+  const CreateUserModal = window.TcbCmsConfig.mpAppID
     ? CreateUserWithQrCode
     : CreateUserWithUsername
 

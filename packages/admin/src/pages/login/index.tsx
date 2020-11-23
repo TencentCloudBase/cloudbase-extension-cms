@@ -3,7 +3,8 @@ import UserName from './UserName'
 import WechatCode from './WechatCode'
 
 const Login: React.FC = () => {
-  return window.TcbCmsConfig.mpAppId ? <WechatCode /> : <UserName />
+  // TODO: return window.TcbCmsConfig.mpAppID ? <WechatCode /> : <UserName />
+  return <UserName />
 }
 
 export default Login

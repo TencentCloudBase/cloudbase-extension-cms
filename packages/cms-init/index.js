@@ -2,33 +2,38 @@
 const CloudBase = require('@cloudbase/manager-node')
 const cloudbase = require('@cloudbase/node-sdk')
 
-const userJobs = require('./scripts/users')
+const tcbUserJobs = require('./scripts/tcb-users')
+const wxUserJobs = require('./scripts/wx-users')
 const deployJobs = require('./scripts/deploy')
 const migrateJobs = require('./scripts/migrate')
 
 module.exports.main = async (event, context) => {
   // 兼容小程序
-  const RESOURCE_PREFIX = process.env.WX_MP ? 'wx-ext-cms' : 'tcb-ext-cms'
+  const RESOURCE_PREFIX = process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'
   const envId = context.namespace || process.env.SCF_NAMESPACE
   const app = cloudbase.init({
     env: envId,
   })
 
   const {
-    // 管理员账号
-    CMS_ADMIN_USER_NAME: administratorName,
-    // 管理员密码
-    CMS_ADMIN_PASS_WORD: administratorPassword,
+    // 管理人员
+    CMS_ADMIN_USER_NAME: adminUsername,
+    CMS_ADMIN_PASS_WORD: adminPassword,
     // 运营人员
-    CMS_OPERATOR_USER_NAME: operatorName,
+    CMS_OPERATOR_USER_NAME: operatorUsername,
     CMS_OPERATOR_PASS_WORD: operatorPassword,
     // 部署路径
     CMS_DEPLOY_PATH: deployPath,
     // 服务自定义域名
     ACCESS_DOMAIN: accessDomain,
+    // 微信、管理员 OPENID
+    WX_ADMIN_OPENID: adminOpenID,
     // 微信小程序 AppID
-    WX_MP_APP_ID: mpAppId,
+    WX_MP_APP_ID: mpAppID,
   } = process.env
+
+  // TODO: const userJobs = WX_MP ? wxUserJobs : tcbUserJobs
+  const userJobs = tcbUserJobs
 
   const jobs = {
     // 创建管理员和运营者
@@ -55,13 +60,16 @@ module.exports.main = async (event, context) => {
       usersCollectionName: `${RESOURCE_PREFIX}-users`,
       rolesCollectionName: `${RESOURCE_PREFIX}-user-roles`,
     },
-    administratorName,
-    administratorPassword,
-    operatorName,
+    // 用户信息
+    adminUsername,
+    adminPassword,
+    adminOpenID,
+    operatorUsername,
     operatorPassword,
+    // 部署配置信息
     deployPath,
     accessDomain,
-    mpAppId,
+    mpAppID,
   }
 
   return runJobs(jobs, ctx)

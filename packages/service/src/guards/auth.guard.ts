@@ -66,7 +66,7 @@ export class GlobalAuthGuard implements CanActivate {
     }
 
     // 未登录用户
-    if (!userInfo?.username) {
+    if (!userInfo?.username && !userInfo?.openId) {
       throw new HttpException(
         {
           code: 'NO_AUTH',
