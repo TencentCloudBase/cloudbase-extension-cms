@@ -1,7 +1,7 @@
 import { mixin, Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
 
 // 合法操作
-const ALLOW_ACTIONS = ['get', 'update', 'create', 'delete']
+const ALLOW_ACTIONS = ['get', 'update', 'create', 'delete', 'set']
 
 @Injectable()
 class MixinPermissionGuard implements CanActivate {
@@ -30,7 +30,7 @@ class MixinPermissionGuard implements CanActivate {
       return false
     }
 
-    // 是否允许访问服务
+    // 是否允许访问服务：查询用户所有角色、权限对应的服务，是否包含 handleService，如果不包含，则返回
     const allowService = userRoles.find((role) =>
       role.permissions.find((_) => _.service === '*' || _.service === this.handleService)
     )
@@ -38,24 +38,41 @@ class MixinPermissionGuard implements CanActivate {
       return false
     }
 
-    // 是否允许操作
-    // HACK: 使用 Service 的函数名作为 action 判断依据：get, create, update, delete
+    // 根据 handleService 和 action 进一步判断是否允许操作
+    // HACK: 使用 Service 的函数名作为 action 判断依据：get, create, update, delete, set
     let handleAction = context.getHandler().name
     // 部分 service 使用 handleAction
     if (handleAction === 'handleAction') {
       const body = request.body as any
       handleAction = body.action
     }
+
+    console.log('测试', handleAction)
+
+    // 用户绑定的角色，对应的权限
     const allowAction = userRoles.find((role) =>
-      role.permissions.find((_) => {
-        if (_.service === this.handleService && _.action.includes('*')) {
+      role.permissions.find((permission) => {
+        // 服务需要对应
+        // action 要合法
+        if (
+          permission.service !== this.handleService ||
+          permission.action.some((action) => !ALLOW_ACTIONS.includes(action))
+        )
+          return false
+
+        // 全部 action
+        if (permission.action.includes('*')) {
           return true
         }
 
-        return _.action.find(
+        return permission.action.find(
           (action) =>
-            ALLOW_ACTIONS.includes(action) &&
-            (action === '*' || new RegExp(action).test(handleAction))
+            // 全部 action
+            action === '*' ||
+            // action 为 update，行为为 set
+            (action === 'update' && /^set/.test(handleAction)) ||
+            // 其他 action 完全对应的情况
+            new RegExp(action).test(handleAction)
         )
       })
     )
