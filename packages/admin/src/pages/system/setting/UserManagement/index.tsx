@@ -6,7 +6,6 @@ import { Skeleton, Button, Tag, Typography, Modal } from 'antd'
 import { getUsers, deleteUser } from '@/services/user'
 import { PlusOutlined } from '@ant-design/icons'
 import { getUserRoles } from '@/services/role'
-import CreateUserWithQrCode from './CreateUserWithQrCode'
 import CreateUserWithUsername from './CreateUserWithUsername'
 
 export default (): React.ReactElement => {
@@ -33,9 +32,7 @@ export default (): React.ReactElement => {
     return <Skeleton active />
   }
 
-  const CreateUserModal = window.TcbCmsConfig.mpAppID
-    ? CreateUserWithQrCode
-    : CreateUserWithUsername
+  const CreateUserModal = CreateUserWithUsername
 
   return (
     <>
@@ -69,7 +66,6 @@ export default (): React.ReactElement => {
                 size="small"
                 key="edit"
                 type="primary"
-                disabled={item?.root}
                 onClick={() => {
                   setActionState({
                     action: 'edit',

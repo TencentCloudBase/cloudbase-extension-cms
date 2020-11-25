@@ -49,9 +49,9 @@ async function writeConfigJS(manager, dir, context) {
     // https://console.cloud.tencent.com/tcb/env/access
     cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',`
 
-  // 微信小程序 Id
-  console.log('微信 AppID', mpAppID)
-  if (mpAppID) {
+  // 微信小程序，拼接更多信息
+  console.log('微信 AppID', mpAppID, process.env.WX_MP)
+  if (mpAppID || process.env.WX_MP) {
     configFileContent += `mpAppID: '${mpAppID}',
     cmsTitle: '内容管理（CMS）',
     cmsLogo: './icon-wx.svg',

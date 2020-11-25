@@ -2,8 +2,7 @@
 const CloudBase = require('@cloudbase/manager-node')
 const cloudbase = require('@cloudbase/node-sdk')
 
-const tcbUserJobs = require('./scripts/tcb-users')
-const wxUserJobs = require('./scripts/wx-users')
+const userJobs = require('./scripts/users')
 const deployJobs = require('./scripts/deploy')
 const migrateJobs = require('./scripts/migrate')
 
@@ -26,14 +25,9 @@ module.exports.main = async (event, context) => {
     CMS_DEPLOY_PATH: deployPath,
     // 服务自定义域名
     ACCESS_DOMAIN: accessDomain,
-    // 微信、管理员 OPENID
-    WX_ADMIN_OPENID: adminOpenID,
     // 微信小程序 AppID
     WX_MP_APP_ID: mpAppID,
   } = process.env
-
-  // TODO: const userJobs = WX_MP ? wxUserJobs : tcbUserJobs
-  const userJobs = tcbUserJobs
 
   const jobs = {
     // 创建管理员和运营者
@@ -63,7 +57,6 @@ module.exports.main = async (event, context) => {
     // 用户信息
     adminUsername,
     adminPassword,
-    adminOpenID,
     operatorUsername,
     operatorPassword,
     // 部署配置信息

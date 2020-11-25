@@ -1,7 +1,4 @@
 /* eslint-disable */
-/**
- * TCB 侧新建用户
- */
 module.exports = {
   async createUsers(context) {
     // 不能并发执行
