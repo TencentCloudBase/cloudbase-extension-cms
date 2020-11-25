@@ -2,6 +2,7 @@ import React from 'react'
 import { useModel } from 'umi'
 import { Tooltip, Tag, Space } from 'antd'
 import { QuestionCircleOutlined } from '@ant-design/icons'
+import { getCmsConfig } from '@/utils'
 import styles from './index.less'
 
 export type SiderTheme = 'light' | 'dark'
@@ -29,7 +30,7 @@ const GlobalHeaderRight: React.FC<{}> = () => {
   return (
     <Space className={className}>
       <Tooltip title="使用文档">
-        <a href="https://docs.cloudbase.net/cms/intro.html" target="_blank">
+        <a href={getCmsConfig('cmsDocLink')} target="_blank">
           <QuestionCircleOutlined />
         </a>
       </Tooltip>

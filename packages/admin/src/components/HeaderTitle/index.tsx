@@ -1,9 +1,8 @@
 import React from 'react'
 import { history } from 'umi'
-import logo from '@/assets/logo.svg'
 import { getCmsConfig } from '@/utils'
 
-const HeaderTitle: React.SFC<{ collapsed: boolean }> = (props) => (
+const HeaderTitle: React.FC<{ collapsed: boolean }> = (props) => (
   <a
     onClick={(e) => {
       e.stopPropagation()
@@ -11,7 +10,7 @@ const HeaderTitle: React.SFC<{ collapsed: boolean }> = (props) => (
       history.push('/home')
     }}
   >
-    <img src={logo} alt="logo" style={{ height: '35px', width: '35px' }} />
+    <img src={getCmsConfig('cmsLogo')} alt="logo" style={{ height: '35px', width: '35px' }} />
     <h1>{props.collapsed ? null : getCmsConfig('cmsTitle')}</h1>
   </a>
 )

@@ -68,6 +68,9 @@ Resources:
         Variables:
           WX_MP: "true"
           WX_MP_APP_ID: ""
+          CMS_DOC_LINK: ""
+          CMS_HELP_LINK: ""
+          CMS_OFFICIALSITE_LINK: ""
           CMS_RESOURCE_PREFIX: wx-ext-cms
           CMS_DEPLOY_PATH: "/wx-cms/"
       Role: TCB_QcsRole

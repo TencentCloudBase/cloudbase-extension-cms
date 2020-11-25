@@ -13,9 +13,9 @@ import {
   setTwoToneColor,
 } from '@ant-design/icons'
 import { useConcent } from 'concent'
-import logo from '@/assets/logo.svg'
-import defaultSettings from '../../config/defaultSettings'
 import { ContentCtx } from 'typings/store'
+import { getCmsConfig } from '@/utils'
+import defaultSettings from '../../config/defaultSettings'
 
 setTwoToneColor('#0052d9')
 
@@ -54,11 +54,11 @@ const customMenuDate: MenuDataItem[] = [
 ]
 
 const layoutProps: BasicLayoutProps = {
-  logo,
   theme: 'light',
   navTheme: 'light',
   headerHeight: 64,
   disableContentMargin: true,
+  logo: getCmsConfig('cmsLogo'),
   rightContentRender: () => <RightContent />,
   headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
   // 面包屑渲染

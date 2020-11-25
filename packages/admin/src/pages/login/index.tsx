@@ -4,7 +4,6 @@ import { useModel, history } from 'umi'
 import { getCmsConfig, getPageQuery, loginWithPassword } from '@/utils'
 import Footer from '@/components/Footer'
 import { LoginParamsType } from '@/services/login'
-import logo from '@/assets/logo.svg'
 import LoginFrom from './components'
 import styles from './index.less'
 
@@ -109,7 +108,7 @@ const Login: React.FC<{}> = () => {
           <div className={styles.top}>
             <div className={styles.header}>
               <a href="https://cloudbase.net" target="_blank">
-                <img alt="logo" className={styles.logo} src={logo} />
+                <img alt="logo" className={styles.logo} src={getCmsConfig('cmsLogo')} />
                 <span className={styles.title}>{getCmsConfig('cmsTitle')}</span>
               </a>
             </div>

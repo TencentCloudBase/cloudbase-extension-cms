@@ -2,7 +2,7 @@ import { IConfig } from 'umi'
 
 const { WX_MP } = process.env
 
-console.log('WX_MP', WX_MP)
+WX_MP && console.log('微信构建')
 
 const name = WX_MP ? '内容管理（CMS）' : 'CloudBase CMS'
 

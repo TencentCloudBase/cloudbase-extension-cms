@@ -28,7 +28,6 @@ import { useConcent } from 'concent'
 import { history, useRequest, useAccess } from 'umi'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
-import logo from '@/assets/logo.svg'
 import { getCmsNotices } from '@/services/notice'
 import { getCmsConfig, getFullDate } from '@/utils'
 import './index.less'
@@ -104,7 +103,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
     <Layout className="home">
       <Header className="header">
         <div className="left">
-          <img className="logo" src={logo} alt="logo" />
+          <img className="logo" src={getCmsConfig('cmsLogo')} alt="logo" />
           <h1 className="title">{getCmsConfig('cmsTitle')}</h1>
         </div>
         <div className="right">

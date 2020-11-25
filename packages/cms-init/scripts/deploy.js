@@ -52,12 +52,19 @@ async function writeConfigJS(manager, dir, context) {
   // 微信小程序，拼接更多信息
   console.log('微信 AppID', mpAppID, process.env.WX_MP)
   if (mpAppID || process.env.WX_MP) {
+    // 文档链接
+    const docLink = process.env.CMS_DOC_LINK || 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html'
+    // 反馈链接
+    const helpLink = process.env.CMS_HELP_LINK || 'https://developers.weixin.qq.com/community/develop/question'
+
+    const officialSiteLink = process.env.CMS_OFFICIALSITE_LINK || 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html'
+
     configFileContent += `mpAppID: '${mpAppID}',
     cmsTitle: '内容管理（CMS）',
     cmsLogo: './icon-wx.svg',
-    cmsDocLink: 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html',
-    cmsHelpLink: 'https://developers.weixin.qq.com/community/develop/question',
-    officialSiteLink: 'https://mp.weixin.qq.com/cgi-bin/wx',
+    cmsDocLink: '${docLink}',
+    cmsHelpLink: '${helpLink}',
+    officialSiteLink: '${officialSiteLink}',
     appName: '微信小程序云开发',`
   }
 
