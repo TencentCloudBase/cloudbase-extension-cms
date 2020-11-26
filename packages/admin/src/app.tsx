@@ -68,6 +68,18 @@ export async function getInitialState(): Promise<{
     settings: defaultSettings,
   }
 
+  // 已经登录成功，响应低码平台
+  if (currentUser?._id && window.parent) {
+    window.parent.postMessage(
+      JSON.stringify({
+        ack: 2,
+        from: 'cms',
+        status: 'success',
+      }),
+      '*'
+    )
+  }
+
   // 移除 loading 元素
   document.getElementById('loading')?.remove()
   return initialState

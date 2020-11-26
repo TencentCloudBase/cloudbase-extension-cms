@@ -1,5 +1,5 @@
 import { Alert, message, Button, Spin } from 'antd'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useModel, history } from 'umi'
 import { getPageQuery, loginWithPassword } from '@/utils'
 import Footer from '@/components/Footer'
@@ -59,14 +59,13 @@ const Login: React.FC<{}> = () => {
   const [type, setType] = useState<string>('account')
   const [loginErrorMessage, setLoginErrorMessage] = useState<string>('')
 
-  console.log(initialState)
-
   // 已登录
   if (initialState?.currentUser?._id && initialState?.currentUser?.username) {
     history.push('/home')
     return <Spin />
   }
 
+  // 登录
   const handleSubmit = async (values: LoginParamsType) => {
     setSubmitting(true)
     setLoginErrorMessage('')
@@ -101,6 +100,57 @@ const Login: React.FC<{}> = () => {
 
     setSubmitting(false)
   }
+
+  // 从低码平台登录
+  useEffect(() => {
+    // 监控登录信息
+    const messageListener = async (event: WindowEventMap['message']) => {
+      console.log('CMS 收到信息', event.data, event.origin)
+
+      try {
+        const data = JSON.parse(event.data)
+        if (data?.from === 'lowcode') return
+        window?.parent.postMessage(
+          JSON.stringify({
+            ack: 1,
+            from: 'cms',
+          }),
+          '*'
+        )
+
+        const { password, username } = data
+        await handleSubmit({
+          password,
+          username,
+        })
+        // 响应低码平台
+        window?.parent.postMessage(
+          JSON.stringify({
+            ack: 2,
+            from: 'cms',
+            status: 'success',
+          }),
+          '*'
+        )
+      } catch (error) {
+        // 响应低码平台
+        window?.parent.postMessage(
+          JSON.stringify({
+            ack: 2,
+            from: 'cms',
+            status: 'fail',
+            message: error.message,
+          }),
+          '*'
+        )
+      }
+    }
+
+    window.addEventListener('message', messageListener, false)
+    return () => {
+      window.removeEventListener('message', messageListener)
+    }
+  }, [])
 
   return (
     <div className={styles.container}>

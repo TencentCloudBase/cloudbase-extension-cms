@@ -66,6 +66,11 @@ const config: IConfig = {
       component: './system/setting/RoleEditor/index',
     },
     {
+      path: '/redirect',
+      exact: true,
+      component: './redirect',
+    },
+    {
       path: '/',
       exact: true,
       redirect: '/home',

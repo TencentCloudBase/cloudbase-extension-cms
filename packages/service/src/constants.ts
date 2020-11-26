@@ -1,10 +1,3 @@
-// V1 集合名
-export const CollectionV1 = {
-  Schemas: 'tcb-ext-cms-contents',
-  Users: 'tcb-ext-cms-users',
-  Webhooks: 'tcb-ext-cms-webhooks',
-}
-
 // V2 集合名
 export const CollectionV2 = {
   // 项目集合

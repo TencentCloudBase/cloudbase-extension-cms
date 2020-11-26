@@ -3,12 +3,6 @@ import { useRequest, useParams, history } from 'umi'
 import { getProject, updateProject, deleteProject } from '@/services/project'
 import { Divider, Button, Space, Typography, Form, Input, Skeleton, Modal, message } from 'antd'
 
-interface Project {
-  _id: string
-  name: string
-  description: string
-}
-
 const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
   const { projectId } = useParams<any>()
   const [modalVisible, setModalVisible] = useState(false)
