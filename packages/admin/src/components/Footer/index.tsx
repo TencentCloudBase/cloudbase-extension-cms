@@ -10,7 +10,9 @@ export default () => (
       {
         key: getCmsConfig('cmsTitle'),
         title: getCmsConfig('cmsTitle'),
-        href: getCmsConfig('officialSiteLink'),
+        href: WX_MP
+          ? 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/extensions/cms/introduction.html'
+          : getCmsConfig('officialSiteLink'),
         blankTarget: true,
       },
       {
@@ -22,7 +24,9 @@ export default () => (
       {
         key: getCmsConfig('appName'),
         title: getCmsConfig('appName'),
-        href: getCmsConfig('officialSiteLink'),
+        href: WX_MP
+          ? 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html'
+          : getCmsConfig('officialSiteLink'),
         blankTarget: true,
       },
     ]}
