@@ -80,7 +80,7 @@ const WebhookColumns: ProColumns<Webhook>[] = [
           if (_ === '*') {
             return <Typography.Text key={index}>全部</Typography.Text>
           } else {
-            return <Typography.Text key={index}>{_.displayName}</Typography.Text>
+            return <Typography.Text key={index}>{_ ? _.displayName : '空'}</Typography.Text>
           }
         })}
       </Space>
