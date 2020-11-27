@@ -53,11 +53,11 @@ async function writeConfigJS(manager, dir, context) {
   console.log('微信 AppID', mpAppID, process.env.WX_MP)
   if (mpAppID || process.env.WX_MP) {
     // 文档链接
-    const docLink = process.env.CMS_DOC_LINK || 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html'
+    const docLink = process.env.CMS_DOC_LINK || 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/extensions/cms/introduction.html'
     // 反馈链接
-    const helpLink = process.env.CMS_HELP_LINK || 'https://developers.weixin.qq.com/community/develop/question'
+    const helpLink = process.env.CMS_HELP_LINK || 'https://developers.weixin.qq.com/community/minihome/mixflow/1286298401038155776'
 
-    const officialSiteLink = process.env.CMS_OFFICIALSITE_LINK || 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html'
+    const officialSiteLink = process.env.CMS_OFFICIALSITE_LINK || 'https://mp.weixin.qq.com/cgi-bin/wx'
 
     configFileContent += `mpAppID: '${mpAppID}',
     cmsTitle: '内容管理（CMS）',

@@ -4,8 +4,7 @@ const InnerDefaultValue: Partial<ITcbCmsConfing> = {
   cmsLogo: './icon.svg',
   cmsDocLink: 'https://docs.cloudbase.net/cms/intro.html',
   cmsHelpLink: 'https://support.qq.com/products/148793',
-  officialSiteLink:
-    'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html',
+  officialSiteLink: 'https://cloudbase.net',
 }
 
 /**

@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.3.0
+Version: 2.3.1
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -19,9 +19,12 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.3.0
+  - Title: 2.3.1
     Content:
-      - 支持 RESTful API
+      - 优化首页项目展示样式
+      - 修复“修改”权限失效的问题
+      - 修复 Webhook 集合为空导致展示异常的问题
+      - 单图片/文件上传支持删除已上传图片/文件
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -68,9 +71,9 @@ Resources:
         Variables:
           WX_MP: "true"
           WX_MP_APP_ID: ""
-          CMS_DOC_LINK: ""
-          CMS_HELP_LINK: ""
-          CMS_OFFICIALSITE_LINK: ""
+          CMS_DOC_LINK: "https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/extensions/cms/introduction.html"
+          CMS_HELP_LINK: "https://developers.weixin.qq.com/community/minihome/mixflow/1286298401038155776"
+          CMS_OFFICIALSITE_LINK: "https://mp.weixin.qq.com/cgi-bin/wx"
           CMS_RESOURCE_PREFIX: wx-ext-cms
           CMS_DEPLOY_PATH: "/wx-cms/"
       Role: TCB_QcsRole
