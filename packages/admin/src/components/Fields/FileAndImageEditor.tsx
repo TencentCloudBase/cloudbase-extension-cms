@@ -119,6 +119,12 @@ export const ISingleFileUploader: React.FC<{
       <Dragger
         fileList={fileList}
         listType={type === 'image' ? 'picture' : 'text'}
+        onRemove={(file) => {
+          const newFileList = fileList.filter((_) => _.uid !== file.uid)
+          const urls = newFileList.map((file) => file.uid)
+          onChange(urls)
+          setFileList(newFileList)
+        }}
         beforeUpload={(file) => {
           setUploading(true)
           setPercent(0)
