@@ -108,8 +108,8 @@ const Login: React.FC<{}> = () => {
       console.log('CMS 收到信息', event.data, event.origin)
 
       try {
-        const data = JSON.parse(event.data)
-        if (data?.from === 'lowcode') return
+        const data = event?.data ? JSON.parse(event.data) : {}
+        if (data?.from !== 'lowcode') return
         window?.parent.postMessage(
           JSON.stringify({
             ack: 1,
@@ -133,6 +133,7 @@ const Login: React.FC<{}> = () => {
           '*'
         )
       } catch (error) {
+        if (window.parent === window.self) return
         // 响应低码平台
         window?.parent.postMessage(
           JSON.stringify({
