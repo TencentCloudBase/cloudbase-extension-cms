@@ -122,7 +122,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
         )}
       </Content>
       <Footer className="text-center">
-        {getCmsConfig('cmsTitle')}
+        {getCmsConfig('cmsTitle')}&nbsp;
         {pkg.version}
       </Footer>
 
