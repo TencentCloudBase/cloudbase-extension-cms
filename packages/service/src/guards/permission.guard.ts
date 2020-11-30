@@ -54,11 +54,7 @@ class MixinPermissionGuard implements CanActivate {
       role.permissions.find((permission) => {
         // 服务需要对应
         // action 要合法
-        if (
-          permission.service !== this.handleService ||
-          permission.action.some((action) => !ALLOW_ACTIONS.includes(action))
-        )
-          return false
+        if (permission.service !== this.handleService) return false
 
         // 全部 action
         if (permission.action.includes('*')) {

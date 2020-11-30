@@ -1,5 +1,5 @@
 import { Alert, message, Button, Spin } from 'antd'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useModel, history } from 'umi'
 import { getCmsConfig, getPageQuery, loginWithPassword } from '@/utils'
 import Footer from '@/components/Footer'
@@ -100,6 +100,58 @@ const Login: React.FC<{}> = () => {
 
     setSubmitting(false)
   }
+
+  // 从低码平台登录
+  useEffect(() => {
+    // 监控登录信息
+    const messageListener = async (event: WindowEventMap['message']) => {
+      console.log('CMS 收到信息', event.data, event.origin)
+
+      try {
+        const data = event?.data ? JSON.parse(event.data) : {}
+        if (data?.from !== 'lowcode') return
+        window?.parent.postMessage(
+          JSON.stringify({
+            ack: 1,
+            from: 'cms',
+          }),
+          '*'
+        )
+
+        const { password, username } = data
+        await handleSubmit({
+          password,
+          username,
+        })
+        // 响应低码平台
+        window?.parent.postMessage(
+          JSON.stringify({
+            ack: 2,
+            from: 'cms',
+            status: 'success',
+          }),
+          '*'
+        )
+      } catch (error) {
+        if (window.parent === window.self) return
+        // 响应低码平台
+        window?.parent.postMessage(
+          JSON.stringify({
+            ack: 2,
+            from: 'cms',
+            status: 'fail',
+            message: error.message,
+          }),
+          '*'
+        )
+      }
+    }
+
+    window.addEventListener('message', messageListener, false)
+    return () => {
+      window.removeEventListener('message', messageListener)
+    }
+  }, [])
 
   return (
     <div className={styles.container}>
