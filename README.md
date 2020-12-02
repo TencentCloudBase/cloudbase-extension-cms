@@ -49,7 +49,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 
 [![](https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg)](https://console.cloud.tencent.com/tcb/env/index?action=CreateAndDeployCloudBaseProject&tdl_anchor=github&tdl_site=0&appUrl=https://github.com/TencentCloudBase/cloudbase-extension-cms)
 
-**注：一键部署使用云托管部署，会收取运行费用，计费标准[参考文档](https://cloud.tencent.com/document/product/1243/48037)。**
+**注：一键部署使用云托管部署，将会运行费用，计费标准[参考文档](https://cloud.tencent.com/document/product/1243/48037)。**
 
 ### 扩展安装
 

@@ -9,8 +9,8 @@
         "use": "@cloudbase/framework-plugin-website",
         "inputs": {
           "outputPath": "./packages/admin/dist",
-          "installCommand": "echo \"Skip Install\"",
-          "buildCommand": "echo \"Skip Build \"",
+          "installCommand": "echo 'Skip Install'",
+          "buildCommand": "echo 'Skip Build '",
           "cloudPath": "{{env.deployPath}}"
         }
       },
