@@ -39,6 +39,26 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 | 数据源兼容 | 支持管理已有的云开发数据，也可以在 CMS 后台创建新的内容和数据集合          |
 | 部署简单   | 可在云开发控制台扩展管理界面一键部署和升级，也可通过项目提供的脚本自动部署 |
 
+## 🚀 快速开始
+
+你可以通过下面的方式快速部署 CloudBase CMS
+
+### 一键部署
+
+使用一键部署，将 CMS 部署到云托管。
+
+[![](https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg)](https://console.cloud.tencent.com/tcb/env/index?action=CreateAndDeployCloudBaseProject&tdl_anchor=github&tdl_site=0&appUrl=https://github.com/TencentCloudBase/cloudbase-extension-cms)
+
+**注：一键部署使用云托管部署，会收取运行费用，计费标准[参考文档](https://cloud.tencent.com/document/product/1243/48037)。**
+
+### 扩展安装
+
+在[云开发控制台](https://console.cloud.tencent.com/tcb/extensions/index)安装
+
+### 源码部署
+
+参考 CMS 使用说明[文档](https://docs.cloudbase.net/cms/install/source.html)
+
 ## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
 
 ![](https://main.qcloudimg.com/raw/9fde303ac81a3d3028552f73337726ee.png)
@@ -50,18 +70,6 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 - ❤️ React
 - ❤️ Node.js + Nest.js + [CloudBase](https://cloudbase.net)
 - ❤️ TypeScript
-
-## 🚀 快速开始
-
-你可以通过下面的方式快速部署 CloudBase CMS
-
-### 扩展安装
-
-在[云开发控制台](https://console.cloud.tencent.com/tcb/extensions/index)安装
-
-### 源码部署
-
-参考 CMS 使用说明[文档](https://docs.cloudbase.net/cms/install/source.html)
 
 ## 使用案例
 
