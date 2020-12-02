@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "envId": "{{env.TCB_ENVID}}",
+  "envId": "{{env.ENV_ID}}",
   "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
   "framework": {
     "name": "cloudbase-extension-cms0",
@@ -49,7 +49,7 @@
           "uploadType": "package",
           "containerPort": 5000,
           "envVariables": {
-            "TCB_ENVID": "{{env.TCB_ENVID}}",
+            "TCB_ENVID": "{{env.ENV_ID}}",
             "NODE_ENV": "production"
           }
         }
