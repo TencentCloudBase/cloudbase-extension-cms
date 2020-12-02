@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "lerna run dev",
-    "build": "lerna run build --stream",
+    "build": "cross-env SERVER_MODE=true lerna run build --stream",
     "build:wx": "cross-env WX_MP=true lerna run build --stream",
     "setup": "lerna bootstrap",
     "prettier": "prettier -c --write \"**/*.{ts,tsx,js,jsx,json}\"",

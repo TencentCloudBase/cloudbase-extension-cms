@@ -9,7 +9,7 @@
         "type": "execCommand",
         "commands": [
           "bash ./scripts/setup.sh",
-          "cross-env SERVER_MODE=true lerna run build --stream"
+          "npm run build"
         ]
       },
       "postDeploy": {
