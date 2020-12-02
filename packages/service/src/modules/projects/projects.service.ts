@@ -1,12 +1,12 @@
 import { RecordExistException } from '@/common'
 import { Functions } from '@/constants'
-import { getCloudBaseManager } from '@/utils'
+import { getCloudBaseManager, isRunInContainer, isRunInServerMode } from '@/utils'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class ProjectsService {
   async deleteApiAccessPath(path: string) {
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
     // 查询 apiId
     const {
       APISet: [accessPath],
@@ -24,7 +24,7 @@ export class ProjectsService {
   }
 
   async createApiAccessPath(path: string) {
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
 
     // 查询 path 是否已经绑定了其他的云函数/云托管服务
     const {

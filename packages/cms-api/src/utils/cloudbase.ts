@@ -82,3 +82,9 @@ export function cloudIdToUrl(cloudId: string) {
 
   return `//${trimBucket}.tcb.qcloud.la/${path}`
 }
+
+// 以服务器模式运行，即通过监听端口的方式运行
+export const isRunInServerMode = () =>
+  process.env.NODE_ENV === 'development' ||
+  !process.env.TENCENTCLOUD_RUNENV ||
+  !!process.env.KUBERNETES_SERVICE_HOST

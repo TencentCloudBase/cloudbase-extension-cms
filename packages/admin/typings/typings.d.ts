@@ -29,6 +29,8 @@ interface ITcbCmsConfing {
   envId: string
   // 云接入域名
   cloudAccessPath: string
+  // 容器模式时的路径
+  containerAccessPath: string
   // 禁用帮助按钮
   disableHelpButton: boolean
   // 禁用通知提示
@@ -65,6 +67,8 @@ interface Window {
 declare let ga: Function
 
 declare const WX_MP: boolean
+
+declare const SERVER_MODE: boolean
 
 // preview.pro.ant.design only do not use in your production ;
 // preview.pro.ant.design 专用环境变量，请不要在你的项目中使用它。

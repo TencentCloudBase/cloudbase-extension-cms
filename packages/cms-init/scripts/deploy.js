@@ -47,7 +47,8 @@ async function writeConfigJS(manager, dir, context) {
     envId: '${envId}',
     // 云接入默认域名/自定义域名，不带 https 协议符
     // https://console.cloud.tencent.com/tcb/env/access
-    cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',`
+    cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
+    containerAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service-container',`
 
   // 微信小程序，拼接更多信息
   console.log('微信 AppID', mpAppID, process.env.WX_MP)

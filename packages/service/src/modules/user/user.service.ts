@@ -6,7 +6,7 @@ import { EndUserInfo } from '@cloudbase/manager-node/types/interfaces'
 export class UserService {
   // 用户名密码登录 => 注册用户信息
   async createUser(username: string, password: string): Promise<EndUserInfo> {
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
 
     console.log(username)
 
@@ -21,7 +21,7 @@ export class UserService {
   }
 
   async deleteUser(uuid: string) {
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
     return manager.user.deleteEndUsers({
       userList: [uuid],
     })
@@ -29,7 +29,7 @@ export class UserService {
 
   async updateUserInfo(uuid: string, data: { username: string; password: string }) {
     const { username, password } = data
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
     return manager.user.modifyEndUser({
       uuid,
       username,

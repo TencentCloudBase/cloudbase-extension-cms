@@ -8,14 +8,6 @@ export interface LoginParamsType {
   type?: string
 }
 
-export async function accountLogin(params: LoginParamsType) {
-  return tcbRequest<API.LoginStateType>('/auth/login', {
-    method: 'POST',
-    data: params,
-    skipErrorHandler: true,
-  })
-}
-
 export async function getFakeCaptcha(mobile: string) {
   return tcbRequest(`/login/captcha?mobile=${mobile}`)
 }

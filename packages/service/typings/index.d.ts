@@ -20,6 +20,9 @@ interface User {
 
   // cloudbase uuid
   uuid: string
+
+  // 是否为 root 用户
+  root?: boolean
 }
 
 interface UserRole {

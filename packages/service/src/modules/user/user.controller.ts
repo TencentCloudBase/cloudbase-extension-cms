@@ -7,9 +7,10 @@ import {
   Param,
   Controller,
   UseInterceptors,
-  ClassSerializerInterceptor,
-  UseGuards,
   Patch,
+  Request,
+  UseGuards,
+  ClassSerializerInterceptor,
 } from '@nestjs/common'
 import _ from 'lodash'
 import { PermissionGuard } from '@/guards'
@@ -83,7 +84,11 @@ export class UserController {
   }
 
   @Patch(':id')
-  async updateUser(@Param('id') id: string, @Body() payload: Partial<User>) {
+  async updateUser(
+    @Param('id') id: string,
+    @Body() payload: Partial<User>,
+    @Request() req: AuthRequest
+  ) {
     const query = this.collection().doc(id)
     const {
       data: [userInfo],
@@ -93,7 +98,8 @@ export class UserController {
       throw new RecordNotExistException('用户不存在')
     }
 
-    if (userInfo.root) {
+    // 只有 root 用户才能修改 root 用户的信息
+    if (userInfo.root && !req.cmsUser.root) {
       throw new UnauthorizedOperation('无法操作超级管理员')
     }
 
@@ -123,6 +129,7 @@ export class UserController {
       throw new RecordNotExistException('用户不存在')
     }
 
+    // root 用户不能删除
     if (user.root) {
       throw new UnauthorizedOperation('无法操作超级管理员')
     }

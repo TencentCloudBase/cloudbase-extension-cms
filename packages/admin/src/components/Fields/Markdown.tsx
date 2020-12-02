@@ -82,6 +82,8 @@ export const MarkdownEditor: React.FC<{
         headers: authHeader,
         url: isDevEnv()
           ? '/api/v1.0/upload'
+          : SERVER_MODE
+          ? `https://${window.TcbCmsConfig.containerAccessPath}/api/v1.0/upload`
           : `https://${window.TcbCmsConfig.cloudAccessPath}/api/v1.0/upload`,
       },
       theme: 'classic',

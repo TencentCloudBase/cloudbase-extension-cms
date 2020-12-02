@@ -1,13 +1,13 @@
 import React from 'react'
 import { run } from 'concent'
 import { notification, message, Typography } from 'antd'
-import { ResponseError } from 'umi-request'
+import { Context, ResponseError } from 'umi-request'
 import { history, RequestConfig } from 'umi'
 import { codeMessage } from '@/constants'
 import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout'
 import { queryCurrent } from './services/user'
 import defaultSettings from '../config/defaultSettings'
-import { getCloudBaseApp, isDevEnv } from './utils'
+import { getAuthHeaderAsync, getCloudBaseApp, isDevEnv } from './utils'
 import * as models from './models'
 
 run(models)
@@ -151,6 +151,24 @@ const errorHandler = async (error: ResponseError) => {
  * 全局 request 配置
  */
 export const request: RequestConfig = {
+  middlewares: [
+    async (ctx: Context, next: () => void) => {
+      // 以 SERVER_MODE 运行时，添加 auth header
+      // 获取通知时，不需要 auth header
+      if ((SERVER_MODE || isDevEnv()) && !ctx.req.url.includes('tcli.service')) {
+        const res = await getAuthHeaderAsync()
+        const { options } = ctx.req
+        ctx.req.options = {
+          ...options,
+          headers: {
+            ...options?.headers,
+            'x-cloudbase-credentials': res['x-cloudbase-credentials'],
+          },
+        }
+      }
+      await next()
+    },
+  ],
   errorHandler,
   errorConfig: {
     adaptor: (resData) => {
@@ -163,5 +181,7 @@ export const request: RequestConfig = {
   },
   prefix: isDevEnv()
     ? defaultSettings.globalPrefix
+    : SERVER_MODE
+    ? `https://${window.TcbCmsConfig.containerAccessPath}${defaultSettings.globalPrefix}`
     : `https://${window.TcbCmsConfig.cloudAccessPath}${defaultSettings.globalPrefix}`,
 }

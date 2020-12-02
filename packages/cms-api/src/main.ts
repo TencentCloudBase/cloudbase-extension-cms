@@ -2,12 +2,13 @@ import helmet from 'helmet'
 import express from 'express'
 import { NestFactory } from '@nestjs/core'
 import { ValidationPipe } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express'
 import { AppModule } from './app.module'
 import { GlobalAuthGuard } from './guards/auth.guard'
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { AllExceptionsFilter } from './exceptions.filter'
-import { ConfigService } from '@nestjs/config'
+import { isRunInServerMode } from './utils'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -15,7 +16,7 @@ const port = process.env.SERVER_PORT || 5001
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, adapter, {
-    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+    logger: ['log', 'error', 'warn'],
   })
 
   const config = app.get(ConfigService)
@@ -56,7 +57,7 @@ export async function bootstrap() {
   app.disable('x-powered-by')
 
   // 兼容云函数与本地开发
-  if (process.env.NODE_ENV === 'development') {
+  if (isRunInServerMode()) {
     await app.listen(port)
   } else {
     await app.init()
@@ -65,7 +66,7 @@ export async function bootstrap() {
   return expressApp
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (isRunInServerMode()) {
   bootstrap().then(() => {
     console.log(`\n> 🚀 App listen on http://localhost:${port}`)
   })

@@ -3,14 +3,14 @@
   "envId": "{{env.TCB_ENVID}}",
   "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
   "framework": {
-    "name": "cloudbase-extension-cms0",
+    "name": "cloudbase-extension-cms",
     "plugins": {
       "admin": {
         "use": "@cloudbase/framework-plugin-website",
         "inputs": {
           "outputPath": "./packages/admin/dist",
           "installCommand": "echo \"Skip Install\"",
-          "buildCommand": "echo \"Skip Build \"",
+          "buildCommand": "echo \"Skip Build\"",
           "cloudPath": "{{env.deployPath}}"
         }
       },
@@ -21,8 +21,8 @@
           "functions": [
             {
               "name": "tcb-ext-cms-init",
-              "functionDistPath": "cms-init",
               "timeout": 60,
+              "functionDistPath": "cms-init",
               "envVariables": {
                 "CMS_ADMIN_USER_NAME": "{{env.administratorName}}",
                 "CMS_ADMIN_PASS_WORD": "{{env.administratorPassword}}",
@@ -38,19 +38,24 @@
         }
       },
       "service": {
-        "use": "@cloudbase/framework-plugin-container",
+        "use": "@cloudbase/framework-plugin-function",
         "inputs": {
-          "minNum": 0,
-          "cpu": 0.25,
-          "mem": 0.5,
-          "serviceName": "tcb-ext-cms-service",
-          "servicePath": "/tcb-ext-cms-service-container",
-          "localPath": "./packages/service",
-          "uploadType": "package",
-          "containerPort": 5000,
-          "envVariables": {
-            "TCB_ENVID": "{{env.TCB_ENVID}}",
-            "NODE_ENV": "production"
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "tcb-ext-cms-service",
+              "timeout": 15,
+              "memory": 256,
+              "handler": "index.main",
+              "runtime": "Nodejs10.15",
+              "functionDistPath": "service",
+              "envVariables": {
+                "NODE_ENV": "production"
+              }
+            }
+          ],
+          "servicePaths": {
+            "tcb-ext-cms-service": "/tcb-ext-cms-service"
           }
         }
       },

@@ -9,20 +9,12 @@ import { getFullDate } from './date'
 let app: any
 let auth: any
 
+initCloudBaseApp()
+
+/**
+ * 获取 CloudBase App 实例
+ */
 export async function getCloudBaseApp() {
-  if (!app) {
-    const { envId } = window.TcbCmsConfig || {}
-    app = window.cloudbase.init({
-      env: envId,
-      // 默认可用区为上海
-      region: window.TcbCmsConfig.region || 'ap-shanghai',
-    })
-  }
-
-  if (!auth) {
-    auth = app.auth({ persistence: 'local' })
-  }
-
   const loginState = await auth.getLoginState()
 
   if (!loginState && !isDevEnv()) {
@@ -33,18 +25,8 @@ export async function getCloudBaseApp() {
   return app
 }
 
-// 用户名密码登录
-export async function loginWithPassword(username: string, password: string) {
-  if (!auth) {
-    const app = await getCloudBaseApp()
-    auth = app.auth({ persistence: 'local' })
-  }
-
-  // 登陆
-  await auth.signInWithUsernameAndPassword(username, password)
-}
-
-export function getAuthHeader() {
+// 初始化 app 实例
+function initCloudBaseApp() {
   if (!app) {
     const { envId } = window.TcbCmsConfig || {}
     app = window.cloudbase.init({
@@ -52,18 +34,48 @@ export function getAuthHeader() {
       // 默认可用区为上海
       region: window.TcbCmsConfig.region || 'ap-shanghai',
     })
+    console.log('init cloudbase app')
   }
 
-  const auth = app.auth()
+  if (!auth) {
+    console.log('init cloudbase app auth')
+    auth = app.auth({ persistence: 'local' })
+  }
+}
+
+// 用户名密码登录
+export async function loginWithPassword(username: string, password: string) {
+  // 登陆
+  await auth.signInWithUsernameAndPassword(username, password)
+}
+
+export function getAuthHeader() {
   return auth.getAuthHeader()
 }
 
-export async function logout() {
-  if (!auth) {
-    const app = await getCloudBaseApp()
-    auth = app.auth({ persistence: 'local' })
+let gotAuthHeader = false
+
+/**
+ * 获取 x-cloudbase-credentials 请求 Header
+ */
+export async function getAuthHeaderAsync() {
+  // 直接读取本地
+  let res = auth.getAuthHeader()
+
+  // TODO: 当期 SDK 同步获取的 token 可能是过期的
+  // 临时解决办法：在首次获取时，刷新 token
+  if (!res?.['x-cloudbase-credentials'] || !gotAuthHeader) {
+    res = await auth.getAuthHeaderAsync()
+    gotAuthHeader = true
   }
 
+  return res
+}
+
+/**
+ * 退出登录
+ */
+export async function logout() {
   await auth.signOut()
 }
 
@@ -72,11 +84,7 @@ export async function tcbRequest<T = any>(
   url: string,
   options: RequestOptionsInit & { skipErrorHandler?: boolean } = {}
 ): Promise<T> {
-  if (url === '/auth/login' && !isDevEnv()) {
-    return request<T>(url, options)
-  }
-
-  if (isDevEnv()) {
+  if (isDevEnv() || SERVER_MODE) {
     return request<T>(url, options)
   }
 
@@ -86,12 +94,13 @@ export async function tcbRequest<T = any>(
   const functionName = WX_MP ? 'wx-ext-cms-service' : 'tcb-ext-cms-service'
 
   const res = await app.callFunction({
+    parse: true,
     name: functionName,
     data: {
-      path: `${defaultSettings.globalPrefix}${url}`,
+      body: data,
       httpMethod: method,
       queryStringParameters: params,
-      body: data,
+      path: `${defaultSettings.globalPrefix}${url}`,
     },
   })
 
@@ -106,10 +115,10 @@ export async function tcbRequest<T = any>(
   // 转化响应值
   let body
   try {
-    body = JSON.parse(res.result.body)
+    body = typeof res.result.body === 'string' ? JSON.parse(res.result.body) : res.result.body
   } catch (error) {
+    body = res.result.body
     console.log(error)
-    body = {}
   }
 
   if (body?.error) {

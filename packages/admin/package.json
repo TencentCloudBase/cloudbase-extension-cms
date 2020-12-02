@@ -7,7 +7,7 @@
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
     "deploy": "npm run site && npm run gh-pages",
-    "dev": "npm run start:dev",
+    "dev": "cross-env SERVER_MODE=true npm run start:dev",
     "postinstall": "umi g tmp",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none UMI_UI=none umi dev",
     "start:pre": "cross-env REACT_APP_ENV=pre umi dev",

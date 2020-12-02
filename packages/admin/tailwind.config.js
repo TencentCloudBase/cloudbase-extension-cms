@@ -7,6 +7,9 @@ module.exports = {
       80: '80%',
     },
   },
+  purge: [
+    './src/**/*.tsx',
+  ],
   variants: {},
   plugins: [],
 }

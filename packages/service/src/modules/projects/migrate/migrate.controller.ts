@@ -72,7 +72,7 @@ export class MigrateController {
 
     const { total } = await dbQuery.count()
     const { data } = await dbQuery.get()
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
     if (!data?.length) {
       return {
         total: 0,
@@ -107,7 +107,7 @@ export class MigrateController {
     @Request() req: AuthRequest
   ) {
     const { filePath, collectionName, conflictMode } = body
-    const manager = getCloudBaseManager()
+    const manager = await getCloudBaseManager()
     const fileKey = `cloudbase-cms/${filePath}`
 
     // 导入数据

@@ -15,6 +15,7 @@ import { ContextInterceptor } from './interceptors/context.interceptor'
 
 import { AllExceptionsFilter } from './exceptions.filter'
 import config from './config'
+import { isRunInServerMode } from './utils'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -66,7 +67,7 @@ export async function bootstrap() {
   app.setGlobalPrefix(config.globalPrefix)
 
   // 兼容云函数与本地开发
-  if (process.env.NODE_ENV === 'development') {
+  if (isRunInServerMode()) {
     await app.listen(port)
   } else {
     await app.init()
@@ -75,7 +76,7 @@ export async function bootstrap() {
   return expressApp
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (isRunInServerMode()) {
   bootstrap().then(() => {
     console.log(`App listen on http://localhost:${port}`)
   })

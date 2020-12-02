@@ -4,6 +4,7 @@ import {
   BellOutlined,
   MessageOutlined,
   setTwoToneColor,
+  CodeSandboxOutlined,
 } from '@ant-design/icons'
 import {
   Card,
@@ -36,6 +37,11 @@ import pkg from '../../package.json'
 setTwoToneColor('#0052d9')
 
 const { Header, Content, Footer } = Layout
+const IconStyle: React.CSSProperties = {
+  fontSize: '1.8em',
+  fontWeight: 'bold',
+  color: '#fff',
+}
 
 export default (): React.ReactNode => {
   const ctx = useConcent('$$global')
@@ -107,6 +113,17 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
           <h1 className="title">{getCmsConfig('cmsTitle')}</h1>
         </div>
         <div className="right">
+          {SERVER_MODE && (
+            <Tooltip title="当前 CMS 以容器服务模式运行">
+              <CodeSandboxOutlined
+                style={{
+                  ...IconStyle,
+                  marginTop: '3px',
+                  marginRight: '10px',
+                }}
+              />
+            </Tooltip>
+          )}
           {window.TcbCmsConfig.disableNotice ? null : <NoticeRender />}
           <AvatarDropdown />
         </div>
@@ -208,13 +225,7 @@ export const NoticeRender: React.FC = () => {
         }}
       >
         <Badge count={unReadNoticeCount} overflowCount={10}>
-          <BellOutlined
-            style={{
-              fontSize: '1.8em',
-              fontWeight: 'bold',
-              color: '#fff',
-            }}
-          />
+          <BellOutlined style={IconStyle} />
         </Badge>
       </Button>
       <Drawer

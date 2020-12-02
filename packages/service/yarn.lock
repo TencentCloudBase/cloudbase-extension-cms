@@ -112,9 +112,9 @@
     query-string "^6.8.3"
     walkdir "^0.4.1"
 
-"@cloudbase/node-sdk@^2.4.2-beta":
+"@cloudbase/node-sdk@2.4.2-beta":
   version "2.4.2-beta"
-  resolved "http://r.tnpm.oa.com/@cloudbase%2fnode-sdk/-/node-sdk-2.4.2-beta.tgz#92061084aa57fbc2aeb92c293c4c2932867482aa"
+  resolved "https://registry.yarnpkg.com/@cloudbase/node-sdk/-/node-sdk-2.4.2-beta.tgz#92061084aa57fbc2aeb92c293c4c2932867482aa"
   integrity sha512-LTkZ+xXn4ac2Ra8YoO0+C1o5g4Zf/PJgT5813u0UtNgBooqCAoLgdg/vmetytdrgEfVH82RMK+g9xdn/5jvNQg==
   dependencies:
     "@cloudbase/database" "1.2.2"
