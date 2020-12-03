@@ -1,13 +1,20 @@
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
+import { Response } from 'express'
 import { Injectable, ExecutionContext, CallHandler, NestInterceptor } from '@nestjs/common'
 
 @Injectable()
 export class TimeCost implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const start = Date.now()
-    // const req = context.switchToHttp().getRequest()
-    // const log = `${req.method}:  ${req.url}\nBody: ${JSON.stringify(req.body)}`
-    return next.handle().pipe(tap(() => console.log(`Time: ${Date.now() - start} ms\n`)))
+    return next.handle().pipe(
+      tap(() => {
+        const res = context.switchToHttp().getResponse() as Response
+        // 计算请求耗时，并添加到 header
+        const timeCost = Date.now() - res.locals.cost
+        res.header('x-request-cost', `${timeCost}`)
+
+        console.log(`> 请求处理耗时： ${timeCost} ms`)
+      })
+    )
   }
 }
