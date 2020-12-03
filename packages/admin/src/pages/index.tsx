@@ -141,6 +141,7 @@ const HomePage: React.FC<{ loading: boolean }> = ({ children, loading }) => {
       <Footer className="text-center">
         {getCmsConfig('cmsTitle')}&nbsp;
         {pkg.version}
+        {SERVER_MODE && ` - Stone`}
       </Footer>
 
       {/* 悬浮按钮 */}

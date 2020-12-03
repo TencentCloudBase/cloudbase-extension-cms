@@ -43,13 +43,13 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 
 你可以通过下面的方式快速部署 CloudBase CMS
 
-### 一键部署
+<!-- ### 一键部署
 
 使用一键部署，将 CMS 部署到云托管。
 
 [![](https://main.qcloudimg.com/raw/67f5a389f1ac6f3b4d04c7256438e44f.svg)](https://console.cloud.tencent.com/tcb/env/index?action=CreateAndDeployCloudBaseProject&tdl_anchor=github&tdl_site=0&appUrl=https://github.com/TencentCloudBase/cloudbase-extension-cms)
 
-**注：一键部署使用云托管部署，将会运行费用，计费标准[参考文档](https://cloud.tencent.com/document/product/1243/48037)。**
+**注：一键部署使用云托管部署，将会运行费用，计费标准[参考文档](https://cloud.tencent.com/document/product/1243/48037)。** -->
 
 ### 扩展安装
 
@@ -131,6 +131,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 如果在使用、安装过程中有任何问题，或者建议，欢迎加群讨论、反馈问题，或加云开发小助手微信： Tcloudedu1，发送 CloudBase CMS 入群。
 
 <div align="center">
+  <img src="https://main.qcloudimg.com/raw/c78005f04eb42e64e687cb690798af13.png" height="300px" />
   <img src="https://main.qcloudimg.com/raw/b0e6c47ee41ef561cd02ec9e2af6c3b1.jpg" height="300px" alt=""/>
   <img src="https://main.qcloudimg.com/raw/a07b103a276b42fa727102e66c54f787.jpg" height="300px" alt=""/>
 </div>
