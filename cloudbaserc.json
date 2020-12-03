@@ -7,10 +7,7 @@
     "hooks": {
       "preDeploy": {
         "type": "execCommand",
-        "commands": [
-          "bash ./scripts/setup.sh",
-          "npm run build"
-        ]
+        "commands": ["bash ./scripts/setup.sh", "npm run build"]
       },
       "postDeploy": {
         "type": "callFunction",
@@ -57,7 +54,7 @@
       "service": {
         "use": "@cloudbase/framework-plugin-container",
         "inputs": {
-          "minNum": 0,
+          "minNum": 1,
           "cpu": 0.25,
           "mem": 0.5,
           "serviceName": "tcb-ext-cms-service",
@@ -136,6 +133,66 @@
               "aclTag": "ADMINONLY"
             }
           ]
+        }
+      }
+    },
+    "requirement": {
+      "environment": {
+        "administratorName": {
+          "description": "管理员账号，字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32",
+          "required": true,
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$",
+              "flag": "g"
+            },
+            "errorMessage": "账号不符合规范"
+          }
+        },
+        "administratorPassword": {
+          "description": "管理员密码，长度必需大于 8 位，不能由纯数字或纯字母组成",
+          "required": true,
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "[^a-zA-Z]",
+              "flag": ""
+            },
+            "errorMessage": "密码不符合规范"
+          }
+        },
+        "operatorName": {
+          "description": "运营者账号（字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32，不能和管理员账号相同）",
+          "required": true,
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$",
+              "flag": "g"
+            },
+            "errorMessage": "账号不符合规范"
+          }
+        },
+        "operatorPassword": {
+          "description": "运营者密码，长度必需大于 8 位，不能由纯数字或纯字母组成",
+          "required": true,
+          "validation": {
+            "rule": {
+              "type": "RegExp",
+              "pattern": "[^a-zA-Z]",
+              "flag": ""
+            },
+            "errorMessage": "密码不符合规范"
+          }
+        },
+        "deployPath": {
+          "description": "部署路径",
+          "required": true,
+          "default": "/tcb-cms/"
+        },
+        "accessDomain": {
+          "description": "HTTP 访问服务域名（选填）"
         }
       }
     }
