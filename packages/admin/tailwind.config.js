@@ -1,4 +1,5 @@
 module.exports = {
+  important: true,
   theme: {
     color: {
       primary: '#0052d9',

@@ -4,6 +4,7 @@ import { useConcent } from 'concent'
 import { SchmeaCtx } from 'typings/store'
 import { createSchema, updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Typography } from 'antd'
+import { SYSTEM_FIELDS } from '@/common'
 
 const { TextArea } = Input
 
@@ -33,6 +34,7 @@ const SchemaEditor: React.FC = () => {
           displayName,
           collectionName,
           description,
+          fields: SYSTEM_FIELDS,
         })
       }
 

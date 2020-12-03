@@ -27,6 +27,9 @@ interface SchemaField {
   isOrderField: boolean
   orderDirection: 'asc' | 'desc'
 
+  // 是否为系统内置字段
+  isSystem: boolean
+
   // 是否唯一
   isUnique: boolean
 

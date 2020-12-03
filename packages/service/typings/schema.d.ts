@@ -17,6 +17,9 @@ interface SchemaField {
   // 字段描述
   description: string
 
+  // 是否为系统内置字段
+  isSystem: boolean
+
   // 是否隐藏
   isHidden: boolean
 

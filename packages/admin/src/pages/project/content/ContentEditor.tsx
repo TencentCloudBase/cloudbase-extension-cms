@@ -20,6 +20,7 @@ const ContentEditor: React.FC = () => {
 
   // 表单初始值
   const initialValues = getInitialValues(contentAction, schema, selectedContent)
+
   // 创建/更新内容
   const { run, loading } = useRequest(
     async (payload: any) => {
@@ -74,7 +75,9 @@ const ContentEditor: React.FC = () => {
                 </Form.Item>
               )}
 
-              {schema?.fields?.map((filed, index) => getFieldFormItem(filed, index))}
+              {schema?.fields
+                ?.filter((_) => !_.isSystem)
+                .map((filed, index) => getFieldFormItem(filed, index))}
 
               <Form.Item>
                 <Row>

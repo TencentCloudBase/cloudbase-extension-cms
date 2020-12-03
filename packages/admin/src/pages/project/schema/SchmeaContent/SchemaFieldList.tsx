@@ -31,8 +31,8 @@ const SchemaFields: React.FC = () => {
 
   return currentSchema?.fields?.length ? (
     <SchemaFieldRender
-      onFiledClick={(field) => editFiled(field)}
       schema={currentSchema}
+      onFiledClick={(field) => editFiled(field)}
       actionRender={(field) => (
         <Space>
           <Button

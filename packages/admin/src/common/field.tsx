@@ -105,3 +105,24 @@ export const FieldTypes = [
   // 数组：`Array<Value>`
   // 内容关联（外键）：分组与搜索，多层弹窗？
 ]
+
+export const SYSTEM_FIELDS: any[] = [
+  {
+    displayName: '创建时间',
+    id: '_createTime',
+    name: '_createTime',
+    type: 'DateTime',
+    isSystem: true,
+    dateFormatType: 'timestamp-ms',
+    description: '系统字段，请勿随意修改',
+  },
+  {
+    displayName: '修改时间',
+    id: '_updateTime',
+    name: '_updateTime',
+    type: 'DateTime',
+    isSystem: true,
+    dateFormatType: 'timestamp-ms',
+    description: '系统字段，请勿随意修改',
+  },
+]

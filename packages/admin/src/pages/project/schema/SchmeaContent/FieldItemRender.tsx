@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { FieldTypes } from '@/common'
+import React, { useMemo, useState } from 'react'
+import { FieldTypes, SYSTEM_FIELDS } from '@/common'
 import { Card, Space, Typography, Tooltip, Switch, Popover, Tag, Spin } from 'antd'
 import { ExclamationCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
@@ -72,14 +72,14 @@ export const SchemaFieldRender: React.FC<{
 
   return (
     <div>
-      <SchemaSystemField />
+      <SchemaSystemField {...props} />
       <Spin tip="加载中" spinning={loading || sortLoading}>
         <DragDropContext onDragEnd={handleDragSort}>
           <Droppable droppableId="droppable">
             {(droppableProvided) => (
               <div ref={droppableProvided.innerRef}>
                 {schema?.fields
-                  ?.filter((_) => _)
+                  ?.filter((_) => _ && !_.isSystem)
                   .sort((prev, next) => prev.order - next.order)
                   .map((field, index) => {
                     const type = FieldTypes.find((_) => _.type === field.type)
@@ -132,27 +132,20 @@ export const SchemaFieldRender: React.FC<{
   )
 }
 
-const SYSTEM_FIELDS = [
-  {
-    displayName: '创建时间',
-    id: '_createTime',
-    name: '_createTime',
-    order: 0,
-    type: 'DateTime',
-    description: '系统字段，不可修改',
-  },
-  {
-    displayName: '修改时间',
-    id: '_updateTime',
-    name: '_updateTime',
-    order: 0,
-    type: 'DateTime',
-    description: '系统字段，不可修改',
-  },
-]
-
-export const SchemaSystemField: React.FC = () => {
+export const SchemaSystemField: React.FC<{ onFiledClick: Function; schema: Schema }> = ({
+  onFiledClick,
+  schema,
+}) => {
   const [showSystemField, setShowSystemField] = useState(false)
+
+  // 合并系统字段
+  const systemFields = useMemo(() => {
+    if (!schema?.fields) return SYSTEM_FIELDS
+    return schema.fields
+      .filter((_) => _.isSystem)
+      .concat(SYSTEM_FIELDS)
+      .filter((field, i, arr) => arr.findIndex((_) => _.name === field.name) === i)
+  }, [schema])
 
   return (
     <div>
@@ -160,16 +153,21 @@ export const SchemaSystemField: React.FC = () => {
         <Space>
           <Switch checked={showSystemField} onChange={(v) => setShowSystemField(v)} />
           <span>展示系统字段</span>
-          <Popover content="系统字段为系统自动创建的字段，不可修改">
+          <Popover content="系统字段为系统自动创建的字段，请谨慎操作">
             <QuestionCircleTwoTone />
           </Popover>
         </Space>
       </Paragraph>
       {showSystemField
-        ? SYSTEM_FIELDS.map((field, index) => {
+        ? systemFields.map((field, index) => {
             const type = FieldTypes.find((_) => _.type === field.type)
             return (
-              <Card hoverable key={index} className="schema-field-card system-field">
+              <Card
+                hoverable
+                key={index}
+                className="schema-field-card system-field"
+                onClick={() => onFiledClick(field)}
+              >
                 <Space style={{ flex: '1 1 auto' }}>
                   <div className="icon">{type?.icon}</div>
                   <div className="flex-column">
@@ -180,11 +178,9 @@ export const SchemaSystemField: React.FC = () => {
                         </Title>
                       </Tooltip>
                       <Text strong># {field.name}</Text>
-                      {field.description && (
-                        <Tooltip title={field.description}>
-                          <ExclamationCircleTwoTone style={{ fontSize: '16px' }} />
-                        </Tooltip>
-                      )}
+                      <Tooltip title="系统字段，请勿随意修改">
+                        <ExclamationCircleTwoTone style={{ fontSize: '16px' }} />
+                      </Tooltip>
                     </Space>
                     <Space>
                       <Tag color="#9da6c7">{type?.name}</Tag>

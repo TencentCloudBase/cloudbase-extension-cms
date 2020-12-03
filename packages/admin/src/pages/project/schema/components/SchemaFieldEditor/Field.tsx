@@ -94,7 +94,7 @@ export function getFieldFormItem(
     case 'DateTime':
       return (
         <Form.Item label="时间存储格式" name="dateFormatType" validateTrigger={['onChange']}>
-          <Select placeholder="时间存储格式">
+          <Select placeholder="时间存储格式" disabled={selectedField.isSystem}>
             <Option value="timestamp-ms">Unix Timestamp 毫秒</Option>
             <Option value="timestamp-s">Unix Timestamp 秒</Option>
             <Option value="date">Date 对象</Option>

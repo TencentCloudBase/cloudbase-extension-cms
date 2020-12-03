@@ -1,6 +1,7 @@
 import { ProColumns } from '@ant-design/pro-table'
 import { getFieldRender } from '@/components/Fields'
 import { calculateFieldWidth } from '@/utils'
+import { SYSTEM_FIELDS } from '@/common'
 
 type DateTime = 'dateTime' | 'date' | 'textarea'
 
@@ -11,7 +12,8 @@ const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
  */
 export const getTableColumns = (fields: SchemaField[] = []): ProColumns[] => {
   const columns: ProColumns[] = fields
-    ?.filter((_) => _)
+    .concat(SYSTEM_FIELDS)
+    ?.filter((field, i, arr) => field && arr.findIndex((_) => _.name === field.name) === i)
     .map((field) => {
       const { name, type, displayName, isHidden } = field
 
@@ -34,8 +36,8 @@ export const getTableColumns = (fields: SchemaField[] = []): ProColumns[] => {
         filters: true,
         align: 'center',
         dataIndex: name,
-        title: displayName,
         hideInTable: isHidden,
+        title: field.isSystem ? `${displayName} 💻` : displayName,
       }
 
       if (type === 'Enum') {
@@ -53,29 +55,6 @@ export const getTableColumns = (fields: SchemaField[] = []): ProColumns[] => {
 
       return column
     })
-
-  columns.push(
-    {
-      width: 150,
-      sorter: true,
-      filters: true,
-      align: 'center',
-      title: '创建时间 💻',
-      hideInSearch: true,
-      dataIndex: '_createTime',
-      valueType: 'dateTime',
-    },
-    {
-      width: 150,
-      sorter: true,
-      filters: true,
-      dataIndex: '_updateTime',
-      align: 'center',
-      title: '更新时间 💻',
-      hideInSearch: true,
-      valueType: 'dateTime',
-    }
-  )
 
   columns.unshift({
     title: '序号',
