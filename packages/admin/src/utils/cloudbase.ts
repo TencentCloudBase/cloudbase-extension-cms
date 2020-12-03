@@ -54,19 +54,21 @@ export function getAuthHeader() {
 }
 
 let gotAuthHeader = false
-
+let gotAuthTime = 0
 /**
  * 获取 x-cloudbase-credentials 请求 Header
  */
 export async function getAuthHeaderAsync() {
   // 直接读取本地
   let res = auth.getAuthHeader()
+  const diff = Date.now() - gotAuthTime
 
   // TODO: 当期 SDK 同步获取的 token 可能是过期的
-  // 临时解决办法：在首次获取时，刷新 token
-  if (!res?.['x-cloudbase-credentials'] || !gotAuthHeader) {
+  // 临时解决办法：在首次获取时、间隔大于 3500S 时，刷新 token
+  if (!res?.['x-cloudbase-credentials'] || !gotAuthHeader || diff > 3500000) {
     res = await auth.getAuthHeaderAsync()
     gotAuthHeader = true
+    gotAuthTime = Date.now()
   }
 
   return res
