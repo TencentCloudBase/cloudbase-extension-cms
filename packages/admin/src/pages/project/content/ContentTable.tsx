@@ -1,14 +1,18 @@
-import React, { useRef, useCallback, useMemo } from 'react'
+import React, { useRef, useCallback, useMemo, useState } from 'react'
 import { useConcent } from 'concent'
 import { useParams, history } from 'umi'
 import ProTable, { ProColumns } from '@ant-design/pro-table'
-import { Button, Modal, message, Space, Row, Col, Dropdown, Menu } from 'antd'
-import { PlusOutlined, DeleteOutlined, FilterOutlined } from '@ant-design/icons'
+import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select } from 'antd'
+import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { ContentCtx } from 'typings/store'
-import DataImport from './DataImport'
-import ContentTableSearchForm from './SearchForm'
 import { getTableColumns } from './columns'
+import ContentTableSearchForm from './SearchForm'
+import DataImport from './DataImport'
+import DataExport from './DataExport'
+import { exportData, formatSearchParams } from './common'
+
+const { Option } = Select
 
 // 不能支持搜索的类型
 const negativeTypes = ['File', 'Image']
@@ -46,17 +50,7 @@ export const ContentTable: React.FC<{
       const resource = currentSchema.collectionName
 
       // 搜索参数
-      const fuzzyFilter = searchParams
-        ? Object.keys(searchParams)
-            .filter((key) => currentSchema.fields?.some((field: SchemaField) => field.name === key))
-            .reduce(
-              (prev, key) => ({
-                ...prev,
-                [key]: searchParams[key],
-              }),
-              {}
-            )
-        : {}
+      const fuzzyFilter = formatSearchParams(searchParams, currentSchema)
 
       try {
         const { data = [], total } = await getContents(projectId, resource, {
@@ -95,6 +89,7 @@ export const ContentTable: React.FC<{
             message.error('字段已添加，请勿重复添加')
             return
           }
+          // 添加字段
           field && ctx.mr.addSearchField(field)
         }}
       >
@@ -200,11 +195,17 @@ export const ContentTable: React.FC<{
         新建
       </Button>,
       <DataImport key="import" collectionName={currentSchema.collectionName} />,
+      <DataExport
+        key="export"
+        schema={currentSchema}
+        searchParams={searchParams}
+        collectionName={currentSchema.collectionName}
+      />,
     ],
-    [currentSchema]
+    [currentSchema, searchParams]
   )
 
-  // 从 url 获取分页数据
+  // 从 url 获取分页条件
   const pagination = useMemo(() => {
     const { query } = history.location
     return {
@@ -217,33 +218,37 @@ export const ContentTable: React.FC<{
 
   return (
     <>
+      {/* 搜索表单 */}
       <ContentTableSearchForm
         schema={currentSchema}
         onSearch={(params) => {
           ctx.setState({
             searchParams: params,
           })
-          replaceHistory(1, 10)
+          setPageQuery(1, 10)
           tableRef?.current?.reload(true)
         }}
       />
+
+      {/* 数据 Table */}
       <ProTable
         rowKey="_id"
-        rowSelection={{}}
-        tableAlertRender={tableAlerRender}
         search={false}
+        rowSelection={{}}
         actionRef={tableRef}
         dateFormatter="string"
         scroll={{ x: 1000 }}
+        request={tableRequest}
+        columns={memoTableColumns}
+        toolBarRender={() => toolBarRender}
+        tableAlertRender={tableAlerRender}
         pagination={{
           ...pagination,
+          // 翻页时，将分页数据保存在 URL 中
           onChange: (current = 1, pageSize = 10) => {
-            replaceHistory(current, pageSize)
+            setPageQuery(current, pageSize)
           },
         }}
-        columns={memoTableColumns}
-        request={tableRequest}
-        toolBarRender={() => toolBarRender}
       />
     </>
   )
@@ -261,6 +266,9 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
   selectedRowKeys: any[]
   selectedRows: any[]
 }) => {
+  // 导出文件类型
+  const [fileType, setExportFileType] = useState<'json' | 'csv'>('json')
+
   return (
     <Row>
       <Col flex="0 0 auto">
@@ -271,31 +279,61 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
         </Space>
       </Col>
       <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
-        <Button
-          danger
-          size="small"
-          type="primary"
-          onClick={() => {
-            const modal = Modal.confirm({
-              title: '确认删除选中的内容？',
-              onCancel: () => {
-                modal.destroy()
-              },
-              onOk: async () => {
-                try {
-                  const ids = selectedRows.map((_: any) => _._id)
-                  await batchDeleteContent(projectId, currentSchema.collectionName, ids)
-                  tableRef?.current?.reload()
-                  message.success('删除内容成功')
-                } catch (error) {
-                  message.error('删除内容失败')
-                }
-              },
-            })
-          }}
-        >
-          <DeleteOutlined /> 删除文档
-        </Button>
+        <Space>
+          <Button
+            danger
+            size="small"
+            type="primary"
+            onClick={() => {
+              const modal = Modal.confirm({
+                title: '确认删除选中的内容？',
+                onCancel: () => {
+                  modal.destroy()
+                },
+                onOk: async () => {
+                  try {
+                    const ids = selectedRows.map((_: any) => _._id)
+                    await batchDeleteContent(projectId, currentSchema.collectionName, ids)
+                    tableRef?.current?.reload()
+                    message.success('删除内容成功')
+                  } catch (error) {
+                    message.error('删除内容失败')
+                  }
+                },
+              })
+            }}
+          >
+            <DeleteOutlined /> 删除文档
+          </Button>
+          <Button
+            size="small"
+            type="primary"
+            onClick={() => {
+              const modal = Modal.confirm({
+                title: '确认导出选中的内容？',
+                content: (
+                  <Select defaultValue="json" onChange={setExportFileType} className="mt-3">
+                    <Option value="csv">导出为 CSV 文件</Option>
+                    <Option value="json">导出为 JSON 文件</Option>
+                  </Select>
+                ),
+                onCancel: () => {
+                  modal.destroy()
+                },
+                onOk: async () => {
+                  try {
+                    await exportData(selectedRows, fileType)
+                    message.success('导出数据成功')
+                  } catch (error) {
+                    message.error('导出数据失败')
+                  }
+                },
+              })
+            }}
+          >
+            <ExportOutlined /> 导出数据
+          </Button>
+        </Space>
       </Col>
     </Row>
   )
@@ -304,7 +342,7 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
 /**
  * 修改、添加 URL 中的 pageSize 和 current 参数
  */
-const replaceHistory = (current = 1, pageSize = 10) => {
+const setPageQuery = (current = 1, pageSize = 10) => {
   const { pathname, query } = history.location
   history.replace({
     path: pathname,

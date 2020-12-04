@@ -76,11 +76,13 @@ export class ContentsService {
 
     let query = collection.where(where)
 
-    // 获取总数
+    // 获取符合查询条件的文档总数
     const countRes = await query.count()
-    // 查询
+
+    // 分页查询
     query = query.skip(Number(page - 1) * Number(pageSize)).limit(pageSize)
 
+    // 排序
     if (sort) {
       Object.keys(sort)
         .filter((key) => sort[key])
@@ -98,10 +100,11 @@ export class ContentsService {
       })
     }
 
+    // 数据库查询
     const res = await query.get()
 
     // 如果获取定义的内容，且内容中存在关联的字段
-    // 则把返回结果中的所有关联字段 id 转换为关联 id 对应的数据
+    // 则把返回结果中的所有关联字段 id 转换为对应的 Doc
     if (schema) {
       // 存在关联类型字段
       const connectFields = schema.fields.filter((field) => field.type === 'Connect')
@@ -112,21 +115,6 @@ export class ContentsService {
     }
 
     return { ...res, total: countRes.total }
-  }
-
-  async getOne(resource: string, options: { filter: { _id?: string } }) {
-    const { filter = {} } = options
-    const collection = this.cloudbaseService.collection(resource)
-
-    let query = collection.where(filter)
-
-    const {
-      data: [record],
-    } = (await query.limit(1).get()) as any
-
-    return {
-      data: record,
-    }
   }
 
   async updateOne(

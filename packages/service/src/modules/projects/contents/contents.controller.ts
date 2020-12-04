@@ -19,15 +19,7 @@ import { CloudBaseService } from '@/services'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
 
-const validActions = [
-  'getOne',
-  'getMany',
-  'setOne',
-  'createOne',
-  'updateOne',
-  'deleteOne',
-  'deleteMany',
-]
+const validActions = ['getMany', 'setOne', 'createOne', 'updateOne', 'deleteOne', 'deleteMany']
 
 interface QuerySearch {
   page?: number
@@ -51,7 +43,7 @@ class ActionBody {
   resource: string
 
   @IsIn(validActions)
-  action: 'getOne' | 'getMany' | 'createOne' | 'updateOne' | 'deleteOne' | 'deleteMany'
+  action: 'getMany' | 'createOne' | 'updateOne' | 'deleteOne' | 'deleteMany'
 
   options?: QuerySearch
 }
@@ -127,7 +119,7 @@ export class ContentsController {
     let res = await this.contentsService[action](resource, options as any)
 
     // get 不触发 webhook
-    if (action === 'getOne' || action === 'getMany') {
+    if (action === 'getMany') {
       return res
     }
 

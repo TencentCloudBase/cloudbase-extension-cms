@@ -6,11 +6,11 @@ import { checkAccessAndGetResource } from '@/utils'
 import { ContentsService } from '../contents/contents.service'
 import { Webhook } from './type'
 
-const validActions = ['getOne', 'getMany', 'createOne', 'updateOne', 'deleteOne', 'deleteMany']
+const validActions = ['getMany', 'createOne', 'updateOne', 'deleteOne', 'deleteMany']
 
 class ActionBody {
   @IsIn(validActions)
-  action: 'getOne' | 'getMany' | 'createOne' | 'updateOne' | 'deleteOne' | 'deleteMany'
+  action: 'getMany' | 'createOne' | 'updateOne' | 'deleteOne' | 'deleteMany'
 
   options?: {
     page?: number

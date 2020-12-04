@@ -4,6 +4,7 @@ const util = require('util')
 const path = require('path')
 const writeFile = util.promisify(fs.writeFile)
 const exec = util.promisify(require('child_process').exec)
+const pkg = require('../package.json')
 
 module.exports = {
   // 部署静态资源
@@ -41,6 +42,7 @@ async function writeConfigJS(manager, dir, context) {
   accessDomain = accessDomain.replace('https://', '').replace('http://', '').replace(/\/$/, '')
 
   let configFileContent = `window.TcbCmsConfig = {
+    version: '${pkg.version}',
     region: '${process.env.TENCENTCLOUD_REGION || 'ap-shanghai'}',
     history: 'hash',
     // 环境 Id

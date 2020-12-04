@@ -4,7 +4,7 @@ import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
-import React, { useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from 'react'
 import { ContentTable } from './ContentTable'
 
 export default (): React.ReactNode => {
@@ -30,7 +30,6 @@ export default (): React.ReactNode => {
   return (
     <PageContainer
       content={
-        // 渲染内容描述
         <div
           dangerouslySetInnerHTML={{
             __html: currentSchema?.description || '',
@@ -45,40 +44,45 @@ export default (): React.ReactNode => {
           ) : currentSchema?.fields?.length ? (
             <ContentTable currentSchema={currentSchema} />
           ) : (
-            <Empty description="当前内容模型字段为空，请添加字段后再创建内容">
-              <Button
-                type="primary"
-                onClick={() => {
-                  history.push(`/${projectId}/schema`)
-                }}
-              >
-                添加字段
-              </Button>
-            </Empty>
+            <EmptyTip
+              btnText="添加字段"
+              projectId={projectId}
+              desc="当前内容模型字段为空，请添加字段后再创建内容"
+            />
           )
         ) : (
           <div className="flex justify-center">
-            <Empty
-              description={
+            <EmptyTip
+              btnText="创建模型"
+              projectId={projectId}
+              desc={
                 <>
                   <span>内容模型为空 🤔</span>
                   <br />
                   <span>请先创建你的内容模型，再创建内容文档</span>
                 </>
               }
-            >
-              <Button
-                type="primary"
-                onClick={() => {
-                  history.push(`/${projectId}/schema`)
-                }}
-              >
-                创建模型
-              </Button>
-            </Empty>
+            />
           </div>
         )}
       </ProCard>
     </PageContainer>
   )
 }
+
+const EmptyTip: React.FC<{ projectId: string; desc: ReactNode; btnText: string }> = ({
+  desc,
+  btnText,
+  projectId,
+}) => (
+  <Empty description={desc}>
+    <Button
+      type="primary"
+      onClick={() => {
+        history.push(`/${projectId}/schema`)
+      }}
+    >
+      {btnText}
+    </Button>
+  </Empty>
+)
