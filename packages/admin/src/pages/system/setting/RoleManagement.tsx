@@ -15,7 +15,7 @@ export default (): React.ReactElement => {
   })
 
   if (loading) {
-    return <Skeleton />
+    return <Skeleton active />
   }
 
   return (

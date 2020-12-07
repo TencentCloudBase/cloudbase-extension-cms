@@ -31,6 +31,7 @@ export const WebhookModal: React.FC<{
   const { projectId } = useParams<any>()
   const actionText = action === 'create' ? '创建' : '更新'
 
+  // 创建、更新 webhook
   const { run, loading } = useRequest(
     async (webhook: Webhook) => {
       if (action === 'create') {
@@ -76,10 +77,10 @@ export const WebhookModal: React.FC<{
     label: EventMap[key],
   }))
 
-  // 复制 webhook
+  // 复制 webhook，collection 展开为 id 数组
   const initialWebhook = {
     ...selectedWebhook,
-    collections: selectedWebhook?.collections.map((_) => _._id),
+    collections: selectedWebhook?.collections.map((_) => (_?._id ? _._id : _)),
   }
 
   return (
