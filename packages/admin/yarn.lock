@@ -10014,7 +10014,7 @@ json5@^2.1.2:
 
 jsonexport@^3.0.1:
   version "3.0.1"
-  resolved "http://r.tnpm.oa.com/jsonexport/-/jsonexport-3.0.1.tgz#918980b7506aa9377eec95cceee99d488b5d7317"
+  resolved "https://registry.yarnpkg.com/jsonexport/-/jsonexport-3.0.1.tgz#918980b7506aa9377eec95cceee99d488b5d7317"
   integrity sha512-lxDoAZxmWDt1wa4S75CUYe/ZASdmOYyhV7iYbF4npTWxrDv19ofZpJMGbt20W5Orx0hYuid65zGHpt6rRW0Z3A==
 
 jsonfile@^4.0.0:

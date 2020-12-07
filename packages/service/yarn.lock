@@ -112,9 +112,9 @@
     query-string "^6.8.3"
     walkdir "^0.4.1"
 
-"@cloudbase/node-sdk@2.4.6-beta":
+"@cloudbase/node-sdk@^2.4.6-beta":
   version "2.4.6-beta"
-  resolved "http://r.tnpm.oa.com/@cloudbase%2fnode-sdk/-/node-sdk-2.4.6-beta.tgz#5848f7d943ffa7a4a4ec39029e2b2da608fcaf15"
+  resolved "https://registry.yarnpkg.com/@cloudbase/node-sdk/-/node-sdk-2.4.6-beta.tgz#5848f7d943ffa7a4a4ec39029e2b2da608fcaf15"
   integrity sha512-rnfDqVqC/LjC1rwDqwi/zIFf+kPtMvZZvItyP1HHAmZ9cwSqVuijnm46r5EHAviqeb24Noq8LB7ISOVkGMi6Mg==
   dependencies:
     "@cloudbase/database" "1.2.2"
@@ -1155,10 +1155,17 @@ browserify-zlib@^0.2.0:
   dependencies:
     pako "~1.0.5"
 
-bson@^4.0.2, bson@^4.0.3:
+bson@^4.0.2:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/bson/-/bson-4.2.0.tgz#15b5beffed6e44883de9922a2e1896fba4042cd4"
   integrity sha512-c3MlJqdROnCRvDr/+MLfaDvQ7CvGI4p1hKX45/fvgzSwKRdOjsfRug1NJJ8ty5mXCNtUdjJEWzoZWcBQxV4TyA==
+  dependencies:
+    buffer "^5.6.0"
+
+bson@^4.0.3:
+  version "4.2.2"
+  resolved "https://registry.yarnpkg.com/bson/-/bson-4.2.2.tgz#ac01bb32b8ab30839550b98e0f44fced931df75d"
+  integrity sha512-9fX257PVHAUpiRGmY3356RVWKQxLA73BgjA/x5MGuJkTEMeG7yzjuBrsiFB67EXRJnFVKrbJY9t/M+oElKYktQ==
   dependencies:
     buffer "^5.6.0"
 

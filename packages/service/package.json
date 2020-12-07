@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@cloudbase/manager-node": "^3.8.0",
-    "@cloudbase/node-sdk": "2.4.6-beta",
+    "@cloudbase/node-sdk": "^2.4.6-beta",
     "@nestjs/common": "^7.3.2",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.3.2",
