@@ -33,10 +33,13 @@ const SchemaContent: React.FC = () => {
           <Row>
             <Col flex="1 1 auto" />
             <Col flex="0 1 600px">
+              {/* 工具栏 */}
               <Space className="schema-layout-header">
                 <Typography.Title level={3}>{currentSchema.displayName}</Typography.Title>
                 <SchemaToolbar />
               </Space>
+
+              {/* 字段列表 */}
               <Content>
                 <SchemaFieldList />
               </Content>

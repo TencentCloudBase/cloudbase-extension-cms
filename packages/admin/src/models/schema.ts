@@ -1,7 +1,7 @@
 import { IActionCtx } from 'concent'
 import { getSchemas } from '@/services/schema'
 
-type Action = 'create' | 'edit'
+type Action = 'create' | 'edit' | 'copy'
 
 interface SchemaState {
   currentSchema: Schema
@@ -40,6 +40,12 @@ const state: SchemaState = {
 export default {
   state,
   reducer: {
+    copySchema() {
+      return {
+        schemaEditAction: 'copy',
+        schemaEditVisible: true,
+      }
+    },
     createSchema() {
       return {
         schemaEditAction: 'create',

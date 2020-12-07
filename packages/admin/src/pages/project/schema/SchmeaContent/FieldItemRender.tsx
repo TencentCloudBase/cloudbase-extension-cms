@@ -30,7 +30,7 @@ export const SchemaFieldRender: React.FC<{
   const { loading } = ctx.state
 
   const handleDragSort = async (result: DropResult) => {
-    // dropped outside the list
+    // 脱离列表，无效
     if (!result.destination) {
       return
     }
@@ -38,25 +38,27 @@ export const SchemaFieldRender: React.FC<{
     const source = result.source.index
     const destination = result.destination.index
 
-    // 未改变顺序
+    // 未改变顺序，无效
     if (source === destination) {
       return
     }
 
-    // 获取字段排序后的列表
+    // 获取字段排序后的列表，系统字段不参与排序
     let resortedFields = schema?.fields
-      ?.filter((_) => _)
+      .filter((_) => _ && !_.isSystem)
       .sort((prev, next) => prev.order - next.order)
 
     // 将被移动的字段移到对应的位置
     const moveField = resortedFields.splice(source, 1)?.[0]
     resortedFields.splice(destination, 0, moveField)
 
-    // 重置 order 值
-    resortedFields = resortedFields.map((field, index) => ({
-      ...field,
-      order: index,
-    }))
+    // 重置 order 值，并添加系统字段
+    resortedFields = resortedFields
+      .map((field, index) => ({
+        ...field,
+        order: index,
+      }))
+      .concat(getSchemaSystemFields(schema))
 
     // 更新顺序
     schema.fields = resortedFields
@@ -64,6 +66,7 @@ export const SchemaFieldRender: React.FC<{
     await updateSchema(projectId, schema?._id, {
       fields: resortedFields,
     })
+
     // 重新加载数据
     ctx.mr.getSchemas(projectId)
     contentCtx.mr.getContentSchemas(projectId)
@@ -194,4 +197,13 @@ export const SchemaSystemField: React.FC<{ onFiledClick: Function; schema: Schem
         : ''}
     </div>
   )
+}
+
+// 获取 Schema 的系统字段
+const getSchemaSystemFields = (schema: Schema) => {
+  if (!schema?.fields) return SYSTEM_FIELDS
+  return schema.fields
+    .filter((_) => _.isSystem)
+    .concat(SYSTEM_FIELDS)
+    .filter((field, i, arr) => arr.findIndex((_) => _.name === field.name) === i)
 }

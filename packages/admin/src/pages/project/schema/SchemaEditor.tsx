@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { SchmeaCtx } from 'typings/store'
@@ -7,6 +7,14 @@ import { Modal, Form, message, Input, Space, Button, Typography } from 'antd'
 import { SYSTEM_FIELDS } from '@/common'
 
 const { TextArea } = Input
+
+const ActionTip = {
+  create: '创建',
+  edit: '更新',
+  copy: '复制',
+}
+
+const DefaultKeys = ['_id', '_createTime', '_updateTime']
 
 /**
  * 新建/更新模型
@@ -17,12 +25,14 @@ const SchemaEditor: React.FC = () => {
   const contentCtx = useConcent('content')
   const { schemaEditAction, schemaEditVisible, currentSchema } = ctx.state
 
+  // 关闭弹窗
   const onClose = () =>
     ctx.setState({
       schemaEditVisible: false,
     })
 
-  const actionTip = schemaEditAction === 'create' ? '创建' : '更新'
+  // action 提示文案
+  const actionTip = ActionTip[schemaEditAction]
 
   // 创建/更新模型
   const { run, loading } = useRequest(
@@ -52,6 +62,20 @@ const SchemaEditor: React.FC = () => {
         await updateSchema(projectId, currentSchema?._id, diffData)
       }
 
+      if (currentSchema && schemaEditAction === 'copy') {
+        const newSchema = Object.keys(data)
+          .filter((key) => !DefaultKeys.includes(key))
+          .reduce(
+            (ret, key) => ({
+              ...ret,
+              [key]: data[key],
+            }),
+            {}
+          )
+
+        await createSchema(projectId, { ...newSchema, fields: currentSchema.fields })
+      }
+
       onClose()
       ctx.mr.getSchemas(projectId)
       contentCtx.dispatch('getContentSchemas', projectId)
@@ -61,6 +85,25 @@ const SchemaEditor: React.FC = () => {
       onError: () => message.error(`${actionTip}模型失败`),
       onSuccess: () => message.success(`${actionTip}模型成功`),
     }
+  )
+
+  const getInitialValues = useCallback(
+    (action: string, currentSchema: Schema) => {
+      switch (action) {
+        case 'create':
+          return undefined
+        case 'edit':
+          return currentSchema
+        case 'copy':
+          return {
+            ...currentSchema,
+            collectionName: `${currentSchema.collectionName}-copy`,
+          }
+        default:
+          return currentSchema
+      }
+    },
+    [schemaEditAction, currentSchema]
   )
 
   return (
@@ -79,8 +122,13 @@ const SchemaEditor: React.FC = () => {
         layout="vertical"
         labelAlign="left"
         labelCol={{ span: 6 }}
-        initialValues={schemaEditAction === 'edit' ? currentSchema || {} : undefined}
+        initialValues={getInitialValues(schemaEditAction, currentSchema)}
         onFinish={(v: any) => {
+          if (schemaEditAction === 'copy' && v.collectionName === currentSchema.collectionName) {
+            message.error('复制模型数据库名不能与已有模型数据库名相同')
+            onClose()
+            return
+          }
           run(v)
         }}
       >

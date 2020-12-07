@@ -1,11 +1,11 @@
 import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useState, useCallback, useEffect } from 'react'
-import { Modal, message, Space, Checkbox, Typography } from 'antd'
-import { EditTwoTone, DeleteTwoTone, ExportOutlined } from '@ant-design/icons'
-import { SchmeaCtx } from 'typings/store'
+import { Modal, message, Space, Checkbox, Typography, Tooltip } from 'antd'
+import { EditTwoTone, DeleteTwoTone, ExportOutlined, CopyOutlined } from '@ant-design/icons'
 import { random, saveContentToFile } from '@/utils'
 import { deleteSchema } from '@/services/schema'
+import { ContentCtx, SchmeaCtx } from 'typings/store'
 
 export interface TableListItem {
   key: number
@@ -47,20 +47,33 @@ const SchemaEdit: React.FC = () => {
     })
   }, [currentSchema])
 
+  const copySchema = useCallback(() => {
+    ctx.mr.copySchema()
+  }, [currentSchema])
+
   return (
     <>
       <Space size="middle">
         {/* 编辑模型 */}
-        <EditTwoTone
-          style={iconStyle}
-          onClick={() => {
-            ctx.mr.editSchema()
-          }}
-        />
+        <Tooltip title="编辑模型">
+          <EditTwoTone
+            style={iconStyle}
+            onClick={() => {
+              ctx.mr.editSchema()
+            }}
+          />
+        </Tooltip>
         {/* 删除模型 */}
-        <DeleteTwoTone style={iconStyle} onClick={() => setDeleteSchmeaVisible(true)} />
+        <Tooltip title="删除模型">
+          <DeleteTwoTone style={iconStyle} onClick={() => setDeleteSchmeaVisible(true)} />
+        </Tooltip>
         {/* 导出模型 */}
-        <ExportOutlined style={{ ...iconStyle, color: '#0052d9' }} onClick={exportSchema} />
+        <Tooltip title="导出模型">
+          <ExportOutlined style={{ ...iconStyle, color: '#0052d9' }} onClick={exportSchema} />
+        </Tooltip>
+        <Tooltip title="复制当前模型为新的模型">
+          <CopyOutlined style={{ ...iconStyle, color: '#0052d9' }} onClick={copySchema} />
+        </Tooltip>
       </Space>
 
       <DeleteSchemaModal
@@ -79,9 +92,9 @@ export const DeleteSchemaModal: React.FC<{
   onClose: () => void
 }> = ({ visible, onClose }) => {
   const { projectId } = useParams<any>()
-  const ctx = useConcent('schema')
-  const contentCtx = useConcent('content')
-  const { currentSchema = {} } = ctx.state
+  const ctx = useConcent<{}, SchmeaCtx>('schema')
+  const contentCtx = useConcent<{}, ContentCtx>('content')
+  const { currentSchema } = ctx.state
   const [loading, setLoading] = useState(false)
   const [deleteCollection, setDeleteCollection] = useState(false)
 
@@ -101,7 +114,7 @@ export const DeleteSchemaModal: React.FC<{
       onOk={async () => {
         try {
           setLoading(true)
-          await deleteSchema(projectId, currentSchema._id, deleteCollection)
+          await deleteSchema(projectId, currentSchema?._id, deleteCollection)
           message.success('删除内容模型成功！')
           ctx.dispatch('getSchemas', projectId)
           contentCtx.dispatch('getContentSchemas', projectId)
@@ -114,7 +127,9 @@ export const DeleteSchemaModal: React.FC<{
       }}
     >
       <Space direction="vertical">
-        <Typography.Text>确认删【{currentSchema?.displayName}】内容模型？</Typography.Text>
+        <Typography.Text>
+          确认删【{currentSchema?.displayName} ({currentSchema?.collectionName})】内容模型？
+        </Typography.Text>
         <Checkbox
           checked={deleteCollection}
           onChange={(e) => setDeleteCollection(e.target.checked)}
