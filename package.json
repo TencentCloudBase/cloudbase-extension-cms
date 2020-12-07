@@ -1,11 +1,12 @@
 {
   "name": "cloudbase-cms",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "private": true,
   "scripts": {
     "dev": "lerna run dev",
-    "build": "cross-env SERVER_MODE=true lerna run build --stream",
+    "build": "lerna run build --stream",
     "build:wx": "cross-env WX_MP=true lerna run build --stream",
+    "build:server": "cross-env SERVER_MODE=true lerna run build --stream",
     "setup": "lerna bootstrap",
     "prettier": "prettier -c --write \"**/*.{ts,tsx,js,jsx,json}\"",
     "lint-staged": "lint-staged",

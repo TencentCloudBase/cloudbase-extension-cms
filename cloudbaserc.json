@@ -7,7 +7,7 @@
     "hooks": {
       "preDeploy": {
         "type": "execCommand",
-        "commands": ["bash ./scripts/setup.sh", "npm run build"]
+        "commands": ["bash ./scripts/setup.sh", "npm run build:server"]
       },
       "postDeploy": {
         "type": "callFunction",
