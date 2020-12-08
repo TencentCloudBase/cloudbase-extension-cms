@@ -1,13 +1,15 @@
-import { CollectionV2 } from '@/constants'
+import R from 'ramda'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
-import _ from 'lodash'
-import { getCloudBaseApp } from './cloudbase'
+import { getCollectionSchema } from './cloudbase'
 import { isDateType } from './field'
 
 dayjs.locale('zh-cn')
 
-export const dateToNumber = (date?: string) => {
+/**
+ * 将时间转换成毫秒级的 unix timestamp Date.now()
+ */
+export const dateToUnixTimestampInMs = (date?: string) => {
   // 毫秒
   const unixTime = dayjs(date).valueOf()
 
@@ -18,44 +20,42 @@ export const dateToNumber = (date?: string) => {
   return unixTime
 }
 
-// 获取 2020-08-08 格式的时间
+/**
+ * 获取 2020-08-08 格式的时间
+ */
 export const getFullDate = (date?: string) => {
   // 毫秒
   return dayjs(date).format('YYYY-MM-DD')
 }
 
-// 格式化 data 中的时间类型
+/**
+ * 格式化 data 中的时间类型，转换成 Native Date 类型
+ */
 export const formatPayloadDate = async (payload: Object | Object[], collectionName: string) => {
-  const app = getCloudBaseApp()
-  const {
-    data: [schema],
-  }: { data: Schema[] } = await app
-    .database()
-    .collection(CollectionV2.Schemas)
-    .where({
-      collectionName,
-    })
-    .get()
+  const schema = await getCollectionSchema(collectionName)
 
-  // Webhook 直接返回
+  // Webhook，或没有 Schema 信息，直接返回
   if (!schema) return payload
 
-  const dateFields = schema.fields.filter(
-    (field) => isDateType(field.type) && field.dateFormatType === 'date'
+  const dateFields = R.filter(
+    R.where({ type: isDateType, dateFormatType: R.equals('date') }),
+    schema.fields
   )
 
   // 不存在需要格式化的时间字段
-  if (!dateFields.length) return payload
+  if (R.isEmpty(dateFields)) return payload
 
+  // payload 为数组时
   if (Array.isArray(payload)) {
     return payload.map((record) => {
       dateFields.forEach((field) => {
-        record[field.name] = new Date(record[field.name])
+        record[field.name] = dayjs(record[field.name]).toDate()
       })
       return record
     })
   }
 
+  // payload 为 Object
   dateFields.forEach((field) => {
     payload[field.name] = dayjs(payload[field.name]).toDate()
   })

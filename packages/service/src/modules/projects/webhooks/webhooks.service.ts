@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 import config from '@/config'
 import { Webhook } from './type'
 
@@ -50,7 +50,7 @@ export class WebhooksService {
 
     // 查询满足的 webhook
     let { data: webhooks } = await this.cloudbaseService
-      .collection(CollectionV2.Webhooks)
+      .collection(Collection.Webhooks)
       .where({
         projectId,
         // TODO: SDK 解析 Bug，待修复

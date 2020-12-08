@@ -4,17 +4,21 @@ import cloudbase from '@cloudbase/node-sdk'
 import CloudBaseManager from '@cloudbase/manager-node'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
 import { isDevEnv } from './tools'
-
-// 从环境变量中读取
-export const getEnvIdString = (): string => {
-  const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
-  return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
-}
+import { Collection } from '@/constants'
 
 let nodeApp
 let managerApp
 let secretManager: SecretManager
 
+// 从环境变量中获取 envId
+export const getEnvIdString = (): string => {
+  const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
+  return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
+}
+
+/**
+ * 获取初始化后的 cloudbase node sdk 实例
+ */
 export const getCloudBaseApp = () => {
   if (nodeApp) {
     return nodeApp
@@ -39,6 +43,9 @@ export const getCloudBaseApp = () => {
   return app
 }
 
+/**
+ * 获取初始化后的 cloudbase manager sdk 实例
+ */
 export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   if (managerApp) {
     return managerApp
@@ -71,6 +78,9 @@ export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   return manager
 }
 
+/**
+ * 从 credential header 中获取用户信息
+ */
 export const getUserFromCredential = async (credential: string, origin: string) => {
   const envId = getEnvIdString()
   const region = process.env.TENCENTCLOUD_REGION || 'ap-shanghai'
@@ -101,12 +111,30 @@ export const getUserFromCredential = async (credential: string, origin: string) 
   return res.data
 }
 
+/**
+ * 获取集合的 Schema
+ */
+export const getCollectionSchema = async (collection: string) => {
+  const app = getCloudBaseApp()
+  const {
+    data: [schema],
+  }: { data: Schema[] } = await app
+    .database()
+    .collection(Collection.Schemas)
+    .where({
+      collectionName: collection,
+    })
+    .get()
+  return schema
+}
+
 // 以服务器模式运行，即通过监听端口的方式运行
 export const isRunInServerMode = () =>
   process.env.NODE_ENV === 'development' ||
   !process.env.TENCENTCLOUD_RUNENV ||
   !!process.env.KUBERNETES_SERVICE_HOST
 
+// 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST
 
 interface Secret {
@@ -116,6 +144,9 @@ interface Secret {
   expire: number // 过期时间，单位：秒
 }
 
+/**
+ * 从容器运行环境中获取临时秘钥
+ */
 export default class SecretManager {
   private tmpSecret: Secret | null
   private TMP_SECRET_URL: string

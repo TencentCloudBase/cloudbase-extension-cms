@@ -13,8 +13,8 @@ module.exports = {
   rules: {
     complexity: 'off',
     'max-params': ['error', 4],
+    'prefer-promise-reject-errors': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     '@typescript-eslint/no-parameter-properties': 'off',
-    'prefer-promise-reject-errors': 'off',
   },
 }

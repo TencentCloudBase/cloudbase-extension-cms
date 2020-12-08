@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { AppService } from './app.service'
 import { RecordNotExistException } from './common'
-import { CollectionV2 } from './constants'
+import { Collection } from './constants'
 import { CloudBaseService } from './services'
 
 @Controller()
@@ -23,7 +23,7 @@ export class AppController {
     const {
       data: [schema],
     } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where({
         collectionName,
       })

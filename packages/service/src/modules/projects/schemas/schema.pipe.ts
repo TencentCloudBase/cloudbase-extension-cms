@@ -1,4 +1,4 @@
-import { dateToNumber, nanoid } from '@/utils'
+import { dateToUnixTimestampInMs, nanoid } from '@/utils'
 import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common'
 
 @Injectable()
@@ -6,7 +6,7 @@ export class SchemaTransfromPipe implements PipeTransform {
   constructor(private readonly action: 'create' | 'update') {}
 
   transform(value: any, metadata: ArgumentMetadata) {
-    const _createTime = dateToNumber()
+    const _createTime = dateToUnixTimestampInMs()
     const _updateTime = _createTime
 
     // 为 field 添加 id

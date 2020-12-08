@@ -1,6 +1,6 @@
 import { Request } from 'express'
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
-import { CollectionV2, SystemUserRoles } from '@/constants'
+import { Collection, SystemUserRoles } from '@/constants'
 import { getCloudBaseApp } from '@/utils'
 
 // 校验、并挂载用户角色信息
@@ -44,7 +44,7 @@ export class GlobalRoleGuard implements CanActivate {
 
     // 查询用户的所有角色信息
     const { data: userRoles }: { data: UserRole[] } = await db
-      .collection(CollectionV2.CustomUserRoles)
+      .collection(Collection.CustomUserRoles)
       .where({
         _id: db.command.in(cmsUser.roles),
       })

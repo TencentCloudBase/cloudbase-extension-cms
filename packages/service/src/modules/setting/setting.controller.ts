@@ -1,6 +1,6 @@
 import { Controller, Get, Patch } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 
 @Controller('setting')
 export class SettingController {
@@ -11,7 +11,7 @@ export class SettingController {
     let {
       data: [setting],
       requestId,
-    } = await this.cloudbaseService.collection(CollectionV2.Settings).where({}).get()
+    } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
     return {
       data: setting,
@@ -24,7 +24,7 @@ export class SettingController {
     let {
       data: [setting],
       requestId,
-    } = await this.cloudbaseService.collection(CollectionV2.Settings).where({}).get()
+    } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
     return {
       data: setting,

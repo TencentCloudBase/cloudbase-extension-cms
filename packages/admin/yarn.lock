@@ -2260,7 +2260,7 @@
 
 "@types/jsonexport@^3.0.1":
   version "3.0.1"
-  resolved "http://r.tnpm.oa.com/@types%2fjsonexport/-/jsonexport-3.0.1.tgz#05d5daf0909d82b0d45d98525c29acd7718c6710"
+  resolved "https://registry.yarnpkg.com/@types/jsonexport/-/jsonexport-3.0.1.tgz#05d5daf0909d82b0d45d98525c29acd7718c6710"
   integrity sha512-3kL9SSzykzoIchP2vE0jEdBJh7YOFTOGvTJhQa0uPXqYNADYXIcsamUZuexfAfIo1ufpwjNfCgzDtsp1Vu7lYg==
   dependencies:
     "@types/node" "*"

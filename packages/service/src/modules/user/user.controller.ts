@@ -14,8 +14,8 @@ import {
 } from '@nestjs/common'
 import _ from 'lodash'
 import { PermissionGuard } from '@/guards'
-import { CollectionV2 } from '@/constants'
-import { dateToNumber } from '@/utils'
+import { Collection } from '@/constants'
+import { dateToUnixTimestampInMs } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { RecordExistException, RecordNotExistException, UnauthorizedOperation } from '@/common'
 import { UserService } from './user.service'
@@ -36,7 +36,7 @@ export class UserController {
     const { page = 1, pageSize = 10 } = query
 
     let { data, requestId } = await this.cloudbaseService
-      .collection(CollectionV2.Users)
+      .collection(Collection.Users)
       .where({})
       .skip(Number(page - 1) * Number(pageSize))
       .limit(Number(pageSize))
@@ -58,7 +58,7 @@ export class UserController {
   async createUser(@Body() body: User) {
     // 检查同名用户是否存在
     const { data } = await this.cloudbaseService
-      .collection(CollectionV2.Users)
+      .collection(Collection.Users)
       .where({
         username: body.username,
       })
@@ -72,12 +72,12 @@ export class UserController {
     const { username, password } = body
     const { UUId } = await this.userService.createUser(username, password)
 
-    body.createTime = dateToNumber()
+    body.createTime = dateToUnixTimestampInMs()
 
     // 不存储密码
     const user = _.omit(body, ['password'])
 
-    return this.cloudbaseService.collection(CollectionV2.Users).add({
+    return this.cloudbaseService.collection(Collection.Users).add({
       ...user,
       uuid: UUId,
     })
@@ -141,7 +141,7 @@ export class UserController {
     return this.collection().doc(userId).remove()
   }
 
-  private collection(name = CollectionV2.Users) {
+  private collection(name = Collection.Users) {
     return this.cloudbaseService.collection(name)
   }
 }

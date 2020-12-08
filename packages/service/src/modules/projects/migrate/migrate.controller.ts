@@ -15,7 +15,7 @@ import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty } from 'class-validator'
 import { getCloudBaseManager } from '@/utils'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 
 class MigrateBody {
   @IsNotEmpty()
@@ -135,7 +135,7 @@ export class MigrateController {
     return this.collection().add(jobRecord)
   }
 
-  collection(collection = CollectionV2.DataMigrateTasks) {
+  collection(collection = Collection.DataMigrateTasks) {
     return this.cloudbaseService.collection(collection)
   }
 }

@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UseGuards, Request, Param } from '@nestjs/common'
 import { IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 import { checkAccessAndGetResource } from '@/utils'
 import { ContentsService } from '../contents/contents.service'
 import { Webhook } from './type'
@@ -60,6 +60,6 @@ export class WebhooksController {
       projectId,
     }
 
-    return this.contentsService[action](CollectionV2.Webhooks, options as any)
+    return this.contentsService[action](Collection.Webhooks, options as any)
   }
 }

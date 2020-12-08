@@ -14,8 +14,8 @@ import {
 import { PermissionGuard } from '@/guards'
 import { UnauthorizedOperation, RecordExistException } from '@/common'
 import { CloudBaseService } from '@/services'
-import { CollectionV2 } from '@/constants'
-import { dateToNumber } from '@/utils'
+import { Collection } from '@/constants'
+import { dateToUnixTimestampInMs } from '@/utils'
 import { ProjectsService } from './projects.service'
 
 @Controller('projects')
@@ -73,7 +73,7 @@ export class ProjectsController {
 
     // 检查同名项目是否已经存在
     const { data } = await this.cloudbaseService
-      .collection(CollectionV2.Projects)
+      .collection(Collection.Projects)
       .where({
         name,
       })
@@ -86,7 +86,7 @@ export class ProjectsController {
 
     const project = {
       ...body,
-      _createTime: dateToNumber(),
+      _createTime: dateToUnixTimestampInMs(),
     }
     return this.collection().add(project)
   }
@@ -154,23 +154,24 @@ export class ProjectsController {
   @Delete(':id')
   async deleteProject(@Param('id') id: string) {
     // 删除此项目的 schema
-    await this.collection(CollectionV2.Schemas)
+    await this.collection(Collection.Schemas)
       .where({
         projectId: id,
       })
       .remove()
 
     // 删除此项目的 Webhooks
-    await this.collection(CollectionV2.Webhooks)
+    await this.collection(Collection.Webhooks)
       .where({
         projectId: id,
       })
       .remove()
 
+    // 删除项目
     return this.collection().doc(id).remove()
   }
 
-  private collection(collection = CollectionV2.Projects) {
+  private collection(collection = Collection.Projects) {
     return this.cloudbaseService.collection(collection)
   }
 

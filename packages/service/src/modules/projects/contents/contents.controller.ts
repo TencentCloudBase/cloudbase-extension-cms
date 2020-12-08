@@ -12,7 +12,7 @@ import {
 } from '@nestjs/common'
 import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 import { UnsupportedOperation } from '@/common'
 import { checkAccessAndGetResource } from '@/utils'
 import { CloudBaseService } from '@/services'
@@ -83,7 +83,7 @@ export class ContentsController {
     }
 
     const { data, requestId } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where(filter)
       .skip(Number(page - 1) * Number(pageSize))
       .limit(Number(pageSize))
@@ -147,7 +147,7 @@ export class ContentsController {
     const {
       data: [schema],
     } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where({
         collectionName: resource,
       })

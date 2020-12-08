@@ -1,5 +1,5 @@
 import config from '@/config'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 import { getCloudBaseApp, getUserFromCredential, isDevEnv, isRunInServerMode } from '@/utils'
 import cloudbase from '@cloudbase/node-sdk'
 import {
@@ -91,7 +91,7 @@ export class GlobalAuthGuard implements CanActivate {
       data: [userRecord],
     } = await app
       .database()
-      .collection(CollectionV2.Users)
+      .collection(Collection.Users)
       .where({
         username: userInfo.username,
       })

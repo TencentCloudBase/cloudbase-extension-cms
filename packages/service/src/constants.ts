@@ -4,7 +4,7 @@ export const RESOURCE_PREFIX = process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'
 /**
  * 数据库
  */
-export const CollectionV2 = {
+export const Collection = {
   // 项目集合
   Projects: `${RESOURCE_PREFIX}-projects`,
 

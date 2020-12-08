@@ -1,6 +1,6 @@
 import { randomId } from '@/utils'
-import { Injectable, NestMiddleware } from '@nestjs/common'
 import { Request, Response } from 'express'
+import { Injectable, NestMiddleware } from '@nestjs/common'
 
 @Injectable()
 export class BodyConverter implements NestMiddleware {

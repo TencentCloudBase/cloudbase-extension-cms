@@ -14,7 +14,7 @@ import {
   Controller,
   Patch,
 } from '@nestjs/common'
-import { CollectionV2 } from '@/constants'
+import { Collection } from '@/constants'
 import { PermissionGuard } from '@/guards'
 import { checkAccessAndGetResource } from '@/utils'
 import { CloudBaseService } from '@/services'
@@ -56,7 +56,7 @@ export class SchemasController {
     }
 
     const { data, requestId } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where(filter)
       .skip(Number(page - 1) * Number(pageSize))
       .limit(Number(pageSize))
@@ -77,7 +77,7 @@ export class SchemasController {
     const {
       data: [schema],
       requestId,
-    } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
+    } = await this.cloudbaseService.collection(Collection.Schemas).doc(schemaId).get()
 
     return {
       data: schema,
@@ -94,7 +94,7 @@ export class SchemasController {
     const {
       data: [schema],
     } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where({
         collectionName: body.collectionName,
       })
@@ -111,7 +111,7 @@ export class SchemasController {
       throw new CmsException(code, '创建集合失败')
     }
 
-    return this.cloudbaseService.collection(CollectionV2.Schemas).add({
+    return this.cloudbaseService.collection(Collection.Schemas).add({
       ...body,
       projectId,
     })
@@ -131,7 +131,7 @@ export class SchemasController {
 
     const {
       data: [schema],
-    } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
+    } = await this.cloudbaseService.collection(Collection.Schemas).doc(schemaId).get()
 
     if (!schema) {
       throw new RecordNotExistException('模型不存在！')
@@ -145,7 +145,7 @@ export class SchemasController {
     const data = _.omit(payload, 'projectId')
 
     const res = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where({
         _id: schemaId,
       })
@@ -177,10 +177,10 @@ export class SchemasController {
 
     const {
       data: [schema],
-    } = await this.cloudbaseService.collection(CollectionV2.Schemas).doc(schemaId).get()
+    } = await this.cloudbaseService.collection(Collection.Schemas).doc(schemaId).get()
 
     const res = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+      .collection(Collection.Schemas)
       .where({
         _id: schemaId,
       })

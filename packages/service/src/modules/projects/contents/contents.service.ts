@@ -1,8 +1,9 @@
 import _ from 'lodash'
+import R from 'ramda'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import { dateToNumber, formatPayloadDate } from '@/utils'
-import { CollectionV2 } from '@/constants'
+import { dateToUnixTimestampInMs, formatPayloadDate } from '@/utils'
+import { Collection } from '@/constants'
 import { Schema, SchemaField } from '../schemas/types'
 import { BadRequestException, RecordNotExistException } from '@/common'
 
@@ -29,8 +30,8 @@ export class ContentsService {
     }
   ) {
     const { filter = {}, fuzzyFilter, page = 1, pageSize = 10, sort } = options
-    const db = this.cloudbaseService.db
-    const collection = this.cloudbaseService.collection(resource)
+    const { db } = this.cloudbaseService
+    const collection = this.collection(resource)
 
     let where: any = {}
 
@@ -41,8 +42,7 @@ export class ContentsService {
 
     const {
       data: [schema],
-    }: { data: Schema[] } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
+    }: { data: Schema[] } = await this.collection(Collection.Schemas)
       .where({
         collectionName: resource,
       })
@@ -63,7 +63,7 @@ export class ContentsService {
         ...where,
         ...conditions,
       }
-    } else if (filter && !_.isEmpty(filter)) {
+    } else if (!_.isEmpty(filter)) {
       // 过滤，精确匹配，适用  webhooks 搜索
       Object.keys(filter)
         .filter((key) => typeof filter[key] !== 'undefined' && filter[key] !== null)
@@ -122,7 +122,7 @@ export class ContentsService {
     options: { filter: { _id: string }; payload: Record<string, any> }
   ) {
     const { filter, payload } = options
-    const collection = this.cloudbaseService.collection(resource)
+    const collection = this.collection(resource)
 
     if (!filter?._id) {
       throw new BadRequestException('Id 不存在，更新失败！')
@@ -140,11 +140,11 @@ export class ContentsService {
     let updateData = _.omit(payload, '_id')
     updateData = await formatPayloadDate(updateData, resource)
 
-    if (resource !== CollectionV2.Webhooks) {
+    if (resource !== Collection.Webhooks) {
       // 查询 schema 信息
       const {
         data: [schema],
-      } = await this.collection(CollectionV2.Schemas)
+      } = await this.collection(Collection.Schemas)
         .where({
           collectionName: resource,
         })
@@ -180,7 +180,7 @@ export class ContentsService {
     // 更新记录
     return collection.doc(record._id).update({
       ...updateData,
-      _updateTime: dateToNumber(),
+      _updateTime: dateToUnixTimestampInMs(),
     })
   }
 
@@ -190,7 +190,7 @@ export class ContentsService {
     options: { filter: { _id: string }; payload: Record<string, any> }
   ) {
     const { filter, payload } = options
-    const collection = this.cloudbaseService.collection(resource)
+    const collection = this.collection(resource)
 
     if (!filter?._id) {
       throw new BadRequestException('Id 不存在，更新失败！')
@@ -207,11 +207,11 @@ export class ContentsService {
 
     let updateData = await formatPayloadDate(payload, resource)
 
-    if (resource !== CollectionV2.Webhooks) {
+    if (resource !== Collection.Webhooks) {
       // 查询 schema 信息
       const {
         data: [schema],
-      } = await this.collection(CollectionV2.Schemas)
+      } = await this.collection(Collection.Schemas)
         .where({
           collectionName: resource,
         })
@@ -249,7 +249,7 @@ export class ContentsService {
       {
         ...record,
         ...updateData,
-        _updateTime: dateToNumber(),
+        _updateTime: dateToUnixTimestampInMs(),
       },
       '_id'
     )
@@ -258,6 +258,9 @@ export class ContentsService {
     return collection.doc(record._id).set(doc)
   }
 
+  /**
+   * 创建一个记录
+   */
   async createOne(
     resource: string,
     options: {
@@ -265,45 +268,34 @@ export class ContentsService {
     }
   ) {
     let { payload } = options
-    const collection = this.cloudbaseService.collection(resource)
+    const collection = this.collection(resource)
 
     payload = await formatPayloadDate(payload, resource)
 
     const data = {
       ...payload,
-      _createTime: dateToNumber(),
-      _updateTime: dateToNumber(),
+      _createTime: dateToUnixTimestampInMs(),
+      _updateTime: dateToUnixTimestampInMs(),
     }
 
     return collection.add(data)
   }
 
+  /**
+   * 删除一个记录
+   */
   async deleteOne(resource: string, options: { filter: { _id?: string } }) {
     const { filter = {} } = options
-    const collection = this.cloudbaseService.collection(resource)
-
-    const { data } = await collection
-      .where({
-        _id: filter._id,
-      })
-      .limit(1)
-      .get()
-
-    if (!data?.length) {
-      return {
-        deleted: 0,
-      }
-    }
-
-    return collection.doc(data[0]?._id).remove()
+    return this.collection(resource).doc(filter._id).remove()
   }
 
+  /**
+   * 删除多个记录
+   */
   async deleteMany(resource: string, options: { filter: { ids?: string[] } }) {
     const { filter = {} } = options
     const db = this.cloudbaseService.db
-    const collection = this.cloudbaseService.collection(resource)
-
-    console.log(filter)
+    const collection = this.collection(resource)
 
     return collection
       .where({
@@ -312,6 +304,7 @@ export class ContentsService {
       .remove()
   }
 
+  // 简写
   private collection(collection: string) {
     return this.cloudbaseService.collection(collection)
   }
@@ -372,11 +365,7 @@ export class ContentsService {
     const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
-    const { data: schemas } = await this.cloudbaseService
-      .collection(CollectionV2.Schemas)
-      .where({})
-      .limit(1000)
-      .get()
+    const { data: schemas } = await this.collection(Collection.Schemas).where({}).limit(1000).get()
 
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaField) => {
@@ -401,8 +390,7 @@ export class ContentsService {
         .collectionName
 
       // 获取关联的数据，分页最大条数 50
-      const { data: connectData } = await this.cloudbaseService
-        .collection(collectionName)
+      const { data: connectData } = await this.collection(collectionName)
         .where({ _id: $.in(ids) })
         .limit(1000)
         .get()
