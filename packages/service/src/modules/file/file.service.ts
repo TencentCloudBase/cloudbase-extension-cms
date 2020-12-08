@@ -1,10 +1,9 @@
-import path from 'path'
 import dayjs from 'dayjs'
-import { nanoid } from 'nanoid'
-import { IFile } from './types'
+import 'dayjs/locale/zh-cn'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import 'dayjs/locale/zh-cn'
+import { randomId } from '@/utils'
+import { IFile } from './types'
 
 // 本地时间
 dayjs.locale('zh-cn')
@@ -31,7 +30,7 @@ export class FileService {
     const day = dayjs().format('YYYY-MM-DD')
     // 上传文件
     const { fileID } = await this.cloudbaseService.app.uploadFile({
-      cloudPath: `cloudbase-cms/upload/${day}/${nanoid(16)}-${file.originalname}`,
+      cloudPath: `cloudbase-cms/upload/${day}/${randomId(16)}-${file.originalname}`,
       fileContent: file.buffer,
     })
     return {

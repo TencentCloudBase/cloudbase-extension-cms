@@ -5,6 +5,7 @@ import { useConcent } from 'concent'
 import { getSchema } from '@/services/schema'
 import { getContents, Options } from '@/services/content'
 import { calculateFieldWidth } from '@/utils'
+import { ContentCtx } from 'typings/store'
 
 const { Option } = Select
 const { Text, Paragraph } = Typography
@@ -13,6 +14,7 @@ interface Doc {
   _id: string
   [key: string]: any
 }
+
 type IConnectSingleValue = string | Doc
 type IConnectMultiValue = string[] & Doc[]
 type IConnectValue = IConnectSingleValue | IConnectMultiValue
@@ -27,15 +29,17 @@ export const IConnectRender: React.FC<{
   field: SchemaField
 }> = (props) => {
   const { value, field } = props
-  const { connectField, connectMany } = field
+  const { connectMany } = field
   const width = calculateFieldWidth(field)
+  const ctx = useConcent<{}, ContentCtx>('content')
+  const { schemas } = ctx.state
 
   if (!value || typeof value === 'string' || typeof value?.[0] === 'string') return <span>-</span>
 
   if (!connectMany) {
     return (
       <Text ellipsis style={{ width }}>
-        {value[connectField]}
+        {getConnectFieldDisplayText(value, schemas, field)}
       </Text>
     )
   }
@@ -45,7 +49,7 @@ export const IConnectRender: React.FC<{
       {value
         .filter((_: any) => _)
         .map((record: any, index: number) => (
-          <Tag key={index}>{record?.[connectField]}</Tag>
+          <Tag key={index}>{getConnectFieldDisplayText(record, schemas, field)}</Tag>
         ))}
     </Paragraph>
   )
@@ -59,10 +63,11 @@ export const IConnectEditor: React.FC<{
   field: SchemaField
   onChange?: (v: string | string[]) => void
 }> = (props) => {
-  const { projectId } = useParams<any>()
-  const ctx = useConcent('content')
   const { value = [], onChange, field } = props
+  const { projectId } = useParams<any>()
+  const ctx = useConcent<{}, ContentCtx>('content')
   const { connectField, connectResource, connectMany } = field
+  const { schemas } = ctx.state
 
   // 加载关联的文档列表
   const [docs, setDocs] = useState<Doc[]>([])
@@ -72,13 +77,12 @@ export const IConnectEditor: React.FC<{
   useRequest(
     async () => {
       setLoading(true)
-      const { schemas } = ctx.state
-      let schema = schemas.find((_: Schema) => _._id === connectResource)
+      let connectSchema = schemas.find((_: Schema) => _._id === connectResource)
 
       // 后台获取 Schema
-      if (!schema) {
+      if (!connectSchema) {
         const { data } = await getSchema(projectId, connectResource)
-        schema = data
+        connectSchema = data
       }
 
       const fetchOptions: Options = {
@@ -92,7 +96,7 @@ export const IConnectEditor: React.FC<{
         }
       }
 
-      const { data } = await getContents(projectId, schema.collectionName, fetchOptions)
+      const { data } = await getContents(projectId, connectSchema.collectionName, fetchOptions)
 
       setDocs(data)
       setLoading(false)
@@ -130,11 +134,14 @@ export const IConnectEditor: React.FC<{
           <Spin size="small" />
         </Option>
       ) : docs?.length ? (
-        docs?.map((doc) => (
-          <Option value={doc._id} key={doc._id}>
-            {doc[connectField]}
-          </Option>
-        ))
+        <>
+          <Option value="">空</Option>
+          {docs?.map((doc) => (
+            <Option value={doc._id} key={doc._id}>
+              {getConnectFieldDisplayText(doc, schemas, field)}
+            </Option>
+          ))}
+        </>
       ) : (
         <Option value="" disabled>
           空
@@ -142,6 +149,27 @@ export const IConnectEditor: React.FC<{
       )}
     </Select>
   )
+}
+
+/**
+ * 处理关联字段的展示信息，可能为多层嵌套
+ */
+const getConnectFieldDisplayText = (doc: any, schemas: Schema[], field: SchemaField) => {
+  // 当前关联字段的信息
+  const { connectField, connectResource } = field
+
+  // 当前关联字段 => 关联 schema 的信息
+  const connectedSchema = schemas.find((_: Schema) => _._id === connectResource)
+
+  // 关联字段的信息
+  const connectedFieldInfo = connectedSchema?.fields.find((_) => _.name === connectField)
+
+  // 关联的字段，又是一个关联类型，则展示关联字段关联的字段
+  if (connectedFieldInfo?.connectResource) {
+    return doc[connectField][connectedFieldInfo.connectField]
+  } else {
+    return doc[connectField]
+  }
 }
 
 // 将关联的数据转换成关联数据对应的 _id 数据

@@ -114,7 +114,7 @@ export const getUserFromCredential = async (credential: string, origin: string) 
 /**
  * 获取集合的 Schema
  */
-export const getCollectionSchema = async (collection: string) => {
+export const getCollectionSchema = async (collection: string): Promise<Schema> => {
   const app = getCloudBaseApp()
   const {
     data: [schema],
@@ -125,6 +125,7 @@ export const getCollectionSchema = async (collection: string) => {
       collectionName: collection,
     })
     .get()
+
   return schema
 }
 

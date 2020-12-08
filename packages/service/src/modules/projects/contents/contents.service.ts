@@ -2,10 +2,15 @@ import _ from 'lodash'
 import R from 'ramda'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import { dateToUnixTimestampInMs, formatPayloadDate } from '@/utils'
+import {
+  dateToUnixTimestampInMs,
+  formatPayloadDate,
+  getCollectionSchema,
+  isNotEmpty,
+} from '@/utils'
 import { Collection } from '@/constants'
-import { Schema, SchemaField } from '../schemas/types'
 import { BadRequestException, RecordNotExistException } from '@/common'
+import { Schema, SchemaField } from '../schemas/types'
 
 @Injectable()
 export class ContentsService {
@@ -40,13 +45,7 @@ export class ContentsService {
       where._id = db.command.in(filter.ids)
     }
 
-    const {
-      data: [schema],
-    }: { data: Schema[] } = await this.collection(Collection.Schemas)
-      .where({
-        collectionName: resource,
-      })
-      .get()
+    const schema = await getCollectionSchema(resource)
 
     // 模糊搜索
     if (fuzzyFilter && schema) {
@@ -108,8 +107,7 @@ export class ContentsService {
     if (schema) {
       // 存在关联类型字段
       const connectFields = schema.fields.filter((field) => field.type === 'Connect')
-
-      if (connectFields?.length) {
+      if (!R.isEmpty(connectFields)) {
         res.data = await this.transformConnectField(res.data, connectFields)
       }
     }
@@ -358,10 +356,10 @@ export class ContentsService {
 
   /**
    * 处理数据返回结果
-   * 将数据中的关联字段解析后返回
+   * 将数据中的关联字段转换成原始 Doc 后返回
    */
-  private async transformConnectField(rawData: any[], connectFields: SchemaField[]) {
-    let resData = rawData
+  private async transformConnectField(docs: any[], connectFields: SchemaField[]) {
+    let resData: any[] = docs
     const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
@@ -375,59 +373,63 @@ export class ContentsService {
 
       // 获取数据中所有的关联资源 Id
       let ids = []
+      // 关联多个对象，将 Doc 数组中的 id 数组合并、去重
       if (connectMany) {
-        // 合并数组
-        ids = resData
-          .filter((record) => record[fieldName]?.length)
-          .map((record) => record[fieldName])
-          .reduce((ret, current) => [...ret, ...current], [])
+        ids = R.pipe(
+          R.reject<any>(R.where({ [fieldName]: R.isEmpty })),
+          R.map(R.prop(fieldName)),
+          R.reduce(R.union, []),
+          R.filter(isNotEmpty)
+        )(resData)
       } else {
-        ids = resData.map((record) => record[fieldName]).filter((_) => _)
+        // 关联单个对象，取 Doc 数组中的 id，过滤
+        ids = R.pipe(R.map(R.prop(fieldName)), R.filter(isNotEmpty))(resData)
       }
 
-      // 集合名
-      const collectionName = schemas.find((schema) => schema._id === field.connectResource)
-        .collectionName
+      // 关联的 Schema
+      const connectSchema = schemas.find((schema) => schema._id === field.connectResource)
 
-      // 获取关联的数据，分页最大条数 50
-      const { data: connectData } = await this.collection(collectionName)
-        .where({ _id: $.in(ids) })
-        .limit(1000)
-        .get()
+      // 获取关联 id 对应的 Doc
+      // 使用 getMany 获取数据，自动转换 Connect 字段
+      const { data: connectData } = await this.getMany(connectSchema.collectionName, {
+        page: 1,
+        pageSize: 1000,
+        filter: {
+          ids,
+        },
+      })
 
       // 修改 resData 中的关联字段
       resData = resData.map((record) => {
-        if (!record[fieldName]) return record
-        let connectRecord
+        // 关联字段的值：id 或 [id]
+        const connectValue = record[fieldName]
+        if (!connectValue) return record
 
         // 关联的数据被删除
         if (!connectData) {
-          return {
-            ...record,
-            [fieldName]: null,
-          }
+          record[fieldName] = null
+          return record
         }
 
+        let connectRecord
+
+        // id 数组
         if (connectMany) {
-          // id 数组
-          connectRecord = record[fieldName]?.length
-            ? record[fieldName]?.map((id) => connectData.find((_) => _._id === id))
+          connectRecord = connectValue?.length
+            ? connectValue?.map((id) => connectData.find((_) => _._id === id))
             : []
         } else {
-          connectRecord = connectData.find((_) => _._id === record[fieldName])
+          connectRecord = connectData.find((_) => _._id === connectValue)
         }
 
-        return {
-          ...record,
-          [fieldName]: connectRecord,
-        }
+        record[fieldName] = connectRecord
+        return record
       })
     }
 
     // 转换 connectField
-    const promises = connectFields.map(transformDataByField)
-
-    await Promise.all(promises)
+    const tasks = connectFields.map(transformDataByField)
+    await Promise.all(tasks)
 
     return resData
   }

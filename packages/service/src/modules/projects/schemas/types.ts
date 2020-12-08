@@ -84,7 +84,4 @@ export class Schema {
   _creatTime: number
 
   _updateTime: number
-
-  // Schema 协议版本 v2
-  _version: '2.0'
 }

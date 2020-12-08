@@ -1,4 +1,4 @@
-import { dateToUnixTimestampInMs, nanoid } from '@/utils'
+import { dateToUnixTimestampInMs, randomId } from '@/utils'
 import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common'
 
 @Injectable()
@@ -13,7 +13,7 @@ export class SchemaTransfromPipe implements PipeTransform {
     if (this.action === 'create') {
       value.fields =
         value?.fields?.map((v) => {
-          const id = v.id || nanoid()
+          const id = v.id || randomId()
           return {
             ...v,
             id,
@@ -31,7 +31,7 @@ export class SchemaTransfromPipe implements PipeTransform {
       if (value.fields?.length) {
         // 为 field 添加 id
         value.fields = value?.fields?.map((v) => {
-          const id = v.id || nanoid()
+          const id = v.id || randomId()
           return {
             ...v,
             id,
