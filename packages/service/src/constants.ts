@@ -34,10 +34,19 @@ export const Functions = {
   API: `${RESOURCE_PREFIX}-api`,
 }
 
+export enum SYSTEM_ROLE_IDS {
+  // 管理员
+  ADMIN = 'administrator',
+  // 运营
+  CONTENT_ADMIN = 'content:administrator',
+  // 项目管理员
+  PROJECT_ADMIN = 'project:administrator',
+}
+
 // 系统角色，无法修改
 export const SystemUserRoles: UserRole[] = [
   {
-    _id: 'administrator',
+    _id: SYSTEM_ROLE_IDS.ADMIN,
     roleName: '系统管理员',
     description: '允许管理系统内所有用户及其权限、所有内容、所有系统设置等',
     permissions: [
@@ -52,7 +61,7 @@ export const SystemUserRoles: UserRole[] = [
     type: 'system',
   },
   {
-    _id: 'project:administrator',
+    _id: SYSTEM_ROLE_IDS.PROJECT_ADMIN,
     roleName: '项目管理员',
     description: '允许管理系统内的所有项目及项目内的资源',
     permissions: [
@@ -67,7 +76,7 @@ export const SystemUserRoles: UserRole[] = [
     type: 'system',
   },
   {
-    _id: 'content:administrator',
+    _id: SYSTEM_ROLE_IDS.CONTENT_ADMIN,
     roleName: '内容管理员',
     description: '允许管理系统内，所有项目的所有内容文档',
     permissions: [

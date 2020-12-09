@@ -5,7 +5,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 export class ContextInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
     // 超时处理
-    const request: AuthRequest = context.switchToHttp().getRequest()
+    const request: IRequest = context.switchToHttp().getRequest()
 
     const { userRoles } = request.cmsUser || {}
 

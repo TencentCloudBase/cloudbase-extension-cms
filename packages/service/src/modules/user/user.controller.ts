@@ -14,14 +14,14 @@ import {
 } from '@nestjs/common'
 import _ from 'lodash'
 import { PermissionGuard } from '@/guards'
-import { Collection } from '@/constants'
+import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 import { dateToUnixTimestampInMs } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { RecordExistException, RecordNotExistException, UnauthorizedOperation } from '@/common'
 import { UserService } from './user.service'
 import { User } from './user.dto'
 
-@UseGuards(PermissionGuard('user', ['administrator']))
+@UseGuards(PermissionGuard('user', [SYSTEM_ROLE_IDS.ADMIN]))
 @Controller('user')
 export class UserController {
   constructor(
@@ -87,7 +87,7 @@ export class UserController {
   async updateUser(
     @Param('id') id: string,
     @Body() payload: Partial<User>,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const query = this.collection().doc(id)
     const {

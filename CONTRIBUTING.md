@@ -28,10 +28,14 @@ npm install -g @cloudbase/cli@latest
 复制 `packages/service/.env.example` 为 `packages/service/.env.local`，并配置
 
 ```
-TCB_ENVID=xxx
-# 腾讯云-云 API 密钥授权
-SECRETID=xxx
-SECRETKEY=xxx
+# 您的云开发环境 Id
+ENV_ID=xxx
+# 管理员账户名，账号名长度需要大于 4 位，支持字母和数字
+administratorName=xxxx
+# 管理员账号密码，8~32位，密码支持字母、数字、字符、不能由纯字母或存数字组成
+administratorPassword=xxxx
+# CMS 控制台路径，如 /tcb-cms/，建议使用根路径 /
+deployPath=/
 ```
 
 复制 `packages/admin/public/config.example.js` 为 `packages/admin/public/config.js`，并配置
@@ -69,10 +73,16 @@ tcb framework deploy db
 
 ### 启动开发
 
+运行下面的命令，成功后，可以访问 http://localhost:8000/ 打开 CMS 管理界面
+
 ```bash
 cd packages/admin && npm run dev
 cd packages/service && npm run dev
 ```
+
+## 部署测试
+
+参考[源码部署](https://docs.cloudbase.net/cms/install/source.html)说明文档。
 
 ## 提交代码规范
 

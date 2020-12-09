@@ -5,7 +5,7 @@ import { UnauthorizedOperation } from '@/common'
 // 返回可访问的资源
 export const checkAccessAndGetResource = (
   projectId: string,
-  req: AuthRequest,
+  req: IRequest,
   resourceId?: string
 ) => {
   const { projectResource } = req.cmsUser

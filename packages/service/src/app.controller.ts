@@ -1,15 +1,11 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { AppService } from './app.service'
 import { RecordNotExistException } from './common'
-import { Collection } from './constants'
-import { CloudBaseService } from './services'
+import { getCollectionSchema } from './utils'
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private readonly cloudbaseService: CloudBaseService
-  ) {}
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   async getHello(): Promise<string> {
@@ -20,14 +16,7 @@ export class AppController {
   @Post('collectionInfo')
   async getCollectionInfo(@Body() body) {
     const { collectionName } = body
-    const {
-      data: [schema],
-    } = await this.cloudbaseService
-      .collection(Collection.Schemas)
-      .where({
-        collectionName,
-      })
-      .get()
+    const schema = await getCollectionSchema(collectionName)
 
     if (!schema) {
       throw new RecordNotExistException('数据集合不存在')

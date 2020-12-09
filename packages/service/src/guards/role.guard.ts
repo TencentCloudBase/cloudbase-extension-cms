@@ -1,13 +1,12 @@
-import { Request } from 'express'
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
-import { Collection, SystemUserRoles } from '@/constants'
+import { Collection, SystemUserRoles, SYSTEM_ROLE_IDS } from '@/constants'
 import { getCloudBaseApp } from '@/utils'
 
 // 校验、并挂载用户角色信息
 @Injectable()
 export class GlobalRoleGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthRequest & Request>()
+    const request = context.switchToHttp().getRequest<IRequest>()
 
     const { cmsUser } = request
 
@@ -18,7 +17,7 @@ export class GlobalRoleGuard implements CanActivate {
     }
 
     // 系统管理员，全部可以访问
-    const isAdmin = user.roles.find((roleId) => roleId === 'administrator')
+    const isAdmin = user.roles.find((roleId) => roleId === SYSTEM_ROLE_IDS.ADMIN)
     if (isAdmin) {
       request.cmsUser.userRoles = []
       request.cmsUser.isAdmin = true
@@ -29,7 +28,7 @@ export class GlobalRoleGuard implements CanActivate {
     }
 
     // 项目管理员可以访问项目内的资源
-    const isProjectAdmin = user.roles.find((roleId) => roleId === 'project:administrator')
+    const isProjectAdmin = user.roles.find((roleId) => roleId === SYSTEM_ROLE_IDS.PROJECT_ADMIN)
     if (isProjectAdmin) {
       request.cmsUser.userRoles = []
       request.cmsUser.isProjectAdmin = true
@@ -52,7 +51,7 @@ export class GlobalRoleGuard implements CanActivate {
       .get()
 
     // 内容管理员，添加内容访问权限
-    const isContentAdmin = cmsUser.roles.find((roleId) => roleId === 'content:administrator')
+    const isContentAdmin = cmsUser.roles.find((roleId) => roleId === SYSTEM_ROLE_IDS.CONTENT_ADMIN)
     if (isContentAdmin) {
       userRoles.push(SystemUserRoles[2])
     }

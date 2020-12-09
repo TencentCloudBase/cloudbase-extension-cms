@@ -15,7 +15,7 @@ import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty } from 'class-validator'
 import { getCloudBaseManager } from '@/utils'
-import { Collection } from '@/constants'
+import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 
 class MigrateBody {
   @IsNotEmpty()
@@ -50,7 +50,7 @@ interface MigrateJobDto {
   status?: string
 }
 
-@UseGuards(PermissionGuard('content', ['administrator']))
+@UseGuards(PermissionGuard('content', [SYSTEM_ROLE_IDS.ADMIN]))
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('projects/:projectId/migrate')
 export class MigrateController {
@@ -104,7 +104,7 @@ export class MigrateController {
   async createMigrateJob(
     @Param('projectId') projectId,
     @Body() body: MigrateBody,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const { filePath, collectionName, conflictMode } = body
     const manager = await getCloudBaseManager()

@@ -1,5 +1,5 @@
 import config from '@/config'
-import { Collection } from '@/constants'
+import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 import { getCloudBaseApp, getUserFromCredential, isDevEnv, isRunInServerMode } from '@/utils'
 import cloudbase from '@cloudbase/node-sdk'
 import {
@@ -9,18 +9,17 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common'
-import { Request } from 'express'
 
 // 校验用户是否登录，是否存在
 @Injectable()
 export class GlobalAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthRequest & Request>()
+    const request = context.switchToHttp().getRequest<IRequest>()
 
     if (isDevEnv()) {
       request.cmsUser = {
         _id: 'test',
-        roles: ['administrator'],
+        roles: [SYSTEM_ROLE_IDS.ADMIN],
         username: 'admin',
         createTime: 2020,
         isAdmin: true,
@@ -29,7 +28,7 @@ export class GlobalAuthGuard implements CanActivate {
 
       // request.cmsUser = {
       //     _id: 'test',
-      //     roles: ['content:administrator'],
+      //     roles: [SYSTEM_ROLE_IDS.ADMIN],
       //     username: 'admin',
       //     createTime: 2020,
       //     uuid: 'xxx'
@@ -74,17 +73,6 @@ export class GlobalAuthGuard implements CanActivate {
         },
         HttpStatus.FORBIDDEN
       )
-
-      // request.cmsUser = {
-      //   _id: 'restful',
-      //   roles: ['public'],
-      //   username: '_anonymous',
-      //   createTime: 2020,
-      //   isAdmin: false,
-      //   uuid: '',
-      // }
-
-      // return true
     }
 
     const {

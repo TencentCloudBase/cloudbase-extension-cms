@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import R from 'ramda'
 import { Injectable } from '@nestjs/common'
-import { CloudBaseService } from '@/services'
+import { CloudBaseService, LocalCacheService } from '@/services'
 import {
   dateToUnixTimestampInMs,
   formatPayloadDate,
@@ -14,7 +14,10 @@ import { Schema, SchemaField } from '../schemas/types'
 
 @Injectable()
 export class ContentsService {
-  constructor(private cloudbaseService: CloudBaseService) {}
+  constructor(
+    private cloudbaseService: CloudBaseService,
+    private readonly cacheService: LocalCacheService
+  ) {}
 
   async getMany(
     resource: string,
@@ -140,13 +143,7 @@ export class ContentsService {
 
     if (resource !== Collection.Webhooks) {
       // 查询 schema 信息
-      const {
-        data: [schema],
-      } = await this.collection(Collection.Schemas)
-        .where({
-          collectionName: resource,
-        })
-        .get()
+      const schema = await getCollectionSchema(resource)
 
       if (!schema) {
         throw new RecordNotExistException('模型记录不存在')
@@ -207,13 +204,7 @@ export class ContentsService {
 
     if (resource !== Collection.Webhooks) {
       // 查询 schema 信息
-      const {
-        data: [schema],
-      } = await this.collection(Collection.Schemas)
-        .where({
-          collectionName: resource,
-        })
-        .get()
+      const schema = await getCollectionSchema(resource)
 
       if (!schema) {
         throw new RecordNotExistException('模型记录不存在')
@@ -360,10 +351,17 @@ export class ContentsService {
    */
   private async transformConnectField(docs: any[], connectFields: SchemaField[]) {
     let resData: any[] = docs
-    const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
-    const { data: schemas } = await this.collection(Collection.Schemas).where({}).limit(1000).get()
+    let schemas = []
+    // 缓存的 Schema 数据
+    const cachedSchemas = this.cacheService.get('schemas')
+    if (cachedSchemas?.length) {
+      schemas = cachedSchemas
+    } else {
+      schemas = await getCollectionSchema()
+      this.cacheService.set('schemas', schemas)
+    }
 
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaField) => {

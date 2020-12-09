@@ -1,13 +1,13 @@
 import _ from 'lodash'
 
 import { Controller, Get, Post, Delete, Body, Query, Param, UseGuards, Patch } from '@nestjs/common'
-import { Collection, SystemUserRoles } from '@/constants'
+import { Collection, SystemUserRoles, SYSTEM_ROLE_IDS } from '@/constants'
 import { RecordExistException, RecordNotExistException } from '@/common'
 import { CloudBaseService } from '@/services'
 import { PermissionGuard } from '@/guards'
 import { UserRole } from './role.dto'
 
-@UseGuards(PermissionGuard('role', ['administrator']))
+@UseGuards(PermissionGuard('role', [SYSTEM_ROLE_IDS.ADMIN]))
 @Controller('roles')
 export class RoleController {
   constructor(private readonly cloudbaseService: CloudBaseService) {}

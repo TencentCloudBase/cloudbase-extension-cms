@@ -1,7 +1,5 @@
 import { mixin, Injectable, CanActivate, ExecutionContext } from '@nestjs/common'
-
-// 合法操作
-const ALLOW_ACTIONS = ['get', 'update', 'create', 'delete', 'set']
+import { SYSTEM_ROLE_IDS } from '@/constants'
 
 @Injectable()
 class MixinPermissionGuard implements CanActivate {
@@ -11,7 +9,7 @@ class MixinPermissionGuard implements CanActivate {
   protected readonly handleService: string
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request: AuthRequest = context.switchToHttp().getRequest()
+    const request: IRequest = context.switchToHttp().getRequest()
 
     request.handleService = this.handleService
 
@@ -20,7 +18,7 @@ class MixinPermissionGuard implements CanActivate {
     } = request
 
     // 访问路由需要管理员权限
-    const needAdmin = this.needRoles?.find((roleId) => roleId === 'administrator')
+    const needAdmin = this.needRoles?.find((roleId) => roleId === SYSTEM_ROLE_IDS.ADMIN)
 
     if (isAdmin || (isProjectAdmin && !needAdmin)) {
       return true
@@ -47,8 +45,6 @@ class MixinPermissionGuard implements CanActivate {
       handleAction = body.action
     }
 
-    console.log('测试', handleAction)
-
     // 用户绑定的角色，对应的权限
     const allowAction = userRoles.find((role) =>
       role.permissions.find((permission) => {
@@ -65,7 +61,7 @@ class MixinPermissionGuard implements CanActivate {
           (action) =>
             // 全部 action
             action === '*' ||
-            // action 为 update，行为为 set
+            // action 为 update，处理 action 为 set
             (action === 'update' && /^set/.test(handleAction)) ||
             // 其他 action 完全对应的情况
             new RegExp(action).test(handleAction)
@@ -81,7 +77,7 @@ class MixinPermissionGuard implements CanActivate {
   }
 }
 
-export const PermissionGuard = (service: string, roles?: 'administrator'[]) => {
+export const PermissionGuard = (service: string, roles?: SYSTEM_ROLE_IDS.ADMIN[]) => {
   const guard = mixin(
     class extends MixinPermissionGuard {
       protected readonly needRoles = roles

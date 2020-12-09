@@ -40,7 +40,7 @@ export class WebhooksController {
   async handleAction(
     @Param('projectId') projectId,
     @Body() body: ActionBody,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const {
       action,

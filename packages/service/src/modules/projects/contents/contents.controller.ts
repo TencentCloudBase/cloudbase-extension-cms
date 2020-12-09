@@ -14,7 +14,7 @@ import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
 import { Collection } from '@/constants'
 import { UnsupportedOperation } from '@/common'
-import { checkAccessAndGetResource } from '@/utils'
+import { checkAccessAndGetResource, getCollectionSchema } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
@@ -68,7 +68,7 @@ export class ContentsController {
   async getContentSchemas(
     @Param('projectId') projectId,
     @Query() query: SchemaQuery,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const { page = 1, pageSize = 100 } = query
 
@@ -101,7 +101,7 @@ export class ContentsController {
   async handleAction(
     @Param('projectId') projectId,
     @Body() body: ActionBody,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const {
       action,
@@ -140,18 +140,11 @@ export class ContentsController {
   }
 
   // 二次校验权限
-  private async checkResourcePermission(projectId: string, req: AuthRequest, resource: string) {
+  private async checkResourcePermission(projectId: string, req: IRequest, resource: string) {
     // 检查 CMS 系统角色
     checkAccessAndGetResource(projectId, req, resource)
 
-    const {
-      data: [schema],
-    } = await this.cloudbaseService
-      .collection(Collection.Schemas)
-      .where({
-        collectionName: resource,
-      })
-      .get()
+    const schema = await getCollectionSchema(resource)
 
     // CMS 只能操作 CMS 管理的集合，不能操作非 CMS 管理的集合
     if (!schema) {
