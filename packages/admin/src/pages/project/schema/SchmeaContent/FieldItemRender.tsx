@@ -1,12 +1,13 @@
+import { useParams } from 'umi'
+import { useConcent } from 'concent'
 import React, { useMemo, useState } from 'react'
-import { FieldTypes, SYSTEM_FIELDS } from '@/common'
+import { FieldTypes } from '@/common'
 import { Card, Space, Typography, Tooltip, Switch, Popover, Tag, Spin } from 'antd'
 import { ExclamationCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 import { updateSchema } from '@/services/schema'
-import { useParams } from 'umi'
-import { useConcent } from 'concent'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
+import { getSchemaSystemFields } from '@/utils'
 
 export interface FieldType {
   icon: React.ReactNode
@@ -58,7 +59,7 @@ export const SchemaFieldRender: React.FC<{
         ...field,
         order: index,
       }))
-      .concat(getSchemaSystemFields(schema))
+      .concat(getSchemaSystemFields(schema?.fields))
 
     // 更新顺序
     schema.fields = resortedFields
@@ -142,13 +143,7 @@ export const SchemaSystemField: React.FC<{ onFiledClick: Function; schema: Schem
   const [showSystemField, setShowSystemField] = useState(false)
 
   // 合并系统字段
-  const systemFields = useMemo(() => {
-    if (!schema?.fields) return SYSTEM_FIELDS
-    return schema.fields
-      .filter((_) => _.isSystem)
-      .concat(SYSTEM_FIELDS)
-      .filter((field, i, arr) => arr.findIndex((_) => _.name === field.name) === i)
-  }, [schema])
+  const systemFields = useMemo(() => getSchemaSystemFields(schema?.fields), [schema])
 
   return (
     <div>
@@ -197,13 +192,4 @@ export const SchemaSystemField: React.FC<{ onFiledClick: Function; schema: Schem
         : ''}
     </div>
   )
-}
-
-// 获取 Schema 的系统字段
-const getSchemaSystemFields = (schema: Schema) => {
-  if (!schema?.fields) return SYSTEM_FIELDS
-  return schema.fields
-    .filter((_) => _.isSystem)
-    .concat(SYSTEM_FIELDS)
-    .filter((field, i, arr) => arr.findIndex((_) => _.name === field.name) === i)
 }

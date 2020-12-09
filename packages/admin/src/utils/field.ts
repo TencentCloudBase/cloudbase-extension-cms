@@ -1,3 +1,5 @@
+import { SYSTEM_FIELDS } from '@/common'
+
 // 是否为 date 类型
 export const isDateType = (type: string): boolean => type === 'Date' || type === 'DateTime'
 
@@ -67,4 +69,27 @@ export const formatSearchData = (schema: Schema, params: Record<string, any>) =>
       [key]: value,
     }
   }, {})
+}
+
+// 字段排序，数字越大，越靠后
+const SYSTEM_FIELD_ORDER = {
+  _createTime: 1,
+  _updateTime: 2,
+}
+
+const fieldOrder = (field: SchemaField) => {
+  return SYSTEM_FIELD_ORDER[field.name] || 0
+}
+
+// 获取 Schema 中的系统字段，并排序
+export const getSchemaSystemFields = (fields: SchemaField[]) => {
+  if (!fields?.length) return SYSTEM_FIELDS
+
+  return fields
+    .filter((_) => _.isSystem)
+    .concat(SYSTEM_FIELDS)
+    .filter((field, i, arr) => arr.findIndex((_) => _.name === field.name) === i)
+    .sort((prev, next) => {
+      return fieldOrder(prev) - fieldOrder(next)
+    })
 }
