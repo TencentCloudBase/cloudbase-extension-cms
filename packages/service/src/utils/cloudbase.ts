@@ -3,12 +3,14 @@ import request from 'request'
 import cloudbase from '@cloudbase/node-sdk'
 import CloudBaseManager from '@cloudbase/manager-node'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
-import { isDevEnv } from './tools'
 import { Collection } from '@/constants'
+import { isDevEnv } from './tools'
+import { MemoryCache } from './cache'
 
 let nodeApp
 let managerApp
 let secretManager: SecretManager
+const schemaCache = new MemoryCache()
 
 // 从环境变量中获取 envId
 export const getEnvIdString = (): string => {
@@ -114,13 +116,13 @@ export const getUserFromCredential = async (credential: string, origin: string) 
 /**
  * 获取集合的 Schema
  */
-/**
- * 获取集合的 Schema
- */
 export async function getCollectionSchema(collection: string): Promise<Schema>
 export async function getCollectionSchema(): Promise<Schema[]>
 
 export async function getCollectionSchema(collection?: string) {
+  const cacheSchema = collection ? schemaCache.get(collection) : schemaCache.get('SCHEMAS')
+  if (cacheSchema) return cacheSchema
+
   const app = getCloudBaseApp()
 
   const query = collection
@@ -136,7 +138,23 @@ export async function getCollectionSchema(collection?: string) {
     .limit(1000)
     .get()
 
+  if (collection) {
+    schemaCache.set(collection, data[0])
+  } else {
+    schemaCache.set('SCHEMAS', data)
+  }
+
   return collection ? data[0] : data
+}
+
+/**
+ * 清除 schema 缓存
+ */
+export const clearSchemaCache = (collection: string) => {
+  // 清除 collection 对应的缓存
+  schemaCache.del(collection)
+  // schema 变更时，schemas 也失效，清除 SCHEMAS（全部 schema 数组）缓存
+  schemaCache.del('SCHEMAS')
 }
 
 // 以服务器模式运行，即通过监听端口的方式运行
@@ -148,16 +166,16 @@ export const isRunInServerMode = () =>
 // 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST
 
+/**
+ * 从容器运行环境中获取临时秘钥
+ */
+
 interface Secret {
   secretId: string
   secretKey: string
   token: string
   expire: number // 过期时间，单位：秒
 }
-
-/**
- * 从容器运行环境中获取临时秘钥
- */
 export default class SecretManager {
   private tmpSecret: Secret | null
   private TMP_SECRET_URL: string

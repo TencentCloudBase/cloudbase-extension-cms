@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Body,
+  Patch,
   Query,
   Param,
   Delete,
@@ -12,11 +13,10 @@ import {
   UnauthorizedException,
   ClassSerializerInterceptor,
   Controller,
-  Patch,
 } from '@nestjs/common'
 import { Collection } from '@/constants'
 import { PermissionGuard } from '@/guards'
-import { checkAccessAndGetResource } from '@/utils'
+import { checkAccessAndGetResource, clearSchemaCache, getCollectionSchema } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { CmsException, RecordExistException, RecordNotExistException } from '@/common'
 import { SchemasService } from './schema.service'
@@ -39,10 +39,8 @@ export class SchemasController {
   async getSchemas(
     @Param('projectId') projectId,
     @Query() query: SchemaQuery,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
-    console.log('get', projectId)
-
     const { page = 1, pageSize = 100 } = query
 
     const schemas = checkAccessAndGetResource(projectId, req)
@@ -69,7 +67,7 @@ export class SchemasController {
   }
 
   @Get(':schemaId')
-  async getSchema(@Param() params, @Request() req: AuthRequest) {
+  async getSchema(@Param() params, @Request() req: IRequest) {
     const { projectId, schemaId } = params
 
     checkAccessAndGetResource(projectId, req, schemaId)
@@ -91,14 +89,7 @@ export class SchemasController {
     @Body(new SchemaTransfromPipe('create')) body: Schema
   ) {
     // 检查同名集合是否存在，全局范围，不同项目不允许存在同名的集合
-    const {
-      data: [schema],
-    } = await this.cloudbaseService
-      .collection(Collection.Schemas)
-      .where({
-        collectionName: body.collectionName,
-      })
-      .get()
+    const schema = await getCollectionSchema(body.collectionName)
 
     if (schema) {
       throw new RecordExistException(`系统中已存在绑定了此数据库 ${schema?.collectionName} 的模型`)
@@ -121,11 +112,9 @@ export class SchemasController {
   async updateSchema(
     @Param() params,
     @Body(new SchemaTransfromPipe('update')) payload: Schema,
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const { projectId, schemaId } = params
-
-    console.log(params)
 
     checkAccessAndGetResource(projectId, req, schemaId)
 
@@ -156,6 +145,9 @@ export class SchemasController {
       await this.schemaService.renameCollection(schema.collectionName, payload.collectionName)
     }
 
+    // 使原有的 schema 缓存失效
+    clearSchemaCache(schema.collectionName)
+
     return res
   }
 
@@ -163,7 +155,7 @@ export class SchemasController {
   async deleteSchema(
     @Param() params,
     @Body() body: { deleteCollection: boolean },
-    @Request() req: AuthRequest
+    @Request() req: IRequest
   ) {
     const { projectId, schemaId } = params
     const { deleteCollection } = body
@@ -189,6 +181,9 @@ export class SchemasController {
     if (deleteCollection) {
       await this.schemaService.deleteCollection(schema.collectionName)
     }
+
+    // 使原有的 schema 缓存失效
+    clearSchemaCache(schema.collectionName)
 
     return res
   }
