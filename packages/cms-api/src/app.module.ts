@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common'
+import { Module, MiddlewareConsumer, NestModule, Scope } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'

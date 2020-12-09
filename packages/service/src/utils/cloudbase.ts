@@ -114,19 +114,29 @@ export const getUserFromCredential = async (credential: string, origin: string) 
 /**
  * 获取集合的 Schema
  */
-export const getCollectionSchema = async (collection: string): Promise<Schema> => {
+/**
+ * 获取集合的 Schema
+ */
+export async function getCollectionSchema(collection: string): Promise<Schema>
+export async function getCollectionSchema(): Promise<Schema[]>
+
+export async function getCollectionSchema(collection?: string) {
   const app = getCloudBaseApp()
-  const {
-    data: [schema],
-  }: { data: Schema[] } = await app
+
+  const query = collection
+    ? {
+        collectionName: collection,
+      }
+    : {}
+
+  const { data }: { data: Schema[] } = await app
     .database()
     .collection(Collection.Schemas)
-    .where({
-      collectionName: collection,
-    })
+    .where(query)
+    .limit(1000)
     .get()
 
-  return schema
+  return collection ? data[0] : data
 }
 
 // 以服务器模式运行，即通过监听端口的方式运行

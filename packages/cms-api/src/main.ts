@@ -5,10 +5,10 @@ import { ValidationPipe } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { NestExpressApplication, ExpressAdapter } from '@nestjs/platform-express'
 import { AppModule } from './app.module'
-import { GlobalAuthGuard } from './guards/auth.guard'
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { AllExceptionsFilter } from './exceptions.filter'
 import { isRunInServerMode } from './utils'
+import { TimeCost } from './interceptors/timecost.interceptor'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -35,11 +35,11 @@ export async function bootstrap() {
     })
   )
 
-  // 登录校验
-  app.useGlobalGuards(new GlobalAuthGuard())
-
   // 超时时间
   app.useGlobalInterceptors(new TimeoutInterceptor(config.get('RES_TIMEOUT')))
+
+  // 请求时间
+  app.useGlobalInterceptors(new TimeCost())
 
   // 错误处理
   app.useGlobalFilters(new AllExceptionsFilter())

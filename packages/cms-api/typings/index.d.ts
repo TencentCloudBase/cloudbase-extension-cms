@@ -81,9 +81,3 @@ interface RequestUser extends User {
   // 用户关联的角色信息
   userRoles?: UserRole[]
 }
-
-interface AuthRequest extends Request {
-  handleService: string
-
-  cmsUser: RequestUser
-}

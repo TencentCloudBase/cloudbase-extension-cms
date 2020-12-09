@@ -6,17 +6,17 @@ import {
   Query,
   Delete,
   Param,
-  Controller,
   Patch,
   Put,
   UseGuards,
+  Controller,
 } from '@nestjs/common'
 import { IsJSON, IsNumber, IsOptional } from 'class-validator'
+import { ActionGuard, RequestAuthGuard } from '@/guards'
 import { formatPayloadDate } from '@/utils'
-import { Collection } from '@/constants'
-import { CloudBaseService } from '@/services'
+import { CloudBaseService, LocalCacheService } from '@/services'
+
 import { ApiService } from './api.service'
-import { ActionGuard } from '@/guards/action.guard'
 
 class IQuery {
   @IsOptional()
@@ -52,11 +52,14 @@ class IPayload {
  * 4. 返回值中的 cloudId 转换成 https 链接，注意数组
  * 5. 请求中的时间字符串要做转换
  */
+
 @Controller('/v1.0')
+@UseGuards(RequestAuthGuard)
 export class ApiController {
   constructor(
     private readonly cloudbaseService: CloudBaseService,
-    private readonly apiService: ApiService
+    private readonly apiService: ApiService,
+    private readonly cacheService: LocalCacheService
   ) {}
 
   // 获取单个文档
@@ -66,13 +69,7 @@ export class ApiController {
     const { collectionName, docId } = params
 
     // 获取数据模型
-    const {
-      data: [docSchema],
-    }: { data: Schema[] } = await this.collection(Collection.Schemas)
-      .where({
-        collectionName,
-      })
-      .get()
+    const docSchema = this.cacheService.get('currentSchema')
 
     // 查询数据库
     let dbQuery = this.collection(collectionName).doc(docId)
@@ -104,7 +101,7 @@ export class ApiController {
   @UseGuards(ActionGuard('read'))
   @Get(':collectionName')
   async getDocuments(@Param('collectionName') collectionName: string, @Query() query: IQuery) {
-    const apiQuery = await this.apiService.getMergedQuery(collectionName, query as any)
+    const apiQuery = await this.apiService.getMergedQuery(collectionName, query)
 
     // 查询数据
     let findRes = await this.apiService.callOpenApi({
@@ -135,7 +132,7 @@ export class ApiController {
     @Query() query,
     @Body() payload
   ) {
-    const apiQuery = await this.apiService.getMergedQuery(collectionName, query as any)
+    const apiQuery = await this.apiService.getMergedQuery(collectionName, query)
 
     const { total } = await this.apiService.callOpenApi({
       collectionName,

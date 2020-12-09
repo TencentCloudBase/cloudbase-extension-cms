@@ -1,26 +1,29 @@
 import _ from 'lodash'
-import querystring from 'querystring'
 import { EJSON } from 'bson'
+import querystring from 'querystring'
+import { Injectable } from '@nestjs/common'
 import Axios, { AxiosRequestConfig } from 'axios'
 import { sign } from '@cloudbase/signature-nodejs'
-import { Collection } from '@/constants'
-import { CloudBaseService } from '@/services'
-import { Injectable } from '@nestjs/common'
-import { cloudIdToUrl, getCredential, getEnvIdString } from '@/utils'
 import { CmsException, RecordExistException } from '@/common'
+import { CloudBaseService, LocalCacheService } from '@/services'
+import { cloudIdToUrl, getCollectionSchema, getCredential, getEnvIdString } from '@/utils'
 
-interface IQuery extends NodeJS.Dict<number | string> {
+interface IQuery {
   limit?: number
   skip?: number
   fields?: string
   sort?: string
+  [key: string]: any
 }
 
 type OpenApiAction = 'find' | 'count' | 'updateOne' | 'updateMany' | 'deleteOne' | 'deleteMany'
 
 @Injectable()
 export class ApiService {
-  constructor(private readonly cloudbaseService: CloudBaseService) {}
+  constructor(
+    private readonly cloudbaseService: CloudBaseService,
+    private readonly cacheService: LocalCacheService
+  ) {}
 
   /**
    * 合并传入的 query 与 Schema 内置的条件，获取最终查询 query
@@ -32,14 +35,7 @@ export class ApiService {
     fields = fields ? JSON.parse(fields) : {}
 
     // 获取 doc 模型信息
-    const {
-      data: [docSchema],
-    }: { data: Schema[] } = await this.cloudbaseService
-      .collection(Collection.Schemas)
-      .where({
-        collectionName,
-      })
-      .get()
+    const docSchema = this.cacheService.get('currentSchema')
 
     if (!docSchema) {
       throw new RecordExistException('内容模型不存在，查询错误！')
@@ -90,14 +86,7 @@ export class ApiService {
     let formatData = resData
 
     // 获取数据模型
-    const {
-      data: [docSchema],
-    }: { data: Schema[] } = await this.cloudbaseService
-      .collection(Collection.Schemas)
-      .where({
-        collectionName,
-      })
-      .get()
+    const docSchema = this.cacheService.get('currentSchema')
 
     // 如果文档模型定义中存在关联字段
     // 则把返回结果中的所有关联字段 id 转换为对应的数据
@@ -136,11 +125,15 @@ export class ApiService {
     const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
-    const { data: schemas } = await this.cloudbaseService
-      .collection(Collection.Schemas)
-      .where({})
-      .limit(1000)
-      .get()
+    let schemas = []
+    // 缓存的 Schema 数据
+    const cachedSchemas = this.cacheService.get('schemas')
+    if (cachedSchemas?.length) {
+      schemas = cachedSchemas
+    } else {
+      schemas = await getCollectionSchema()
+      this.cacheService.set('schemas', schemas)
+    }
 
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaField) => {
@@ -165,11 +158,13 @@ export class ApiService {
         .collectionName
 
       // 获取关联的数据，分页最大条数 50
-      const { data: connectData } = await this.cloudbaseService
+      let { data: connectData } = await this.cloudbaseService
         .collection(collectionName)
         .where({ _id: $.in(ids) })
         .limit(1000)
         .get()
+
+      connectData = await this.parseResData(connectData, collectionName)
 
       // 修改 resData 中的关联字段
       resData = resData.map((record) => {

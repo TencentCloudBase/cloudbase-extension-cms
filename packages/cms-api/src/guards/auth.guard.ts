@@ -1,34 +1,33 @@
 import { Collection } from '@/constants'
-import { getCloudBaseApp } from '@/utils'
+import { LocalCacheService } from '@/services'
+import { getCloudBaseApp, getCollectionSchema } from '@/utils'
 import {
   CanActivate,
   HttpStatus,
   Injectable,
   HttpException,
   ExecutionContext,
+  Inject,
 } from '@nestjs/common'
-import { Request } from 'express'
 
 @Injectable()
-export class GlobalAuthGuard implements CanActivate {
+export class RequestAuthGuard implements CanActivate {
+  constructor(@Inject('LocalCacheService') private readonly cacheService: LocalCacheService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthRequest & Request>()
+    const req = context.switchToHttp().getRequest<IRequest>()
 
     // 数据库集合名
-    const collectionName = request.params?.collectionName
+    const collectionName = req.params?.collectionName
     const app = getCloudBaseApp()
     const db = app.database()
-    const {
-      data: [collection],
-    } = await db
-      .collection(Collection.Schemas)
-      .where({
-        collectionName,
-      })
-      .get()
+    const schema = await getCollectionSchema(collectionName)
+
+    // 首次查询、缓存 schema 信息
+    this.cacheService.set('currentSchema', schema)
 
     // 集合非 CMS 管理的集合，禁止访问
-    if (!collection) {
+    if (!schema) {
       throw new HttpException(
         {
           error: {
@@ -43,10 +42,7 @@ export class GlobalAuthGuard implements CanActivate {
     // 查询项目
     const {
       data: [project],
-    }: { data: Project[] } = await db
-      .collection(Collection.Projects)
-      .doc(collection.projectId)
-      .get()
+    }: { data: Project[] } = await db.collection(Collection.Projects).doc(schema.projectId).get()
 
     if (!project) {
       throw new HttpException(
@@ -59,6 +55,9 @@ export class GlobalAuthGuard implements CanActivate {
         HttpStatus.FORBIDDEN
       )
     }
+
+    // 缓存 project 信息
+    this.cacheService.set('project', project)
 
     // 是否开启 API 访问
     if (!project.enableApiAccess) {

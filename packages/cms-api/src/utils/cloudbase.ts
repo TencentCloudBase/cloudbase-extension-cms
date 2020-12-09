@@ -1,3 +1,4 @@
+import { Collection } from '@/constants'
 import cloudbase from '@cloudbase/node-sdk'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
 import { isDevEnv } from './tools'
@@ -43,6 +44,31 @@ export const getCloudBaseApp = () => {
   const app = cloudbase.init(options)
 
   return app
+}
+
+/**
+ * 获取集合的 Schema
+ */
+export async function getCollectionSchema(collection: string): Promise<Schema>
+export async function getCollectionSchema(): Promise<Schema[]>
+
+export async function getCollectionSchema(collection?: string) {
+  const app = getCloudBaseApp()
+
+  const query = collection
+    ? {
+        collectionName: collection,
+      }
+    : {}
+
+  const { data }: { data: Schema[] } = await app
+    .database()
+    .collection(Collection.Schemas)
+    .where(query)
+    .limit(1000)
+    .get()
+
+  return collection ? data[0] : data
 }
 
 export function cloudIdToUrl(cloudId: string) {

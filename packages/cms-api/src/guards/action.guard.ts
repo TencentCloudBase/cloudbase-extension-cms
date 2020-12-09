@@ -1,8 +1,6 @@
+import { CanActivate, Injectable, ExecutionContext, mixin, Inject } from '@nestjs/common'
 import { CmsException, ErrorCode, UnauthorizedOperation } from '@/common'
-import { Collection } from '@/constants'
-import { getCloudBaseApp } from '@/utils'
-import { CanActivate, Injectable, ExecutionContext, mixin } from '@nestjs/common'
-import { Request } from 'express'
+import { LocalCacheService } from '@/services'
 
 // 映射 action 和对应的权限控制字段
 const ACTION_MAP = {
@@ -16,30 +14,17 @@ export class MixinActionGuard implements CanActivate {
   // 操作
   protected readonly action: 'read' | 'modify' | 'delete'
 
+  constructor(@Inject('LocalCacheService') private readonly cacheService: LocalCacheService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<AuthRequest & Request>()
+    const req = context.switchToHttp().getRequest<IRequest>()
+    const res = context.switchToHttp().getResponse<IResponse>()
 
     // 数据库集合名
-    const collectionName = request.params?.collectionName
-    const app = getCloudBaseApp()
-    const db = app.database()
-    // 查询 collection 的信息
-    const {
-      data: [collection],
-    } = await db
-      .collection(Collection.Schemas)
-      .where({
-        collectionName,
-      })
-      .get()
+    const collectionName = req.params?.collectionName
 
-    // 查询 collection 所属项目
-    const {
-      data: [project],
-    }: { data: Project[] } = await db
-      .collection(Collection.Projects)
-      .doc(collection.projectId)
-      .get()
+    // 从缓存中读取 project
+    const project = this.cacheService.get('project')
 
     if (!this.action) {
       throw new CmsException(ErrorCode.ServerError, 'Missing Action')
