@@ -314,7 +314,7 @@ export const SchemaFieldEditorModal: React.FC<{
               <Row align="middle">
                 <Col flex="1 1 auto">
                   <Form.Item noStyle name="isOrderField" valuePropName="checked">
-                    <Switch disabled={selectedField.isSystem} />
+                    <Switch />
                   </Form.Item>
                 </Col>
                 <Col flex="0 0 auto">

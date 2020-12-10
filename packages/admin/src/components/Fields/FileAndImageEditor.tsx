@@ -20,7 +20,7 @@ export const IFileAndImageEditor: React.FC<{
   type: 'file' | 'image'
   value?: string | string[]
   resourceLinkType?: 'https' | 'fileId'
-  onChange?: (v: string | string[]) => void
+  onChange?: (v: string | string[] | null) => void
 }> = (props) => {
   let { value: links, type, field, onChange = () => {}, resourceLinkType = 'fileId' } = props
   const { isMultiple } = field
@@ -55,7 +55,7 @@ export const IFileAndImageEditor: React.FC<{
 export const ISingleFileUploader: React.FC<{
   type: 'file' | 'image'
   fileUri: string
-  onChange: (v: string | string[]) => void
+  onChange: (v: string | string[] | null) => void
   resourceLinkType: 'fileId' | 'https'
 }> = ({ type, fileUri, onChange, resourceLinkType }) => {
   const [percent, setPercent] = useState(0)
@@ -120,10 +120,8 @@ export const ISingleFileUploader: React.FC<{
         fileList={fileList}
         listType={type === 'image' ? 'picture' : 'text'}
         onRemove={(file) => {
-          const newFileList = fileList.filter((_) => _.uid !== file.uid)
-          const urls = newFileList.map((file) => file.uid)
-          onChange(urls)
-          setFileList(newFileList)
+          onChange(null)
+          setFileList([])
         }}
         beforeUpload={(file) => {
           setUploading(true)
