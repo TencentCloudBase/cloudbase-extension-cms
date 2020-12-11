@@ -17063,10 +17063,10 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
-vditor@^3.5.4:
-  version "3.6.2"
-  resolved "https://registry.yarnpkg.com/vditor/-/vditor-3.6.2.tgz#ee6011efa3ec563c6356ed82efbf2e00ba2e35c6"
-  integrity sha512-HPHHun5+IXmYGMKDWcUD83VfP1Qfncz7DmaIKoWpluJgE8ve7s+4RbFBcaEpYPXYzIuL2UTHoMnIjmTPbenOCA==
+vditor@^3.7.1:
+  version "3.7.1"
+  resolved "http://r.tnpm.oa.com/vditor/-/vditor-3.7.1.tgz#09ea23212416c4f1a129ec3863bbc52f47251bb1"
+  integrity sha512-/yen904xluZ9CVRZqeEUULZDBV7FdANhtlwracOAkaeQoYMEqT7xqLpJsJPEk6OHJ4MtFXSIGodDAM5H9DskTQ==
   dependencies:
     diff-match-patch "^1.0.5"
 
