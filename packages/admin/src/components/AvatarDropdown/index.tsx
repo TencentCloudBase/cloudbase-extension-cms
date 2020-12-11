@@ -1,11 +1,10 @@
 import React, { useCallback } from 'react'
 import { LogoutOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Menu, Spin, message } from 'antd'
+import { Avatar, Menu, Spin, message, Dropdown } from 'antd'
 import { history, useModel, useAccess } from 'umi'
 import { getCloudBaseApp, getPageQuery, logout } from '@/utils'
 
 import { stringify } from 'querystring'
-import HeaderDropdown from '../HeaderDropdown'
 import styles from './index.less'
 
 export interface GlobalHeaderRightProps {
@@ -97,7 +96,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
     </Menu>
   )
   return (
-    <HeaderDropdown overlay={menuHeaderDropdown}>
+    <Dropdown overlay={menuHeaderDropdown}>
       <span className={`${styles.action} ${styles.account}`}>
         {currentUser?.avatar ? (
           <Avatar alt="avatar" size="large" className={styles.avatar} src={currentUser?.avatar} />
@@ -111,7 +110,7 @@ const AvatarDropdown: React.FC<GlobalHeaderRightProps> = () => {
           />
         )}
       </span>
-    </HeaderDropdown>
+    </Dropdown>
   )
 }
 

@@ -30,7 +30,7 @@ export async function getInitialState(): Promise<{
       .getLoginState()
   } catch (error) {
     console.log(error)
-    message.error(`CloudBase JS SDK 初始化失败，${error.message}`)
+    message.error(`CloudBase JS SDK 初始化失败，${error?.message}`)
   }
 
   // 没有登录，重新登录
@@ -128,7 +128,7 @@ const errorHandler = async (error: ResponseError) => {
     })
   }
 
-  if (data.error) {
+  if (data?.error) {
     const message = data?.error?.message || data?.error?.code
 
     notification.error({

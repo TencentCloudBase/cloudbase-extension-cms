@@ -17,6 +17,7 @@ import { ContentCtx } from 'typings/store'
 import { getCmsConfig } from '@/utils'
 import defaultSettings from '../../config/defaultSettings'
 
+// 设置图标颜色
 setTwoToneColor('#0052d9')
 
 const customMenuDate: MenuDataItem[] = [

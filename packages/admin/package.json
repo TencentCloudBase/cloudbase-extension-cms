@@ -39,7 +39,6 @@
     "antd": "4.8.4",
     "braft-editor": "^2.3.9",
     "braft-utils": "^3.0.12",
-    "classnames": "^2.2.6",
     "concent": "^2.9.38",
     "css.gg": "^2.0.0",
     "jsonexport": "^3.0.1",
@@ -60,7 +59,6 @@
   "devDependencies": {
     "@ant-design/pro-cli": "^2.0.2",
     "@types/braft-editor": "^2.2.0",
-    "@types/classnames": "^2.2.7",
     "@types/express": "^4.17.0",
     "@types/history": "^4.7.8",
     "@types/jsonexport": "^3.0.1",

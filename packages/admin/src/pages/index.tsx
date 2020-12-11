@@ -34,6 +34,7 @@ import { getCmsConfig, getFullDate } from '@/utils'
 import './index.less'
 import pkg from '../../package.json'
 
+// 设置图标颜色
 setTwoToneColor('#0052d9')
 
 const { Header, Content, Footer } = Layout
@@ -99,7 +100,7 @@ export default (): React.ReactNode => {
       </div>
 
       {/* 新项目创建 */}
-      {isAdmin && <CreateProject onReload={() => setReload(reload + 1)} />}
+      {isAdmin && <ProjectCreateSection onReload={() => setReload(reload + 1)} />}
     </HomePage>
   )
 }
@@ -258,7 +259,7 @@ export const NoticeRender: React.FC = () => {
   )
 }
 
-export const CreateProject: React.FC<{
+export const ProjectCreateSection: React.FC<{
   onReload: () => void
 }> = ({ onReload }) => {
   const [modalVisible, setModalVisible] = useState(false)
@@ -283,7 +284,7 @@ export const CreateProject: React.FC<{
           </div>
         </Card>
       </div>
-      <CreateProjectModal
+      <ProjectCreateModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
         onSuccess={() => {
@@ -295,7 +296,7 @@ export const CreateProject: React.FC<{
   )
 }
 
-export const CreateProjectModal: React.FC<{
+export const ProjectCreateModal: React.FC<{
   visible: boolean
   onSuccess: () => void
   onClose: () => void

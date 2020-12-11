@@ -1,7 +1,8 @@
 module.exports = {
   important: true,
   theme: {
-    color: {
+    textColor: theme => theme('colors'),
+    colors: {
       primary: '#0052d9',
     },
     maxWidth: {
