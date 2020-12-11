@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { Typography, message, Tag, Select, Spin } from 'antd'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
-import { getSchema } from '@/services/schema'
-import { getContents, Options } from '@/services/content'
+import { getContentSchema, getContents, Options } from '@/services/content'
 import { calculateFieldWidth } from '@/utils'
 import { ContentCtx } from 'typings/store'
 
@@ -81,7 +80,7 @@ export const IConnectEditor: React.FC<{
 
       // 后台获取 Schema
       if (!connectSchema) {
-        const { data } = await getSchema(projectId, connectResource)
+        const { data } = await getContentSchema(projectId, connectResource)
         connectSchema = data
       }
 

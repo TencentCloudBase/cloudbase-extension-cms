@@ -46,11 +46,21 @@ export class SchemasController {
     const schemas = checkAccessAndGetResource(projectId, req)
 
     const $ = this.cloudbaseService.db.command
-    const filter: any = {}
-    projectId && (filter.projectId = projectId)
+    let filter: any = {}
+    let _id
 
     if (schemas !== '*') {
-      filter._id = $.in(schemas)
+      _id = $.in(schemas)
+    }
+
+    if (projectId) {
+      filter = $.or(
+        { _id, projectId },
+        {
+          _id,
+          projectIds: $.elemMatch($.eq(projectId)),
+        }
+      )
     }
 
     const { data, requestId } = await this.cloudbaseService

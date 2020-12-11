@@ -21,6 +21,15 @@ export interface Options {
   payload?: Record<string, any>
 }
 
+export async function getContentSchema(
+  projectId: string,
+  schemaId: string
+): Promise<{ data: Schema }> {
+  return tcbRequest(`/projects/${projectId}/contents/${schemaId}`, {
+    method: 'GET',
+  })
+}
+
 export async function getContentSchemas(projectId: string) {
   return tcbRequest(`/projects/${projectId}/contents`, {
     method: 'GET',

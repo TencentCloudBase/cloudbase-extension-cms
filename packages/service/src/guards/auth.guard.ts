@@ -36,11 +36,10 @@ export class GlobalAuthGuard implements CanActivate {
 
       // request.cmsUser = {
       //   _id: 'test',
-      //   roles: ['public'],
+      //   roles: [SYSTEM_ROLE_IDS.CONTENT_ADMIN],
       //   username: '_anonymous',
       //   createTime: 2020,
-      //   isAdmin: false,
-      //   uuid: '',
+      //   uuid: 'xxx',
       // }
 
       return true

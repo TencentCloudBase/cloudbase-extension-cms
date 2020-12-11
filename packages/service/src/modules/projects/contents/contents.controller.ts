@@ -75,11 +75,22 @@ export class ContentsController {
     const collectionNames = checkAccessAndGetResource(projectId, req)
 
     const $ = this.cloudbaseService.db.command
-    const filter: any = {}
-    projectId && (filter.projectId = projectId)
+
+    let filter: any = {}
+    let filterCollection
 
     if (collectionNames !== '*') {
-      filter.collectionName = $.in(collectionNames)
+      filterCollection = $.in(collectionNames)
+    }
+
+    if (projectId) {
+      filter = $.or(
+        { projectId, collectionName: filterCollection },
+        {
+          collectionName: filterCollection,
+          projectIds: $.elemMatch($.eq(projectId)),
+        }
+      )
     }
 
     const { data, requestId } = await this.cloudbaseService
@@ -91,6 +102,23 @@ export class ContentsController {
 
     return {
       data,
+      requestId,
+    }
+  }
+
+  @Get(':schemaId')
+  async getContentSchema(@Param() params, @Request() req: IRequest) {
+    const { projectId, schemaId } = params
+
+    checkAccessAndGetResource(projectId, req, schemaId)
+
+    const {
+      data: [schema],
+      requestId,
+    } = await this.cloudbaseService.collection(Collection.Schemas).doc(schemaId).get()
+
+    return {
+      data: schema,
       requestId,
     }
   }
