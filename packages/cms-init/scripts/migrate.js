@@ -75,7 +75,7 @@ async function migrateSchemas(context, projectId) {
               stringMaxLength,
               connectField,
               connectResource,
-              connectMany
+              connectMany,
             } = field
 
             const newField = {
@@ -214,7 +214,8 @@ module.exports = {
 
     // 是否为 V1 项目
     let result = await manager.database.checkCollectionExists('tcb-ext-cms-contents')
-    if (!result.Exists) return
+    // 微信侧不做迁移工作
+    if (!result.Exists || process.env.WX_MP) return
 
     result = await manager.database.checkCollectionExists('tcb-ext-cms-settings')
     if (result.Exists) {

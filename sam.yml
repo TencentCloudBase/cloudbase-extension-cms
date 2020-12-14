@@ -45,7 +45,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-service
-      CodeUri: extension://c33d095204ac409fa7de92b4a66b1958.zip
+      CodeUri: extension://e731e1624b4e4d24954ec207a0f399b5.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -62,7 +62,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-init
-      CodeUri: extension://c59d3c1dff8346d5b85162bbc22d4c0c.zip
+      CodeUri: extension://0241c2720afb459d9c8bf1a00608b167.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -82,7 +82,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-api
-      CodeUri: extension://9e7b9774fd484c9b87751fd182dce270.zip
+      CodeUri: extension://9c74210f66264444a0d21d5b491726f3.zip
       InstallDependency: true
       Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
       MemorySize: 256

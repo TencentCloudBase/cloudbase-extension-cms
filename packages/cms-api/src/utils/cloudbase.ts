@@ -106,7 +106,7 @@ export function cloudIdToUrl(cloudId: string) {
     envId = envId.trim()
   }
 
-  return `//${trimBucket}.tcb.qcloud.la/${path}`
+  return `https://${trimBucket}.tcb.qcloud.la/${path}`
 }
 
 // 以服务器模式运行，即通过监听端口的方式运行
