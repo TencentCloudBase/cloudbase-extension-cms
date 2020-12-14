@@ -8,10 +8,10 @@ import 'braft-editor/dist/index.css'
 
 const { Dragger } = Upload
 
-const RichText: React.FC<{ value?: any; key: string; onChange?: (...args: any) => void }> = (
+const RichText: React.FC<{ value?: any; id: number; onChange?: (...args: any) => void }> = (
   props
 ) => {
-  const { key = 'default', value = '欢迎使用富文本编辑器', onChange = (...args: any) => {} } = props
+  const { id = 'default', value = '欢迎使用富文本编辑器', onChange = (...args: any) => {} } = props
   const [editorState, setEditorState] = useState<any>()
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const RichText: React.FC<{ value?: any; key: string; onChange?: (...args: any) =
   return (
     <div style={{ border: '1px solid #d1d1d1' }}>
       <BraftEditor
-        key={key}
+        key={id}
         value={editorState}
         onChange={(s) => {
           setEditorState(s)

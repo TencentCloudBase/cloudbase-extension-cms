@@ -11,13 +11,13 @@ const RichTextEditor = React.lazy(() => import('@/components/Fields/RichText'))
 const { TextArea } = Input
 const { Option } = Select
 
-const LazyMarkdownEditor: React.FC = (props: any) => (
+const LazyMarkdownEditor: React.FC<{ id: number }> = (props: any) => (
   <Suspense fallback={<Spin />}>
     <MarkdownEditor {...props} />
   </Suspense>
 )
 
-const LazyRichTextEditor: React.FC = (props: any) => (
+const LazyRichTextEditor: React.FC<{ id: number }> = (props: any) => (
   <Suspense fallback={<Spin />}>
     <RichTextEditor {...props} />
   </Suspense>
@@ -192,10 +192,10 @@ export function getFieldEditor(field: SchemaField, key: number) {
       )
       break
     case 'Markdown':
-      FieldEditor = <LazyMarkdownEditor key={key} />
+      FieldEditor = <LazyMarkdownEditor id={key} />
       break
     case 'RichText':
-      FieldEditor = <LazyRichTextEditor key={String(key)} />
+      FieldEditor = <LazyRichTextEditor id={key} />
       break
     case 'Connect':
       FieldEditor = <IConnectEditor field={field} />

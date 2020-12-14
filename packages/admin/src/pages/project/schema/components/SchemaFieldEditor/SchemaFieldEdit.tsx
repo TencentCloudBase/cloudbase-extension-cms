@@ -283,6 +283,7 @@ export const SchemaFieldEditorModal: React.FC<{
         {/* 特定字段的特殊属性 */}
         {SpecificAttributeFormItem}
 
+        {/* 必要字段 */}
         <Form.Item>
           <div className="form-item">
             <Form.Item style={{ marginBottom: 0 }}>
@@ -295,6 +296,7 @@ export const SchemaFieldEditorModal: React.FC<{
           </div>
         </Form.Item>
 
+        {/* 隐藏字段 */}
         <Form.Item>
           <div className="form-item">
             <Form.Item style={{ marginBottom: 0 }}>
@@ -302,11 +304,12 @@ export const SchemaFieldEditorModal: React.FC<{
               <Form.Item name="isHidden" valuePropName="checked" style={{ marginBottom: 0 }}>
                 <Switch />
               </Form.Item>
-              <Text type="secondary">在内容集合表格展示时隐藏该字段</Text>
+              <Text type="secondary">在内容集合表格展示、编辑内容时隐藏该字段</Text>
             </Form.Item>
           </div>
         </Form.Item>
 
+        {/* 排序字段 */}
         <Form.Item>
           <div className="form-item">
             <Form.Item style={{ marginBottom: 0 }}>

@@ -62,17 +62,17 @@ const getToolBarWithoutUpload = () => {
 const toolbar: any[] = WX_MP ? getToolBarWithoutUpload() : DefaultToolbar
 
 export const MarkdownEditor: React.FC<{
+  id: number
   value?: any
-  key: string
   onChange?: (...args: any) => void
 }> = (props) => {
-  const { value, key = 'default', onChange = (...args: any) => {} } = props
+  const { value, id = 'default', onChange = (...args: any) => {} } = props
 
   const authHeader = getAuthHeader()
 
   useEffect(() => {
     // eslint-disable-next-line
-    new VditorX(`${key}-editor`, {
+    new VditorX(`${id}-editor`, {
       value,
       toolbar,
       input: (text, html) => {
@@ -98,7 +98,7 @@ export const MarkdownEditor: React.FC<{
     })
   }, [authHeader?.['x-cloudbase-credentials']])
 
-  return <div id={`${key}-editor`} />
+  return <div id={`${id}-editor`} />
 }
 
 export default MarkdownEditor
