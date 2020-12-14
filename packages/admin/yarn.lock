@@ -17065,7 +17065,7 @@ vary@~1.1.2:
 
 vditor@^3.7.1:
   version "3.7.1"
-  resolved "http://r.tnpm.oa.com/vditor/-/vditor-3.7.1.tgz#09ea23212416c4f1a129ec3863bbc52f47251bb1"
+  resolved "https://registry.yarnpkg.com/vditor/-/vditor-3.7.1.tgz#09ea23212416c4f1a129ec3863bbc52f47251bb1"
   integrity sha512-/yen904xluZ9CVRZqeEUULZDBV7FdANhtlwracOAkaeQoYMEqT7xqLpJsJPEk6OHJ4MtFXSIGodDAM5H9DskTQ==
   dependencies:
     diff-match-patch "^1.0.5"
