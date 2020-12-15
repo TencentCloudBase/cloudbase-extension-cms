@@ -1,10 +1,11 @@
-import { Upload, Progress, message, Modal } from 'antd'
+import { Upload, Progress, message, Modal, Input, Space, Button } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { InboxOutlined, FileImageTwoTone } from '@ant-design/icons'
 import { ContentUtils } from 'braft-utils'
 import BraftEditor, { ExtendControlType } from 'braft-editor'
 import { uploadFile, getTempFileURL } from '@/utils'
 import 'braft-editor/dist/index.css'
+import { useSetState } from 'react-use'
 
 const { Dragger } = Upload
 
@@ -55,48 +56,82 @@ const RichText: React.FC<{ value?: any; id: number; onChange?: (...args: any) =>
   )
 }
 
+interface IUploadState {
+  fileList: any[]
+  percent: number
+  visible: boolean
+  uploading: boolean
+  inputUrl: string
+}
+
 export const CustomUploader: React.FC<{
   onChange?: (v: string) => void
 }> = (props) => {
   let { onChange = () => {} } = props
-  const [fileList, setFileList] = useState<any[]>()
-  const [percent, setPercent] = useState(0)
-  const [uploading, setUploading] = useState(false)
-  const [visible, setVisible] = useState(false)
+  const [{ fileList, percent, visible, uploading, inputUrl }, setState] = useSetState<IUploadState>(
+    {
+      fileList: [],
+      percent: 0,
+      visible: false,
+      uploading: false,
+      inputUrl: '',
+    }
+  )
 
   return (
     <>
       <button type="button" data-title="媒体上传" className="control-item button">
-        <FileImageTwoTone className="bfi-list" onClick={() => setVisible(true)} />
+        <FileImageTwoTone className="bfi-list" onClick={() => setState({ visible: true })} />
       </button>
       <Modal
         centered
         closable={true}
         visible={visible}
         footer={null}
-        onCancel={() => setVisible(false)}
+        onCancel={() => setState({ visible: false })}
       >
+        <p>输入链接插入图片</p>
+        <div className="w-full flex">
+          <Input
+            className="flex-auto"
+            value={inputUrl}
+            placeholder="输入图片地址"
+            onChange={(e) => setState({ inputUrl: e.target.value })}
+          />
+          &nbsp;
+          <Button
+            type="primary"
+            onClick={() => {
+              onChange(inputUrl)
+              setState({ visible: false })
+            }}
+          >
+            确认
+          </Button>
+        </div>
+        <p className="mt-5">或拖拽上传插入图片</p>
         <Dragger
           fileList={fileList}
           listType="picture"
           beforeUpload={(file) => {
-            setUploading(true)
-            setPercent(0)
+            setState({ uploading: true, percent: 0 })
 
             uploadFileAndGetUrl(file, (percent) => {
-              setPercent(percent)
+              setState({ percent })
             })
               .then(({ url, fileId }) => {
                 onChange(url)
-                setFileList([
-                  {
-                    uid: fileId,
-                    name: file.name,
-                    status: 'done',
-                  },
-                ])
+                setState({
+                  visible: false,
+                  fileList: [
+                    {
+                      uid: fileId,
+                      name: file.name,
+                      status: 'done',
+                    },
+                  ],
+                })
                 message.success(`上传图片成功`)
-                setVisible(false)
               })
               .catch((e) => {
                 console.log(e)
