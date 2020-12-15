@@ -1,11 +1,11 @@
 import { Injectable, Scope } from '@nestjs/common'
 
 interface CacheMap {
-  // currentSchema: Schema
-
-  // project: Project
-
+  // 模型数据
   schemas: Schema[]
+
+  // 关联遍历的集合名
+  connectTraverseCollections: string[]
 }
 
 // 针对单个请求的缓存

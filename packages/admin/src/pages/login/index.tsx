@@ -116,8 +116,8 @@ const Login: React.FC<{}> = () => {
         if (data?.from !== 'lowcode') return
         window?.parent.postMessage(
           JSON.stringify({
-            ack: 1,
             from: 'cms',
+            status: 'success',
           }),
           '*'
         )
@@ -130,7 +130,6 @@ const Login: React.FC<{}> = () => {
         // 响应低码平台
         window?.parent.postMessage(
           JSON.stringify({
-            ack: 2,
             from: 'cms',
             status: 'success',
           }),
@@ -141,7 +140,6 @@ const Login: React.FC<{}> = () => {
         // 响应低码平台
         window?.parent.postMessage(
           JSON.stringify({
-            ack: 2,
             from: 'cms',
             status: 'fail',
             message: error.message,

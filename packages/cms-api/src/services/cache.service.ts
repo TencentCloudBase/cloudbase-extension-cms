@@ -6,6 +6,8 @@ interface CacheMap {
   project: Project
 
   schemas: Schema[]
+
+  connectTraverseCollections: string[]
 }
 
 // 针对单个请求的缓存

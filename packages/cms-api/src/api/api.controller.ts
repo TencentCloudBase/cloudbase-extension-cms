@@ -101,7 +101,7 @@ export class ApiController {
   @UseGuards(ActionGuard('read'))
   @Get(':collectionName')
   async getDocuments(@Param('collectionName') collectionName: string, @Query() query: IQuery) {
-    const apiQuery = await this.apiService.getMergedQuery(collectionName, query)
+    const apiQuery = await this.apiService.getMergedQuery(query)
 
     // 查询数据
     let findRes = await this.apiService.callOpenApi({
@@ -132,7 +132,7 @@ export class ApiController {
     @Query() query,
     @Body() payload
   ) {
-    const apiQuery = await this.apiService.getMergedQuery(collectionName, query)
+    const apiQuery = await this.apiService.getMergedQuery(query)
 
     const { total } = await this.apiService.callOpenApi({
       collectionName,

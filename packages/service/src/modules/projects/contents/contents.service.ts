@@ -22,16 +22,20 @@ export class ContentsService {
   async getMany(
     resource: string,
     options: {
+      // 过滤
       filter?: {
         _id?: string
         ids?: string[]
         [key: string]: any
       }
+      // 模糊查询
       fuzzyFilter?: {
         [key: string]: any
       }
+      // 分页
       pageSize?: number
       page?: number
+      // 排序
       sort?: {
         [key: string]: 'ascend' | 'ascend'
       }
@@ -48,7 +52,10 @@ export class ContentsService {
       where._id = db.command.in(filter.ids)
     }
 
-    const schema = await getCollectionSchema(resource)
+    // 获取所有 Schema 数据
+    const schemas = await getCollectionSchema()
+    // 当前 Schema 配置
+    const schema = schemas.find((_) => _.collectionName === resource)
 
     // 模糊搜索
     if (fuzzyFilter && schema) {
@@ -111,6 +118,13 @@ export class ContentsService {
       // 存在关联类型字段
       const connectFields = schema.fields.filter((field) => field.type === 'Connect')
       if (!R.isEmpty(connectFields)) {
+        // 存储 connect schema，以确认是否发生循环关联
+        const connectTraverseCollections = this.cacheService.get('connectTraverseCollections') || []
+        this.cacheService.set(
+          'connectTraverseCollections',
+          connectTraverseCollections.concat([schema.collectionName])
+        )
+        // 获取 connect 数据
         res.data = await this.transformConnectField(res.data, connectFields)
       }
     }
@@ -351,17 +365,10 @@ export class ContentsService {
    */
   private async transformConnectField(docs: any[], connectFields: SchemaField[]) {
     let resData: any[] = docs
+    const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
-    let schemas = []
-    // 缓存的 Schema 数据
-    const cachedSchemas = this.cacheService.get('schemas')
-    if (cachedSchemas?.length) {
-      schemas = cachedSchemas
-    } else {
-      schemas = await getCollectionSchema()
-      this.cacheService.set('schemas', schemas)
-    }
+    const schemas = await getCollectionSchema()
 
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaField) => {
@@ -385,17 +392,36 @@ export class ContentsService {
       }
 
       // 关联的 Schema
-      const connectSchema = schemas.find((schema) => schema._id === field.connectResource)
+      const collectionName = schemas.find((schema) => schema._id === field.connectResource)
+        ?.collectionName
 
       // 获取关联 id 对应的 Doc
       // 使用 getMany 获取数据，自动转换 Connect 字段
-      const { data: connectData } = await this.getMany(connectSchema.collectionName, {
-        page: 1,
-        pageSize: 1000,
-        filter: {
-          ids,
-        },
-      })
+      let connectData = []
+      // 是否发生循环关联
+      const existCircle = this.cacheService
+        .get('connectTraverseCollections')
+        .includes(collectionName)
+
+      // 存在环且会在当前的节点发生循环，直接获取底层数据
+      if (existCircle) {
+        const { data } = await this.cloudbaseService
+          .collection(collectionName)
+          .where({ _id: $.in(ids) })
+          .limit(1000)
+          .get()
+        connectData = data
+      } else {
+        // 不发生循环，获取关联转换的数据
+        const { data } = await this.getMany(collectionName, {
+          page: 1,
+          pageSize: 1000,
+          filter: {
+            ids,
+          },
+        })
+        connectData = data
+      }
 
       // 修改 resData 中的关联字段
       resData = resData.map((record) => {

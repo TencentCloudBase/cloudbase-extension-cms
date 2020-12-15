@@ -28,13 +28,13 @@ export class ApiService {
   /**
    * 合并传入的 query 与 Schema 内置的条件，获取最终查询 query
    */
-  async getMergedQuery(collectionName: string, query: IQuery) {
+  async getMergedQuery(query: IQuery) {
     // 调用 api 传入的 query
     let { limit, skip, fields, sort } = query
     sort = sort ? JSON.parse(sort) : {}
     fields = fields ? JSON.parse(fields) : {}
 
-    // 获取 doc 模型信息
+    // 从缓存中获取 doc 模型信息
     const docSchema = this.cacheService.get('currentSchema')
 
     if (!docSchema) {
@@ -85,13 +85,26 @@ export class ApiService {
 
     let formatData = resData
 
-    // 获取数据模型
-    const docSchema = this.cacheService.get('currentSchema')
+    // 获取数据模型，优先使用 currentSchema 缓存
+    // 如果 currentSchema 与 collectionName 不相等，再查找 schema
+    const currentSchema = this.cacheService.get('currentSchema')
+    let docSchema = currentSchema
+    if (docSchema.collectionName !== collectionName) {
+      // 获取所有 Schema 数据
+      const schemas = await this.getAndCacheSchemas()
+      docSchema = schemas.find((_) => _.collectionName === collectionName)
+    }
 
     // 如果文档模型定义中存在关联字段
     // 则把返回结果中的所有关联字段 id 转换为对应的数据
     const connectFields = docSchema.fields.filter((field) => field.type === 'Connect')
     if (connectFields?.length) {
+      // 存储 connect schema，以确认是否发生循环关联
+      const connectTraverseCollections = this.cacheService.get('connectTraverseCollections') || []
+      this.cacheService.set(
+        'connectTraverseCollections',
+        connectTraverseCollections.concat([docSchema.collectionName])
+      )
       formatData = await this.transformConnectField(resData, connectFields)
     }
 
@@ -125,15 +138,7 @@ export class ApiService {
     const $ = this.cloudbaseService.db.command
 
     // 获取所有 Schema 数据
-    let schemas = []
-    // 缓存的 Schema 数据
-    const cachedSchemas = this.cacheService.get('schemas')
-    if (cachedSchemas?.length) {
-      schemas = cachedSchemas
-    } else {
-      schemas = await getCollectionSchema()
-      this.cacheService.set('schemas', schemas)
-    }
+    const schemas = await this.getAndCacheSchemas()
 
     // 转换 data 中的关联 field
     const transformDataByField = async (field: SchemaField) => {
@@ -157,14 +162,28 @@ export class ApiService {
       const collectionName = schemas.find((schema) => schema._id === field.connectResource)
         .collectionName
 
-      // 获取关联的数据，分页最大条数 50
-      let { data: connectData } = await this.cloudbaseService
+      // 获取关联 id 对应的 Doc
+      // 使用 getMany 获取数据，自动转换 Connect 字段
+      let connectData = []
+      // 是否发生循环关联
+      const existCircle = this.cacheService
+        .get('connectTraverseCollections')
+        .includes(collectionName)
+
+      // 拉取数据
+      const { data } = await this.cloudbaseService
         .collection(collectionName)
         .where({ _id: $.in(ids) })
         .limit(1000)
         .get()
 
-      connectData = await this.parseResData(connectData, collectionName)
+      //  存在环且会在当前的节点发生循环，直接使用底层数据
+      if (existCircle) {
+        connectData = data
+      } else {
+        // 不发生循环，获取关联转换的数据
+        connectData = await this.parseResData(data, collectionName)
+      }
 
       // 修改 resData 中的关联字段
       resData = resData.map((record) => {
@@ -172,7 +191,7 @@ export class ApiService {
         let connectRecord
 
         // 关联的数据被删除
-        if (!connectData) {
+        if (!connectData?.length) {
           return {
             ...record,
             [fieldName]: null,
@@ -266,6 +285,22 @@ export class ApiService {
     }
 
     return queryRes
+  }
+
+  // 获取并使用 localCache 缓存 Schemas
+  private async getAndCacheSchemas() {
+    // 获取所有 Schema 数据
+    let schemas: Schema[] = []
+    // 缓存的 Schema 数据
+    const cachedSchemas = this.cacheService.get('schemas')
+    if (cachedSchemas?.length) {
+      schemas = cachedSchemas
+    } else {
+      schemas = await getCollectionSchema()
+      this.cacheService.set('schemas', schemas)
+    }
+
+    return schemas
   }
 
   /**

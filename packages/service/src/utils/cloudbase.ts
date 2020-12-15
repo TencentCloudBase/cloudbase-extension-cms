@@ -120,6 +120,7 @@ export async function getCollectionSchema(collection: string): Promise<Schema>
 export async function getCollectionSchema(): Promise<Schema[]>
 
 export async function getCollectionSchema(collection?: string) {
+  // 全部 schemas 使用 SCHEMAS 作为 key 缓存
   const cacheSchema = collection ? schemaCache.get(collection) : schemaCache.get('SCHEMAS')
   if (cacheSchema) return cacheSchema
 
