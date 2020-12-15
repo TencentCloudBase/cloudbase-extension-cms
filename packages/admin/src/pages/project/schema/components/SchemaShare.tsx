@@ -3,7 +3,7 @@ import { useConcent } from 'concent'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Modal, Typography, Upload, message, Checkbox, Space, Alert } from 'antd'
 import { SchmeaCtx, ContentCtx } from 'typings/store'
-import { random, saveContentToFile } from '@/utils'
+import { random, readFile, saveContentToFile } from '@/utils'
 import { InboxOutlined } from '@ant-design/icons'
 import { createSchema } from '@/services/schema'
 
@@ -74,7 +74,9 @@ export const SchemaExportModal: React.FC<{
         })
         const fileName = `schema-export-${random(8)}.json`
         saveContentToFile(JSON.stringify(exportSchemas), fileName)
+
         message.success('导出模型成功！')
+        onClose()
       }}
       okButtonProps={{
         disabled: !selectedSchemas?.length,
@@ -106,62 +108,69 @@ export const SchemaImportModal: React.FC<{
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const { schemas } = ctx.state
+
   const [loading, setLoading] = useState(false)
-  const [importSchemas, setImportSchemas] = useState<Partial<Schema>[]>([])
+  const [importFileList, setFileList] = useState<any[]>([])
+  const [importSchemas, setImportSchemas] = useState<
+    {
+      uid: string
+      schema: Partial<Schema>
+    }[]
+  >([])
 
   // 读取、校验导入文件
-  const onUpload = useCallback(
-    (file) => {
-      // 文件路径
-      const fileReader = new FileReader()
-      fileReader.onload = (e) => {
-        const json = e.target?.result as string
-        if (!json) {
-          message.error('导入数据不能为空！')
+  const validFileContent = useCallback(
+    async (file): Promise<boolean | undefined> => {
+      const json = await readFile(file)
+
+      if (!json) {
+        message.error('导入数据不能为空！')
+        return
+      }
+
+      try {
+        const importData: Partial<Schema>[] = JSON.parse(json)
+
+        // 检查数据格式是否符合基本要求
+        const schemaValid = importData.every(
+          (_: any) => _.fields?.length && _.displayName && _.collectionName
+        )
+        if (!schemaValid) {
+          message.error('导入数据格式错误')
           return
         }
 
-        try {
-          const importData = JSON.parse(json)
+        // 检查集合名是否存在冲突
+        const conflict = importData.some((_: any) =>
+          schemas.find((item) => item.collectionName === _.collectionName)
+        )
 
-          // 检查数据格式是否符合基本要求
-          const schemaValid = importData.every(
-            (_: any) => _.fields?.length && _.displayName && _.collectionName
-          )
-          if (!schemaValid) {
-            message.error('导入数据格式错误')
-            return
-          }
-
-          // 检查集合名是否存在冲突
-          const conflict = importData.some((_: any) =>
-            schemas.find((item) => item.collectionName === _.collectionName)
-          )
-
-          if (conflict) {
-            message.error(
-              '导入模型集合名和已有模型集合名存在冲突，无法导入，请修改冲突后重新导入！'
-            )
-            return
-          }
-
-          setImportSchemas(importData)
-        } catch (error) {
-          message.error('导入数据格式错误，非法的 JSON 字符串')
+        if (conflict) {
+          message.error('导入模型集合名和已有模型集合名存在冲突，无法导入，请修改冲突后重新导入！')
+          return
         }
+
+        const importSchemaWrap = importData.map((_) => ({
+          uid: file.uid,
+          schema: _,
+        }))
+
+        setImportSchemas(importSchemas.concat(importSchemaWrap))
+      } catch (error) {
+        message.error('导入数据格式错误，非法的 JSON 字符串')
+        return false
       }
 
-      fileReader.readAsText(file)
-      return false
+      return true
     },
-    [schemas]
+    [schemas, importSchemas]
   )
 
   // 创建模型
   const onImportData = useCallback(async () => {
     setLoading(true)
     try {
-      const tasks = importSchemas.map(async (schema) => await createSchema(projectId, schema))
+      const tasks = importSchemas.map(async (_) => await createSchema(projectId, _.schema))
       await Promise.all(tasks)
       message.success('导入模型成功！')
       ctx.mr.getSchemas(projectId)
@@ -177,12 +186,11 @@ export const SchemaImportModal: React.FC<{
   return (
     <Modal
       centered
-      destroyOnClose
       title="导入模型"
       closable={true}
       visible={visible}
-      onCancel={() => onClose()}
       onOk={onImportData}
+      onCancel={() => onClose()}
       okButtonProps={{
         loading,
       }}
@@ -190,7 +198,41 @@ export const SchemaImportModal: React.FC<{
       <Title level={4}>注意事项</Title>
       <Alert message="仅支持导入 JSON 格式的数据" />
       <br />
-      <Dragger accept=".json" listType="text" beforeUpload={onUpload}>
+      <Dragger
+        accept=".json"
+        listType="text"
+        fileList={importFileList}
+        onChange={({ file, fileList }) => {
+          // 删除文件
+          if (file.status === 'removed') {
+            setFileList(fileList)
+            // 删除文件时，也删除导入的模型
+            setImportSchemas(importSchemas.filter((_) => _.uid !== file.uid))
+            return
+          }
+
+          // 导入文件
+          if (file instanceof File) {
+            // 校验文件是否已经添加
+            const fileExist = importFileList.find((_) => _.name === file.name)
+            if (fileExist) {
+              message.error(`已添加文件 ${file.name}，请勿重复添加`)
+              return
+            }
+            // 校验文件内容
+            validFileContent(file)
+              .then((valid: boolean | undefined) => {
+                if (valid) {
+                  setFileList(fileList)
+                }
+              })
+              .catch((e) => {
+                message.error(e.message)
+              })
+          }
+        }}
+        beforeUpload={() => false}
+      >
         <p className="ant-upload-drag-icon">
           <InboxOutlined />
         </p>
@@ -200,10 +242,10 @@ export const SchemaImportModal: React.FC<{
       {importSchemas.length ? (
         <>
           <Paragraph>共计 {importSchemas.length} 个模型</Paragraph>
-          {importSchemas.map((schema, index) => (
+          {importSchemas.map((_, index) => (
             <Paragraph key={index}>
-              模型名称：{schema.displayName}，数据库名：{schema.collectionName}，共计{' '}
-              {schema.fields?.length} 个字段
+              模型名称：{_?.schema.displayName}，数据库名：{_?.schema.collectionName}，共计{' '}
+              {_?.schema.fields?.length} 个字段
             </Paragraph>
           ))}
           <Alert

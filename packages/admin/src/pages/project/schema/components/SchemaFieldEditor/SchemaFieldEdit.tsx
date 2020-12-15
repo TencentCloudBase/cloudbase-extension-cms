@@ -304,7 +304,7 @@ export const SchemaFieldEditorModal: React.FC<{
               <Form.Item name="isHidden" valuePropName="checked" style={{ marginBottom: 0 }}>
                 <Switch />
               </Form.Item>
-              <Text type="secondary">在内容集合表格展示、编辑内容时隐藏该字段</Text>
+              <Text type="secondary">在内容集合表格展示时隐藏该字段</Text>
             </Form.Item>
           </div>
         </Form.Item>

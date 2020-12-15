@@ -76,7 +76,7 @@ const ContentEditor: React.FC = () => {
               )}
 
               {schema?.fields
-                ?.filter((_) => !_.isSystem && !_.isHidden)
+                ?.filter((_) => !_.isSystem)
                 .map((filed, index) => getFieldFormItem(filed, index))}
 
               <Form.Item>
