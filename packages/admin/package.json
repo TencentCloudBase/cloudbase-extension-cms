@@ -44,6 +44,7 @@
     "jsonexport": "^3.0.1",
     "moment": "^2.27.0",
     "omit.js": "^2.0.2",
+    "plyr": "^3.6.3",
     "react": "^16.13.1",
     "react-beautiful-dnd": "^13.0.0",
     "react-dom": "^16.13.1",

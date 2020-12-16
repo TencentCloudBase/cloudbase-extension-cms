@@ -28,9 +28,20 @@ export class FileService {
   async upload(file: IFile) {
     // 按照日期分类
     const day = dayjs().format('YYYY-MM-DD')
+    // 文件名
+    let ext
+    if (file.originalname?.length && file.originalname.includes('.')) {
+      ext = file.originalname.split('.').pop()
+      ext = `.${ext}`
+    } else {
+      ext = file.originalname
+    }
+
+    // 文件路径
+    const cloudPath = `cloudbase-cms/upload/${day}/${randomId()}_${ext}`
     // 上传文件
     const { fileID } = await this.cloudbaseService.app.uploadFile({
-      cloudPath: `cloudbase-cms/upload/${day}/${randomId(16)}-${file.originalname}`,
+      cloudPath,
       fileContent: file.buffer,
     })
     return {

@@ -77,6 +77,9 @@ interface SchemaField {
 
   // 时间存储格式
   dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
+
+  // 多媒体类型
+  mediaType: 'video' | 'music'
 }
 
 interface Schema {
@@ -96,26 +99,6 @@ interface Schema {
 
   _updateTime: number
 }
-
-type SchemaFieldType =
-  | 'String'
-  | 'MultiLineString'
-  | 'Number'
-  | 'Boolean'
-  | 'DateTime'
-  | 'Date'
-  | 'File'
-  | 'Image'
-  | 'Email'
-  | 'Tel'
-  | 'Url'
-  | 'RichText'
-  | 'Markdown'
-  | 'Connect'
-  | 'Array'
-  | 'Enum'
-  | 'Object'
-  | 'Text'
 
 interface Project {
   _id: string
@@ -143,4 +126,23 @@ interface Project {
 
   // 可删除的集合
   deletableCollections: string[]
+}
+
+interface Project {
+  _id: string
+
+  name: string
+
+  customId: string
+
+  description: string
+
+  // 项目封面图
+  cover?: string
+
+  // 是否开启 Api 访问
+  enableApiAccess: boolean
+
+  // Api 访问路径
+  apiAccessPath: string
 }

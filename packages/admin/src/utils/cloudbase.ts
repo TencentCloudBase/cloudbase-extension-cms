@@ -145,7 +145,15 @@ export async function uploadFile(
   const day = getFullDate()
 
   // 文件名
-  const uploadFilePath = filePath || `upload/${day}/${random(32)}-${file.name}`
+  let ext
+  if (file.name?.length && file.name.includes('.')) {
+    ext = file.name.split('.').pop()
+    ext = `.${ext}`
+  } else {
+    ext = file.name
+  }
+
+  const uploadFilePath = filePath || `upload/${day}/${random(32)}_${ext}`
 
   const result = await app.uploadFile({
     filePath: file,

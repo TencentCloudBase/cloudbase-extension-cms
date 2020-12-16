@@ -131,6 +131,7 @@ export function getFieldEditor(field: SchemaField, key: number) {
       )
       break
     case 'File':
+    case 'Media':
       FieldEditor = (
         <IFileAndImageEditor type="file" field={field} resourceLinkType={field.resourceLinkType} />
       )

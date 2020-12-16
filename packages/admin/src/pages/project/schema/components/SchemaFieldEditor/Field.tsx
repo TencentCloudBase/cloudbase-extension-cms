@@ -167,6 +167,15 @@ export function getFieldFormItem(
           </Form.Item>
         </>
       )
+    case 'Media':
+      return (
+        <Form.Item label="媒体类型" name="mediaType" validateTrigger={['onChange']}>
+          <Select placeholder="媒体类型">
+            <Option value="video">视频</Option>
+            <Option value="music">音频</Option>
+          </Select>
+        </Form.Item>
+      )
     case 'Connect':
       return (
         <>

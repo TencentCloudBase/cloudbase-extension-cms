@@ -380,7 +380,7 @@ const getFormInitailValues = (action: 'edit' | 'create', field: SchemaField) => 
     return field
   }
 
-  const createInitialValues: any = {}
+  const createInitialValues: Partial<SchemaField> = {}
   if (type === 'Enum') {
     createInitialValues.enumElementType = 'string'
   }
@@ -391,6 +391,10 @@ const getFormInitailValues = (action: 'edit' | 'create', field: SchemaField) => 
 
   if (type === 'File' || type === 'Image') {
     createInitialValues.resourceLinkType = 'fileId'
+  }
+
+  if (type === 'Media') {
+    createInitialValues.mediaType = 'music'
   }
 
   return createInitialValues

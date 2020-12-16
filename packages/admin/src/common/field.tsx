@@ -56,6 +56,11 @@ export const FieldTypes = [
     name: '图片',
     icon: <i className="gg-image" />,
   },
+  {
+    type: 'Media',
+    name: '多媒体',
+    icon: <i className="gg-play-button-r" />,
+  },
   // 邮箱地址
   {
     type: 'Email',

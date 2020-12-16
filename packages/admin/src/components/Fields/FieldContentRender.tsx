@@ -3,6 +3,7 @@ import { Space, Tag, Tooltip, Typography } from 'antd'
 import { IConnectRender, IFileRender, ImageRender } from '@/components/Fields'
 import { calculateFieldWidth } from '@/utils'
 import { IObjectRender } from './Object'
+import { IMedia } from './Media'
 
 const { Text } = Typography
 
@@ -107,6 +108,13 @@ export function getFieldRender(field: SchemaField) {
       ): React.ReactNode | React.ReactNode[] => (
         <IFileRender urls={record[name]} displayName={displayName} />
       )
+    case 'Media':
+      return (
+        text: React.ReactNode,
+        record: any,
+        index: number,
+        action: any
+      ): React.ReactNode | React.ReactNode[] => <IMedia uri={record[name]} field={field} />
     case 'Array':
       return (
         text: React.ReactNode,
