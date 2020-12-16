@@ -21,10 +21,16 @@ export default (): React.ReactNode => {
   // HACK: 切换模型时卸载 Table，强制重新加载数据
   // 直接 Reset 表格并加载数据，会保留上一个模型的列，效果不好
   useEffect(() => {
+    // 重新挂载 Table
     setContentLoading(true)
     setTimeout(() => {
       setContentLoading(false)
     }, 200)
+
+    // 显示保存的检索条件
+    if (currentSchema?.searchFields?.length) {
+      ctx.mr.setSearchFields(currentSchema?.searchFields)
+    }
   }, [currentSchema])
 
   return (
@@ -70,6 +76,9 @@ export default (): React.ReactNode => {
   )
 }
 
+/**
+ * 模型为空时的提示信息
+ */
 const EmptyTip: React.FC<{ projectId: string; desc: ReactNode; btnText: string }> = ({
   desc,
   btnText,

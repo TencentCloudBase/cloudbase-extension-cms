@@ -93,6 +93,8 @@ interface Schema {
 
   fields: SchemaField[]
 
+  searchFields: SchemaField[]
+
   description: string
 
   _creatTime: number

@@ -91,7 +91,12 @@ interface Schema {
 
   projectId: string
 
+  // 在多个项目之间实现共享
+  projectIds: string[]
+
   fields: SchemaField[]
+
+  searchFields: SchemaField[]
 
   description: string
 

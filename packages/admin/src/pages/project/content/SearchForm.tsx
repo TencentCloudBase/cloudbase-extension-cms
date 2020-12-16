@@ -1,17 +1,32 @@
 import React, { useCallback } from 'react'
-import { Form, Space, Button, Row, Input, Switch, InputNumber, Select } from 'antd'
 import { DeleteTwoTone } from '@ant-design/icons'
+import {
+  Form,
+  Space,
+  Button,
+  Row,
+  Input,
+  Switch,
+  Select,
+  Tooltip,
+  Modal,
+  message,
+  InputNumber,
+} from 'antd'
 import { IDatePicker, IConnectEditor } from '@/components/Fields'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
 import { calculateFieldWidth } from '@/utils'
+import { updateSchema } from '@/services/schema'
+import { useParams, useRequest } from 'umi'
 
 const { Option } = Select
 
 const ContentTableSearchForm: React.FC<{
   schema: Schema
   onSearch: (v: Record<string, any>) => void
-}> = ({ onSearch }) => {
+}> = ({ schema, onSearch }) => {
+  const { projectId } = useParams<any>()
   const ctx = useConcent<{}, ContentCtx>('content')
   const { searchFields, searchParams } = ctx.state
 
@@ -19,6 +34,21 @@ const ContentTableSearchForm: React.FC<{
   const deleteField = useCallback((field: SchemaField) => {
     ctx.mr.removeSearchField(field)
   }, [])
+
+  // 保存检索条件
+  const { run: saveSearchFields, loading } = useRequest(
+    async () => {
+      await updateSchema(projectId, schema._id, {
+        searchFields,
+      })
+      ctx.mr.getContentSchemas(projectId)
+    },
+    {
+      manual: true,
+      onSuccess: () => message.success('保存检索条件成功！'),
+      onError: (e) => message.error(e.message || '保存检索条件失败！'),
+    }
+  )
 
   return (
     <div>
@@ -43,8 +73,25 @@ const ContentTableSearchForm: React.FC<{
             ))}
             <Space style={{ marginBottom: '10px' }}>
               <Button
-                type="primary"
                 onClick={() => {
+                  const modal = Modal.confirm({
+                    title: '是否重置保存的检索条件？',
+                    onCancel: () => {
+                      modal.destroy()
+                    },
+                    onOk: async () => {
+                      try {
+                        await updateSchema(projectId, schema._id, {
+                          searchFields: [],
+                        })
+                        message.success('重置检索条件成功！')
+                        ctx.mr.getContentSchemas(projectId)
+                      } catch (error) {
+                        message.error('重置检索条件失败！')
+                      }
+                    },
+                  })
+                  // 重置检索条件
                   ctx.mr.clearSearchField()
                   onSearch({})
                 }}
@@ -54,6 +101,11 @@ const ContentTableSearchForm: React.FC<{
               <Button type="primary" htmlType="submit">
                 搜索
               </Button>
+              <Tooltip title="保存检索条件，下次直接搜索">
+                <Button type="primary" loading={loading} onClick={saveSearchFields}>
+                  保存
+                </Button>
+              </Tooltip>
             </Space>
           </Row>
         </Form>
