@@ -76,26 +76,32 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 <table>
   <tr>
     <td align="center"><a href="https://cloudbase.net">
-      <img src="./docs/examples/cloudbase.png" width="100px;" alt=""/>
+      <img src="./docs/examples/cloudbase.png" width="100px;" alt="云开发"/>
       <br /><sub><b>云开发</b></sub></a>
     </td>
     <td align="center">
       <a href="https://face.xiaoxili.com/">
-      <img src="./docs/examples/hi-avatar.jpg" width="100px;" alt=""/><br />
+      <img src="./docs/examples/hi-avatar.jpg" width="100px;" alt="Hi 头像"/><br />
       <sub><b>Hi 头像</b></sub>
     </a>
     </td>
     <td align="center"><a href="https://featwork.com/blog">
-      <img src="./docs/examples/featblog.png" width="100px;" alt=""/>
+      <img src="./docs/examples/featblog.png" width="100px;" alt="轻博客"/>
       <br /><sub><b>轻博客</b></sub></a>
     </td>
     <td align="center">
-      <img src="./docs/examples/yami.png" width="100px;" alt=""/>
+      <img src="./docs/examples/yami.png" width="100px;" alt="密鸭车服"/>
       <br /><sub><b>密鸭车服</b></sub>
     </td>
     <td align="center"><a href="https://github.com/wforguo/wedding-app">
-      <img src="./docs/examples/wedding-app.jpeg" width="100px;" alt=""/>
+      <img src="./docs/examples/wedding-app.jpeg" width="100px;" alt="趣婚礼"/>
       <br /><sub><b>趣婚礼</b></sub></a>
+    </td>
+    <td align="center">
+      <a href="">
+        <img src="./docs/examples/realtime-earthquake.jpeg" width="100px;" alt="实时地震"/>
+        <br /><sub><b>实时地震</b></sub>
+      </a>
     </td>
   </tr>
 </table>
@@ -106,13 +112,13 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
 
 | 功能                                             | 状态      | 发布版本 |
 | ------------------------------------------------ | --------- | -------- |
-| 支持默认排序字段                                 | 🏹 设计中 |          |
 | 支持以微前端的模式嵌入系统                       | 🏹 设计中 |          |
 | 提供项目模板，支持从模板创建项目                 | 🏹 设计中 |          |
 | 支持操作记录                                     | 🏹 设计中 |          |
 | 支持 GraphQL                                     | ⏳ 规划中 |          |
 | 内容表字段索引支持                               | ⏳ 规划中 |          |
 | 定时任务 ⇒ 统计报表                              | ⏳ 规划中 |          |
+| 支持默认排序字段                                 | 🚀 已完成 | V2.5     |
 | 支持复制内容模型                                 | 🚀 已完成 | V2.4     |
 | 支持导出数据到 CSV、JSON 文件                    | 🚀 已完成 | V2.4     |
 | 支持云应用部署                                   | 🚀 已完成 | V2.4     |
