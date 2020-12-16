@@ -73,7 +73,7 @@ export const IMedia: React.FC<{ field: SchemaField; uri: string }> = ({ field, u
   }, [source])
 
   // 渲染媒体组件样式
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (visible && !player) {
       const player = new Plyr(`#${select}`)
       setState({

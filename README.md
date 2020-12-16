@@ -98,10 +98,8 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
       <br /><sub><b>趣婚礼</b></sub></a>
     </td>
     <td align="center">
-      <a href="">
-        <img src="./docs/examples/realtime-earthquake.jpeg" width="100px;" alt="实时地震"/>
-        <br /><sub><b>实时地震</b></sub>
-      </a>
+      <img src="./docs/examples/realtime-earthquake.jpeg" width="100px;" alt="实时地震"/>
+      <br /><sub><b>实时地震</b></sub>
     </td>
   </tr>
 </table>
