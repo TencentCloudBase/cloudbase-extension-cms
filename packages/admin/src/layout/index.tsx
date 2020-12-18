@@ -43,7 +43,7 @@ const customMenuDate: MenuDataItem[] = [
   {
     authority: 'canWebhook',
     path: '/:projectId/webhook',
-    name: 'Webbook',
+    name: 'Webhook',
     icon: <RocketTwoTone />,
   },
   {

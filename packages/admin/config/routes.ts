@@ -85,7 +85,7 @@ const routesConfig: IConfig = {
         {
           exact: true,
           path: '/:projectId/webhook',
-          name: 'Webbook',
+          name: 'Webhook',
           icon: 'deployment-unit',
           access: 'canWebhook',
           wrappers: ['../components/SecurityWrapper/index'],

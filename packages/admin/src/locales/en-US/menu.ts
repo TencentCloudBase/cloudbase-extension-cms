@@ -4,7 +4,7 @@ export default {
   'menu.content': 'Content',
   'menu.more-blocks': 'More Blocks',
   'menu.system-settings': 'System Settings',
-  'menu.webbook': 'Webbook',
+  'menu.webhook': 'Webhook',
 
   'menu.home': 'Home',
   'menu.admin': 'Admin',

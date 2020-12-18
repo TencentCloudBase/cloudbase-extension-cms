@@ -150,6 +150,11 @@ export class SchemasController {
       })
       .update(data)
 
+    if (payload?.collectionName) {
+      // 重新创建集合
+      await this.schemaService.createCollection(payload.collectionName)
+    }
+
     // 重命名集合
     if (payload?.collectionName !== schema.collectionName) {
       await this.schemaService.renameCollection(schema.collectionName, payload.collectionName)
