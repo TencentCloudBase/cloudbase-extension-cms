@@ -72,7 +72,6 @@ export async function getInitialState(): Promise<{
   if (currentUser?._id && window.parent !== window.self) {
     window.parent.postMessage(
       JSON.stringify({
-        ack: 2,
         from: 'cms',
         status: 'success',
       }),

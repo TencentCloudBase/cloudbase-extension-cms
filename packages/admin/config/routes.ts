@@ -34,6 +34,11 @@ const routesConfig: IConfig = {
       redirect: '/home',
     },
     {
+      path: '/redirect',
+      exact: true,
+      component: './redirect',
+    },
+    {
       component: '../layout/index',
       layout: false,
       routes: [
