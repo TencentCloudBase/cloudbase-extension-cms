@@ -19,14 +19,12 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.5.1
+  - Title: 2.6.0
     Content:
-      - 支持关联嵌套
-      - 性能优化，提升接口加载速度
-      - 支持按创建时间、更新时间排序
-      - 支持隐藏创建时间、更新时间
-      - 修复图片上传存储异常的问题
-      - 修复多个 Markdown 字段只展示一个编辑的问题
+      - 支持保存检索字段
+      - 富文本支持输入链接插入图片
+      - 新增多媒体类型，支持上传并播放视频、音乐
+      - 修复部分拼写错误
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
