@@ -1,9 +1,9 @@
 import { Module, Global } from '@nestjs/common'
-import { CloudBaseService, LocalCacheService } from './services'
+import { CloudBaseService, LocalCacheService, SchemaCacheService } from './services'
 
 @Global()
 @Module({
-  providers: [CloudBaseService, LocalCacheService],
-  exports: [CloudBaseService, LocalCacheService],
+  providers: [CloudBaseService, LocalCacheService, SchemaCacheService],
+  exports: [CloudBaseService, LocalCacheService, SchemaCacheService],
 })
 export class GlobalModule {}

@@ -1,6 +1,11 @@
 import { Injectable, Scope } from '@nestjs/common'
 
-interface CacheMap {
+interface KV {
+  [key: string]: any
+  [key: number]: any
+}
+
+interface CacheMap extends KV {
   // 模型数据
   schemas: Schema[]
 
@@ -13,7 +18,7 @@ interface CacheMap {
   scope: Scope.REQUEST,
 })
 export class LocalCacheService {
-  private readonly cache: Map<string, any>
+  private readonly cache: Map<string | number, any>
 
   constructor() {
     this.cache = new Map()

@@ -122,7 +122,8 @@ export async function getCollectionSchema(): Promise<Schema[]>
 export async function getCollectionSchema(collection?: string) {
   // 全部 schemas 使用 SCHEMAS 作为 key 缓存
   const cacheSchema = collection ? schemaCache.get(collection) : schemaCache.get('SCHEMAS')
-  if (cacheSchema) return cacheSchema
+  // 容器模式，才启用本地缓存
+  if (cacheSchema && isRunInContainer()) return cacheSchema
 
   const app = getCloudBaseApp()
 
@@ -167,16 +168,16 @@ export const isRunInServerMode = () =>
 // 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST
 
-/**
- * 从容器运行环境中获取临时秘钥
- */
-
 interface Secret {
   secretId: string
   secretKey: string
   token: string
   expire: number // 过期时间，单位：秒
 }
+
+/**
+ * 从容器运行环境中获取临时秘钥
+ */
 export default class SecretManager {
   private tmpSecret: Secret | null
   private TMP_SECRET_URL: string

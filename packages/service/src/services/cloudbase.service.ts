@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { CloudBase, Database } from '@cloudbase/node-sdk'
 import { getCloudBaseApp } from '@/utils'
 

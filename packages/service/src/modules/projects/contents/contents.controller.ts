@@ -14,8 +14,8 @@ import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
 import { Collection } from '@/constants'
 import { UnsupportedOperation } from '@/common'
-import { checkAccessAndGetResource, getCollectionSchema } from '@/utils'
-import { CloudBaseService } from '@/services'
+import { checkAccessAndGetResource } from '@/utils'
+import { CloudBaseService, SchemaCacheService } from '@/services'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
 
@@ -60,7 +60,8 @@ export class ContentsController {
   constructor(
     private readonly contentsService: ContentsService,
     private readonly webhookService: WebhooksService,
-    private readonly cloudbaseService: CloudBaseService
+    private readonly cloudbaseService: CloudBaseService,
+    private readonly schemaCacheService: SchemaCacheService
   ) {}
 
   // 获取内容 schema 集合
@@ -172,7 +173,8 @@ export class ContentsController {
     // 检查 CMS 系统角色
     checkAccessAndGetResource(projectId, req, resource)
 
-    const schema = await getCollectionSchema(resource)
+    // 获取并缓存 schema
+    const schema = await this.schemaCacheService.getCollectionSchema(resource)
 
     // CMS 只能操作 CMS 管理的集合，不能操作非 CMS 管理的集合
     if (!schema) {
