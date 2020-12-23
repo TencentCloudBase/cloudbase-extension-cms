@@ -259,6 +259,13 @@ export const SchemaFieldEditorModal: React.FC<{
                 ? [
                     {
                       validator: (_, value) => {
+                        // 空值不校验
+                        // 值的类型为 object 时，说明已经是合法的值，无需要再校验
+                        if (
+                          typeof value === 'undefined' ||
+                          (typeof value === 'object' && value !== null)
+                        )
+                          return Promise.resolve()
                         try {
                           const json = JSON.parse(value)
                           if (typeof json !== 'object') {
