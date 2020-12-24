@@ -1,7 +1,7 @@
 import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
 import { useSetState } from 'react-use'
-import React, { useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { Button, message, Modal, Spin, Tooltip } from 'antd'
 import { CloseCircleOutlined, PlayCircleTwoTone } from '@ant-design/icons'
 import { batchGetTempFileURL, hashCode, isFileId } from '@/utils'

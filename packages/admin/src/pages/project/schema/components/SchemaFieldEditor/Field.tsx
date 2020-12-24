@@ -182,7 +182,7 @@ export function getFieldFormItem(
           <Form.Item label="关联">
             <Space>
               <Form.Item
-                label="关联的内容"
+                label="关联内容"
                 name="connectResource"
                 rules={[{ required: true, message: '请选择关联内容！' }]}
               >
@@ -195,9 +195,9 @@ export function getFieldFormItem(
                 </Select>
               </Form.Item>
               <Form.Item
-                label="关联的字段"
+                label="展示字段"
                 name="connectField"
-                rules={[{ required: true, message: '请选择关联内容字段！' }]}
+                rules={[{ required: true, message: '请选择关联需要展示的字段！' }]}
               >
                 <Select style={{ width: 200 }} placeholder="关联字段">
                   {connectSchema?.fields?.length ? (
