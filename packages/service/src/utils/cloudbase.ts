@@ -6,9 +6,11 @@ import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
 import { Collection } from '@/constants'
 import { isDevEnv } from './tools'
 import { MemoryCache } from './cache'
+import { getUnixTimestamp } from './date'
 
 let nodeApp
 let managerApp
+let secretExpire: number
 let secretManager: SecretManager
 const schemaCache = new MemoryCache()
 
@@ -49,7 +51,11 @@ export const getCloudBaseApp = () => {
  * 获取初始化后的 cloudbase manager sdk 实例
  */
 export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
-  if (managerApp) {
+  // +120 缓冲时间
+  const now = getUnixTimestamp() + 120
+
+  // 秘钥没有过期，可以继续使用，否则，需要重新获取秘钥
+  if (managerApp && now < secretExpire) {
     return managerApp
   }
 
@@ -70,7 +76,8 @@ export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   // 云托管中
   if (isRunInContainer()) {
     secretManager = new SecretManager()
-    const { secretId, secretKey, token } = await secretManager.getTmpSecret()
+    const { secretId, secretKey, token, expire } = await secretManager.getTmpSecret()
+    secretExpire = expire
     options = { ...options, secretId, secretKey, token }
   }
 

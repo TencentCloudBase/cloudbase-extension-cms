@@ -20,6 +20,8 @@ export const dateToUnixTimestampInMs = (date?: string) => {
   return unixTime
 }
 
+export const getUnixTimestamp = () => dayjs().unix()
+
 /**
  * 获取 2020-08-08 格式的时间
  */
