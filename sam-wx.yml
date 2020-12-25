@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.3.1
+Version: 2.6.0
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -19,12 +19,18 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.3.1
+  - Title: 2.6.0
     Content:
-      - 优化首页项目展示样式
-      - 修复“修改”权限失效的问题
-      - 修复 Webhook 集合为空导致展示异常的问题
-      - 单图片/文件上传支持删除已上传图片/文件
+      - 支持复制内容模型
+      - 支持导出数据到 CSV/JSON 文件
+      - 支持修改系统内置的创建时间、修改时间等字段的属性
+      - 支持关联嵌套
+      - 支持按创建时间、更新时间排序
+      - 支持隐藏创建时间、更新时间
+      - 支持保存检索字段
+      - 富文本支持输入链接插入图片
+      - 新增多媒体类型，支持上传并播放视频、音乐
+
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -42,7 +48,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-service
-      CodeUri: extension://71324d02772a4872b3043f5453c13614.zip
+      CodeUri: extension://6e8c945530d948fcaa7461a11ee9c790.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -60,7 +66,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-init
-      CodeUri: extension://f02198d2dd57435daa449d3eba111c32.zip
+      CodeUri: extension://d5a2e8a8b72c4cac8487cf60df7a87f3.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
