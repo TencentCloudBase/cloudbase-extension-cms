@@ -9,10 +9,13 @@ export class SchemasService {
 
     try {
       const res = await manager.database.createCollectionIfNotExists(name)
-      if (!res?.IsCreated) {
+
+      // 集合创建失败
+      if (!res?.IsCreated && !res.ExistsResult?.Exists) {
         return `Create Collection Fail: ${res.RequestId}`
       }
     } catch (e) {
+      console.error(e)
       return e.code
     }
   }
