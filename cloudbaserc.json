@@ -130,6 +130,11 @@
               "collectionName": "tcb-ext-cms-user-roles",
               "description": "CMS 系统系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）",
               "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "tcb-ext-cms-data-migrate",
+              "description": "CMS 系统数据导入导出的记录（请不要手动修改）",
+              "aclTag": "ADMINONLY"
             }
           ]
         }
