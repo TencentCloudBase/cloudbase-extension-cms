@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.6.0
+Version: 2.6.1
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -19,7 +19,7 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.6.0
+  - Title: 2.6.1
     Content:
       - 支持复制内容模型
       - 支持导出数据到 CSV/JSON 文件
