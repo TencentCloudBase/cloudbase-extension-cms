@@ -56,7 +56,9 @@ export class GlobalAuthGuard implements CanActivate {
       const { headers } = request
       const credentials = headers['x-cloudbase-credentials'] as string
       if (credentials) {
-        const user = await getUserFromCredential(credentials, headers['origin'])
+        // headers.origin 可能为空
+        const origin = headers.origin || headers.host || 'http://127.0.0.1:8000'
+        const user = await getUserFromCredential(credentials, origin)
         if (user) {
           userInfo = user
         }
