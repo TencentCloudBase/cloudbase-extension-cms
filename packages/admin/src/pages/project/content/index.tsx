@@ -1,5 +1,5 @@
 import { Empty, Button, Skeleton } from 'antd'
-import { history, useParams } from 'umi'
+import { history, useAccess, useParams } from 'umi'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
 import ProCard from '@ant-design/pro-card'
@@ -83,15 +83,21 @@ const EmptyTip: React.FC<{ projectId: string; desc: ReactNode; btnText: string }
   desc,
   btnText,
   projectId,
-}) => (
-  <Empty description={desc}>
-    <Button
-      type="primary"
-      onClick={() => {
-        history.push(`/${projectId}/schema`)
-      }}
-    >
-      {btnText}
-    </Button>
-  </Empty>
-)
+}) => {
+  const { canSchema } = useAccess()
+
+  return (
+    <Empty description={desc}>
+      {canSchema && (
+        <Button
+          type="primary"
+          onClick={() => {
+            history.push(`/${projectId}/schema`)
+          }}
+        >
+          {btnText}
+        </Button>
+      )}
+    </Empty>
+  )
+}
