@@ -30,6 +30,8 @@ export const getFullDate = (date?: string) => {
   return dayjs(date).format('YYYY-MM-DD')
 }
 
+export const getNow = () => dayjs().toISOString()
+
 /**
  * 格式化 data 中的时间类型，转换成 Native Date 类型
  */

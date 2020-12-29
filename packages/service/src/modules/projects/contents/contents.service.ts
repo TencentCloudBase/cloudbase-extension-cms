@@ -2,7 +2,7 @@ import _ from 'lodash'
 import R from 'ramda'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService, LocalCacheService, SchemaCacheService } from '@/services'
-import { isNotEmpty, formatPayloadDate, dateToUnixTimestampInMs } from '@/utils'
+import { isNotEmpty, formatPayloadDate, dateToUnixTimestampInMs, logger } from '@/utils'
 import { Collection } from '@/constants'
 import { BadRequestException, RecordNotExistException } from '@/common'
 import { Schema, SchemaField } from '../schemas/types'
@@ -77,7 +77,7 @@ export class ContentsService {
         })
     }
 
-    console.log('where', where)
+    logger.info(where, 'where')
 
     let query = collection.where(where)
 
@@ -319,7 +319,6 @@ export class ContentsService {
     Object.keys(fuzzyFilter)
       .filter((key) => typeof fuzzyFilter[key] !== 'undefined' && fuzzyFilter[key] !== null)
       .forEach((key) => {
-        console.log(key)
         const value = fuzzyFilter[key]
 
         if (typeof value === 'boolean' || typeof value === 'number' || key === '_id') {

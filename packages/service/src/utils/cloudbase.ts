@@ -7,6 +7,7 @@ import { Collection } from '@/constants'
 import { isDevEnv } from './tools'
 import { MemoryCache } from './cache'
 import { getUnixTimestamp } from './date'
+import { logger } from './log'
 
 let nodeApp
 let managerApp
@@ -113,7 +114,7 @@ export const getUserFromCredential = async (credential: string, origin: string) 
   })
 
   if (res.data?.code || !res.data?.uuid) {
-    console.log('获取用户信息失败', res.data)
+    logger.error(res.data, '获取用户信息失败')
     return null
   }
 
@@ -172,6 +173,9 @@ export const isRunInServerMode = () =>
   !process.env.TENCENTCLOUD_RUNENV ||
   !!process.env.KUBERNETES_SERVICE_HOST
 
+// 是否在云函数中运行
+export const isInSCF = () =>
+  process.env.NODE_ENV !== 'development' && process.env.TENCENTCLOUD_RUNENV === 'scf'
 // 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST
 

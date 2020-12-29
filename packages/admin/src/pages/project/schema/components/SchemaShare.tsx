@@ -69,8 +69,8 @@ export const SchemaExportModal: React.FC<{
         const exportSchemas = selectedSchemas.map((_: string) => {
           const schema = schemas.find((item) => item.collectionName === _) as Schema
           // 关联字段记录了 schema 的 id，导出 schema 需要携带 _id
-          const { fields, collectionName, displayName, _id } = schema
-          return { fields, collectionName, displayName, _id }
+          const { fields, collectionName, displayName, description, _id } = schema
+          return { fields, collectionName, displayName, description, _id }
         })
         const fileName = `schema-export-${random(8)}.json`
         saveContentToFile(JSON.stringify(exportSchemas), fileName)

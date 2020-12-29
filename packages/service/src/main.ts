@@ -15,7 +15,7 @@ import { ContextInterceptor } from './interceptors/context.interceptor'
 
 import { AllExceptionsFilter } from './exceptions.filter'
 import config from './config'
-import { isRunInServerMode } from './utils'
+import { isRunInServerMode, logger } from './utils'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -23,7 +23,7 @@ const port = process.env.PORT || 5000
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, adapter, {
-    logger: ['error', 'warn'],
+    logger: false,
   })
 
   // Security
@@ -78,6 +78,6 @@ export async function bootstrap() {
 
 if (isRunInServerMode()) {
   bootstrap().then(() => {
-    console.log(`App listen on http://localhost:${port}`)
+    logger.info(` 🚀 App listen on http://localhost:${port}`)
   })
 }

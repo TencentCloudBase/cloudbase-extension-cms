@@ -2,7 +2,7 @@ import { useRequest } from 'umi'
 import { useSetState } from 'react-use'
 import React, { useState } from 'react'
 import ProList from '@ant-design/pro-list'
-import { Skeleton, Button, Tag, Typography, Modal } from 'antd'
+import { Skeleton, Button, Tag, Typography, Modal, message } from 'antd'
 import { getUsers, deleteUser } from '@/services/user'
 import { PlusOutlined } from '@ant-design/icons'
 import { getUserRoles } from '@/services/role'
@@ -88,6 +88,7 @@ export default (): React.ReactElement => {
                     onOk: async () => {
                       await deleteUser(item._id)
                       setReload(reload + 1)
+                      message.success('删除用户成功！')
                     },
                   })
                 }}

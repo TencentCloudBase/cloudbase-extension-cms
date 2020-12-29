@@ -4,6 +4,7 @@ import { CloudBaseService } from '@/services'
 import { Collection } from '@/constants'
 import config from '@/config'
 import { Webhook } from './type'
+import { logger } from '@/utils'
 
 export interface WebhookCallOptions {
   // 项目 Id
@@ -69,11 +70,11 @@ export class WebhooksService {
     webhooks = webhooks.filter((_) => _.event?.includes('*') || _.event?.includes(webhookEvent))
 
     if (!webhooks?.length) {
-      console.log('没有符合条件的 Webhook')
+      logger.info('没有符合条件的 Webhook')
       return
     }
 
-    console.log('Webhook 获取成功', webhooks)
+    logger.info(webhooks, 'Webhook 获取成功')
 
     const executions = webhooks.map(async (webhook: Webhook) => {
       const { method, url, headers = [] } = webhook
@@ -113,6 +114,6 @@ export class WebhooksService {
     // TODO: 隔离处理，不影响请求
     await Promise.all(executions)
 
-    console.log('Webhook 触发成功！')
+    logger.info('Webhook 触发成功！')
   }
 }

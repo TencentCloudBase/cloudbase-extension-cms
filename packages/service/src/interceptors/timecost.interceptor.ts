@@ -2,6 +2,7 @@ import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { Response } from 'express'
 import { Injectable, ExecutionContext, CallHandler, NestInterceptor } from '@nestjs/common'
+import { logger } from '@/utils'
 
 @Injectable()
 export class TimeCost implements NestInterceptor {
@@ -13,7 +14,7 @@ export class TimeCost implements NestInterceptor {
         const timeCost = Date.now() - res.locals.cost
         res.header('x-request-cost', `${timeCost}`)
 
-        console.log(`> 请求处理耗时： ${timeCost} ms`)
+        logger.info(`请求处理耗时： ${timeCost} ms`)
       })
     )
   }

@@ -6,6 +6,10 @@ module.exports.main = async (event, context) => {
   context.callbackWaitsForEmptyEventLoop = false
   let app = entry
 
+  // 本次请求的 requestId
+  // 云函数当前的一个并发实例在同一时刻仅处理一个事件 
+  process.env.CMS_REQUEST_ID = context.request_id
+
   // support for async load app
   if (entry && entry.tcbGetApp && typeof entry.tcbGetApp === 'function') {
     app = await entry.tcbGetApp()

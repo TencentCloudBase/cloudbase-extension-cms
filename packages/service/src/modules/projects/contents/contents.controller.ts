@@ -14,7 +14,7 @@ import { IsNotEmpty, IsIn } from 'class-validator'
 import { PermissionGuard } from '@/guards'
 import { Collection } from '@/constants'
 import { UnsupportedOperation } from '@/common'
-import { checkAccessAndGetResource } from '@/utils'
+import { checkAccessAndGetResource, logger } from '@/utils'
 import { CloudBaseService, SchemaCacheService } from '@/services'
 import { ContentsService } from './contents.service'
 import { WebhooksService } from '../webhooks/webhooks.service'
@@ -162,7 +162,7 @@ export class ContentsController {
         actionOptions: options,
       })
     } catch (error) {
-      console.log('Webhook 触发失败', error)
+      logger.error(error, 'Webhook 触发失败')
     }
 
     return res

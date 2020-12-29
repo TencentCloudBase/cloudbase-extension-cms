@@ -15,7 +15,7 @@ import {
 import _ from 'lodash'
 import { PermissionGuard } from '@/guards'
 import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
-import { dateToUnixTimestampInMs } from '@/utils'
+import { dateToUnixTimestampInMs, logger } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { RecordExistException, RecordNotExistException, UnauthorizedOperation } from '@/common'
 import { UserService } from './user.service'
@@ -136,7 +136,7 @@ export class UserController {
 
     // 删除用户
     const deleteRes = await this.userService.deleteUser(user.uuid)
-    console.log('删除用户', deleteRes)
+    logger.info(deleteRes, '删除用户')
 
     return this.collection().doc(userId).remove()
   }
