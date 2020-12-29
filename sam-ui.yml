@@ -17,7 +17,7 @@ Form:
           - size: l
         Validation:
           Type: Attribute
-          Rule: ${STRING(value)}.$match(\\D+,g).$match(^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$,g)
+          Rule: ${STRING(value)}.$match(\\D+,g).$match(^[a-zA-Z0-9]+[a-zA-Z0-9_-]*[a-zA-Z0-9]+$,g)
           ErrorMessage: "字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32"
         ValueFor: ${Resources.InitFunction.Properties.Environment.Variables.CMS_ADMIN_USER_NAME}
     - Label:
@@ -49,7 +49,7 @@ Form:
           - size: l
         Validation:
           Type: Attribute
-          Rule: ${STRING(value)}.$match(\\D+,g).$match(^[a-zA-Z0-9]+[a-zA-Z0-9_-]?[a-zA-Z0-9]+$,g)
+          Rule: ${STRING(value)}.$match(\\D+,g).$match(^[a-zA-Z0-9]+[a-zA-Z0-9_-]*[a-zA-Z0-9]+$,g)
           ErrorMessage: "字母和数字的组合，不能为纯数字，长度范围是 1 ~ 32"
         CasCadeRule:
           Master: ADMIN
