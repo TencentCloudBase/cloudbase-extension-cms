@@ -5,7 +5,13 @@ export const getFullDate = (v = Date.now()) => moment(v).format('YYYY-MM-DD')
 
 export const getDateValue = (v?: string | number) => moment(v).valueOf()
 
-export const formatTimeByType = (
+/**
+ * 格式化保存到数据库中的时间
+ * @param v
+ * @param dateType
+ * @param valueType
+ */
+export const formatStoreTimeByType = (
   v: string,
   dateType?: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string',
   valueType?: string
@@ -32,4 +38,29 @@ export const formatTimeByType = (
   }
 
   return formatDate
+}
+
+/**
+ * 格式化展示的时间
+ * @param v
+ * @param dateType
+ * @param valueType
+ */
+export const formatDisplayTimeByType = (
+  v: string | number,
+  dateType?: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string',
+  valueType?: string
+) => {
+  const format = valueType === 'Date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss'
+
+  // 字符串
+  if (dateType === 'string') {
+    return v
+  }
+
+  if (dateType === 'timestamp-s') {
+    return moment(Number(v) * 1000).format(format)
+  }
+
+  return moment(v).format(format)
 }

@@ -3,7 +3,7 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import { DatePicker } from 'antd'
 import locale from 'antd/es/date-picker/locale/zh_CN'
-import { formatTimeByType } from '@/utils'
+import { formatStoreTimeByType } from '@/utils'
 
 export const IDatePicker: React.FC<{
   type?: string
@@ -35,7 +35,7 @@ export const IDatePicker: React.FC<{
         }
 
         // 格式化时间
-        const formatDate: number | string = formatTimeByType(v, dateFormatType, type)
+        const formatDate: number | string = formatStoreTimeByType(v, dateFormatType, type)
         onChange(formatDate)
       }}
     />

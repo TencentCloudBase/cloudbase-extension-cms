@@ -19,7 +19,7 @@ import {
 import { ContentCtx, SchmeaCtx } from 'typings/store'
 import { getFieldDefaultValueInput, getFieldFormItem } from './Field'
 import { FieldTypes, SYSTEM_FIELDS } from '@/common'
-import { formatTimeByType, isDateType, isResourceType, random } from '@/utils'
+import { formatStoreTimeByType, isDateType, isResourceType, random } from '@/utils'
 
 const { TextArea } = Input
 const { Text } = Typography
@@ -203,7 +203,7 @@ export const SchemaFieldEditorModal: React.FC<{
 
           // 格式化默认时间，与 dateFormatType 保持一致
           if (v.dateFormatType && v.defaultValue) {
-            v.defaultValue = formatTimeByType(v.defaultValue, v.dateFormatType)
+            v.defaultValue = formatStoreTimeByType(v.defaultValue, v.dateFormatType)
           }
 
           createField(v)
