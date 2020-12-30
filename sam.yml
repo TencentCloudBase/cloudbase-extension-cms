@@ -21,10 +21,9 @@ IntroUrl: https://docs.cloudbase.net/cms/intro.html
 ChangeLog:
   - Title: 2.6.1
     Content:
-      - 支持保存检索字段
-      - 富文本支持输入链接插入图片
-      - 新增多媒体类型，支持上传并播放视频、音乐
-      - 修复部分拼写错误
+      - 支持显示登录用户名
+      - 修复 Unix Timestamp 时间展示异常
+      - 修复 JSON 对象校验异常
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -42,7 +41,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-service
-      CodeUri: extension://3f11ea403e46420bb698e3690147426a.zip
+      CodeUri: extension://2ad37c20df6245dbba50edf918734f71.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -59,7 +58,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-init
-      CodeUri: extension://940faae7cb5f4f2db79a6dacc37fac47.zip
+      CodeUri: extension://396cc371d7184c7aa6494dff22cc53c0.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -79,7 +78,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-api
-      CodeUri: extension://df1595f98bee4a4ebe5f6dc73c0ece0c.zip
+      CodeUri: extension://7a5e2991b8224e608cc4d62a8f7acc86.zip
       InstallDependency: true
       Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
       MemorySize: 256
