@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button, Form, Input, Modal, Space, Switch } from 'antd'
+import { Alert, Button, Col, Divider, Form, Input, Modal, Row, Space, Switch } from 'antd'
 import ReactJson from 'react-json-view'
 
 export const IObjectEditor: React.FC<{
@@ -11,26 +11,32 @@ export const IObjectEditor: React.FC<{
 
   return (
     <>
-      <Space size="large">
-        <Space>
-          <Switch
-            onChange={(v) => {
-              if (v) {
-                onChange([value])
-              } else {
-                const json = Array.isArray(value) ? value[0] || {} : value
-                onChange(json)
-              }
-            }}
-          />
-          JSON 数组
-        </Space>
-        <Space>
-          <Button size="small" type="primary" onClick={() => setVisible(true)}>
-            快捷输入
-          </Button>
-        </Space>
-      </Space>
+      <Row justify="space-between">
+        <Col>
+          <h4 className="mb-0">点击下方对象进行编辑</h4>
+        </Col>
+        <Col>
+          <Space size="large">
+            <Space>
+              <Switch
+                onChange={(v) => {
+                  if (v) {
+                    onChange([value])
+                  } else {
+                    const json = Array.isArray(value) ? value[0] || {} : value
+                    onChange(json)
+                  }
+                }}
+              />
+              JSON 数组
+            </Space>
+            <Button size="small" type="primary" onClick={() => setVisible(true)}>
+              JSON 字符串
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+
       <ReactJson
         name={false}
         src={value}
@@ -50,6 +56,7 @@ export const IObjectEditor: React.FC<{
           onChange(e.updated_src)
         }}
       />
+
       <Modal
         centered
         footer={null}

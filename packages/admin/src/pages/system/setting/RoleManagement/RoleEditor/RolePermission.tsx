@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRequest } from 'umi'
 import { getSchemas } from '@/services/schema'
 import { getProjects } from '@/services/project'
@@ -17,6 +17,13 @@ const RolePermission: React.FC<{
 }> = ({ creating, initialValues, onConfirm, onPrevious, actionText }) => {
   const [permissionType, setPermissionType] = useState('project')
   const [formValue, setFormValue] = useState<any>({})
+
+  // 设置 formValue
+  useEffect(() => {
+    if (initialValues) {
+      setFormValue(initialValues)
+    }
+  }, [initialValues])
 
   // 加载项目
   const { data: projects = [], loading: projectLoading } = useRequest(() => getProjects(), {
@@ -77,21 +84,26 @@ const RolePermission: React.FC<{
               <div>
                 {fields?.map((field, index) => {
                   const permission = formValue?.permissions?.[field.name]
+                  console.log(permission)
                   return (
                     <Form.Item key={index}>
                       <Row gutter={24} align="middle">
-                        <Col flex="1 1 auto">
+                        <Col flex="0 0 120px">
                           <Form.Item
                             noStyle
                             name={[field.name, 'projectId']}
                             rules={[
                               {
                                 required: true,
-                                message: '请选择用户角色！',
+                                message: '请选择项目！',
                               },
                             ]}
                           >
-                            <Select loading={projectLoading} placeholder="项目">
+                            <Select
+                              loading={projectLoading}
+                              placeholder="项目"
+                              dropdownMatchSelectWidth={false}
+                            >
                               <Select.Option key="all" value="*">
                                 全部项目
                               </Select.Option>
@@ -103,7 +115,7 @@ const RolePermission: React.FC<{
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col flex="1 1 auto">
+                        <Col flex="1 1 120px">
                           <Form.Item
                             noStyle
                             name={[field.name, 'action']}
@@ -123,7 +135,7 @@ const RolePermission: React.FC<{
                             </Select>
                           </Form.Item>
                         </Col>
-                        <Col flex="0 0 320px">
+                        <Col flex="0 0 120px">
                           <Form.Item
                             noStyle
                             name={[field.name, 'service']}
@@ -134,20 +146,24 @@ const RolePermission: React.FC<{
                               },
                             ]}
                           >
-                            <Select placeholder="项目中的服务">
-                              <Select.Option value="*">
+                            <Select
+                              placeholder="项目中的服务"
+                              optionLabelProp="label"
+                              dropdownMatchSelectWidth={false}
+                            >
+                              <Select.Option value="*" label="全部服务">
                                 <h4>全部服务</h4>
                                 <div>内容模型、内容集合、Webhook 等全部服务</div>
                               </Select.Option>
-                              <Select.Option value="schema">
+                              <Select.Option value="schema" label="内容模型">
                                 <h4>内容模型</h4>
                                 <div>内容模型操作，如创建、修改模型等</div>
                               </Select.Option>
-                              <Select.Option value="content">
+                              <Select.Option value="content" label="集合内容">
                                 <h4>内容集合</h4>
                                 <div>指定内容集合的管理，如创建、修改内容等</div>
                               </Select.Option>
-                              <Select.Option value="webhook">
+                              <Select.Option value="webhook" label="Webhook">
                                 <h4>Webhook</h4>
                                 <div>Webhook 管理操作，如创建、修改 Webhook 等</div>
                               </Select.Option>
@@ -266,6 +282,7 @@ const ResourceSelect: React.FC<{
       onChange={(v) => onChange?.(v)}
       onFocus={() => {
         if (!service) {
+          console.log(service)
           message.error('请选择服务')
         } else if (!projectId) {
           message.error('请选择项目')

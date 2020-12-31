@@ -2,7 +2,7 @@ import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { AppController } from '@/app.controller'
 import { AppService } from '@/app.service'
-import { BodyConverter } from '@/middlewares/converter.middleware'
+import { BodySerialize } from '@/middlewares/converter.middleware'
 import { FileModule } from './modules/file/file.module'
 import { AuthModule } from './modules/auth/auth.module'
 import { ProjectsModule } from './modules/projects/projects.module'
@@ -30,6 +30,6 @@ import { GlobalModule } from './global.module'
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(BodyConverter).forRoutes('*')
+    consumer.apply(BodySerialize).forRoutes('*')
   }
 }

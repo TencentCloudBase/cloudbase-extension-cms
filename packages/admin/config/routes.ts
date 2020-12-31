@@ -26,7 +26,7 @@ const routesConfig: IConfig = {
       layout: false,
       access: 'isAdmin',
       wrappers: ['../components/SecurityWrapper/index'],
-      component: './system/setting/RoleEditor/index',
+      component: './system/setting/RoleManagement/RoleEditor/index',
     },
     {
       path: '/',

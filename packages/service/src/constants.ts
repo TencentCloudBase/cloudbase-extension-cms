@@ -43,7 +43,10 @@ export enum SYSTEM_ROLE_IDS {
   PROJECT_ADMIN = 'project:administrator',
 }
 
-// 系统角色，无法修改
+/**
+ * 系统角色，无法修改
+ * 请勿随意增加系统角色
+ */
 export const SystemUserRoles: UserRole[] = [
   {
     _id: SYSTEM_ROLE_IDS.ADMIN,

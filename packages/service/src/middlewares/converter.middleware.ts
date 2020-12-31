@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { Injectable, NestMiddleware } from '@nestjs/common'
 
 @Injectable()
-export class BodyConverter implements NestMiddleware {
+export class BodySerialize implements NestMiddleware {
   use(req: Request, res: Response, next: Function) {
     // 将 seqId 添加到 header 中
     res.header('x-seqid', randomId(16).toString())

@@ -1,9 +1,12 @@
 import { tcbRequest } from '@/utils'
 
-export const getUserRoles = async () => {
+export const getUserRoles = async (page = 1, pageSize = 10) => {
   return tcbRequest('/roles', {
     method: 'GET',
-    params: {},
+    params: {
+      page,
+      pageSize,
+    },
   })
 }
 

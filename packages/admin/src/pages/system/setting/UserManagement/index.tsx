@@ -1,15 +1,12 @@
-import { useRequest } from 'umi'
 import { useSetState } from 'react-use'
-import React, { useState } from 'react'
+import React, { useRef } from 'react'
 import ProList from '@ant-design/pro-list'
-import { Skeleton, Button, Tag, Typography, Modal, message } from 'antd'
+import { Button, Tag, Typography, Modal, message } from 'antd'
 import { getUsers, deleteUser } from '@/services/user'
 import { PlusOutlined } from '@ant-design/icons'
-import { getUserRoles } from '@/services/role'
 import CreateUserWithUsername from './CreateUserWithUsername'
 
 export default (): React.ReactElement => {
-  const [reload, setReload] = useState(0)
   const [actionState, setActionState] = useSetState<{
     visible: boolean
     action: 'create' | 'edit'
@@ -20,23 +17,22 @@ export default (): React.ReactElement => {
     selectedUser: {},
   })
 
-  const { data, loading } = useRequest(() => getUsers(), {
-    refreshDeps: [reload],
-  })
-
-  const { data: roles = [], loading: roleLoading } = useRequest(() => getUserRoles(), {
-    refreshDeps: [reload],
-  })
-
-  if (loading || roleLoading) {
-    return <Skeleton active />
-  }
-
   const CreateUserModal = CreateUserWithUsername
+
+  const listRef = useRef<any>()
 
   return (
     <>
-      <ProList<any>
+      <ProList<User>
+        rowKey="_id"
+        actionRef={listRef}
+        pagination={{
+          pageSize: 10,
+        }}
+        request={async (params = {}) => {
+          const { current, pageSize } = params
+          return getUsers(current, pageSize)
+        }}
         toolBarRender={() => {
           return [
             <Button
@@ -54,14 +50,12 @@ export default (): React.ReactElement => {
             </Button>,
           ]
         }}
-        rowKey="id"
-        dataSource={data}
         metas={{
           title: {
             render: (dom, item) => <Typography.Title level={4}>{item.username}</Typography.Title>,
           },
           actions: {
-            render: (dom, item) => [
+            render: (dom, user: User) => [
               <Button
                 size="small"
                 key="edit"
@@ -69,7 +63,10 @@ export default (): React.ReactElement => {
                 onClick={() => {
                   setActionState({
                     action: 'edit',
-                    selectedUser: item,
+                    selectedUser: {
+                      ...user,
+                      roles: user.roles.map((_) => _._id),
+                    },
                     visible: true,
                   })
                 }}
@@ -81,14 +78,14 @@ export default (): React.ReactElement => {
                 size="small"
                 key="delete"
                 type="primary"
-                disabled={item?.root}
+                disabled={user?.root}
                 onClick={() => {
                   Modal.confirm({
-                    title: `确认删除用户 ${item.username} ？`,
+                    title: `确认删除用户 ${user.username} ？`,
                     onOk: async () => {
-                      await deleteUser(item._id)
-                      setReload(reload + 1)
+                      await deleteUser(user._id)
                       message.success('删除用户成功！')
+                      listRef?.current?.reload()
                     },
                   })
                 }}
@@ -100,9 +97,7 @@ export default (): React.ReactElement => {
           description: {
             render: (dom, item) => (
               <div>
-                {item.roles?.map((roleId: any, index: number) => {
-                  const role = roles?.find((_: any) => _._id === roleId)
-
+                {item.roles?.map((role: any, index: number) => {
                   return (
                     <Tag key={index} color="#2575e6">
                       {role?.roleName}
@@ -122,7 +117,7 @@ export default (): React.ReactElement => {
           setActionState({
             visible: false,
           })
-          setReload(reload + 1)
+          listRef?.current?.reload()
         }}
       />
     </>

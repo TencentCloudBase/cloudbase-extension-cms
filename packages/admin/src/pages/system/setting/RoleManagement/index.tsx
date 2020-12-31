@@ -1,25 +1,25 @@
-import React, { useState } from 'react'
-import { useRequest, history } from 'umi'
-import ProList from '@ant-design/pro-list'
+import { history } from 'umi'
 import { useConcent } from 'concent'
-import { getUserRoles, deleteUserRole } from '@/services/role'
-import { Button, Tag, Modal, Skeleton, Typography } from 'antd'
+import React, { useRef } from 'react'
+import ProList from '@ant-design/pro-list'
 import { PlusOutlined } from '@ant-design/icons'
+import { Button, Tag, Modal, Typography } from 'antd'
+import { getUserRoles, deleteUserRole } from '@/services/role'
 
 export default (): React.ReactElement => {
-  const [reload, setReload] = useState(0)
   const ctx = useConcent('role')
 
-  const { data, loading } = useRequest(() => getUserRoles(), {
-    refreshDeps: [reload],
-  })
-
-  if (loading) {
-    return <Skeleton active />
-  }
+  const listRef = useRef<any>()
 
   return (
     <ProList<any>
+      pagination={{
+        pageSize: 10,
+      }}
+      request={async (params = {}) => {
+        const { current, pageSize } = params
+        return getUserRoles(current, pageSize)
+      }}
       toolBarRender={() => [
         <Button
           key="new"
@@ -37,7 +37,6 @@ export default (): React.ReactElement => {
         </Button>,
       ]}
       rowKey="id"
-      dataSource={data}
       metas={{
         title: {
           render: (dom, item) => (
@@ -76,7 +75,7 @@ export default (): React.ReactElement => {
                   title: `确认删除角色【${item.roleName}】？`,
                   onOk: async () => {
                     await deleteUserRole(item._id)
-                    setReload(reload + 1)
+                    listRef?.current?.reload()
                   },
                 })
               }}

@@ -33,7 +33,7 @@
     "@ant-design/icons": "4.3.0",
     "@ant-design/pro-card": "^1.2.1",
     "@ant-design/pro-layout": "6.4.19",
-    "@ant-design/pro-list": "1.0.9",
+    "@ant-design/pro-list": "^1.2.5",
     "@ant-design/pro-table": "2.9.3",
     "@umijs/hooks": "^1.9.3",
     "antd": "4.8.4",

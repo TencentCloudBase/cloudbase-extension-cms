@@ -115,9 +115,9 @@ export default ({
           rules={[{ required: true, message: '请选择用户角色！' }]}
         >
           {/* 管理员角色不能修改 */}
-          <Select mode="multiple" disabled={selectedUser?.root}>
+          <Select mode="multiple" disabled={selectedUser?.root} optionLabelProp="label">
             {userRoles?.map((role: any, index: any) => (
-              <Select.Option key={index} value={role._id}>
+              <Select.Option key={index} value={role._id} label={role.roleName}>
                 <h4>{role.roleName}</h4>
                 <div>{role.description}</div>
               </Select.Option>

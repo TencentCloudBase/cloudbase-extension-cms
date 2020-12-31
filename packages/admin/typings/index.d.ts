@@ -151,3 +151,36 @@ interface Project {
   // Api 访问路径
   apiAccessPath: string
 }
+
+interface User {
+  _id: string
+
+  username: string
+
+  // 创建时间
+  createTime: number
+
+  // 用户角色
+  roles: UserRole[]
+
+  // cloudbase uuid
+  uuid: string
+
+  // 是否为 root 用户
+  root?: boolean
+}
+
+interface UserRole {
+  _id: string
+
+  // 角色名
+  roleName: string
+
+  // 角色描述
+  description: string
+
+  // 角色绑定的权限描述
+  permissions: Permission[]
+
+  type: string | 'system'
+}
