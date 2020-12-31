@@ -1,15 +1,27 @@
 import pino from 'pino'
+import { Signale } from 'signale'
 import { isRunInContainer } from './cloudbase'
 import { isDevEnv } from './tools'
 
-export const logger =
-  isRunInContainer() || isDevEnv()
-    ? pino({
-        timestamp: isDevEnv() ? false : pino.stdTimeFunctions.isoTime,
-        base: {
-          hostname: false,
-        },
-        // 云函数中按行打印
-        prettyPrint: isDevEnv() ? { colorize: true, ignore: 'time,hostname,pid' } : false,
-      })
-    : console
+const pinoLogger = pino({
+  timestamp: pino.stdTimeFunctions.isoTime,
+  base: {
+    hostname: false,
+  },
+})
+
+// 本地开发和云函数，输出流
+const signaleLogger = new Signale({
+  types: {
+    info: {
+      color: 'cyanBright',
+    },
+  },
+  config: {
+    displayDate: !isDevEnv(),
+    displayFilename: true,
+    displayTimestamp: !isDevEnv(),
+  },
+})
+
+export const logger = isRunInContainer() ? pinoLogger : signaleLogger
