@@ -72,9 +72,6 @@ interface RequestUser extends User {
   // 所有可访问的服务
   accessibleService?: '*' | string[]
 
-  // 授权的操作
-  authorizedAction?: '*' | string[]
-
   // 系统管理员
   isAdmin?: boolean
 

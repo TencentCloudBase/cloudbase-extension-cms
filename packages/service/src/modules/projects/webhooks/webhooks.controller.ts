@@ -52,7 +52,12 @@ export class WebhooksController {
 
     const webhookId = options?.filter?._id
 
-    checkAccessAndGetResource(projectId, req, webhookId)
+    checkAccessAndGetResource({
+      req,
+      action,
+      projectId,
+      resourceId: webhookId,
+    })
 
     // 添加过滤条件
     options.filter = {

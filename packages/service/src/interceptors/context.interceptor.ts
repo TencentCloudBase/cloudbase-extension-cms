@@ -26,12 +26,12 @@ export class ContextInterceptor implements NestInterceptor {
      * Permission 对象
      * {
      *    projectId: '*' | string
-     *    // 行为
+     *    行为
      *    action: string[] | ['*']
      *    effect: 'allow' | 'deny'
-     *    // 服务，schema/content/webhook
+     *    服务，schema/content/webhook
      *    service: string | '*'
-     *    // 具体资源
+     *    具体资源
      *    resource: string[] | ['*']
      * }
      * 1. 从用户绑定的角色列表中取出所有 permission 规则

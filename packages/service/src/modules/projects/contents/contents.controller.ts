@@ -73,7 +73,11 @@ export class ContentsController {
   ) {
     const { page = 1, pageSize = 100 } = query
 
-    const collectionNames = checkAccessAndGetResource(projectId, req)
+    const collectionNames = checkAccessAndGetResource({
+      req,
+      projectId,
+      action: 'get',
+    })
 
     const $ = this.cloudbaseService.db.command
 
@@ -111,7 +115,12 @@ export class ContentsController {
   async getContentSchema(@Param() params, @Request() req: IRequest) {
     const { projectId, schemaId } = params
 
-    checkAccessAndGetResource(projectId, req, schemaId)
+    checkAccessAndGetResource({
+      req,
+      projectId,
+      action: 'get',
+      resourceId: schemaId,
+    })
 
     const {
       data: [schema],
@@ -143,7 +152,7 @@ export class ContentsController {
 
     // 内容以模型为维度，不支持单个内容权限管理
     // 这里的 resource 是 collectionName
-    await this.checkResourcePermission(projectId, req, resource)
+    await this.checkResourcePermission(projectId, req, action, resource)
 
     let res = await this.contentsService[action](resource, options as any)
 
@@ -169,9 +178,19 @@ export class ContentsController {
   }
 
   // 二次校验权限
-  private async checkResourcePermission(projectId: string, req: IRequest, resource: string) {
+  private async checkResourcePermission(
+    projectId: string,
+    req: IRequest,
+    action: string,
+    resource: string
+  ) {
     // 检查 CMS 系统角色
-    checkAccessAndGetResource(projectId, req, resource)
+    checkAccessAndGetResource({
+      req,
+      action,
+      projectId,
+      resourceId: resource,
+    })
 
     // 获取并缓存 schema
     const schema = await this.schemaCacheService.getCollectionSchema(resource)
