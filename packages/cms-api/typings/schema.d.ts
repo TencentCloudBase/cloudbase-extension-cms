@@ -3,7 +3,7 @@ interface SchemaField {
   id: string
 
   // 字段类型
-  type: string
+  type: SchemaFieldType
 
   // 展示标题
   displayName: string

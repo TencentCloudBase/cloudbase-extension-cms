@@ -25,8 +25,7 @@ const { Option } = Select
 
 // 判断两个 field 数组是否包含相同的 field
 const isFieldSame = (field1: any[], field2: any[]) => {
-  if (field1.length !== field2.length) return false
-
+  if (field1?.length !== field2?.length) return false
   return _.differenceBy(field1, field2, 'name')?.length === 0
 }
 
