@@ -298,7 +298,7 @@ export const SchemaFieldEditorModal: React.FC<{
               <Form.Item name="isRequired" valuePropName="checked" style={{ marginBottom: 0 }}>
                 <Switch disabled={selectedField.isSystem} />
               </Form.Item>
-              <Text type="secondary">在创建内容时，此此段是必需要填写的</Text>
+              <Text type="secondary">在创建内容时，此段是必需填写的</Text>
             </Form.Item>
           </div>
         </Form.Item>

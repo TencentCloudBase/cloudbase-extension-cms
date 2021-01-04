@@ -16,6 +16,7 @@
     href="<%= context.config.publicPath + context.config.define.ICON_PATH%>"
     type="image/x-icon" />
   <script src="<%= context.config.publicPath +'config.js'%>"></script>
+  <script src="<%= context.config.publicPath +'raven.min.js'%>"></script>
   <script
     src="//imgcache.qq.com/qcloud/cloudbase-js-sdk/1.3.4-alpha.0/cloudbase.js"></script>
   <script
@@ -222,6 +223,11 @@
       var s = document.getElementsByTagName("script")[0];
       s.parentNode.insertBefore(mta, s);
     })();
+
+    // raven config
+    Raven.config('https://08cf1ea5911142878e8a60d11231f359@report.url.cn/sentry/3186', {
+      release: '2.6.3'
+    }).install()
   </script>
 
 </body>

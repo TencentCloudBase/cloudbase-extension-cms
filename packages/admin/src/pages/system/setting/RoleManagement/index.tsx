@@ -3,7 +3,7 @@ import { useConcent } from 'concent'
 import React, { useRef } from 'react'
 import ProList from '@ant-design/pro-list'
 import { PlusOutlined } from '@ant-design/icons'
-import { Button, Tag, Modal, Typography } from 'antd'
+import { Button, Tag, Modal, Typography, message } from 'antd'
 import { getUserRoles, deleteUserRole } from '@/services/role'
 
 export default (): React.ReactElement => {
@@ -76,6 +76,7 @@ export default (): React.ReactElement => {
                   onOk: async () => {
                     await deleteUserRole(item._id)
                     listRef?.current?.reload()
+                    message.success('删除角色成功')
                   },
                 })
               }}
