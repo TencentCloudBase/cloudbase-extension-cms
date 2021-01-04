@@ -119,11 +119,10 @@ export function getFieldEditor(field: SchemaField, key: number) {
     case 'Tel':
       FieldEditor = <Input style={{ width: '100%' }} />
       break
+    case 'Time':
     case 'Date':
-      FieldEditor = <IDatePicker type="Date" dateFormatType={field.dateFormatType} />
-      break
     case 'DateTime':
-      FieldEditor = <IDatePicker type="DateTime" dateFormatType={field.dateFormatType} />
+      FieldEditor = <IDatePicker type={type} dateFormatType={field.dateFormatType} />
       break
     case 'Image':
       FieldEditor = (

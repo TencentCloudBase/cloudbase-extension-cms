@@ -1,10 +1,12 @@
-type SchemaFieldType =
+type DateFormatType = 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
+
+type DateFieldType = 'Date' | 'Time' | 'DateTime'
+
+type NormalFieldType =
   | 'String'
   | 'MultiLineString'
   | 'Number'
   | 'Boolean'
-  | 'DateTime'
-  | 'Date'
   | 'File'
   | 'Media'
   | 'Image'
@@ -18,3 +20,5 @@ type SchemaFieldType =
   | 'Enum'
   | 'Object'
   | 'Text'
+
+type SchemaFieldType = NormalFieldType | DateFieldType

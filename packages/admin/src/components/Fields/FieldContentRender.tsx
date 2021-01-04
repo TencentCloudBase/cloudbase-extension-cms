@@ -86,6 +86,7 @@ export function getFieldRender(field: SchemaField) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => <Text>{text}</Text>
+    case 'Time':
     case 'Date':
     case 'DateTime':
       return (

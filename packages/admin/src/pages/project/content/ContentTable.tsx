@@ -67,7 +67,6 @@ export const ContentTable: React.FC<{
           success: true,
         }
       } catch (error) {
-        console.log('内容请求错误', error)
         return {
           data: [],
           total: 0,
@@ -78,7 +77,9 @@ export const ContentTable: React.FC<{
     [searchParams]
   )
 
-  // 搜索字段下拉菜单
+  /**
+   * 搜索字段下拉菜单
+   */
   const searchFieldMenu = useMemo(
     () => (
       <Menu
@@ -202,7 +203,7 @@ export const ContentTable: React.FC<{
         collectionName={currentSchema.collectionName}
       />,
     ],
-    [currentSchema, searchParams]
+    [currentSchema, searchParams, searchFields]
   )
 
   // 从 url 获取分页条件

@@ -24,7 +24,6 @@ ChangeLog:
       - 支持显示登录用户名
       - 修复 Unix Timestamp 时间展示异常
       - 修复 JSON 对象校验异常
-
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
