@@ -57,7 +57,7 @@ interface SchemaField {
   // 连接字段
   connectField: string
 
-  // 连接资源 Id
+  // 连接模型 Id
   connectResource: string
 
   // 关联多个
