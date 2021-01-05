@@ -4,6 +4,20 @@
   "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
   "framework": {
     "name": "cloudbase-extension-cms",
+    "hooks": {
+      "preDeploy": {
+        "type": "execCommand",
+        "commands": ["npm run build"]
+      },
+      "postDeploy": {
+        "type": "callFunction",
+        "functions": [
+          {
+            "functionName": "tcb-ext-cms-init"
+          }
+        ]
+      }
+    },
     "plugins": {
       "admin": {
         "use": "@cloudbase/framework-plugin-website",
