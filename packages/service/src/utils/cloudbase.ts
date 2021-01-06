@@ -17,8 +17,8 @@ const schemaCache = new MemoryCache()
 
 // 从环境变量中获取 envId
 export const getEnvIdString = (): string => {
-  const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID } = process.env
-  return TCB_ENV || SCF_NAMESPACE || TCB_ENVID
+  const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID, ENV_ID } = process.env
+  return TCB_ENV || SCF_NAMESPACE || TCB_ENVID || ENV_ID
 }
 
 /**
