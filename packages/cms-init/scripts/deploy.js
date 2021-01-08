@@ -37,7 +37,15 @@ async function writeConfigJS(manager, dir, context) {
   const { envId } = config
 
   // 获取默认的自定义域名
-  const { DefaultDomain } = await manager.access.getDomainList()
+  const { DefaultDomain } = await manager.commonService('tcb').call({
+    Action: 'DescribeCloudBaseGWService',
+    Param: {
+      ServiceId: envId,
+      EnableUnion: true,
+    },
+  })
+
+  console.log('默认域名', DefaultDomain)
 
   accessDomain = accessDomain.replace('https://', '').replace('http://', '').replace(/\/$/, '')
 
@@ -56,11 +64,16 @@ async function writeConfigJS(manager, dir, context) {
   console.log('微信 AppID', mpAppID, process.env.WX_MP)
   if (mpAppID || process.env.WX_MP) {
     // 文档链接
-    const docLink = process.env.CMS_DOC_LINK || 'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/extensions/cms/introduction.html'
+    const docLink =
+      process.env.CMS_DOC_LINK ||
+      'https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/extensions/cms/introduction.html'
     // 反馈链接
-    const helpLink = process.env.CMS_HELP_LINK || 'https://developers.weixin.qq.com/community/minihome/mixflow/1286298401038155776'
+    const helpLink =
+      process.env.CMS_HELP_LINK ||
+      'https://developers.weixin.qq.com/community/minihome/mixflow/1286298401038155776'
 
-    const officialSiteLink = process.env.CMS_OFFICIALSITE_LINK || 'https://mp.weixin.qq.com/cgi-bin/wx'
+    const officialSiteLink =
+      process.env.CMS_OFFICIALSITE_LINK || 'https://mp.weixin.qq.com/cgi-bin/wx'
 
     configFileContent += `mpAppID: '${mpAppID}',
     cmsTitle: '内容管理（CMS）',
