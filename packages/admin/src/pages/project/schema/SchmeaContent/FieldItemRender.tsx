@@ -2,7 +2,7 @@ import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useMemo, useState } from 'react'
 import { FieldTypes } from '@/common'
-import { Card, Space, Typography, Tooltip, Switch, Popover, Tag, Spin } from 'antd'
+import { Card, Space, Typography, Tooltip, Switch, Tag, Spin } from 'antd'
 import { ExclamationCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/icons'
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 import { updateSchema } from '@/services/schema'
@@ -59,7 +59,7 @@ export const SchemaFieldRender: React.FC<{
         ...field,
         order: index,
       }))
-      .concat(getSchemaSystemFields(schema?.fields))
+      .concat(getSchemaSystemFields(schema))
 
     // 更新顺序
     schema.fields = resortedFields
@@ -143,17 +143,17 @@ export const SchemaSystemField: React.FC<{ onFiledClick: Function; schema: Schem
   const [showSystemField, setShowSystemField] = useState(false)
 
   // 合并系统字段
-  const systemFields = useMemo(() => getSchemaSystemFields(schema?.fields), [schema])
+  const systemFields = useMemo(() => getSchemaSystemFields(schema), [schema])
 
   return (
     <div>
       <Paragraph>
         <Space>
           <Switch checked={showSystemField} onChange={(v) => setShowSystemField(v)} />
-          <span>展示系统字段</span>
-          <Popover content="系统字段为系统自动创建的字段，请谨慎操作">
+          <span>展示系统功能性字段</span>
+          <Tooltip title="系统功能性字段为系统功能相关的字段，请谨慎操作">
             <QuestionCircleTwoTone />
-          </Popover>
+          </Tooltip>
         </Space>
       </Paragraph>
       {showSystemField

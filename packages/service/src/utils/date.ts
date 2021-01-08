@@ -20,17 +20,18 @@ export const dateToUnixTimestampInMs = (date?: string) => {
   return unixTime
 }
 
+/**
+ * 获取当前时间的 unix timestamp 形式
+ */
 export const getUnixTimestamp = () => dayjs().unix()
 
 /**
- * 获取 2020-08-08 格式的时间
+ * 获取 2020-08-08 格式型的时间
  */
 export const getFullDate = (date?: string) => {
   // 毫秒
   return dayjs(date).format('YYYY-MM-DD')
 }
-
-export const getNow = () => dayjs().toISOString()
 
 /**
  * 格式化 data 中的时间类型，转换成 Native Date 类型
@@ -65,4 +66,34 @@ export const formatPayloadDate = async (payload: Object | Object[], collectionNa
   })
 
   return payload
+}
+
+/**
+ * 根据时间存储类型格式化时间
+ * @param v
+ * @param dateType
+ */
+export const formatTimeByType = (
+  dateType: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string',
+  v: string | number = Date.now()
+) => {
+  // 默认以 unix timestamp ms 存储
+  let formatDate: number | string | Date = dayjs(v).valueOf()
+
+  // timestamp
+  if (dateType === 'timestamp-s') {
+    formatDate = dayjs(v).unix()
+  }
+
+  // date 对象
+  if (dateType === 'date') {
+    formatDate = dayjs(v).toDate()
+  }
+
+  // 字符串
+  if (dateType === 'string') {
+    formatDate = dayjs(v).format('YYYY-MM-DD HH:mm:ss')
+  }
+
+  return formatDate
 }

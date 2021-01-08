@@ -94,7 +94,7 @@ export function getFieldFormItem(
     case 'DateTime':
       return (
         <Form.Item label="时间存储格式" name="dateFormatType" validateTrigger={['onChange']}>
-          <Select placeholder="时间存储格式" disabled={selectedField.isSystem}>
+          <Select placeholder="时间存储格式">
             <Option value="timestamp-ms">Unix Timestamp 毫秒</Option>
             <Option value="timestamp-s">Unix Timestamp 秒</Option>
             <Option value="date">Date 对象</Option>
@@ -169,12 +169,31 @@ export function getFieldFormItem(
       )
     case 'Media':
       return (
-        <Form.Item label="媒体类型" name="mediaType" validateTrigger={['onChange']}>
-          <Select placeholder="媒体类型">
-            <Option value="video">视频</Option>
-            <Option value="music">音频</Option>
-          </Select>
-        </Form.Item>
+        <>
+          <Form.Item label="资源链接格式" name="resourceLinkType" validateTrigger={['onChange']}>
+            <Select placeholder="资源链接格式">
+              <Option value="fileId">FileId</Option>
+              <Option value="https">HTTPS</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item>
+            <div className="form-item">
+              <Form.Item style={{ marginBottom: 0 }}>
+                <Text>允许多个内容</Text>
+                <Form.Item name="isMultiple" valuePropName="checked" style={{ marginBottom: 0 }}>
+                  <Switch />
+                </Form.Item>
+                <Text type="secondary">在创建内容时，允许创建多个内容，数据将以数组格式存储</Text>
+              </Form.Item>
+            </div>
+          </Form.Item>
+          <Form.Item label="媒体类型" name="mediaType" validateTrigger={['onChange']}>
+            <Select placeholder="媒体类型">
+              <Option value="video">视频</Option>
+              <Option value="music">音频</Option>
+            </Select>
+          </Form.Item>
+        </>
       )
     case 'Connect':
       return (

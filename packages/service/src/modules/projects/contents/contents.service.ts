@@ -1,11 +1,16 @@
 import _ from 'lodash'
 import R from 'ramda'
+import { Collection } from '@/constants'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService, LocalCacheService, SchemaCacheService } from '@/services'
-import { isNotEmpty, formatPayloadDate, dateToUnixTimestampInMs, logger } from '@/utils'
-import { Collection } from '@/constants'
-import { BadRequestException, RecordNotExistException } from '@/common'
-import { Schema, SchemaField } from '../schemas/types'
+import {
+  logger,
+  isNotEmpty,
+  formatPayloadDate,
+  getCollectionSchema,
+  formatTimeByType,
+} from '@/utils'
+import { BadRequestException, RecordNotExistException, getSchemaSystemFields } from '@/common'
 
 @Injectable()
 export class ContentsService {
@@ -149,6 +154,9 @@ export class ContentsService {
     }
 
     let updateData = _.omit(payload, '_id')
+
+    const schema = await getCollectionSchema(resource)
+
     updateData = await formatPayloadDate(updateData, resource)
 
     if (resource !== Collection.Webhooks) {
@@ -182,11 +190,10 @@ export class ContentsService {
       })
     }
 
+    this.appendSystemField(updateData, schema, '_updateTime')
+
     // 更新记录
-    return collection.doc(record._id).update({
-      ...updateData,
-      _updateTime: dateToUnixTimestampInMs(),
-    })
+    return collection.doc(record._id).update(updateData)
   }
 
   // 替换更新一条记录
@@ -243,15 +250,18 @@ export class ContentsService {
       })
     }
 
+    const schema = await getCollectionSchema(resource)
+
     // 不能更新 _id
     const doc = _.omit(
       {
         ...record,
         ...updateData,
-        _updateTime: dateToUnixTimestampInMs(),
       },
       '_id'
     )
+
+    this.appendSystemField(doc, schema, '_updateTime')
 
     // 替换记录
     return collection.doc(record._id).set(doc)
@@ -269,15 +279,12 @@ export class ContentsService {
     let { payload } = options
     const collection = this.collection(resource)
 
+    const schema = await getCollectionSchema(resource)
     payload = await formatPayloadDate(payload, resource)
 
-    const data = {
-      ...payload,
-      _createTime: dateToUnixTimestampInMs(),
-      _updateTime: dateToUnixTimestampInMs(),
-    }
+    this.appendSystemField(payload, schema, '_createTime', '_updateTime')
 
-    return collection.add(data)
+    return collection.add(payload)
   }
 
   /**
@@ -451,5 +458,45 @@ export class ContentsService {
     await Promise.all(tasks)
 
     return resData
+  }
+
+  private appendSystemField(
+    doc: Record<string, any>,
+    schema: Schema,
+    ...fieldName: SystemControlFields[]
+  ) {
+    const docContext = getDocProcessContext(schema)
+
+    fieldName.forEach((name) => {
+      doc[docContext[name].name] = docContext[name].resolver()
+    })
+
+    return doc
+  }
+}
+
+function getDocProcessContext(schema: Schema) {
+  const systemFields: SchemaField[] = getSchemaSystemFields(schema)
+
+  const createTimeField = systemFields.find(
+    (_) => _.name === '_createTime' || _.name === schema.docCreateTimeField
+  )
+  const updateTimeField = systemFields.find(
+    (_) => _.name === '_updateTime' || _.name === schema.docUpdateTimeField
+  )
+
+  const now = Date.now()
+  const createTime = formatTimeByType(createTimeField.dateFormatType, now)
+  const updateTime = formatTimeByType(updateTimeField.dateFormatType, now)
+
+  return {
+    _createTime: {
+      name: createTimeField.name,
+      resolver: () => createTime,
+    },
+    _updateTime: {
+      name: updateTimeField.name,
+      resolver: () => updateTime,
+    },
   }
 }

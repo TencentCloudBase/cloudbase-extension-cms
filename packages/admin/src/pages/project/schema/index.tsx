@@ -7,7 +7,7 @@ import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
 import { SchmeaCtx } from 'typings/store'
 
-import { SchemaExportModal, SchemaImportModal } from './components'
+import { SchemaExportModal, SchemaImportModal } from './SchemaShare'
 import SchemaContent from './SchmeaContent'
 import SchemaMenuList from './SchemaMenuList'
 import SchemaEditor from './SchemaEditor'

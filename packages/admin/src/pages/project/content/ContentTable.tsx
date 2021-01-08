@@ -106,7 +106,7 @@ export const ContentTable: React.FC<{
 
   // 缓存 Table Columns 配置
   const memoTableColumns: ProColumns[] = useMemo(() => {
-    const columns = getTableColumns(currentSchema?.fields)
+    const columns = getTableColumns(currentSchema)
 
     return [
       ...columns,

@@ -3,8 +3,9 @@ import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { SchmeaCtx } from 'typings/store'
 import { createSchema, updateSchema } from '@/services/schema'
-import { Modal, Form, message, Input, Space, Button, Typography } from 'antd'
-import { SYSTEM_FIELDS } from '@/common'
+import { Modal, Form, message, Input, Space, Button, Typography, Tooltip } from 'antd'
+import { QuestionCircleTwoTone } from '@ant-design/icons'
+import { getCustomSystemFields } from '@/common'
 
 const { TextArea } = Input
 
@@ -14,7 +15,27 @@ const ActionTip = {
   copy: '复制',
 }
 
-const DefaultKeys = ['_id', '_createTime', '_updateTime']
+// 模型系统数据，拷贝模型时无需复制
+const SchemaSystemKeys = ['_id', '_createTime', '_updateTime']
+
+const getSchemaInitialValues = (action: string, currentSchema: Schema) => {
+  switch (action) {
+    case 'create':
+      return {
+        docCreateTimeField: '_createTime',
+        docUpdateTimeField: '_updateTime',
+      }
+    case 'edit':
+      return currentSchema
+    case 'copy':
+      return {
+        ...currentSchema,
+        collectionName: `${currentSchema.collectionName}-copy`,
+      }
+    default:
+      return currentSchema
+  }
+}
 
 /**
  * 新建/更新模型
@@ -37,17 +58,30 @@ const SchemaEditor: React.FC = () => {
   // 创建/更新模型
   const { run, loading } = useRequest(
     async (data: Schema) => {
-      const { displayName, collectionName, description } = data
+      const {
+        displayName,
+        collectionName,
+        description,
+        docCreateTimeField,
+        docUpdateTimeField,
+      } = data
 
+      // 新建模型
       if (schemaEditAction === 'create') {
         await createSchema(projectId, {
           displayName,
           collectionName,
           description,
-          fields: SYSTEM_FIELDS,
+          docCreateTimeField,
+          docUpdateTimeField,
+          fields: getCustomSystemFields({
+            docCreateTimeField,
+            docUpdateTimeField,
+          }),
         })
       }
 
+      // 编辑模型
       if (currentSchema && schemaEditAction === 'edit') {
         const diffData = Object.keys(data)
           .filter((key) => currentSchema[key] !== data[key])
@@ -62,9 +96,10 @@ const SchemaEditor: React.FC = () => {
         await updateSchema(projectId, currentSchema?._id, diffData)
       }
 
+      // 复制模型
       if (currentSchema && schemaEditAction === 'copy') {
         const newSchema = Object.keys(data)
-          .filter((key) => !DefaultKeys.includes(key))
+          .filter((key) => !SchemaSystemKeys.includes(key))
           .reduce(
             (ret, key) => ({
               ...ret,
@@ -87,24 +122,8 @@ const SchemaEditor: React.FC = () => {
     }
   )
 
-  const getInitialValues = useCallback(
-    (action: string, currentSchema: Schema) => {
-      switch (action) {
-        case 'create':
-          return undefined
-        case 'edit':
-          return currentSchema
-        case 'copy':
-          return {
-            ...currentSchema,
-            collectionName: `${currentSchema.collectionName}-copy`,
-          }
-        default:
-          return currentSchema
-      }
-    },
-    [schemaEditAction, currentSchema]
-  )
+  // 获取初始化的值
+  const getInitialValues = useCallback(getSchemaInitialValues, [schemaEditAction, currentSchema])
 
   return (
     <Modal
@@ -121,7 +140,6 @@ const SchemaEditor: React.FC = () => {
         name="basic"
         layout="vertical"
         labelAlign="left"
-        labelCol={{ span: 6 }}
         initialValues={getInitialValues(schemaEditAction, currentSchema)}
         onFinish={(v: any) => {
           if (schemaEditAction === 'copy' && v.collectionName === currentSchema.collectionName) {
@@ -164,6 +182,37 @@ const SchemaEditor: React.FC = () => {
         <Form.Item label="描述信息" name="description">
           <TextArea placeholder="描述信息，会展示在对应内容的管理页面顶部，可用于内容提示，支持 HTML 片段" />
         </Form.Item>
+
+        {schemaEditAction === 'create' && (
+          <>
+            <Form.Item
+              label={
+                <Space align="center">
+                  创建时间（系统）字段名
+                  <Tooltip title="自定义创建时间字段的名称，创建内容时，系统会自动添加此字段">
+                    <QuestionCircleTwoTone />
+                  </Tooltip>
+                </Space>
+              }
+              name="docCreateTimeField"
+            >
+              <Input placeholder="记录创建时间字段名" />
+            </Form.Item>
+            <Form.Item
+              label={
+                <Space>
+                  更新时间（系统）字段名
+                  <Tooltip title="自定义更新时间字段的名称，更新内容时，系统会自动更新此字段">
+                    <QuestionCircleTwoTone />
+                  </Tooltip>
+                </Space>
+              }
+              name="docUpdateTimeField"
+            >
+              <Input placeholder="记录更新时间字段名" />
+            </Form.Item>
+          </>
+        )}
 
         <Form.Item>
           <Space size="large" style={{ width: '100%', justifyContent: 'flex-end' }}>

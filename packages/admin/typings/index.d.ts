@@ -1,3 +1,6 @@
+/**
+ * 模型字段描述
+ */
 interface SchemaField {
   // 32 位 Id，需要手动生成
   id: string
@@ -82,6 +85,9 @@ interface SchemaField {
   mediaType: 'video' | 'music'
 }
 
+/**
+ * 模型描述
+ */
 interface Schema {
   _id: string
 
@@ -99,6 +105,12 @@ interface Schema {
   searchFields: SchemaField[]
 
   description: string
+
+  // 文档创建时间字段名
+  docCreateTimeField: string
+
+  // 文件更新数据字段名
+  docUpdateTimeField: string
 
   _creatTime: number
 

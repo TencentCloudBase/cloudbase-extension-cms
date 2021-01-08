@@ -1,3 +1,5 @@
+type SystemControlFields = '_createTime' | '_updateTime'
+
 interface SchemaField {
   // 32 位 Id，需要手动生成
   id: string
@@ -77,6 +79,9 @@ interface SchemaField {
 
   // 时间存储格式
   dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
+
+  // 多媒体类型
+  mediaType: 'video' | 'music'
 }
 
 interface Schema {
@@ -96,6 +101,12 @@ interface Schema {
   searchFields: SchemaField[]
 
   description: string
+
+  // 文档创建时间字段名
+  docCreateTimeField: string
+
+  // 文件更新数据字段名
+  docUpdateTimeField: string
 
   _creatTime: number
 

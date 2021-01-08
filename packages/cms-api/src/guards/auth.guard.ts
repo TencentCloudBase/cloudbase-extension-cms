@@ -21,7 +21,9 @@ export class RequestAuthGuard implements CanActivate {
     const collectionName = req.params?.collectionName
     const app = getCloudBaseApp()
     const db = app.database()
-    const schema = await getCollectionSchema(collectionName)
+    // 获取全部模型数据
+    const schemas = await getCollectionSchema()
+    const schema = schemas.find((_) => _.collectionName === collectionName)
 
     // 首次查询、缓存 schema 信息
     this.cacheService.set('currentSchema', schema)
@@ -77,6 +79,28 @@ export class RequestAuthGuard implements CanActivate {
       throw new HttpException(
         {
           error: { code: 'NOT_FOUND', message: 'API 访问路径未设置' },
+        },
+        HttpStatus.FORBIDDEN
+      )
+    }
+
+    // 校验关联查询的关系
+    const connectCollections = schema.fields
+      .filter((field) => field.type === 'Connect')
+      .map((_) => schemas.find((schema) => schema._id === _.connectResource)?.collectionName)
+
+    // 关联集合不可读
+    const hasUnreadableConnectData = connectCollections.some(
+      (collection) => !project.readableCollections.includes(collection)
+    )
+
+    if (hasUnreadableConnectData) {
+      throw new HttpException(
+        {
+          error: {
+            code: 'NOT_ALLOWED',
+            message: '此集合存在关联集合不可访问',
+          },
         },
         HttpStatus.FORBIDDEN
       )

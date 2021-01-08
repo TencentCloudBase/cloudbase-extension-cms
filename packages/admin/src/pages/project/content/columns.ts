@@ -9,7 +9,8 @@ const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
 /**
  * 获取表格 column 渲染配置
  */
-export const getTableColumns = (fields: SchemaField[] = []): ProColumns[] => {
+export const getTableColumns = (schema: Schema): ProColumns[] => {
+  const { fields = [] } = schema
   // 用户自定义字段，过滤掉系统字段，重复字段
   const customFields = fields
     ?.filter((_) => !_.isSystem)
@@ -17,7 +18,7 @@ export const getTableColumns = (fields: SchemaField[] = []): ProColumns[] => {
 
   // 将系统字段放到表格的末尾列
   const columns: ProColumns[] = customFields.map(fieldToColumn)
-  const systemFieldColumns = getSchemaSystemFields(fields).map(fieldToColumn)
+  const systemFieldColumns = getSchemaSystemFields(schema).map(fieldToColumn)
   columns.push(...systemFieldColumns)
 
   // 插入序号列

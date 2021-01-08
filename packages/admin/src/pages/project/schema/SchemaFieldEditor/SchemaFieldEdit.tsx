@@ -17,9 +17,15 @@ import {
   Alert,
 } from 'antd'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
+import { FieldTypes } from '@/common'
+import {
+  random,
+  isDateType,
+  isAssetType,
+  formatStoreTimeByType,
+  getMissingSystemFields,
+} from '@/utils'
 import { getFieldDefaultValueInput, getFieldFormItem } from './Field'
-import { FieldTypes, SYSTEM_FIELDS } from '@/common'
-import { formatStoreTimeByType, isDateType, isResourceType, random } from '@/utils'
 
 const { TextArea } = Input
 const { Text } = Typography
@@ -71,9 +77,7 @@ export const SchemaFieldEditorModal: React.FC<{
           {}
         )
 
-      let fields = (currentSchema?.fields || [])
-        .concat(SYSTEM_FIELDS)
-        .filter((field, i, arr) => arr.findIndex((_) => _.name === field.name) === i)
+      let fields = currentSchema?.fields || []
 
       // 创建新的字段
       if (fieldAction === 'create') {
@@ -83,6 +87,10 @@ export const SchemaFieldEditorModal: React.FC<{
           type: selectedField.type,
           id: random(32),
         } as any)
+
+        // 补充确实的系统字段
+        const missingSystemFields = getMissingSystemFields(currentSchema)
+        fields.push(...missingSystemFields)
       }
 
       // 编辑字段
@@ -380,7 +388,7 @@ const getFormInitailValues = (action: 'edit' | 'create', field: SchemaField) => 
       field.dateFormatType = 'timestamp-ms'
     }
 
-    if (isResourceType(type) && !field.resourceLinkType) {
+    if (isAssetType(type) && !field.resourceLinkType) {
       field.resourceLinkType = 'fileId'
     }
 

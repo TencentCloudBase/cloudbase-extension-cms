@@ -1,6 +1,16 @@
 import React from 'react'
 
-export const FieldTypes = [
+interface FieldType {
+  name: string
+  type: SchemaFieldType
+  icon: React.ReactNode
+  description?: string
+}
+
+/**
+ * 当期支持的字段类型
+ */
+export const FieldTypes: FieldType[] = [
   // 字符串：单行
   {
     type: 'String',
@@ -107,10 +117,11 @@ export const FieldTypes = [
     icon: <i className="gg-list-tree" />,
     description: '可以自由存储类 JSON 对象和数组（非 JSON 字符串）',
   },
-  // 数组：`Array<Value>`
-  // 内容关联（外键）：分组与搜索，多层弹窗？
 ]
 
+/**
+ * 系统默认字段
+ */
 export const SYSTEM_FIELDS: any[] = [
   {
     displayName: '创建时间',
@@ -131,3 +142,31 @@ export const SYSTEM_FIELDS: any[] = [
     description: '系统字段，请勿随意修改',
   },
 ]
+
+export const getCustomSystemFields = (options: {
+  docCreateTimeField?: string
+  docUpdateTimeField?: string
+}): any[] => {
+  const { docCreateTimeField = '_createTime', docUpdateTimeField = '_updateTime' } = options
+
+  return [
+    {
+      displayName: '创建时间',
+      id: '_createTime',
+      name: docCreateTimeField,
+      type: 'DateTime',
+      isSystem: true,
+      dateFormatType: 'timestamp-ms',
+      description: '系统字段，请勿随意修改',
+    },
+    {
+      displayName: '修改时间',
+      id: '_updateTime',
+      name: docUpdateTimeField,
+      type: 'DateTime',
+      isSystem: true,
+      dateFormatType: 'timestamp-ms',
+      description: '系统字段，请勿随意修改',
+    },
+  ]
+}
