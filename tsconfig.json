@@ -11,12 +11,6 @@
     "outDir": "dist",
     "baseUrl": ".",
     "incremental": true,
-    "paths": {
-      "@/*": ["src/*"],
-      "@modules/*": ["src/modules/*"],
-      "@utils": ["src/utils"]
-    }
-  },
-  "include": ["src/**/*", "typings"],
-  "exclude": ["node_modules", "dist"]
+    "paths": {}
+  }
 }
