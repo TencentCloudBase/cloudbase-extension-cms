@@ -224,11 +224,16 @@
       s.parentNode.insertBefore(mta, s);
     })();
 
-    // raven config
-    Raven.config('https://08cf1ea5911142878e8a60d11231f359@report.url.cn/sentry/3186', {
-      release: '2.6.3'
-    }).install()
   </script>
+
+  <% if (context.config.define.ENV !== 'dev' ) { %>
+    <script>
+      // raven config
+      Raven.config('https://08cf1ea5911142878e8a60d11231f359@report.url.cn/sentry/3186', {
+        release: '2.6.3'
+      }).install()
+    </script>
+  <% } %>
 
 </body>
 
