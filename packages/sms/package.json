@@ -1,0 +1,14 @@
+{
+  "name": "cloudbase-cms-sms",
+  "version": "2.6.5",
+  "description": "短信下发模块",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "dependencies": {
+    "wx-server-sdk": "^2.3.2"
+  }
+}

@@ -8,6 +8,7 @@ import { ContentsService } from './contents/contents.service'
 import { ContentsController } from './contents/contents.controller'
 import { MigrateController } from './migrate/migrate.controller'
 import { ProjectsService } from './projects.service'
+import { OperationController } from './operation/operation.controller'
 
 @Module({
   controllers: [
@@ -16,6 +17,7 @@ import { ProjectsService } from './projects.service'
     ContentsController,
     ProjectsController,
     MigrateController,
+    OperationController,
   ],
   providers: [SchemasService, ContentsService, WebhooksService, ProjectsService],
 })

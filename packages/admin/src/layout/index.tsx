@@ -11,6 +11,7 @@ import {
   SettingTwoTone,
   RocketTwoTone,
   setTwoToneColor,
+  ShoppingTwoTone,
 } from '@ant-design/icons'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
@@ -39,6 +40,19 @@ const customMenuDate: MenuDataItem[] = [
     name: '内容集合',
     icon: <DatabaseTwoTone />,
     children: [],
+  },
+  {
+    authority: 'canContent',
+    path: '/:projectId/operation',
+    name: '运营中心',
+    icon: <ShoppingTwoTone />,
+    children: [
+      {
+        name: '活动',
+        path: '/:projectId/operation/message',
+        component: './project/operation/index',
+      },
+    ],
   },
   {
     authority: 'canWebhook',

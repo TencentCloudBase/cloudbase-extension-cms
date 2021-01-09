@@ -20,9 +20,6 @@ export const getPageQuery = () => {
   return {}
 }
 
-// 判断是否是开发环境
-export const isDevEnv = () => process.env.NODE_ENV === 'development'
-
 // 生成随机字符串
 export const random = (len: number) => {
   const count = Math.ceil(Number(len) / 10) + 1
@@ -49,3 +46,6 @@ export const hashCode = (str: string) => {
 
   return (hash1 >>> 0) * 4096 + (hash2 >>> 0)
 }
+
+// 判断是否是开发环境
+export const isDevEnv = () => process.env.NODE_ENV === 'developmentx'

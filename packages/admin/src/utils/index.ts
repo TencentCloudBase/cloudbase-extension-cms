@@ -1,4 +1,4 @@
-export * from './tool'
+export * from './common'
 export * from './text'
 export * from './cloudbase'
 export * from './date'

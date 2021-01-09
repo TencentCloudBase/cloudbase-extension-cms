@@ -1,0 +1,141 @@
+{
+  "version": "2.0",
+  "envId": "{{env.ENV_ID}}",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "framework": {
+    "name": "cloudbase-extension-cms",
+    "hooks": {},
+    "plugins": {
+      "admin": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "outputPath": "./packages/admin/dist",
+          "installCommand": "echo \"Skip Install\"",
+          "buildCommand": "echo \"Skip Build\"",
+          "cloudPath": "{{env.deployPath}}"
+        }
+      },
+      "init": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "wx-ext-cms-init",
+              "timeout": 60,
+              "functionDistPath": "cms-init",
+              "envVariables": {
+                "CMS_ADMIN_USER_NAME": "{{env.administratorName}}",
+                "CMS_ADMIN_PASS_WORD": "{{env.administratorPassword}}",
+                "CMS_OPERATOR_USER_NAME": "{{env.operatorName}}",
+                "CMS_OPERATOR_PASS_WORD": "{{env.operatorPassword}}",
+                "CMS_DEPLOY_PATH": "{{env.deployPath}}",
+                "ACCESS_DOMAIN": "{{env.accessDomain}}"
+              },
+              "installDependency": true,
+              "handler": "index.main"
+            }
+          ]
+        }
+      },
+      "service": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "wx-ext-cms-service",
+              "timeout": 15,
+              "memory": 256,
+              "handler": "index.main",
+              "runtime": "Nodejs10.15",
+              "functionDistPath": "service",
+              "envVariables": {
+                "WX_MP": "true",
+                "NODE_ENV": "production",
+                "CMS_RESOURCE_PREFIX": "wx-ext-cms"
+              }
+            }
+          ],
+          "servicePaths": {
+            "wx-ext-cms-service": "/wx-ext-cms-service"
+          }
+        }
+      },
+      "sms": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "wx-ext-cms-sms",
+              "timeout": 60,
+              "envVariables": {},
+              "functionDistPath": "sms",
+              "installDependency": true,
+              "handler": "index.main"
+            }
+          ]
+        }
+      },
+      "db": {
+        "use": "@cloudbase/framework-plugin-database",
+        "inputs": {
+          "collections": [
+            {
+              "collectionName": "wx-ext-cms-projects",
+              "description": "CMS 系统项目数据（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "wx-ext-cms-schemas",
+              "description": "CMS 系统内容模型数据（请不需要手动修改）",
+              "aclTag": "ADMINONLY",
+              "createIndexes": [
+                {
+                  "name": "查询索引",
+                  "unique": false,
+                  "keys": [
+                    {
+                      "name": "collectionName",
+                      "direction": "1"
+                    },
+                    {
+                      "name": "projectId",
+                      "direction": "1"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "collectionName": "wx-ext-cms-users",
+              "description": "CMS 系统系统用户数据，存储 CMS 的用户信息，包括管理员账号信息，角色信息等（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "wx-ext-cms-webhooks",
+              "description": "CMS 系统系统 webhook 集合，存储 CMS 系统的回调接口配置，CMS 系统数据的变更可以通过回调来进行同步 （请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "wx-ext-cms-settings",
+              "description": "CMS 系统系统配置集合，存储 CMS 系统的设置（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "wx-ext-cms-user-roles",
+              "description": "CMS 系统系统用户角色配置集合，存储 CMS 系统的自定义用户角色信息（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
+              "collectionName": "wx-ext-cms-data-migrate",
+              "description": "CMS 系统数据导入导出的记录（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

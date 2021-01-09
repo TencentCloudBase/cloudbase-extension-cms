@@ -103,6 +103,15 @@ Resources:
       CollectionName: wx-ext-cms-webhooks
       Description: CMS 系统 webhook 集合，存储 CMS 系统的回调接口配置，CMS 系统数据的变更可以通过回调来进行同步 （请不要手动修改）
       AclTag: ADMINONLY
+
+  # 群发短信的任务记录
+  MessageTaskDB:
+    Type: CloudBase::FlexDB
+    Properties:
+      CollectionName: wx-ext-cms-sms-task
+      Description: CMS 群发短信的任务记录 （请不要手动修改）
+      AclTag: ADMINONLY
+
   SettingDB:
     Type: CloudBase::FlexDB
     Properties:

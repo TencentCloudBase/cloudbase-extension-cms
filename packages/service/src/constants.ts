@@ -25,6 +25,12 @@ export const Collection = {
 
   // 数据导入导出的记录
   DataMigrateTasks: `${RESOURCE_PREFIX}-data-migrate`,
+
+  // 群发短信记录
+  MessageTasks: `${RESOURCE_PREFIX}-sms-task`,
+
+  // 生成可以发送短信的 token
+  MessageAuthToken: `${RESOURCE_PREFIX}-sms-token`,
 }
 
 /**

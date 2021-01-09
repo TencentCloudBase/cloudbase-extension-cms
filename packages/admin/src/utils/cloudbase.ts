@@ -3,7 +3,7 @@ import { message, notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
 import { codeMessage } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
-import { isDevEnv, random } from './tool'
+import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
 
 let app: any
@@ -23,6 +23,35 @@ export async function getCloudBaseApp() {
   }
 
   return app
+}
+
+let wxCloudApp: any
+
+/**
+ * 处理微信 Web SDK 的登录
+ */
+export async function getWxCloudApp() {
+  const { envId } = window.TcbCmsConfig || {}
+
+  if (!wxCloudApp) {
+    // 声明新的 cloud 实例
+    wxCloudApp = new window.cloud.Cloud({
+      // 必填，表示是未登录模式
+      identityless: true,
+      // 资源方环境 ID
+      resourceEnv: envId,
+      // 资源方 AppID
+      // TODO: AppID 替换
+      resourceAppid: '',
+    })
+
+    wxCloudApp.init({
+      env: envId,
+      appid: '',
+    })
+  }
+
+  return wxCloudApp
 }
 
 // 初始化 app 实例

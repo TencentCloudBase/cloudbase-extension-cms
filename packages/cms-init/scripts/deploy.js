@@ -41,7 +41,7 @@ async function writeConfigJS(manager, dir, context) {
     Action: 'DescribeCloudBaseGWService',
     Param: {
       ServiceId: envId,
-      EnableUnion: true,
+      EnableRegion: true,
     },
   })
 

@@ -61,6 +61,8 @@ interface Window {
   cloudbase: any
   TcbCmsConfig: ITcbCmsConfing
   tinymce: any
+
+  cloud: any
   // 禁用帮助按钮
 }
 

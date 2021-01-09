@@ -88,6 +88,30 @@ const routesConfig: IConfig = {
           ],
         },
         {
+          path: '/:projectId/operation',
+          name: '运营中心',
+          icon: 'shopping',
+          access: 'canContent',
+          wrappers: ['../components/SecurityWrapper/index'],
+          routes: [
+            // {
+            //   exact: true,
+            //   path: '/:projectId/content/migrate',
+            //   component: './project/migrate',
+            // },
+            {
+              exact: true,
+              path: '/:projectId/operation/message',
+              component: './project/operation/index',
+            },
+            {
+              exact: true,
+              path: '/:projectId/operation/message/create',
+              component: './project/operation/Message/TaskCreator',
+            },
+          ],
+        },
+        {
           exact: true,
           path: '/:projectId/webhook',
           name: 'Webhook',
