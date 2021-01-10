@@ -1,16 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { useParams, useRequest, history } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
-import { Form, message, Space, Button, Row, Col, Modal, notification } from 'antd'
+import { Form, message, Space, Button, Row, Col, Modal, notification, Input } from 'antd'
 import TextArea from 'antd/lib/input/TextArea'
 import { useSetState } from 'react-use'
 import { getWxCloudApp } from '@/utils'
 import { createBatchTask } from '@/services/operation'
+import { useConcent } from 'concent'
+import { GlobalCtx } from 'typings/store'
 
 const MessageTask: React.FC = () => {
   const { projectId } = useParams<any>()
+  const globalCtx = useConcent<{}, GlobalCtx>('global')
+  const { setting } = globalCtx.state || {}
   const [{ visible, task }, setState] = useSetState<{
     task: any
     totalNumber: number
@@ -21,10 +25,17 @@ const MessageTask: React.FC = () => {
     visible: false,
   })
 
-  // 创建/更新内容
+  if (!setting?.enableOperation) {
+    history.push(`/${projectId}/operation`)
+    return <span />
+  }
+
+  console.log(setting)
+
+  // 创建群发任务
   const { run, loading } = useRequest(
     async (payload: any) => {
-      const wxCloudApp = await getWxCloudApp()
+      const wxCloudApp = await getWxCloudApp(setting)
       const { taskId, token } = await createBatchTask(projectId, payload)
 
       try {
@@ -88,11 +99,6 @@ const MessageTask: React.FC = () => {
             <Form
               name="basic"
               layout="vertical"
-              initialValues={{
-                // TODO: 删除
-                content: 'CMS',
-                phoneNumbers: '18827377402',
-              }}
               onFinish={(
                 v: { phoneNumbers: string; content: string } = { phoneNumbers: '', content: '' }
               ) => {
@@ -172,6 +178,22 @@ const MessageTask: React.FC = () => {
               {/* <Form.Item label="活动" name="activity" extra="">
                 <TextArea />
               </Form.Item> */}
+
+              <Form.Item
+                name="appPath"
+                label="小程序页面路径"
+                extra="必须是已经发布的小程序存在的页面，不可携带 query"
+              >
+                <Input />
+              </Form.Item>
+
+              <Form.Item
+                name="appPathQuery"
+                label="query"
+                extra="通过 scheme 码进入小程序时的 query，最大128个字符，只支持数字，大小写英文以及部分特殊字"
+              >
+                <Input />
+              </Form.Item>
 
               <Form.Item>
                 <Row>

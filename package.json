@@ -3,7 +3,7 @@
   "version": "2.6.5",
   "private": true,
   "scripts": {
-    "dev": "lerna run dev",
+    "dev": "lerna run dev --stream",
     "build": "lerna run build --stream",
     "build:wx": "cross-env WX_MP=true lerna run build --stream",
     "build:server": "cross-env SERVER_MODE=true lerna run build --stream",

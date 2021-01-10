@@ -18,6 +18,7 @@
   <!-- 调试用的移动端 console -->
   <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script> -->
   <!-- <script>eruda.init();</script> -->
+
   <!-- 公众号 JSSDK -->
   <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
   <!-- 云开发 Web SDK -->
@@ -61,7 +62,7 @@
 
         wx.config({
           // debug: true, // 调试时可开启
-          appId: '', // <!-- replace -->
+          appId: '{{APPID}}', // <!-- replace -->
           timestamp: 0, // 必填，填任意数字即可
           nonceStr: 'nonceStr', // 必填，填任意非空字符串即可
           signature: 'signature', // 必填，填任意非空字符串即可
@@ -81,9 +82,9 @@
           // 必填，表示是未登录模式
           identityless: true,
           // 资源方 AppID
-          resourceAppid: '', // <!-- replace -->
+          resourceAppid: '{{APPID}}', // <!-- replace -->
           // 资源方环境 ID
-          resourceEnv: 'minishop', // <!-- replace -->
+          resourceEnv: '{{ENVID}}', // <!-- replace -->
         })
         await c.init()
         window.c = c
@@ -103,11 +104,13 @@
       }
     })
 
+    // 打开小程序
     async function openWeapp(onBeforeJump) {
       var c = window.c
       const res = await c.callFunction({
-        name: 'public',
+        name: 'wx-ext-cms-sms',
         data: {
+          taskId: '{{TASKID}}',
           action: 'getUrlScheme',
         },
       })
@@ -185,25 +188,28 @@
 <body>
   <div class="page full">
     <div id="public-web-container" class="hidden">
-      <p class="">正在打开 “填入你的小程序名称”...</p> <!-- replace -->
+      <p class="">正在打开{{APPNAME}}...</p> <!-- replace -->
       <a id="public-web-jump-button" href="javascript:"
         class="weui-btn weui-btn_primary weui-btn_loading"
         onclick="openWeapp()">
         <span id="public-web-jump-button-loading"
-          class="weui-primary-loading weui-primary-loading_transparent"><i
-            class="weui-primary-loading__dot"></i></span>
+          class="weui-primary-loading weui-primary-loading_transparent">
+          <i class="weui-primary-loading__dot"></i>
+        </span>
         打开小程序
       </a>
     </div>
     <div id="wechat-web-container" class="hidden">
-      <p class="">点击以下按钮打开 “填入你的小程序名称”</p> <!-- replace -->
+      <p class="">点击以下按钮打开{{APPNAME}}</p> <!-- replace -->
       <!-- 跳转小程序的开放标签。文档 https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_Open_Tag.html -->
-      <wx-open-launch-weapp id="launch-btn" username="gh_4b2065b61139"
-        path="要跳转到的页面路径">
+      <wx-open-launch-weapp id="launch-btn" username="{{APPORIGINALID}}"
+        path="{{APPPATH}}">
         <!-- replace -->
         <template>
           <button
-            style="width: 200px; height: 45px; text-align: center; font-size: 17px; display: block; margin: 0 auto; padding: 8px 24px; border: none; border-radius: 4px; background-color: #07c160; color:#fff;">打开小程序</button>
+            style="width: 200px; height: 45px; text-align: center; font-size: 17px; display: block; margin: 0 auto; padding: 8px 24px; border: none; border-radius: 4px; background-color: #07c160; color:#fff;">
+            打开小程序
+          </button>
         </template>
       </wx-open-launch-weapp>
     </div>

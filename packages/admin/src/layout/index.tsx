@@ -14,7 +14,7 @@ import {
   ShoppingTwoTone,
 } from '@ant-design/icons'
 import { useConcent } from 'concent'
-import { ContentCtx } from 'typings/store'
+import { ContentCtx, GlobalCtx } from 'typings/store'
 import { getCmsConfig } from '@/utils'
 import defaultSettings from '../../config/defaultSettings'
 
@@ -42,23 +42,11 @@ const customMenuDate: MenuDataItem[] = [
     children: [],
   },
   {
-    authority: 'canContent',
-    path: '/:projectId/operation',
-    name: '运营中心',
-    icon: <ShoppingTwoTone />,
-    children: [
-      {
-        name: '活动',
-        path: '/:projectId/operation/message',
-        component: './project/operation/index',
-      },
-    ],
-  },
-  {
     authority: 'canWebhook',
     path: '/:projectId/webhook',
     name: 'Webhook',
     icon: <RocketTwoTone />,
+    children: [],
   },
   {
     authority: 'isAdmin',
@@ -67,6 +55,23 @@ const customMenuDate: MenuDataItem[] = [
     icon: <SettingTwoTone />,
   },
 ]
+
+// 微信侧才支持群发短信的功能
+if (WX_MP) {
+  customMenuDate.splice(3, 0, {
+    authority: 'canContent',
+    path: '/:projectId/operation',
+    name: '运营中心',
+    icon: <ShoppingTwoTone />,
+    children: [
+      // {
+      //   name: '群发短信',
+      //   path: '/:projectId/operation/message',
+      //   component: './project/operation/index',
+      // },
+    ],
+  })
+}
 
 const layoutProps: BasicLayoutProps = {
   theme: 'light',
@@ -85,10 +90,23 @@ const Layout: React.FC<any> = (props) => {
   const access = useAccess()
   const { children, location } = props
   const ctx = useConcent<{}, ContentCtx>('content')
+  const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { schemas, loading } = ctx.state
+  const { setting = {} } = globalCtx.state
 
   // 加载 schema 集合
   useEffect(() => {
+    // 是否开启了营销工具
+    if (WX_MP && setting?.enableOperation) {
+      if (!customMenuDate[3].children?.length) {
+        customMenuDate[3].children?.push({
+          name: '群发短信',
+          path: '/:projectId/operation/message',
+          component: './project/operation/Message/index',
+        })
+      }
+    }
+
     // 匹配 Path，获取 projectId
     const match = matchPath<{ projectId?: string }>(history.location.pathname, {
       path: '/:projectId/*',

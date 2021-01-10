@@ -71,7 +71,7 @@
               "name": "wx-ext-cms-sms",
               "timeout": 60,
               "envVariables": {},
-              "functionDistPath": "sms",
+              "functionDistPath": "cms-sms",
               "installDependency": true,
               "handler": "index.main"
             }

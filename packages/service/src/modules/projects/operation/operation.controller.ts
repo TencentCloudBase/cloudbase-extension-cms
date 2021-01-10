@@ -11,8 +11,9 @@ import {
 import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty, MaxLength } from 'class-validator'
-import { getEnvIdString, getCloudBaseManager, dateToUnixTimestampInMs, randomId } from '@/utils'
+import { getEnvIdString, dateToUnixTimestampInMs, randomId } from '@/utils'
 import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
+import { OperationService } from './operation.service'
 
 class MessageTaskBody {
   @IsNotEmpty()
@@ -23,56 +24,55 @@ class MessageTaskBody {
     each: true,
   })
   phoneNumberList: string[]
+
+  appPath: string
+
+  appPathQuery: string
 }
 
-interface MigrateJobDto {
-  // 项目 Id
-  projectId: string
+class EnableServiceBody {
+  @IsNotEmpty()
+  miniappName: string
 
-  // 任务 Id
-  jobId: number
+  @IsNotEmpty()
+  miniappID: string
 
-  // 导入文件路径
-  filePath: string
-
-  // 导入冲突处理模式
-  conflictMode: 'upsert' | 'insert'
-
-  createTime: number
-
-  collectionName: string
-
-  // 任务状态
-  // waiting：等待中，reading：读，writing：写，migrating：转移中，success：成功，fail：失败
-  status?: string
+  @IsNotEmpty()
+  miniappOriginalID: string
 }
 
 @UseGuards(PermissionGuard('content', [SYSTEM_ROLE_IDS.ADMIN]))
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('projects/:projectId/operation')
 export class OperationController {
-  constructor(public cloudbaseService: CloudBaseService) {}
+  constructor(
+    public readonly cloudbaseService: CloudBaseService,
+    private readonly operationService: OperationService
+  ) {}
 
-  @Post('enableOperation')
-  async enableOperation(@Param('projectId') projectId, @Body() body) {
-    const manager = getCloudBaseManager()
-
+  /**
+   * 开启营销工具
+   */
+  @Post('enableOperationService')
+  async enableOperationService(@Body() payload: EnableServiceBody) {
     // 开启未登录
-    const action = {
-      serviceType: 'tcb',
-      action: 'ModifySecurityRule',
-      regionId: 4,
-      data: {
-        Version: '2018-06-08',
-        EnvId: 'minishop',
-        ResourceType: 'FUNCTION',
-        ResourceName: 'minishop',
-        AclTag: 'CUSTOM',
-        Rule:
-          '{\n    "*": {\n        "invoke": "auth != null"\n    },\n    "app": {\n        "invoke": true\n    }\n}',
-      },
-      id: 'e3t2th',
-      status: 'pending',
+    await this.operationService.enableNonLogin()
+    // 修改安全规则
+    await this.operationService.writeSecurityRules()
+
+    const { data: settings } = await this.collection(Collection.Settings).where({}).get()
+
+    const appConfig = {
+      ...payload,
+      enableOperation: true,
+    }
+
+    // setting 为空，直接添加数据
+    if (!settings?.length) {
+      await this.collection(Collection.Settings).add(appConfig)
+    } else {
+      // 存储小程序信息
+      await this.collection(Collection.Settings).where({}).update(appConfig)
     }
   }
 
@@ -82,21 +82,32 @@ export class OperationController {
   @Post('createBatchTask')
   async createBatchTask(@Param('projectId') projectId, @Body() body: MessageTaskBody) {
     const envId = getEnvIdString()
-    const { content, phoneNumberList } = body
+    const { content, phoneNumberList, appPath } = body
+
+    // 模板页面 ID
+    const pageId = randomId(12)
 
     // 写入 task 记录
     const taskRes = await this.collection(Collection.MessageTasks).add({
+      // 模板页面 ID
+      pageId,
+      // 应用路径
+      appPath,
+      // 短信内容
       content,
+      projectId,
+      phoneNumberList,
       // 已创建
       status: 'created',
-      phoneNumberList,
       total: phoneNumberList.length,
       createTime: dateToUnixTimestampInMs(),
     })
 
     const taskId = taskRes.id
-
     const token = randomId(128)
+
+    // 生成活动模板
+    await this.operationService.generateTemplate(taskId, pageId, appPath)
 
     // 生成一个 token，用于下发短信任务的鉴权
     await this.collection(Collection.MessageAuthToken).add({

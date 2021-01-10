@@ -13,9 +13,14 @@ export class SettingController {
       requestId,
     } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
+    // 添加配置
+    if (!setting) {
+      await this.cloudbaseService.collection(Collection.Settings).add({})
+    }
+
     return {
-      data: setting,
       requestId,
+      data: setting || {},
     }
   }
 
@@ -27,8 +32,8 @@ export class SettingController {
     } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
     return {
-      data: setting,
       requestId,
+      data: setting,
     }
   }
 }

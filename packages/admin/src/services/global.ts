@@ -12,3 +12,13 @@ export const updateSetting = async (payload: Record<string, string>) => {
     data: payload,
   })
 }
+
+export const getCollectionInfo = async (customId: string, collectionName: string) => {
+  return tcbRequest('/collectionInfo', {
+    method: 'POST',
+    data: {
+      customId,
+      collectionName,
+    },
+  })
+}

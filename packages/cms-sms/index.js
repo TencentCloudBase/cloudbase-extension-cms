@@ -4,13 +4,20 @@ const cloud = require('wx-server-sdk')
 const MessageTasks = 'wx-ext-cms-sms-task'
 const MessageAuthToken = 'wx-ext-cms-sms-token'
 
-exports.main = async (event = {}, context) => {
+/**
+ * 下发短信 https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/cloudbase/cloudbase.sendSms.html
+ */
+exports.main = async (event = {}) => {
+  const { taskId, action } = event
   const { ENV } = cloud.getWXContext()
-  const { taskId } = event
 
   cloud.init({
     env: ENV,
   })
+
+  if (action === 'getUrlScheme') {
+    return getUrlScheme(event)
+  }
 
   /**
    * 校验 token 和任务信息
@@ -51,7 +58,7 @@ exports.main = async (event = {}, context) => {
       env: ENV,
       phoneNumberList,
       content: task.content,
-      path: `/cms-action/index.html?actionId=1`,
+      path: `/cms-activities/${task.pageId}.html?actionId=1`,
     })
 
     // 发送结果列表
@@ -88,11 +95,10 @@ exports.main = async (event = {}, context) => {
 }
 
 /**
- * 鉴权
+ * 下发短信鉴权
  */
 async function checkAuth(event = {}) {
   const { ENV } = cloud.getWXContext()
-  console.log(ENV)
 
   const { token, taskId } = event
 
@@ -105,7 +111,7 @@ async function checkAuth(event = {}) {
 
   // 查询任务记录
   const {
-    data: [record],
+    data: [tokenRecord],
   } = await cloud
     .database()
     .collection(MessageAuthToken)
@@ -115,33 +121,76 @@ async function checkAuth(event = {}) {
     .get()
 
   // token 不存在
-  if (!record) {
+  if (!tokenRecord) {
     throw {
-      code: 'TOKEN_NOT_FOUND',
+      code: 'INVALID_TOKEN',
       message: '无效的 token',
     }
   }
 
-  const MAXAGE = 300 * 1000
   // token 失效
-  if (record.createTime + MAXAGE < Date.now()) {
+  const MAXAGE = 300 * 1000
+  if (tokenRecord.createTime + MAXAGE < Date.now() || tokenRecord.used) {
     throw {
-      code: 'TOKEN_EXPIRED',
-      message: '无效的 token',
+      code: 'INVALID_TOKEN',
+      message: 'token 已失效',
     }
   }
 
-  if (record.envId !== ENV) {
+  // token 和 envId 无法对应
+  if (tokenRecord.envId !== ENV) {
     throw {
       code: 'ENV_ERROR',
-      message: 'token 与当期环境不一致',
+      message: 'token 异常',
     }
   }
 
-  if (record.taskId !== taskId) {
+  // token 和任务 id 无法对应
+  if (tokenRecord.taskId !== taskId) {
     throw {
       code: 'TASK_ERROR',
-      message: '无效的 token',
+      message: 'token 异常',
     }
   }
+
+  // 将 token 标记为已使用
+  await cloud
+    .database()
+    .collection(MessageAuthToken)
+    .doc(tokenRecord._id)
+    .update({
+      data: {
+        used: true,
+      },
+    })
+}
+
+/**
+ * 生成 URL schema
+ * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
+ */
+async function getUrlScheme(event) {
+  const { ENV } = cloud.getWXContext()
+  const { taskId } = event
+
+  let query = ''
+  let path = ''
+  // 查询 task
+  const { data: task } = await cloud.database().collection(MessageTasks).doc(taskId).get()
+
+  if (task) {
+    path = task.appPath || path
+    query = task.appPathQuery || query
+  }
+
+  return cloud.openapi.urlscheme.generate({
+    jumpWxa: {
+      path,
+      query,
+    },
+    // 如果想不过期则置为 false，并可以存到数据库
+    isExpire: true,
+    // 五分钟有效期
+    expireTime: parseInt(Date.now() / 1000 + 300),
+  })
 }

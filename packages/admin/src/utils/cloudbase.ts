@@ -5,6 +5,7 @@ import { codeMessage } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
+import { getSettings } from '@/services/global'
 
 let app: any
 let auth: any
@@ -30,7 +31,7 @@ let wxCloudApp: any
 /**
  * 处理微信 Web SDK 的登录
  */
-export async function getWxCloudApp() {
+export async function getWxCloudApp(appConfig: any) {
   const { envId } = window.TcbCmsConfig || {}
 
   if (!wxCloudApp) {
@@ -41,13 +42,12 @@ export async function getWxCloudApp() {
       // 资源方环境 ID
       resourceEnv: envId,
       // 资源方 AppID
-      // TODO: AppID 替换
-      resourceAppid: '',
+      resourceAppid: appConfig.miniappID,
     })
 
     wxCloudApp.init({
       env: envId,
-      appid: '',
+      appid: appConfig.miniappID,
     })
   }
 

@@ -94,20 +94,18 @@ const routesConfig: IConfig = {
           access: 'canContent',
           wrappers: ['../components/SecurityWrapper/index'],
           routes: [
-            // {
-            //   exact: true,
-            //   path: '/:projectId/content/migrate',
-            //   component: './project/migrate',
-            // },
             {
               exact: true,
               path: '/:projectId/operation/message',
-              component: './project/operation/index',
+              component: './project/operation/Message/index',
             },
             {
               exact: true,
               path: '/:projectId/operation/message/create',
               component: './project/operation/Message/TaskCreator',
+            },
+            {
+              component: './project/operation/index',
             },
           ],
         },
