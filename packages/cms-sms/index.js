@@ -58,7 +58,7 @@ exports.main = async (event = {}) => {
       env: ENV,
       phoneNumberList,
       content: task.content,
-      path: `/cms-activities/${task.pageId}.html?actionId=1`,
+      path: `/cms-activities/index.html?activityID=${task._id}`,
     })
 
     // 发送结果列表
@@ -170,7 +170,6 @@ async function checkAuth(event = {}) {
  * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
  */
 async function getUrlScheme(event) {
-  const { ENV } = cloud.getWXContext()
   const { taskId } = event
 
   let query = ''
@@ -183,7 +182,7 @@ async function getUrlScheme(event) {
     query = task.appPathQuery || query
   }
 
-  return cloud.openapi.urlscheme.generate({
+  const res = await cloud.openapi.urlscheme.generate({
     jumpWxa: {
       path,
       query,
@@ -193,4 +192,9 @@ async function getUrlScheme(event) {
     // 五分钟有效期
     expireTime: parseInt(Date.now() / 1000 + 300),
   })
+
+  return {
+    task,
+    ...res,
+  }
 }

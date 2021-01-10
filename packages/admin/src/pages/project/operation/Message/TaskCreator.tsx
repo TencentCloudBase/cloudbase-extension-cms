@@ -11,6 +11,13 @@ import { createBatchTask } from '@/services/operation'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
 
+interface Task {
+  content: string
+  appPath: string
+  appPathQuery: string
+  phoneNumbers: string
+}
+
 const MessageTask: React.FC = () => {
   const { projectId } = useParams<any>()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
@@ -29,8 +36,6 @@ const MessageTask: React.FC = () => {
     history.push(`/${projectId}/operation`)
     return <span />
   }
-
-  console.log(setting)
 
   // 创建群发任务
   const { run, loading } = useRequest(
@@ -100,9 +105,14 @@ const MessageTask: React.FC = () => {
               name="basic"
               layout="vertical"
               onFinish={(
-                v: { phoneNumbers: string; content: string } = { phoneNumbers: '', content: '' }
+                v: Task = {
+                  phoneNumbers: '',
+                  content: '',
+                  appPath: '',
+                  appPathQuery: '',
+                }
               ) => {
-                const { phoneNumbers, content } = v
+                const { phoneNumbers, content, appPath, appPathQuery } = v
                 if (phoneNumbers.includes('\n') && phoneNumbers.includes(',')) {
                   message.error('请勿混用换行和英文分号 ,')
                   return
@@ -133,10 +143,17 @@ const MessageTask: React.FC = () => {
                   return
                 }
 
+                // 去重
+                phoneNumberList = phoneNumberList.filter(
+                  (num, i, arr) => arr.findIndex((_) => _ === num) === i
+                )
+
                 setState({
                   visible: true,
                   task: {
                     content,
+                    appPath,
+                    appPathQuery,
                     phoneNumberList,
                   },
                 })

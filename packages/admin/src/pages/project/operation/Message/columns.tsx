@@ -55,9 +55,9 @@ export const columns: ProColumns[] = [
       index: number,
       action: any
     ): React.ReactNode | React.ReactNode[] => (
-      <Tooltip title={text}>
+      <Tooltip title={record.appPath}>
         <Text ellipsis style={{ width: '200px' }}>
-          {text}
+          {record.appPath}
         </Text>
       </Tooltip>
     ),
@@ -89,7 +89,7 @@ export const columns: ProColumns[] = [
       }
 
       return (
-        <Tooltip title={text}>
+        <Tooltip title={phoneNumberList.join(',')}>
           <Text ellipsis style={{ width: '200px' }}>
             {phoneNumberList.join(',')}
           </Text>

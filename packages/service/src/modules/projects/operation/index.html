@@ -24,6 +24,47 @@
   <!-- 云开发 Web SDK -->
   <script src="https://res.wx.qq.com/open/js/cloudbase/1.1.0/cloud.js"></script>
   <script>
+    function getParameterByName(name, url = window.location.href) {
+      name = name.replace(/[\[\]]/g, '\\$&');
+      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+      if (!results) return null;
+      if (!results[2]) return '';
+      return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    // 初始化云开发
+    var cloud = new cloud.Cloud({
+      // 必填，表示是未登录模式
+      identityless: true,
+      // 资源方 AppID
+      resourceAppid: '{{APPID}}', // <!-- replace -->
+      // 资源方环境 ID
+      resourceEnv: '{{ENVID}}', // <!-- replace -->
+    });
+    cloud.init();
+    window.cloudApp = cloud;
+  </script>
+  <script>
+    // 活动 ID
+    var activityID = getParameterByName('activityID');
+
+    ; (function () {
+      var cloudApp = window.cloudApp
+      cloudApp.callFunction({
+        name: 'wx-ext-cms-sms',
+        data: {
+          activityID: activityID,
+          action: 'getUrlScheme',
+        },
+        success: res => {
+          // 动态修改 Path
+          var containerEl = document.getElementById('wechat-web-container')
+          containerEl.path = res.result.appPath + '.html?' + res.result.appPathQuery
+        },
+      })
+    })()
+
     function docReady(fn) {
       if (document.readyState === 'complete' || document.readyState === 'interactive') {
         fn()
@@ -75,19 +116,11 @@
         containerEl.classList.remove('hidden')
         containerEl.classList.add('full', 'desktop-web-container')
       } else {
+        // 其他 H5
         var containerEl = document.getElementById('public-web-container')
         containerEl.classList.remove('hidden')
         containerEl.classList.add('full', 'public-web-container')
-        var c = new cloud.Cloud({
-          // 必填，表示是未登录模式
-          identityless: true,
-          // 资源方 AppID
-          resourceAppid: '{{APPID}}', // <!-- replace -->
-          // 资源方环境 ID
-          resourceEnv: '{{ENVID}}', // <!-- replace -->
-        })
-        await c.init()
-        window.c = c
+
 
         var buttonEl = document.getElementById('public-web-jump-button')
         var buttonLoadingEl = document.getElementById('public-web-jump-button-loading')
@@ -106,11 +139,11 @@
 
     // 打开小程序
     async function openWeapp(onBeforeJump) {
-      var c = window.c
-      const res = await c.callFunction({
+      var cloudApp = window.cloudApp
+      const res = await cloudApp.callFunction({
         name: 'wx-ext-cms-sms',
         data: {
-          taskId: '{{TASKID}}',
+          activityID: activityID,
           action: 'getUrlScheme',
         },
       })
@@ -203,7 +236,7 @@
       <p class="">点击以下按钮打开{{APPNAME}}</p> <!-- replace -->
       <!-- 跳转小程序的开放标签。文档 https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_Open_Tag.html -->
       <wx-open-launch-weapp id="launch-btn" username="{{APPORIGINALID}}"
-        path="{{APPPATH}}">
+        path="">
         <!-- replace -->
         <template>
           <button

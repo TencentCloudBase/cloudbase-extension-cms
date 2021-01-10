@@ -90,39 +90,36 @@ export class OperationService {
    * 生成小程序跳转模板
    * 参考 https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/staticstorage/jump-miniprogram.html
    */
-  async generateTemplate(taskId: string, pageId: string, appPath: string) {
+  async generateTemplate(options: {
+    miniappName: string
+    miniappID: string
+    miniappOriginalID: string
+  }) {
     const envId = getEnvIdString()
     const manager = await getCloudBaseManager()
 
-    // 从设置中查询小程序的配置
-    const {
-      data: [setting],
-    } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
-    const { miniappName, miniappID, miniappOriginalID } = setting
+    const { miniappName, miniappID, miniappOriginalID } = options
 
     if (!miniappName || !miniappID || !miniappOriginalID) {
       throw new CmsException('APP_CONFIG_MISS', '小程序应用配置信息不完善')
     }
 
-    let template = fs.readFileSync(path.join(__dirname, './template.html')).toString()
+    let template = fs.readFileSync(path.join(__dirname, './index.html')).toString()
 
     template = template
       .replace(/\{\{APPID\}\}/g, miniappID)
       .replace(/\{\{ENVID\}\}/g, envId)
       .replace(/\{\{APPNAME\}\}/g, miniappName)
       .replace(/\{\{APPORIGINALID\}\}/g, miniappOriginalID)
-      .replace(/\{\{APPPATH\}\}/g, appPath)
-      .replace(/\{\{TASKID\}\}/g, taskId)
 
     // 写临时文件
-    const templateFile = `${pageId}.html`
     const writeFile = util.promisify(fs.writeFile)
-    await writeFile(`/tmp/${templateFile}`, template)
+    await writeFile(`/tmp/index.html`, template)
 
     // 上传模板文件
     await manager.hosting.uploadFiles({
-      localPath: `/tmp/${templateFile}`,
-      cloudPath: `/cms-activities/${templateFile}`,
+      localPath: `/tmp/index.html`,
+      cloudPath: `/cms-activities/index.html`,
     })
   }
 }
