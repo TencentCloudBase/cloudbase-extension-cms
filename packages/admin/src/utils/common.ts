@@ -48,4 +48,4 @@ export const hashCode = (str: string) => {
 }
 
 // 判断是否是开发环境
-export const isDevEnv = () => process.env.NODE_ENV === 'developmentx'
+export const isDevEnv = () => process.env.NODE_ENV === 'development'

@@ -89,11 +89,16 @@ const routesConfig: IConfig = {
         },
         {
           path: '/:projectId/operation',
-          name: '运营中心',
+          name: '营销工具',
           icon: 'shopping',
           access: 'canContent',
           wrappers: ['../components/SecurityWrapper/index'],
           routes: [
+            {
+              exact: true,
+              path: '/:projectId/operation/activity',
+              component: './project/operation/Activity/index',
+            },
             {
               exact: true,
               path: '/:projectId/operation/message',

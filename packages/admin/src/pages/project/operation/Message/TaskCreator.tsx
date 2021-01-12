@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams, useRequest, history } from 'umi'
+import { useParams, useRequest, history, useModel } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
@@ -10,16 +10,18 @@ import { getWxCloudApp } from '@/utils'
 import { createBatchTask } from '@/services/operation'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
+import { IConnectEditor } from './Connect'
+import { ActivityField } from './columns'
 
 interface Task {
   content: string
-  appPath: string
-  appPathQuery: string
+  activityId: string
   phoneNumbers: string
 }
 
 const MessageTask: React.FC = () => {
   const { projectId } = useParams<any>()
+  const { initialState } = useModel('@@initialState')
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
   const [{ visible, task }, setState] = useSetState<{
@@ -37,11 +39,16 @@ const MessageTask: React.FC = () => {
     return <span />
   }
 
-  // 创建群发任务
+  // 创建发送任务
   const { run, loading } = useRequest(
     async (payload: any) => {
+      const { currentUser } = initialState || {}
       const wxCloudApp = await getWxCloudApp(setting)
-      const { taskId, token } = await createBatchTask(projectId, payload)
+      // 记录创建用户信息
+      const { taskId, token } = await createBatchTask(projectId, {
+        ...payload,
+        createdUser: currentUser,
+      })
 
       try {
         const { result } = await wxCloudApp.callFunction({
@@ -86,7 +93,7 @@ const MessageTask: React.FC = () => {
   )
 
   return (
-    <PageContainer title="创建【群发短信】任务">
+    <PageContainer title="创建【发送短信】任务">
       <Row>
         <Col
           md={{ span: 24, offset: 0 }}
@@ -106,13 +113,14 @@ const MessageTask: React.FC = () => {
               layout="vertical"
               onFinish={(
                 v: Task = {
-                  phoneNumbers: '',
                   content: '',
-                  appPath: '',
-                  appPathQuery: '',
+                  activityId: '',
+                  phoneNumbers: '',
                 }
               ) => {
-                const { phoneNumbers, content, appPath, appPathQuery } = v
+                // 任务信息
+                const { phoneNumbers, content, activityId } = v
+
                 if (phoneNumbers.includes('\n') && phoneNumbers.includes(',')) {
                   message.error('请勿混用换行和英文分号 ,')
                   return
@@ -152,8 +160,7 @@ const MessageTask: React.FC = () => {
                   visible: true,
                   task: {
                     content,
-                    appPath,
-                    appPathQuery,
+                    activityId,
                     phoneNumberList,
                   },
                 })
@@ -162,11 +169,15 @@ const MessageTask: React.FC = () => {
               <Form.Item
                 label="短信内容"
                 name="content"
-                extra="【小程序名称】内容，点击 “云开发静态网站 URL” 打开小程序名称小程序，退订回T。"
+                extra="短信内容最长支持 30 个字符。发送样例：【小程序名称】【内容】，点击 【云开发静态网站 URL】 打开【小程序名称】小程序，回T退订。"
                 rules={[
                   {
                     required: true,
                     message: '请填写短信内容',
+                  },
+                  {
+                    message: '短信内容最长支持 30 个字符',
+                    max: 30,
                   },
                 ]}
               >
@@ -192,24 +203,18 @@ const MessageTask: React.FC = () => {
                 <TextArea placeholder="短信号码列表" />
               </Form.Item>
 
-              {/* <Form.Item label="活动" name="activity" extra="">
-                <TextArea />
-              </Form.Item> */}
-
               <Form.Item
-                name="appPath"
-                label="小程序页面路径"
-                extra="必须是已经发布的小程序存在的页面，不可携带 query"
+                label="活动"
+                name="activityId"
+                extra="关联的活动"
+                rules={[
+                  {
+                    required: true,
+                    message: '请选择关联的活动',
+                  },
+                ]}
               >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="appPathQuery"
-                label="query"
-                extra="通过 scheme 码进入小程序时的 query，最大128个字符，只支持数字，大小写英文以及部分特殊字"
-              >
-                <Input />
+                <IConnectEditor field={ActivityField} />
               </Form.Item>
 
               <Form.Item>
@@ -235,12 +240,12 @@ const MessageTask: React.FC = () => {
           <Modal
             centered
             visible={visible}
-            title="创建群发短信任务"
+            title="创建发送短信任务"
             onOk={() => run(task)}
             okButtonProps={{ loading }}
             onCancel={() => setState({ visible: false })}
           >
-            共计 {task?.phoneNumberList?.length || 0} 个号码，是否创建群发任务？
+            共计 {task?.phoneNumberList?.length || 0} 个号码，是否创建发送任务？
           </Modal>
         </Col>
       </Row>

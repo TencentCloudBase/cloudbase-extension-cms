@@ -21,7 +21,7 @@ IntroUrl: https://docs.cloudbase.net/cms/intro.html
 ChangeLog:
   - Title: 2.6.5
     Content:
-      - 新增运营工具模型，支持群发短信
+      - 新增营销工具模型，支持发送短信
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -39,7 +39,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-service
-      CodeUri: extension://94b52109497f428a940e277d44f9be2f.zip
+      CodeUri: extension://801ea64c253d4d208267b6bf132107ae.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -57,7 +57,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-init
-      CodeUri:  extension://535e2602d7444e8c9bbd5beab7b27c11.zip
+      CodeUri:  extension://5b3426cab5f04380884fc90fc0ce8d6d.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -79,9 +79,9 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-sms
-      CodeUri:  extension://76804b6085664b0084f43d271385f631.zip
+      CodeUri:  extension://642b0dd6c101469593c63f00a2037247.zip
       InstallDependency: true
-      Description: 提供短信群发、生成 url schema 功能
+      Description: 提供短信发送、生成 url schema 功能
       MemorySize: 256
       Timeout: 60
       Runtime: Nodejs10.15
@@ -135,14 +135,20 @@ Resources:
   MessageTaskDB:
     Type: CloudBase::FlexDB
     Properties:
-      CollectionName: wx-ext-cms-sms-task
-      Description: CMS 短信群发任务记录（请不要手动修改）
+      CollectionName: wx-ext-cms-sms-tasks
+      Description: CMS 短信发送任务记录（请不要手动修改）
       AclTag: ADMINONLY
   MessageAuthTokenDB:
     Type: CloudBase::FlexDB
     Properties:
       CollectionName: wx-ext-cms-sms-token
-      Description: CMS 短信群发任务云函数调用凭证记录（请不要手动修改）
+      Description: CMS 短信发送任务云函数调用凭证记录（请不要手动修改）
+      AclTag: ADMINONLY
+  MessageActivityDB:
+    Type: CloudBase::FlexDB
+    Properties:
+      CollectionName: wx-ext-cms-sms-activities
+      Description: CMS 营销活动记录（请不要手动修改）
       AclTag: ADMINONLY
   # 开通静态托管
   StaticStore:

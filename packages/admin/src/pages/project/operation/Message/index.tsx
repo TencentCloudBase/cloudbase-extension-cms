@@ -6,9 +6,9 @@ import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useRef, useCallback, useMemo } from 'react'
 import ProTable, { ProColumns } from '@ant-design/pro-table'
-import { getContents, batchDeleteContent } from '@/services/content'
-import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, List, Typography } from 'antd'
-import { PlusOutlined, DeleteOutlined, FilterOutlined } from '@ant-design/icons'
+import { getContents } from '@/services/content'
+import { Button, Modal, message, Space, Menu, List, Typography, Popover } from 'antd'
+import { PlusOutlined, QuestionCircleTwoTone } from '@ant-design/icons'
 import { formatSearchParams } from '../../content/common'
 import ContentTableSearchForm from '../../content/SearchForm'
 import { TaskSchema } from './schema'
@@ -27,7 +27,7 @@ export default (): React.ReactNode => {
   }
 
   return (
-    <PageContainer>
+    <PageContainer content="短信下发后，会默认附带当前账号所属小程序名称及跳转链接，支持用户直接点击访问你的小程序。">
       <ProCard>
         <ContentTable currentSchema={TaskSchema} />
       </ProCard>
@@ -78,7 +78,10 @@ export const ContentTable: React.FC<{
 
       try {
         const { data = [], total } = await getContents(projectId, resource, {
-          sort,
+          sort: {
+            ...sort,
+            createTime: 1,
+          },
           filter: {
             ...filter,
             projectId,
@@ -160,11 +163,6 @@ export const ContentTable: React.FC<{
     ]
   }, [currentSchema])
 
-  // 表格多选操作
-  const tableAlerRender = useMemo(() => getTableAlertRender(projectId, currentSchema, tableRef), [
-    currentSchema,
-  ])
-
   // 表格 ToolBar
   const toolBarRender = useMemo(
     () => [
@@ -182,7 +180,7 @@ export const ContentTable: React.FC<{
           history.push(`/${projectId}/operation/message/create`)
         }}
       >
-        新建群发
+        发送短信
       </Button>,
     ],
     [currentSchema, searchParams, searchFields]
@@ -217,14 +215,12 @@ export const ContentTable: React.FC<{
       <ProTable
         rowKey="_id"
         search={false}
-        rowSelection={{}}
         actionRef={tableRef}
         dateFormatter="string"
         scroll={{ x: 1000 }}
         request={tableRequest}
         columns={memoTableColumns}
         toolBarRender={() => toolBarRender}
-        tableAlertRender={tableAlerRender}
         pagination={{
           ...pagination,
           // 翻页时，将分页数据保存在 URL 中
@@ -236,78 +232,58 @@ export const ContentTable: React.FC<{
 
       <Modal
         width={720}
-        title="短信发送结果"
+        title={
+          <>
+            <Text>短信发送结果</Text>
+            <div style={{ fontSize: '14px', marginTop: '10px' }}>
+              <Space>
+                <Text>发送成功未收到短信</Text>
+                <Popover
+                  placement="bottom"
+                  content={
+                    <div style={{ maxWidth: '600px' }}>
+                      <p>有以下场景会导致未收到短信 无效号码</p>
+                      <ul className="p-0">
+                        <li>1. 空号、关机、停机等运营商标识为非正常使用的号码</li>
+                        <li>
+                          2.
+                          由于用户终端原因造成的无法正常接收短信，包含但不限于欠费、关机、不在服务区、未订购短信服务、终端网络信号、手机拦截等不稳定等状态
+                        </li>
+                        <li>
+                          3. 腾讯云、运营商定义的黑名单号码。 触发限频
+                          <ul className="pl-5">
+                            <li>a. 相同内容短信对同一个手机号，30 秒内发送短信条数不超过1条</li>
+                            <li>b. 对同一个手机号，1 自然日内发送短信条数不超过10条</li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </div>
+                  }
+                >
+                  <QuestionCircleTwoTone />
+                </Popover>
+              </Space>
+            </div>
+          </>
+        }
         visible={visible}
         onCancel={() => setState({ visible: false })}
       >
-        <List
-          dataSource={sendStatusList}
-          renderItem={(item: any, i) => (
-            <List.Item key={i}>
-              <List.Item.Meta title={item.phoneNumber} />
-              <Text type={item.code !== 'Ok' ? 'danger' : 'success'}>{item.message}</Text>
-            </List.Item>
-          )}
-        >
-          {!sendStatusList?.length && '空'}
-        </List>
+        <div style={{ maxHeight: '450px', overflow: 'auto', paddingRight: '20px' }}>
+          <List
+            dataSource={sendStatusList}
+            renderItem={(item: any, i) => (
+              <List.Item key={i}>
+                <List.Item.Meta title={item.phoneNumber} />
+                <Text type={item.code !== 'Ok' ? 'danger' : 'success'}>{item.message}</Text>
+              </List.Item>
+            )}
+          >
+            {!sendStatusList?.length && '空'}
+          </List>
+        </div>
       </Modal>
     </>
-  )
-}
-
-/**
- * Table 批量操作
- */
-const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef: any) => ({
-  intl,
-  selectedRowKeys,
-  selectedRows,
-}: {
-  intl: any
-  selectedRowKeys: any[]
-  selectedRows: any[]
-}) => {
-  return (
-    <Row>
-      <Col flex="0 0 auto">
-        <Space>
-          <span>已选中</span>
-          <a style={{ fontWeight: 600 }}>{selectedRowKeys?.length}</a>
-          <span>项</span>
-        </Space>
-      </Col>
-
-      <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
-        <Space>
-          <Button
-            danger
-            size="small"
-            type="primary"
-            onClick={() => {
-              const modal = Modal.confirm({
-                title: '确认删除选中的内容？',
-                onCancel: () => {
-                  modal.destroy()
-                },
-                onOk: async () => {
-                  try {
-                    const ids = selectedRows.map((_: any) => _._id)
-                    await batchDeleteContent(projectId, currentSchema.collectionName, ids)
-                    tableRef?.current?.reload()
-                    message.success('删除内容成功')
-                  } catch (error) {
-                    message.error('删除内容失败')
-                  }
-                },
-              })
-            }}
-          >
-            <DeleteOutlined /> 删除文档
-          </Button>
-        </Space>
-      </Col>
-    </Row>
   )
 }
 

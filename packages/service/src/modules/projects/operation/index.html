@@ -24,6 +24,7 @@
   <!-- 云开发 Web SDK -->
   <script src="https://res.wx.qq.com/open/js/cloudbase/1.1.0/cloud.js"></script>
   <script>
+    // 查询 query 参数
     function getParameterByName(name, url = window.location.href) {
       name = name.replace(/[\[\]]/g, '\\$&');
       var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -33,7 +34,7 @@
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    // 初始化云开发
+    // 初始化云开发 SDK
     var cloud = new cloud.Cloud({
       // 必填，表示是未登录模式
       identityless: true,
@@ -47,21 +48,73 @@
   </script>
   <script>
     // 活动 ID
-    var activityID = getParameterByName('activityID');
+    var activityId = getParameterByName('activityId');
 
     ; (function () {
       var cloudApp = window.cloudApp
+
+      // 查询活动信息
       cloudApp.callFunction({
         name: 'wx-ext-cms-sms',
         data: {
-          activityID: activityID,
+          activityId: activityId,
           action: 'getUrlScheme',
         },
         success: res => {
           // 动态修改 Path
-          var containerEl = document.getElementById('wechat-web-container')
-          containerEl.path = res.result.appPath + '.html?' + res.result.appPathQuery
+          var containerEl = document.getElementById('launch-btn')
+          const activity = res.result.activity || {}
+
+          if (!activity) return
+
+          // 添加背景图片
+          if (activity.jumpImg) {
+            var imgEl = document.getElementById('bg-img')
+            imgEl.src = activity.jumpImg
+            imgEl.classList.remove('hidden')
+
+            // 添加
+            var wechatContainerEl = document.getElementById('wechat-web-container')
+            var publicContainerEl = document.getElementById('public-web-container')
+            wechatContainerEl.classList.add('img')
+            publicContainerEl.classList.add('img')
+          }
+
+          window.callResponse = true;
+
+          if (
+            !window.callResponse && (!activity.isActivityOpen || activity.startTime > Date.now())
+          ) {
+            alert('活动还未开始~')
+            return
+          }
+
+          if (!window.callResponse && activity.endTime < Date.now()) {
+            alert('活动已结束')
+            return
+          }
+
+          var jumpPath
+          if (activity.appPath) {
+            jumpPath = activity.appPath + '.html?'
+          }
+          if (activity.appPathQuery) {
+            jumpPath += activity.appPathQuery
+          }
+
+          if (jumpPath) {
+            containerEl.setAttribute('path', jumpPath)
+          }
         },
+        fail: err => {
+          // 页面路径错误
+          if (err.message && err.message.indexOf('40165') > -1) {
+            alert('页面路径填写错误')
+          } else {
+            alert(err)
+          }
+          console.log(err)
+        }
       })
     })()
 
@@ -73,7 +126,7 @@
       }
     }
 
-    docReady(async function () {
+    docReady(function () {
       var ua = navigator.userAgent.toLowerCase()
       var isWXWork = ua.match(/wxwork/i) == 'wxwork'
       var isWeixin = !isWXWork && ua.match(/micromessenger/i) == 'micromessenger'
@@ -121,46 +174,73 @@
         containerEl.classList.remove('hidden')
         containerEl.classList.add('full', 'public-web-container')
 
-
         var buttonEl = document.getElementById('public-web-jump-button')
         var buttonLoadingEl = document.getElementById('public-web-jump-button-loading')
-        try {
-          await openWeapp(() => {
-            buttonEl.classList.remove('weui-btn_loading')
-            buttonLoadingEl.classList.add('hidden')
-          })
-        } catch (e) {
+
+        openWeapp(function () {
+          buttonEl.classList.remove('weui-btn_loading')
+          buttonLoadingEl.classList.add('hidden')
+        }, function (e) {
           buttonEl.classList.remove('weui-btn_loading')
           buttonLoadingEl.classList.add('hidden')
           throw e
-        }
+        })
       }
     })
 
     // 打开小程序
-    async function openWeapp(onBeforeJump) {
+    function openWeapp(onBeforeJump, onError) {
       var cloudApp = window.cloudApp
-      const res = await cloudApp.callFunction({
+
+      cloudApp.callFunction({
         name: 'wx-ext-cms-sms',
         data: {
-          activityID: activityID,
+          activityId: activityId,
           action: 'getUrlScheme',
         },
+        success: function (res) {
+          var activity = res.result.activity
+
+          window.callResponse = true;
+
+          if (
+            !window.callResponse && (!activity.isActivityOpen || activity.startTime > Date.now())
+          ) {
+            alert('活动还未开始~')
+            return
+          }
+
+          if (!window.callResponse && activity.endTime < Date.now()) {
+            alert('活动已结束，正在前往首页')
+            return
+          }
+
+          console.warn(res)
+          if (onBeforeJump) {
+            onBeforeJump()
+          }
+
+          location.href = res.result.openlink
+        },
+        fail: function (err) {
+          onError(err)
+        },
       })
-      console.warn(res)
-      if (onBeforeJump) {
-        onBeforeJump()
-      }
-      location.href = res.result.openlink
     }
 
   </script>
   <style>
+    img {
+      height: 100%;
+      width: 100%;
+    }
+
     .hidden {
       display: none;
     }
 
-    .full {
+    .full,
+    img {
       position: absolute;
       top: 0;
       bottom: 0;
@@ -184,6 +264,16 @@
       bottom: 40%;
     }
 
+    .public-web-container.img p {
+      position: absolute;
+      top: 85%;
+    }
+
+    .public-web-container.img a {
+      bottom: 0;
+      width: 100%;
+    }
+
     .wechat-web-container {
       display: flex;
       flex-direction: column;
@@ -205,6 +295,15 @@
       align-items: center;
     }
 
+    .wechat-web-container.img p {
+      top: 85%;
+    }
+
+    .wechat-web-container.img wx-open-launch-weapp {
+      bottom: 0;
+      width: 100%;
+    }
+
     .desktop-web-container {
       display: flex;
       flex-direction: column;
@@ -220,6 +319,7 @@
 
 <body>
   <div class="page full">
+    <img id="bg-img" src="" class="hidden" />
     <div id="public-web-container" class="hidden">
       <p class="">正在打开{{APPNAME}}...</p> <!-- replace -->
       <a id="public-web-jump-button" href="javascript:"

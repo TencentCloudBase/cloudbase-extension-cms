@@ -17,9 +17,14 @@ const state: GlobalState = {
 export default {
   state,
   init: async () => {
-    const { data = {} } = await getSettings()
-    return {
-      setting: data,
+    try {
+      const { data = {} } = await getSettings()
+      return {
+        setting: data,
+      }
+    } catch (error) {
+      console.log(error)
+      return {}
     }
   },
 }

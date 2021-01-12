@@ -25,7 +25,7 @@ export const ContentTable: React.FC<{
 }> = (props) => {
   const { currentSchema } = props
   const ctx = useConcent<{}, ContentCtx>('content')
-  const { projectId, schemaId } = useParams<any>()
+  const { projectId, schemaId = 'default' } = useParams<any>()
 
   // 检索的字段
   const { searchFields, searchParams } = ctx.state

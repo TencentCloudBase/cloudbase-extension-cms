@@ -67,7 +67,7 @@ export const SchemaFieldEditorModal: React.FC<{
       }
 
       // 过滤掉值为 undefined 的数据
-      const field = Object.keys(fieldAttr)
+      const field: any = Object.keys(fieldAttr)
         .filter((key) => typeof fieldAttr[key] !== 'undefined')
         .reduce(
           (val, key) => ({
@@ -94,6 +94,7 @@ export const SchemaFieldEditorModal: React.FC<{
       }
 
       // 编辑字段
+      console.log(fieldAction, field)
       if (fieldAction === 'edit') {
         const index = fields.findIndex(
           (_: any) => _.id === selectedField?.id || _.name === selectedField?.name
@@ -104,6 +105,8 @@ export const SchemaFieldEditorModal: React.FC<{
             ...selectedField,
             ...field,
           })
+        } else {
+          fields.push(field)
         }
       }
 

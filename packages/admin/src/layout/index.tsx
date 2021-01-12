@@ -56,20 +56,14 @@ const customMenuDate: MenuDataItem[] = [
   },
 ]
 
-// 微信侧才支持群发短信的功能
+// 微信侧才支持发送短信的功能
 if (WX_MP) {
   customMenuDate.splice(3, 0, {
     authority: 'canContent',
     path: '/:projectId/operation',
-    name: '运营中心',
+    name: '营销工具',
     icon: <ShoppingTwoTone />,
-    children: [
-      // {
-      //   name: '群发短信',
-      //   path: '/:projectId/operation/message',
-      //   component: './project/operation/index',
-      // },
-    ],
+    children: [],
   })
 }
 
@@ -94,19 +88,29 @@ const Layout: React.FC<any> = (props) => {
   const { schemas, loading } = ctx.state
   const { setting = {} } = globalCtx.state
 
-  // 加载 schema 集合
+  // 添加菜单
   useEffect(() => {
     // 是否开启了营销工具
     if (WX_MP && setting?.enableOperation) {
       if (!customMenuDate[3].children?.length) {
-        customMenuDate[3].children?.push({
-          name: '群发短信',
-          path: '/:projectId/operation/message',
-          component: './project/operation/Message/index',
-        })
+        customMenuDate[3].children?.push(
+          {
+            name: '营销活动',
+            path: '/:projectId/operation/activity',
+            component: './project/operation/Activity/index',
+          },
+          {
+            name: '发送短信',
+            path: '/:projectId/operation/message',
+            component: './project/operation/Message/index',
+          }
+        )
       }
     }
+  }, [setting])
 
+  // 加载 schema 集合
+  useEffect(() => {
     // 匹配 Path，获取 projectId
     const match = matchPath<{ projectId?: string }>(history.location.pathname, {
       path: '/:projectId/*',

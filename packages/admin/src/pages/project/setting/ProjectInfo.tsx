@@ -109,7 +109,7 @@ export default (): React.ReactElement => {
           }
         }}
       >
-        <Form.Item label="项目 Id">
+        <Form.Item label="项目 ID">
           <Typography.Paragraph copyable>{project?._id}</Typography.Paragraph>
         </Form.Item>
         <Form.Item

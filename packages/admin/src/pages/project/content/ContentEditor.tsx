@@ -13,10 +13,10 @@ const ContentEditor: React.FC = () => {
   const ctx = useConcent('content')
   const { selectedContent, contentAction } = ctx.state
   const {
-    state: { schemas },
+    state: { schemas, currentSchema },
   } = ctx
 
-  const schema: Schema = schemas?.find((item: Schema) => item._id === schemaId)
+  const schema: Schema = schemas?.find((item: Schema) => item._id === schemaId) || currentSchema
 
   // 表单初始值
   const initialValues = getInitialValues(contentAction, schema, selectedContent)

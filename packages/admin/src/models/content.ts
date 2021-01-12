@@ -8,6 +8,7 @@ interface ContentState {
   selectedContent: any
   searchFields: any[]
   searchParams: any
+  currentSchema: any
 }
 
 const state: ContentState = {
@@ -19,6 +20,7 @@ const state: ContentState = {
   // 保存搜索条件
   searchFields: [],
   searchParams: {},
+  currentSchema: {},
 }
 
 export default {

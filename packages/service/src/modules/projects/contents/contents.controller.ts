@@ -192,12 +192,10 @@ export class ContentsController {
       resourceId: resource,
     })
 
-    const IGNORE_RESOURCE = ['wx-ext-cms-sms-task']
-
     // 获取并缓存 schema
     const schema = await this.schemaCacheService.getCollectionSchema(resource)
 
-    if (!schema && IGNORE_RESOURCE.includes(resource)) {
+    if (!schema) {
       return
     }
 

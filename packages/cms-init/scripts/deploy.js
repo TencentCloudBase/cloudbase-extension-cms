@@ -4,6 +4,7 @@ const util = require('util')
 const path = require('path')
 const writeFile = util.promisify(fs.writeFile)
 const exec = util.promisify(require('child_process').exec)
+const { ActivitySchema, TaskSchema } = require('./_schema')
 const pkg = require('../package.json')
 
 module.exports = {
@@ -29,6 +30,70 @@ module.exports = {
 
     console.log('====> 部署静态网站成功 <=====')
   },
+  async deploySchema(context) {
+    // 仅微信环境下创建活动 schema
+    if (!process.env.WX_MP) {
+      return
+    }
+
+    // 添加 schema
+    await addSchema(ActivitySchema, context)
+    await addSchema(TaskSchema, context)
+
+    // 添加活动
+    await addDefaultActivity(context)
+  },
+}
+
+// 添加营销工具 schema
+async function addSchema(schema, context) {
+  // 添加 schema
+  const { manager, db } = context
+
+  await manager.database.createCollectionIfNotExists('wx-ext-cms-schemas')
+  const {
+    data: [record],
+  } = await db
+    .collection('wx-ext-cms-schemas')
+    .where({
+      collectionName: schema.collectionName,
+    })
+    .get()
+
+  if (record) {
+    // 删除 schema 的
+    delete schema._id
+    // 记录存在，更新
+    await db.collection('wx-ext-cms-schemas').doc(record._id).update(schema)
+  } else {
+    // 记录不存在，添加
+    await db.collection('wx-ext-cms-schemas').add(schema)
+  }
+}
+
+// 添加默认活动
+async function addDefaultActivity(context) {
+  // 添加 schema
+  const activityCollection = 'wx-ext-cms-sms-activities'
+  const { manager, db } = context
+
+  await manager.database.createCollectionIfNotExists(activityCollection)
+  const {
+    data: [record],
+  } = await db.collection(activityCollection).where({}).get()
+
+  // 添加默认活动
+  if (!record) {
+    const now = Date.now()
+    await db.collection(activityCollection).add({
+      activityName: '营销demo',
+      endTime: 1893456000000,
+      isActivityOpen: true,
+      startTime: 1610353674000,
+      _createTime: now,
+      _updateTime: now,
+    })
+  }
 }
 
 // 写入配置信息

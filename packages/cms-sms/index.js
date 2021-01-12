@@ -1,7 +1,8 @@
 /* eslint-disable */
 const cloud = require('wx-server-sdk')
 
-const MessageTasks = 'wx-ext-cms-sms-task'
+const MessageActivities = 'wx-ext-cms-sms-activities'
+const MessageTasks = 'wx-ext-cms-sms-tasks'
 const MessageAuthToken = 'wx-ext-cms-sms-token'
 
 /**
@@ -58,7 +59,7 @@ exports.main = async (event = {}) => {
       env: ENV,
       phoneNumberList,
       content: task.content,
-      path: `/cms-activities/index.html?activityID=${task._id}`,
+      path: `/cms-activities/index.html?activityId=${task.activityId}`,
     })
 
     // 发送结果列表
@@ -170,16 +171,22 @@ async function checkAuth(event = {}) {
  * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
  */
 async function getUrlScheme(event) {
-  const { taskId } = event
+  const { activityId } = event
 
   let query = ''
   let path = ''
-  // 查询 task
-  const { data: task } = await cloud.database().collection(MessageTasks).doc(taskId).get()
+  let activity = ''
 
-  if (task) {
-    path = task.appPath || path
-    query = task.appPathQuery || query
+  // 查询活动
+  if (activityId) {
+    const { data } = await cloud.database().collection(MessageActivities).doc(activityId).get()
+
+    activity = data
+
+    if (activity) {
+      path = activity.appPath || path
+      query = activity.appPathQuery || query
+    }
   }
 
   const res = await cloud.openapi.urlscheme.generate({
@@ -194,7 +201,7 @@ async function getUrlScheme(event) {
   })
 
   return {
-    task,
+    activity: activity || {},
     ...res,
   }
 }

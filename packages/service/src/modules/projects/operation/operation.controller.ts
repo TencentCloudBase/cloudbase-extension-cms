@@ -25,9 +25,11 @@ class MessageTaskBody {
   })
   phoneNumberList: string[]
 
-  appPath: string
+  @IsNotEmpty()
+  activityId: string
 
-  appPathQuery: string
+  @IsNotEmpty()
+  createdUser: any
 }
 
 class EnableServiceBody {
@@ -80,21 +82,22 @@ export class OperationController {
   }
 
   /**
-   * 创建群发短信的任务
+   * 创建发送短信的任务
    */
   @Post('createBatchTask')
   async createBatchTask(@Param('projectId') projectId, @Body() body: MessageTaskBody) {
     const envId = getEnvIdString()
-    const { content, phoneNumberList, appPath, appPathQuery } = body
+    const { content, phoneNumberList, activityId, createdUser } = body
 
     // 写入 task 记录
     const taskRes = await this.collection(Collection.MessageTasks).add({
-      // 应用路径
-      appPath,
-      appPathQuery,
       // 短信内容
       content,
       projectId,
+      // 关联的活动 ID
+      activityId,
+      // 创建用户
+      createdUser,
       phoneNumberList,
       // 已创建
       status: 'created',

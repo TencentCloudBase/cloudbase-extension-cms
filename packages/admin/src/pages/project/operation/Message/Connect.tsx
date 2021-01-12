@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import { Typography, message, Tag, Select, Spin } from 'antd'
 import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
-import { getContentSchema, getContents, Options } from '@/services/content'
+import { getContents, Options } from '@/services/content'
 import { calculateFieldWidth } from '@/utils'
 import { ContentCtx } from 'typings/store'
+import { ActivitySchema } from '../Activity/schema'
 
 const { Option } = Select
 const { Text, Paragraph } = Typography
@@ -21,7 +22,6 @@ type ISelectValue = string | string[]
 
 /**
  * 关联渲染
- * TODO: 优化关联渲染
  */
 export const IConnectRender: React.FC<{
   value?: IConnectValue
@@ -76,13 +76,7 @@ export const IConnectEditor: React.FC<{
   useRequest(
     async () => {
       setLoading(true)
-      let connectSchema = schemas.find((_: Schema) => _._id === connectResource)
-      console.log('关联', connectSchema)
-      // 后台获取 Schema
-      if (!connectSchema) {
-        const { data } = await getContentSchema(projectId, connectResource)
-        connectSchema = data
-      }
+      let connectSchema = ActivitySchema
 
       const fetchOptions: Options = {
         page: 1,
@@ -155,13 +149,15 @@ export const IConnectEditor: React.FC<{
  */
 const getConnectFieldDisplayText = (doc: any, schemas: Schema[], field: SchemaField) => {
   // 当前关联字段的信息
-  const { connectField, connectResource } = field
+  const { connectField } = field
 
   // 当前关联字段 => 关联 schema 的信息
-  const connectedSchema = schemas.find((_: Schema) => _._id === connectResource)
+  const connectedSchema = ActivitySchema
 
   // 关联字段的信息
-  const connectedFieldInfo = connectedSchema?.fields.find((_) => _.name === connectField)
+  const connectedFieldInfo = connectedSchema?.fields.find(
+    (_: SchemaField) => _.name === connectField
+  )
 
   // 关联的字段，又是一个关联类型，则展示关联字段关联的字段
   if (connectedFieldInfo?.connectResource) {

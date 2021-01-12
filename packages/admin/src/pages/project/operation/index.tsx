@@ -17,7 +17,7 @@ export default (): React.ReactNode => {
 
   return (
     <PageContainer>
-      <ProCard>活动工具</ProCard>
+      <ProCard>营销工具</ProCard>
     </PageContainer>
   )
 }
@@ -34,14 +34,16 @@ const ServiceEnable: React.FC = () => {
     {
       manual: true,
       onSuccess: () => {
-        message.success('开通成功')
-        history.push(`/${projectId}/operation/message`)
-        window.location.reload()
+        message.success('营销工具开通成功')
+        setTimeout(() => {
+          history.push(`/${projectId}/operation/activity`)
+          window.location.reload()
+        }, 1000)
       },
       onError: (e) => {
         console.error(e)
         // 创建任务，生成 token 失败
-        message.error(`开通失败 ${e.message}`)
+        message.error(`营销工具开通失败 ${e.message}`)
       },
     }
   )
