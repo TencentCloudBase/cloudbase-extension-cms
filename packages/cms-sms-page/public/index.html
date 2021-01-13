@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>打开小程序</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <!-- 调试用的移动端 console -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>
+      eruda.init();
+    </script> -->
+    <link rel="stylesheet" href="./weui.min.css" />
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+    <script src="https://res.wx.qq.com/open/js/cloudbase/1.1.0/cloud.js"></script>
+    <script>
+      // 添加 ID 信息
+      window.cloudResource = {
+        appID: "{{APPID}}",
+        envID: "{{ENVID}}",
+        appName: "{{APPNAME}}",
+        appOriginalID: "{{APPORIGINALID}}",
+      };
+
+      // 捕获错误
+      window.onerror = (e) => {
+        console.error(e);
+        alert("发生错误" + e);
+      };
+    </script>
+  </head>
+
+  <body>
+    <noscript>
+      <strong
+        >We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong
+      >
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+  </body>
+</html>
