@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-admin",
-  "version": "2.6.5",
+  "version": "2.6.6",
   "private": true,
   "description": "An out-of-box UI solution for enterprise applications",
   "scripts": {
