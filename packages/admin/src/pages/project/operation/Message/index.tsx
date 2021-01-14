@@ -267,7 +267,7 @@ export const ContentTable: React.FC<{
           </>
         }
         visible={visible}
-        // onOk={() => setState({ visible: false })}
+        onCancel={() => setState({ visible: false })}
         footer={null}
       >
         <div style={{ maxHeight: '450px', overflow: 'auto', paddingRight: '20px' }}>

@@ -49,3 +49,12 @@ export const hashCode = (str: string) => {
 
 // 判断是否是开发环境
 export const isDevEnv = () => process.env.NODE_ENV === 'development'
+
+// 延迟
+export const sleep = async (interval: number) => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, interval)
+  })
+}

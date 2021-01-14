@@ -20,3 +20,9 @@ export async function getOpenAPIToken(projectId: string, data: any = {}) {
     data,
   })
 }
+
+export async function enableNonLogin(projectId: string) {
+  return tcbRequest(`/projects/${projectId}/operation/enableNonLogin`, {
+    method: 'POST',
+  })
+}

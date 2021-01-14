@@ -73,15 +73,21 @@ export class OperationController {
   }
 
   /**
-   * 开启营销工具
+   * 开启未登录
    */
-  @Post('enableOperationService')
-  async enableOperationService(@Body() payload: EnableServiceBody) {
+  @Post('enableNonLogin')
+  async enableNonLogin() {
     // 开启未登录
     await this.operationService.enableNonLogin()
     // 修改安全规则
     await this.operationService.writeSecurityRules()
+  }
 
+  /**
+   * 开启营销工具
+   */
+  @Post('enableOperationService')
+  async enableOperationService(@Body() payload: EnableServiceBody) {
     const { data: settings } = await this.collection(Collection.Settings).where({}).get()
 
     const appConfig = {

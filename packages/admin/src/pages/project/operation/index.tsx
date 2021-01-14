@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react'
-import { Alert, Button, Col, Descriptions, Form, Input, message, Row, Skeleton, Space } from 'antd'
+import React from 'react'
+import { Alert, Button, Col, Form, Input, message, notification, Row, Skeleton, Space } from 'antd'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { history, SettingState, useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
-import { enableOperationService, getOpenAPIToken } from '@/services/operation'
-import { getWxCloudApp } from '@/utils'
-import { useSetState, useToggle } from 'react-use'
+import { enableNonLogin, enableOperationService, getOpenAPIToken } from '@/services/operation'
+import { getWxCloudApp, sleep } from '@/utils'
+import { useToggle } from 'react-use'
 
 interface MiniApp {
   miniappID: string
@@ -15,6 +15,9 @@ interface MiniApp {
   miniappOriginalID: string
 }
 
+/**
+ *
+ */
 export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
@@ -77,7 +80,44 @@ const OperationEnable: React.FC<{ setting: SettingState }> = ({ setting }) => {
   // 开通营销工具
   const { run: enableService } = useRequest(
     async (data: MiniApp) => {
-      await enableOperationService(projectId, data)
+      // 获取小程序信息
+      const getAppInfo = async () => {
+        const wxCloudApp = await getWxCloudApp({
+          miniappID: setting.miniappID,
+        })
+
+        const { token } = await getOpenAPIToken(projectId)
+        // 获取小程序的名称和原始 ID
+        const { result } = await wxCloudApp.callFunction({
+          name: 'wx-ext-cms-sms',
+          data: {
+            token,
+            action: 'getAppBasicInfo',
+          },
+        })
+
+        const { appid, nickname, username } = result || {}
+
+        return {
+          miniappID: appid,
+          miniappName: nickname,
+          miniappOriginalID: username,
+        }
+      }
+
+      // 开启未登录
+      await enableNonLogin(projectId)
+
+      // 存储 appId
+      if (setting?.miniappID) {
+        // 开通未登录
+        await sleep(1000)
+        // 获取小程序信息
+        const appInfo = await getAppInfo()
+        await enableOperationService(projectId, appInfo)
+      } else {
+        await enableOperationService(projectId, data)
+      }
     },
     {
       manual: true,
@@ -90,89 +130,28 @@ const OperationEnable: React.FC<{ setting: SettingState }> = ({ setting }) => {
       },
       onError: (e) => {
         console.error(e)
-        // 创建任务，生成 token 失败
-        message.error(`营销工具开通失败 ${e.message}`)
+        // 开通失败
+        notification.error({
+          message: '营销工具开通失败',
+          description: e.message,
+        })
       },
     }
   )
 
   // 有 AppID 时使用快速开通
   if (setting?.miniappID) {
-    return <OperationEnableByAppID miniappID={setting.miniappID} enableService={enableService} />
+    return <AppForm hasAppId={true} onSubmit={enableService} />
   }
 
   return <AppForm onSubmit={enableService} />
 }
 
 /**
- * 有 AppID 的情况下开通服务
- */
-const OperationEnableByAppID: React.FC<{
-  miniappID: string
-  enableService: (app: MiniApp) => Promise<void>
-}> = ({ miniappID, enableService }) => {
-  const { projectId } = useParams<any>()
-  const ctx = useConcent<{}, GlobalCtx>('global')
-  const [appInfo, setState] = useSetState<MiniApp>({
-    miniappID: '',
-    miniappName: '',
-    miniappOriginalID: '',
-  })
-
-  useEffect(() => {
-    // 没有 AppID，无法调用云调用，获取小程序信息
-    if (!miniappID) return
-
-    const getAppInfo = async () => {
-      const wxCloudApp = await getWxCloudApp({
-        miniappID,
-      })
-
-      const { token } = await getOpenAPIToken(projectId)
-
-      try {
-        // 获取小程序的名称和原始 ID
-        const { result } = await wxCloudApp.callFunction({
-          name: 'wx-ext-cms-sms',
-          data: {
-            token,
-            action: 'getAppBasicInfo',
-          },
-        })
-
-        const { appid, nickname, username } = result || {}
-
-        const appInfo: MiniApp = {
-          miniappID: appid,
-          miniappName: nickname,
-          miniappOriginalID: username,
-        }
-
-        setState(appInfo)
-
-        await ctx.mr.updateSetting(appInfo)
-      } catch (e) {
-        console.log('获取小程序信息错误', e)
-        message.error(e.message)
-      }
-    }
-
-    getAppInfo()
-  }, [miniappID])
-
-  // 加载信息中
-  if (!appInfo?.miniappOriginalID) {
-    return <Skeleton active />
-  }
-
-  return <AppForm appInfo={appInfo} onSubmit={enableService} />
-}
-
-/**
  * 小程序信息表单
  */
-const AppForm: React.FC<{ appInfo?: MiniApp; onSubmit: (app: any) => Promise<void> }> = ({
-  appInfo,
+const AppForm: React.FC<{ hasAppId?: boolean; onSubmit: (app: any) => Promise<void> }> = ({
+  hasAppId,
   onSubmit,
 }) => {
   const [loading, toggle] = useToggle(false)
@@ -188,11 +167,9 @@ const AppForm: React.FC<{ appInfo?: MiniApp; onSubmit: (app: any) => Promise<voi
       <Form
         name="basic"
         layout="vertical"
-        initialValues={appInfo}
         onFinish={(v: MiniApp) => {
           toggle(true)
-          let app = v?.miniappName ? v : appInfo
-          onSubmit(app)
+          onSubmit(v)
             .then(() => {
               toggle(false)
             })
@@ -201,12 +178,8 @@ const AppForm: React.FC<{ appInfo?: MiniApp; onSubmit: (app: any) => Promise<voi
             })
         }}
       >
-        {appInfo ? (
-          <Descriptions title="将会为下面的小程序开通营销工具" column={1}>
-            <Descriptions.Item label="小程序名称">{appInfo.miniappName}</Descriptions.Item>
-            <Descriptions.Item label="小程序 AppID">{appInfo.miniappID}</Descriptions.Item>
-            <Descriptions.Item label="小程序原始 ID">{appInfo.miniappOriginalID}</Descriptions.Item>
-          </Descriptions>
+        {hasAppId ? (
+          <h3>确认开通营销工具？</h3>
         ) : (
           <>
             <Form.Item
