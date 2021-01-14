@@ -52,6 +52,26 @@ export class OperationController {
     private readonly operationService: OperationService
   ) {}
 
+  @Post('getOpenAPIToken')
+  async getOpenAPIToken() {
+    const token = randomId(128)
+    const envId = getEnvIdString()
+
+    // 生成一个 token，用于调用 openapi
+    await this.collection(Collection.MessageAuthToken).add({
+      // 环境 id，此 token 仅能触发此环境的任务
+      envId,
+      // 验证 token
+      token,
+      // 标志 token 类型
+      type: 'openapi',
+      // 创建时间
+      createTime: Date.now(),
+    })
+
+    return { token }
+  }
+
   /**
    * 开启营销工具
    */
@@ -69,6 +89,9 @@ export class OperationController {
       enableOperation: true,
     }
 
+    // 生成活动模板
+    await this.operationService.generateTemplate(appConfig)
+
     // setting 为空，直接添加数据
     if (!settings?.length) {
       await this.collection(Collection.Settings).add(appConfig)
@@ -76,9 +99,6 @@ export class OperationController {
       // 存储小程序信息
       await this.collection(Collection.Settings).where({}).update(appConfig)
     }
-
-    // 生成活动模板
-    await this.operationService.generateTemplate(appConfig)
   }
 
   /**
@@ -116,6 +136,7 @@ export class OperationController {
       token,
       // 任务 Id
       taskId,
+      type: 'smstask',
       // 创建时间
       createTime: Date.now(),
     })

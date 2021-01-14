@@ -30,6 +30,7 @@ module.exports = {
 
     console.log('====> 部署静态网站成功 <=====')
   },
+  // 部署小程序
   async deploySchema(context) {
     // 仅微信环境下创建活动 schema
     if (!process.env.WX_MP) {
@@ -42,6 +43,52 @@ module.exports = {
 
     // 添加活动
     await addDefaultActivity(context)
+
+    // 保存 AppID
+    await saveMiniAppID(context)
+  },
+  // 部署更新 sms 跳转页面
+  async deploySmsPage(context) {
+    // 仅微信环境下部署 sms 页面
+    if (!process.env.WX_MP) {
+      return
+    }
+
+    const { manager, db, config } = context
+
+    const {
+      data: [setting],
+    } = await db.collection(config.settingCollectionName).where({}).get()
+
+    // 未开通营销工具
+    if (!setting || !setting.miniappName) return
+
+    const { miniappName, miniappID, miniappOriginalID } = setting
+
+    try {
+      await exec('cp -r sms-dist /tmp')
+    } catch (e) {
+      // ignore error
+    }
+
+    // 替换内容
+    let template = fs.readFileSync(path.join(__dirname, '../sms-dist/index.html')).toString()
+
+    template = template
+      .replace(/\{\{APPID\}\}/g, miniappID)
+      .replace(/\{\{ENVID\}\}/g, config.envId)
+      .replace(/\{\{APPNAME\}\}/g, miniappName)
+      .replace(/\{\{APPORIGINALID\}\}/g, miniappOriginalID)
+
+    // 写临时文件
+    const writeFile = util.promisify(fs.writeFile)
+    await writeFile(`/tmp/sms-dist/index.html`, template)
+
+    // 部署 SMS 跳转页面
+    console.log('====> 部署 SMS 跳转页面 <====')
+    await deployHostingFile(manager, '/tmp/sms-dist', '/cms-activities')
+
+    console.log('====> 部署 SMS 跳转页面 <=====')
   },
 }
 
@@ -92,6 +139,26 @@ async function addDefaultActivity(context) {
       startTime: 1610353674000,
       _createTime: now,
       _updateTime: now,
+    })
+  }
+}
+
+// 保存 AppID
+async function saveMiniAppID(context) {
+  const { db, config, mpAppID } = context
+  if (!mpAppID) return
+
+  const {
+    data: [setting],
+  } = await db.collection(config.settingCollectionName).where({}).get()
+
+  if (!setting) {
+    await db.collection(config.settingCollectionName).add({
+      miniappID: mpAppID,
+    })
+  } else {
+    await db.collection(config.settingCollectionName).where({}).update({
+      miniappID: mpAppID,
     })
   }
 }

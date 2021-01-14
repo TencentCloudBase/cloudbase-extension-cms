@@ -25,11 +25,14 @@
               "timeout": 60,
               "functionDistPath": "cms-init",
               "envVariables": {
+                "WX_MP": true,
+                "WX_MP_APP_ID": "",
+                "CMS_DEPLOY_PATH": "/wx-cms/",
+                "CMS_RESOURCE_PREFIX": "wx-ext-cms",
                 "CMS_ADMIN_USER_NAME": "{{env.administratorName}}",
                 "CMS_ADMIN_PASS_WORD": "{{env.administratorPassword}}",
                 "CMS_OPERATOR_USER_NAME": "{{env.operatorName}}",
                 "CMS_OPERATOR_PASS_WORD": "{{env.operatorPassword}}",
-                "CMS_DEPLOY_PATH": "{{env.deployPath}}",
                 "ACCESS_DOMAIN": "{{env.accessDomain}}"
               },
               "installDependency": true,

@@ -33,6 +33,9 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-config/config.json
-.env.local
 .eslintcache
+
+# local env files
+.env.local
+.env.*.local
+config/config.json

@@ -4,8 +4,8 @@ import util from 'util'
 import { Injectable } from '@nestjs/common'
 import { getCloudBaseManager, getEnvIdString } from '@/utils'
 import { CloudBaseService } from '@/services'
-import { Collection } from '@/constants'
 import { CmsException } from '@/common'
+import { exec } from 'child_process'
 
 @Injectable()
 export class OperationService {
@@ -104,7 +104,19 @@ export class OperationService {
       throw new CmsException('APP_CONFIG_MISS', '小程序应用配置信息不完善')
     }
 
-    let template = fs.readFileSync(path.join(__dirname, './index.html')).toString()
+    const execAsync = util.promisify(exec)
+
+    // 复现模板内容到 tmp 文件夹
+    try {
+      await execAsync('cp -r template /tmp', {
+        cwd: __dirname,
+      })
+    } catch (e) {
+      console.log('复制错误', e)
+    }
+
+    // 替换内容
+    let template = fs.readFileSync(path.join(__dirname, './template/index.html')).toString()
 
     template = template
       .replace(/\{\{APPID\}\}/g, miniappID)
@@ -112,14 +124,14 @@ export class OperationService {
       .replace(/\{\{APPNAME\}\}/g, miniappName)
       .replace(/\{\{APPORIGINALID\}\}/g, miniappOriginalID)
 
-    // 写临时文件
+    // 替换 index.html
     const writeFile = util.promisify(fs.writeFile)
-    await writeFile(`/tmp/index.html`, template)
+    await writeFile(`/tmp/template/index.html`, template)
 
     // 上传模板文件
     await manager.hosting.uploadFiles({
-      localPath: `/tmp/index.html`,
-      cloudPath: `/cms-activities/index.html`,
+      localPath: '/tmp/template',
+      cloudPath: '/cms-activities',
     })
   }
 }

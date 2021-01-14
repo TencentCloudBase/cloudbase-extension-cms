@@ -7,11 +7,18 @@ __ABS_PATH__="$(pwd)"
 # 使用 cms-init 函数上传
 cd "$__ABS_PATH__/packages/cms-init"
 rm -rf build
+rm -rf sms-dist
 mkdir build
+mkdir sms-dist
 
 cd -
 
+# 拷贝管理端代码
 cp -R ./packages/admin/dist/* ./packages/cms-init/build
+# 拷贝 sms 跳转页代码
+cp -R ./packages/cms-sms-page/dist/* ./packages/cms-init/sms-dist
+# 添加到 service 服务
+cp -R ./packages/cms-sms-page/dist/* ./packages/service/dist/modules/projects/operation/template
 
 cd $__ABS_PATH__
 
@@ -33,3 +40,4 @@ zipFunction cms-sms
 
 cd $__ABS_PATH__
 rm -rf packages/cms-init/build
+rm -rf packages/cms-init/sms-dist

@@ -1,21 +1,35 @@
-import { getSettings } from '@/services/global'
+import { getSettings, updateSetting } from '@/services/global'
 
-interface SettingState {
+export interface SettingState {
+  miniappID?: string
+  miniappName?: string
+  miniappOriginalID?: string
   enableOperation?: boolean
 }
 
 interface GlobalState {
-  setting: SettingState
+  setting: SettingState | null
 }
 
 const state: GlobalState = {
-  setting: {
-    enableOperation: false,
-  },
+  setting: null,
 }
 
 export default {
   state,
+  reducer: {
+    // 更新设置信息
+    async updateSetting(setting: any, state: GlobalState) {
+      await updateSetting(setting)
+
+      return {
+        setting: {
+          ...state.setting,
+          ...setting,
+        },
+      }
+    },
+  },
   init: async () => {
     try {
       const { data = {} } = await getSettings()

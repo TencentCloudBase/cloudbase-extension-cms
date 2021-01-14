@@ -96,7 +96,7 @@ const ActivitySchema = {
 const TaskSchema = {
   fields: [
     {
-      description: '【小程序名称】，点击 云开发静态网站 URL 打开小程序名称小程序，退订回T。',
+      description: '短信内容，最长不超过 30 个字符',
       displayName: '短信内容',
       id: 'y0um9jhk9v9mrk424wbj95jleg2d2f8y',
       isRequired: true,

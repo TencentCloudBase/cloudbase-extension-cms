@@ -1,10 +1,21 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { useParams, useRequest, history, useModel } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
-import { Form, message, Space, Button, Row, Col, Modal, notification, Input } from 'antd'
-import TextArea from 'antd/lib/input/TextArea'
+import QrCode from '@/components/QrCode'
+import {
+  Form,
+  message,
+  Space,
+  Button,
+  Row,
+  Col,
+  Modal,
+  Input,
+  notification,
+  Typography,
+} from 'antd'
 import { useSetState } from 'react-use'
 import { getWxCloudApp } from '@/utils'
 import { createBatchTask } from '@/services/operation'
@@ -13,6 +24,9 @@ import { GlobalCtx } from 'typings/store'
 import { IConnectEditor } from './Connect'
 import { ActivityField } from './columns'
 
+const { Text } = Typography
+const { TextArea } = Input
+
 interface Task {
   content: string
   activityId: string
@@ -20,18 +34,19 @@ interface Task {
 }
 
 const MessageTask: React.FC = () => {
+  const qrCodeRef = useRef<any>()
+  const [form] = Form.useForm()
   const { projectId } = useParams<any>()
   const { initialState } = useModel('@@initialState')
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
-  const [{ visible, task }, setState] = useSetState<{
-    task: any
-    totalNumber: number
-    visible: boolean
-  }>({
+
+  const [{ visible, task, msgLongWarning, activityId }, setState] = useSetState<any>({
     task: {},
     totalNumber: 0,
     visible: false,
+    activityId: '',
+    msgLongWarning: false,
   })
 
   if (!setting?.enableOperation) {
@@ -109,6 +124,7 @@ const MessageTask: React.FC = () => {
           </div>
           <ProCard>
             <Form
+              form={form}
               name="basic"
               layout="vertical"
               onFinish={(
@@ -146,11 +162,6 @@ const MessageTask: React.FC = () => {
                   return
                 }
 
-                if (phoneNumberList?.length > 1000) {
-                  message.error('最大支持 1000 条号码')
-                  return
-                }
-
                 // 去重
                 phoneNumberList = phoneNumberList.filter(
                   (num, i, arr) => arr.findIndex((_) => _ === num) === i
@@ -167,9 +178,22 @@ const MessageTask: React.FC = () => {
               }}
             >
               <Form.Item
+                shouldUpdate
                 label="短信内容"
                 name="content"
-                extra="短信内容最长支持 30 个字符。发送样例：【小程序名称】【内容】，点击 【云开发静态网站 URL】 打开【小程序名称】小程序，回T退订。"
+                extra={
+                  <div>
+                    <div>短信内容最长支持 30 个字符。</div>
+                    <div>
+                      发送样例：【{setting.miniappName || '小程序名称'}】
+                      {form.getFieldValue('content')}，点击 https://dllzff.cn/xxxxxxxx 打开【
+                      {setting.miniappName || '小程序名称'}】小程序，回T退订。
+                    </div>
+                    {msgLongWarning && (
+                      <Text type="warning">当前短信内容可能超过70字，将会分成2条短信发送</Text>
+                    )}
+                  </div>
+                }
                 rules={[
                   {
                     required: true,
@@ -178,6 +202,23 @@ const MessageTask: React.FC = () => {
                   {
                     message: '短信内容最长支持 30 个字符',
                     max: 30,
+                  },
+                  {
+                    validator: (_, value) => {
+                      const template = `【${setting.miniappName}】，点击 https://dllzff.cn/xxxxxxxx 打开“${setting.miniappName}”小程序，回T退订。`
+
+                      if (template.length + (value?.length || 0) > 70) {
+                        setState({
+                          msgLongWarning: true,
+                        })
+                      } else {
+                        setState({
+                          msgLongWarning: false,
+                        })
+                      }
+
+                      return Promise.resolve()
+                    },
                   },
                 ]}
               >
@@ -203,18 +244,40 @@ const MessageTask: React.FC = () => {
                 <TextArea placeholder="短信号码列表" />
               </Form.Item>
 
-              <Form.Item
-                label="活动"
-                name="activityId"
-                extra="关联的活动"
-                rules={[
-                  {
-                    required: true,
-                    message: '请选择关联的活动',
-                  },
-                ]}
-              >
-                <IConnectEditor field={ActivityField} />
+              <Form.Item label="活动" required>
+                <Space align="start" size="large">
+                  <Form.Item
+                    name="activityId"
+                    extra="关联的活动"
+                    rules={[
+                      {
+                        required: true,
+                        message: '请选择关联的活动',
+                      },
+                    ]}
+                  >
+                    <IConnectEditor field={ActivityField} />
+                  </Form.Item>
+                  <Form.Item shouldUpdate>
+                    {() => {
+                      const activityId = form.getFieldValue(['activityId'])
+                      if (!activityId) return ''
+                      return (
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            setState({
+                              activityId,
+                            })
+                            qrCodeRef.current?.show()
+                          }}
+                        >
+                          体验
+                        </Button>
+                      )
+                    }}
+                  </Form.Item>
+                </Space>
               </Form.Item>
 
               <Form.Item>
@@ -249,6 +312,7 @@ const MessageTask: React.FC = () => {
           </Modal>
         </Col>
       </Row>
+      <QrCode activityId={activityId} actionRef={qrCodeRef} />
     </PageContainer>
   )
 }

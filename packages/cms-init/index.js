@@ -53,6 +53,7 @@ module.exports.main = async (event, context) => {
       contentsCollectionName: `${RESOURCE_PREFIX}-contents`,
       usersCollectionName: `${RESOURCE_PREFIX}-users`,
       rolesCollectionName: `${RESOURCE_PREFIX}-user-roles`,
+      settingCollectionName: `${RESOURCE_PREFIX}-settings`
     },
     // 用户信息
     adminUsername,

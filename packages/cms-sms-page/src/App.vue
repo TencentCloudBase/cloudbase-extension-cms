@@ -4,29 +4,20 @@
     <img v-if="bgImg" id="bgImg" :src="bgImg" />
     <wechat-web v-if="isWeixin" :appPath="appPath" :bgImg="bgImg" />
     <desktop-web v-else-if="isDesktop" />
-    <public-web
-      v-else
-      :bgImg="bgImg"
-      :openWeapp="openWeapp"
-      :btnLoading="btnLoading"
-    />
-    <we-dialog
-      :onOk="openWeapp"
-      :visible="dialogVisible"
-      :message="dialogMsg"
-    />
+    <public-web v-else :bgImg="bgImg" :openWeapp="openWeapp" :btnLoading="btnLoading" />
+    <we-dialog :onOk="openWeapp" :visible="dialogVisible" :message="dialogMsg" />
   </div>
 </template>
 
 <script>
-import WechatWeb from "./components/WechatWeb";
-import PublicWeb from "./components/PublicWeb";
-import DesktopWeb from "./components/DesktopWeb.vue";
-import Loading from "./components/Loading.vue";
-import WeDialog from "./components/WeDialog.vue";
+import WechatWeb from './components/WechatWeb'
+import PublicWeb from './components/PublicWeb'
+import DesktopWeb from './components/DesktopWeb.vue'
+import Loading from './components/Loading.vue'
+import WeDialog from './components/WeDialog.vue'
 
 export default {
-  name: "App",
+  name: 'App',
   components: {
     WechatWeb,
     PublicWeb,
@@ -42,67 +33,66 @@ export default {
       isDesktop: false,
       cloudApp: null,
       // 小程序路径
-      appPath: "",
-      bgImg: "",
+      appPath: '',
+      bgImg: '',
       pageLoading: true,
       // 加载中
       btnLoading: false,
       // 跳转链接
-      openlink: "",
+      openlink: '',
       dialogVisible: false,
-      dialogMsg: "",
-    };
+      dialogMsg: '',
+      // 生成跳转路径错误
+      generateSchemaError: false,
+    }
   },
   created() {
     // 获取 UA 信息
-    const ua = navigator.userAgent.toLowerCase();
-    this.isWXWork = ua.match(/wxwork/i) == "wxwork";
-    this.isWeixin =
-      !this.isWXWork && ua.match(/micromessenger/i) == "micromessenger";
+    const ua = navigator.userAgent.toLowerCase()
+    this.isWXWork = ua.match(/wxwork/i) == 'wxwork'
+    this.isWeixin = !this.isWXWork && ua.match(/micromessenger/i) == 'micromessenger'
 
     if (
-      navigator.userAgent.match(
-        /(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|IEMobile)/i
-      )
+      navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|IEMobile)/i)
     ) {
-      this.isMobile = true;
+      this.isMobile = true
     } else {
-      this.isDesktop = true;
+      this.isDesktop = true
     }
 
     // 桌面不获取活动信息
     if (!this.isDesktop) {
-      this.initCloudAndGetActivityInfo();
+      this.initCloudAndGetActivityInfo()
     } else {
-      this.pageLoading = false;
+      this.pageLoading = false
     }
   },
   mounted() {
     if (this.isWeixin) {
-      this.initWxConfig();
+      this.initWxConfig()
     }
   },
   methods: {
     // 初始化微信 SDK
     initWxConfig() {
-      const { cloudResource = {} } = window;
+      const { cloudResource = {} } = window
 
       wx.config({
         // debug: true, // 调试时可开启
         appId: cloudResource.appID, // <!-- replace -->
         timestamp: 0, // 必填，填任意数字即可
-        nonceStr: "nonceStr", // 必填，填任意非空字符串即可
-        signature: "signature", // 必填，填任意非空字符串即可
-        jsApiList: ["chooseImage"], // 必填，随意一个接口即可
-        openTagList: ["wx-open-launch-weapp"], // 填入打开小程序的开放标签名
-      });
+        nonceStr: 'nonceStr', // 必填，填任意非空字符串即可
+        signature: 'signature', // 必填，填任意非空字符串即可
+        jsApiList: ['chooseImage'], // 必填，随意一个接口即可
+        openTagList: ['wx-open-launch-weapp'], // 填入打开小程序的开放标签名
+      })
     },
     // 初始化云开发 SDK
     initCloudAndGetActivityInfo() {
-      const { cloudResource } = window;
-      if (!cloudResource || cloudResource.appID === "{{APPID}}") {
-        this.showDialog("页面初始化信息缺失");
-        return;
+      const { cloudResource } = window
+      if (!cloudResource || cloudResource.appID === '{{APPID}}') {
+        this.showDialog('页面初始化信息缺失')
+        return
       }
 
       // 初始化云开发 SDK
@@ -113,140 +103,137 @@ export default {
         resourceAppid: cloudResource.appID, // <!-- replace -->
         // 资源方环境 ID
         resourceEnv: cloudResource.envID, // <!-- replace -->
-      });
-      cloud.init();
-      this.cloudApp = cloud;
+      })
+      cloud.init()
+      this.cloudApp = cloud
 
-      this.getActivityInfo();
+      this.getActivityInfo()
     },
     // 查询 query 参数
     getQueryByName(name, url = window.location.href) {
-      name = name.replace(/[\[\]]/g, "\\$&");
-      const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return "";
-      return decodeURIComponent(results[2].replace(/\+/g, " "));
+      name = name.replace(/[\[\]]/g, '\\$&')
+      const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url)
+      if (!results) return null
+      if (!results[2]) return ''
+      return decodeURIComponent(results[2].replace(/\+/g, ' '))
     },
     showDialog(msg) {
-      this.dialogMsg = msg;
-      this.dialogVisible = true;
+      this.dialogMsg = msg
+      this.dialogVisible = true
     },
     /**
      * 获取活动信息
      */
     async getActivityInfo() {
-      this.btnLoading = true;
-      const { cloudResource = {} } = window;
+      this.btnLoading = true
+      const { cloudResource = {} } = window
 
       try {
-        const activityId = this.getQueryByName("activityId");
+        const activityId = this.getQueryByName('activityId')
 
         // 查询活动信息
         const res = await this.cloudApp.callFunction({
-          name: "wx-ext-cms-sms",
+          name: 'wx-ext-cms-sms',
           data: {
             activityId: activityId,
-            action: "getUrlScheme",
+            action: 'getUrlScheme',
           },
-        });
+        })
 
-        console.log(res);
+        console.log(res)
 
-        const { result } = res;
+        const { result } = res
 
         // 函数执行错误
         if (result.error) {
-          this.showDialog(result.error.msg);
-          return;
+          this.generateSchemaError = true
+          this.showDialog(result.error.message)
+          return
         }
 
-        this.openlink = res.result.openlink;
+        this.openlink = res.result.openlink
 
         // 动态修改 Path
-        const activity = res.result.activity || {};
+        const activity = res.result.activity || {}
 
         // 添加背景图片
         if (activity.jumpImg) {
-          this.bgImg = activity.jumpImg;
+          this.bgImg = activity.jumpImg
         }
 
         // 活动状态
-        let status = "";
+        let status = ''
 
         if (!activity || !activity._id) {
-          status = "不存在";
-        } else if (
-          typeof activity.isActivityOpen === "boolean" &&
-          !activity.isActivityOpen
-        ) {
-          status = "未开放";
+          status = '不存在'
+        } else if (typeof activity.isActivityOpen === 'boolean' && !activity.isActivityOpen) {
+          status = '未开放'
         } else if (activity.startTime > Date.now()) {
-          status = "尚未开始";
+          status = '尚未开始'
         } else if (activity.endTime < Date.now()) {
-          status = "已结束";
+          status = '已结束'
         }
 
         // 添加跳转路径
-        let jumpPath;
+        let jumpPath
         if (activity.appPath) {
-          jumpPath = activity.appPath + ".html?";
+          jumpPath = activity.appPath + '.html?'
         }
 
         if (activity.appPathQuery) {
-          jumpPath += activity.appPathQuery;
+          jumpPath += activity.appPathQuery
         }
 
         if (jumpPath) {
-          this.appPath = jumpPath;
+          this.appPath = jumpPath
         }
 
         // 活动状态异常
         if (status) {
-          this.showDialog(
-            `当前活动${status}，更多精彩活动来${cloudResource.appName}看看吧`
-          );
+          this.showDialog(`当前活动${status}，更多精彩活动来${cloudResource.appName}看看吧`)
         } else {
           // 自动跳转
           if (!this.isWeixin && !this.isDesktop) {
-            location.href = this.openlink;
+            location.href = this.openlink
           }
         }
       } catch (err) {
         // 页面路径错误
-        console.log(err);
-        if (err.message && err.message.indexOf("40165") > -1) {
-          this.showDialog("页面路径填写错误");
+        console.log(err)
+        if (err.message && err.message.indexOf('40165') > -1) {
+          this.showDialog('页面路径填写错误')
         } else {
-          alert(err);
+          alert(err)
         }
       } finally {
-        this.pageLoading = false;
-        this.btnLoading = false;
+        this.pageLoading = false
+        this.btnLoading = false
       }
     },
     /**
      * 打开小程序
      */
     openWeapp() {
-      this.dialogVisible = false;
-      if (this.isWeixin) return;
+      this.dialogVisible = false
+
+      if (this.isWeixin || this.generateSchemaError) return
 
       if (this.openlink) {
-        location.href = this.openlink;
+        location.href = this.openlink
       } else {
-        this.getActivityInfo();
+        this.getActivityInfo()
       }
     },
   },
-};
+}
 </script>
 
 <style lang="less">
 #app {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
   text-align: center;
   color: #2c3e50;
 }

@@ -1,7 +1,9 @@
 /* eslint-disable */
 const cloud = require('wx-server-sdk')
 
-const MessageActivities = 'wx-ext-cms-sms-activities'
+const { getUrlScheme } = require('./url')
+const { getAppBasicInfo } = require('./app')
+
 const MessageTasks = 'wx-ext-cms-sms-tasks'
 const MessageAuthToken = 'wx-ext-cms-sms-token'
 
@@ -16,8 +18,22 @@ exports.main = async (event = {}) => {
     env: ENV,
   })
 
+  // 生成 url schema
   if (action === 'getUrlScheme') {
     return getUrlScheme(event)
+  }
+
+  if (action === 'getAppBasicInfo') {
+    /**
+     * 校验 token 和任务信息
+     */
+    try {
+      await checkAuth(event, 'openapi')
+    } catch (e) {
+      console.log(e)
+      return e
+    }
+    return getAppBasicInfo()
   }
 
   /**
@@ -79,7 +95,8 @@ exports.main = async (event = {}) => {
     console.log(result)
     return result
   } catch (err) {
-    console.log('下发失败', err)
+    console.log('下发短信失败', err)
+
     // 更新任务记录
     await db
       .collection(MessageTasks)
@@ -91,14 +108,50 @@ exports.main = async (event = {}) => {
         },
       })
 
-    return err
+    let message
+
+    switch (err.errCode) {
+      case -1:
+        message = '系统繁忙，此时请开发者稍候再试'
+        break
+      case -601027:
+        message = '无效的环境'
+        break
+      case -601028:
+        message = '该环境没有开通静态网站'
+        break
+      case -601029:
+        message = '信息长度过长'
+        break
+      case -601030:
+        message = '信息含有违法违规内容'
+        break
+      case -601031:
+        message = '无效的 Path'
+        break
+      case -601032:
+        message = '小程序昵称不能为空'
+        break
+      case -601033:
+        message = '仅支持非个人主体小程序'
+        break
+      default:
+        message = e.message
+    }
+
+    return {
+      error: {
+        message,
+        code: err.errCode,
+      },
+    }
   }
 }
 
 /**
  * 下发短信鉴权
  */
-async function checkAuth(event = {}) {
+async function checkAuth(event = {}, type) {
   const { ENV } = cloud.getWXContext()
 
   const { token, taskId } = event
@@ -146,8 +199,16 @@ async function checkAuth(event = {}) {
     }
   }
 
+  // taskId missing
+  if (!taskId && type !== 'openapi') {
+    return {
+      code: 'INVALID_PARAM',
+      message: '参数错误',
+    }
+  }
+
   // token 和任务 id 无法对应
-  if (tokenRecord.taskId !== taskId) {
+  if (taskId && tokenRecord.taskId !== taskId) {
     throw {
       code: 'TASK_ERROR',
       message: 'token 异常',
@@ -164,44 +225,4 @@ async function checkAuth(event = {}) {
         used: true,
       },
     })
-}
-
-/**
- * 生成 URL schema
- * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
- */
-async function getUrlScheme(event) {
-  const { activityId } = event
-
-  let query = ''
-  let path = ''
-  let activity = ''
-
-  // 查询活动
-  if (activityId) {
-    const { data } = await cloud.database().collection(MessageActivities).doc(activityId).get()
-
-    activity = data
-
-    if (activity) {
-      path = activity.appPath || path
-      query = activity.appPathQuery || query
-    }
-  }
-
-  const res = await cloud.openapi.urlscheme.generate({
-    jumpWxa: {
-      path,
-      query,
-    },
-    // 如果想不过期则置为 false，并可以存到数据库
-    isExpire: true,
-    // 五分钟有效期
-    expireTime: parseInt(Date.now() / 1000 + 300),
-  })
-
-  return {
-    activity: activity || {},
-    ...res,
-  }
 }

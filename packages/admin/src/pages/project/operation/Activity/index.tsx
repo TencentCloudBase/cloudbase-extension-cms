@@ -4,7 +4,7 @@ import { PageContainer } from '@ant-design/pro-layout'
 import { history, useParams } from 'umi'
 import { useConcent } from 'concent'
 import { ContentCtx, GlobalCtx } from 'typings/store'
-import { ContentTable } from '../../content/ContentTable'
+import { ContentTable } from './ContentTable'
 import { ActivitySchema } from './schema'
 
 export default (): React.ReactNode => {

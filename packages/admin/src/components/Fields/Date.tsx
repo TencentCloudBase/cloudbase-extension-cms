@@ -18,8 +18,7 @@ export const IDatePicker: React.FC<{
   let { type, value, onChange = () => {}, dateFormatType } = props
 
   // 纯时间数字，如 23:59:59
-  const isPureTime = String(value)?.length < 10 && !isNaN(Number(value))
-  if (type === 'Time' || isPureTime) {
+  if (type === 'Time') {
     return <ITimePicker value={value || 0} type={dateFormatType} onChange={onChange} />
   }
 

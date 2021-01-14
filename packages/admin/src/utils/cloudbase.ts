@@ -5,7 +5,6 @@ import { codeMessage } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
-import { getSettings } from '@/services/global'
 
 let app: any
 let auth: any
@@ -146,10 +145,13 @@ export async function tcbRequest<T = any>(
   // 转化响应值
   let body
   try {
-    body = typeof res.result.body === 'string' ? JSON.parse(res.result.body) : res.result.body
+    body =
+      typeof res.result.body === 'string' && res.result.body?.length
+        ? JSON.parse(res.result.body)
+        : res.result.body
   } catch (error) {
-    body = res.result.body
     console.log(error)
+    body = res.result.body
   }
 
   if (body?.error) {

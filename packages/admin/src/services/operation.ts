@@ -13,3 +13,10 @@ export async function createBatchTask(projectId: string, data: any = {}) {
     data,
   })
 }
+
+export async function getOpenAPIToken(projectId: string, data: any = {}) {
+  return tcbRequest(`/projects/${projectId}/operation/getOpenAPIToken`, {
+    method: 'POST',
+    data,
+  })
+}
