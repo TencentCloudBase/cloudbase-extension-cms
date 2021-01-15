@@ -476,6 +476,22 @@ export class ContentsService {
 }
 
 function getDocProcessContext(schema: Schema) {
+  const now = Date.now()
+
+  // schema not exist, such as webhook
+  if (!schema) {
+    return {
+      _createTime: {
+        name: '_createTime',
+        resolver: () => now,
+      },
+      _updateTime: {
+        name: '_updateTime',
+        resolver: () => now,
+      },
+    }
+  }
+
   const systemFields: SchemaField[] = getSchemaSystemFields(schema)
 
   const createTimeField = systemFields.find(
@@ -485,7 +501,6 @@ function getDocProcessContext(schema: Schema) {
     (_) => _.name === '_updateTime' || _.name === schema.docUpdateTimeField
   )
 
-  const now = Date.now()
   const createTime = formatTimeByType(createTimeField.dateFormatType, now)
   const updateTime = formatTimeByType(updateTimeField.dateFormatType, now)
 
