@@ -293,6 +293,7 @@ export const SchemaFieldEditorModal: React.FC<{
             }
           >
             {getFieldDefaultValueInput(selectedField?.type, {
+              enumElementType: formValue?.enumElementType,
               dateFormatType: formValue?.dateFormatType,
             })}
           </Form.Item>

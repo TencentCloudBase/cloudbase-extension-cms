@@ -25,23 +25,30 @@ const ObjectInput: React.FC<{
  * 获取字段默认值的输入 JSX
  */
 export const getFieldDefaultValueInput = (
-  type: string,
+  type: SchemaFieldType,
   options: {
+    enumElementType: 'string' | 'number'
     dateFormatType: 'timestamp-ms' | 'timestamp-s' | 'date' | 'string'
   }
 ) => {
-  const { dateFormatType } = options
+  const { dateFormatType, enumElementType } = options
 
   switch (type) {
     case 'Number':
-      return <InputNumber style={{ width: '50%' }} placeholder="此值的默认值" />
+      return <InputNumber style={{ width: '60%' }} placeholder="此值的默认值" />
     case 'Boolean':
       return <ISwitch />
     case 'Date':
     case 'DateTime':
-      return <IDatePicker style={{ width: '50%' }} type={type} dateFormatType={dateFormatType} />
+      return <IDatePicker style={{ width: '60%' }} type={type} dateFormatType={dateFormatType} />
     case 'Object':
       return <ObjectInput />
+    case 'Enum':
+      if (enumElementType === 'number') {
+        return <InputNumber style={{ width: '60%' }} placeholder="此值的默认值" />
+      } else {
+        return <Input placeholder="此值的默认值" />
+      }
     default:
       return <Input placeholder="此值的默认值" />
   }
