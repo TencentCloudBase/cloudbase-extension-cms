@@ -5,7 +5,7 @@ import { codeMessage } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
-import { uploadFilesToHosting } from '@/services/api'
+import { uploadFilesToHosting } from '@/services/apis'
 
 let app: any
 let auth: any

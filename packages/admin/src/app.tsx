@@ -5,7 +5,7 @@ import { Context, ResponseError } from 'umi-request'
 import { history, RequestConfig } from 'umi'
 import { codeMessage } from '@/constants'
 import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout'
-import { queryCurrent } from './services/user'
+import { getCurrentUser } from './services/apis'
 import defaultSettings from '../config/defaultSettings'
 import { getAuthHeaderAsync, getCloudBaseApp, isDevEnv } from './utils'
 import * as models from './models'
@@ -51,13 +51,13 @@ export async function getInitialState(): Promise<{
   // 如果是登录页面，不执行
   if (history.location.pathname !== '/login') {
     try {
-      currentUser = await queryCurrent()
+      currentUser = await getCurrentUser()
     } catch (e) {
       console.log(e)
     }
   } else {
     try {
-      currentUser = await queryCurrent()
+      currentUser = await getCurrentUser()
     } catch (e) {
       console.log(e)
     }

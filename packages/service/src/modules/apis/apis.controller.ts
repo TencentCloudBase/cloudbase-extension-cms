@@ -1,11 +1,12 @@
 import _ from 'lodash'
 import { Get, Post, Body, Controller } from '@nestjs/common'
-import { IsIn, IsNotEmpty } from 'class-validator'
-import { UtilService } from './util/util.service'
+import { IsNotEmpty } from 'class-validator'
+import { UtilService } from './util.service'
+import { AuthService } from './auth.service'
+import { CmsException } from '@/common'
 
 class RequestBody {
   // 合法的 service
-  @IsIn(['util', 'file'])
   service: string
 
   // 操作
@@ -14,8 +15,8 @@ class RequestBody {
 }
 
 @Controller()
-export class ApiController {
-  constructor(private readonly util: UtilService) {}
+export class ApisController {
+  constructor(private readonly util: UtilService, private readonly auth: AuthService) {}
 
   @Get()
   async getHello(): Promise<string> {
@@ -27,6 +28,12 @@ export class ApiController {
     const { service, action } = body
 
     console.log('Service 处理', service, action)
+
+    const validServices = Object.keys(this)
+
+    if (!validServices.includes(service)) {
+      throw new CmsException('INVALID_SERVICE', '非法的 Service')
+    }
 
     const data = _.omit(body, 'service', 'action')
 

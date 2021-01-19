@@ -1,7 +1,7 @@
 import { Spin } from 'antd'
 import React, { useEffect } from 'react'
 import { history, useRequest } from 'umi'
-import { getCollectionInfo } from '@/services/global'
+import { getCollectionInfo } from '@/services/apis'
 
 export default () => {
   const { collectionName, from, customId } = history.location.query || {}

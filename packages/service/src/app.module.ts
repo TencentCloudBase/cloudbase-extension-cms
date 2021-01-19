@@ -1,19 +1,17 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { BodySerialize } from '@/middlewares/converter.middleware'
-import { AuthModule } from './modules/auth/auth.module'
 import { ProjectsModule } from './modules/projects/projects.module'
 import { UserModule } from './modules/user/user.module'
 import { RoleModule } from './modules/role/role.module'
 import { SettingModule } from './modules/setting/setting.module'
-import { ApiModule } from './modules/api.module'
+import { ApisModule } from './modules/apis/apis.module'
 import { GlobalModule } from './global.module'
 
 @Module({
   imports: [
-    ApiModule,
+    ApisModule,
     GlobalModule,
-    AuthModule,
     UserModule,
     ProjectsModule,
     ConfigModule.forRoot({
