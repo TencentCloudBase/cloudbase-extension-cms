@@ -1,4 +1,4 @@
-export interface IFile {
+interface IFile {
   fieldname: string
   originalname: string
   encoding: string

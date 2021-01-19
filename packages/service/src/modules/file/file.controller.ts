@@ -8,7 +8,6 @@ import {
 } from '@nestjs/common'
 import { AnyFilesInterceptor } from '@nestjs/platform-express'
 import { PermissionGuard } from '@/guards'
-import { IFile } from './types'
 import { FileService } from './file.service'
 
 @UseGuards(PermissionGuard('content'))
@@ -33,5 +32,20 @@ export class FileController {
     // 返回链接
     const result = await this.fileService.getUrl(data)
     return result
+  }
+
+  // 上传文件
+  @Post('hosting')
+  @HttpCode(200)
+  @UseInterceptors(AnyFilesInterceptor())
+  async uploadFile(@UploadedFiles() files: IFile[]) {
+    // 处理多个文件
+    const jobs = files.map((file) => {
+      return this.fileService.uploadFileToHosting(file)
+    })
+
+    const data = await Promise.all(jobs)
+
+    return data
   }
 }

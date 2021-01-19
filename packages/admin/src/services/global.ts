@@ -14,11 +14,13 @@ export const updateSetting = async (payload: Record<string, string>) => {
 }
 
 export const getCollectionInfo = async (customId: string, collectionName: string) => {
-  return tcbRequest('/collectionInfo', {
+  return tcbRequest('/', {
     method: 'POST',
     data: {
       customId,
       collectionName,
+      service: 'util',
+      action: 'getCollectionInfo',
     },
   })
 }

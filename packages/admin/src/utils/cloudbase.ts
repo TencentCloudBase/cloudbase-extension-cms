@@ -5,6 +5,7 @@ import { codeMessage } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
+import { uploadFilesToHosting } from '@/services/api'
 
 let app: any
 let auth: any
@@ -166,12 +167,25 @@ export async function tcbRequest<T = any>(
   return body
 }
 
-// 上传文件
-export async function uploadFile(
-  file: File,
-  onProgress: (v: number) => void,
+/**
+ * 上传文件到文件存储、静态托管
+ */
+export async function uploadFile(options: {
+  file: File
+  onProgress: (v: number) => void
   filePath?: string
-): Promise<string> {
+  uploadType?: 'hosting' | 'storage'
+}): Promise<string> {
+  const { file, onProgress, filePath, uploadType } = options
+
+  // 上传文件到静态托管
+  if (uploadType === 'hosting') {
+    // 返回 URL 信息数组
+    const ret = await uploadFilesToHosting(file)
+    onProgress(100)
+    return ret[0].url
+  }
+
   const app = await getCloudBaseApp()
   const day = getFullDate()
 

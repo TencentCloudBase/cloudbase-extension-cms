@@ -101,13 +101,13 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
             // 文件路径
             const filePath = `data-import/${random(32)}-${file.name}`
             // 上传文件
-            uploadFile(
+            uploadFile({
               file,
-              (percent) => {
+              filePath,
+              onProgress: (percent) => {
                 setPercent(percent)
               },
-              filePath
-            )
+            })
               .then(() => createMigrateJobs(projectId, collectionName, filePath, conflictMode))
               .then(() => {
                 setVisible(false)

@@ -23,11 +23,13 @@ export default () => {
   useEffect(() => {
     if (!data) return
     const { schema, project } = data
+    const projectId = project?._id || schema?.projectId
+
     // 跳转到对应的集合管理页面
     if (schema?._id) {
-      history.push(`/${project._id}/content/${schema._id}`)
+      history.push(`/${projectId}/content/${schema._id}`)
     } else if (project) {
-      history.push(`/${project._id}/home`)
+      history.push(`/${projectId}/home`)
     } else {
       history.push('/home')
     }

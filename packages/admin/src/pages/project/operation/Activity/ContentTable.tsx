@@ -3,7 +3,7 @@ import { useConcent } from 'concent'
 import { useParams, history } from 'umi'
 import QrCode from '@/components/QrCode'
 import ProTable, { ProColumns } from '@ant-design/pro-table'
-import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select, Typography } from 'antd'
+import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select } from 'antd'
 import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { ContentCtx } from 'typings/store'
@@ -132,7 +132,7 @@ export const ContentTable: React.FC<{
                 contentAction: 'edit',
                 selectedContent: row,
               })
-              history.push(`/${projectId}/content/${schemaId}/edit`)
+              history.push(`/${projectId}/content/${schemaId}/edit?upload=hosting`)
             }}
           >
             编辑
@@ -208,8 +208,7 @@ export const ContentTable: React.FC<{
             contentAction: 'create',
             selectedContent: null,
           })
-
-          history.push(`/${projectId}/content/${schemaId}/edit`)
+          history.push(`/${projectId}/content/${schemaId}/edit?upload=hosting`)
         }}
       >
         新建

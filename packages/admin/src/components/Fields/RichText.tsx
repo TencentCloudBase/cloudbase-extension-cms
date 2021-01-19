@@ -153,8 +153,11 @@ export const CustomUploader: React.FC<{
 }
 
 const uploadFileAndGetUrl = async (file: File, setPercent: (percent: number) => void) => {
-  const fileId = await uploadFile(file, (percent) => {
-    setPercent(percent)
+  const fileId = await uploadFile({
+    file,
+    onProgress: (percent) => {
+      setPercent(percent)
+    },
   })
 
   const url = await getTempFileURL(fileId)

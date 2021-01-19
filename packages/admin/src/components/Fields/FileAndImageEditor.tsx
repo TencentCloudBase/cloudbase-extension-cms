@@ -4,6 +4,7 @@ import {
   isFileId,
   uploadFile,
   fileIdToUrl,
+  getPageQuery,
   getTempFileURL,
   getFileNameFromUrl,
   batchGetTempFileURL,
@@ -24,6 +25,8 @@ export const IFileAndImageEditor: React.FC<{
 }> = (props) => {
   let { value: links, type, field, onChange = () => {}, resourceLinkType = 'fileId' } = props
   const { isMultiple } = field
+  const query = getPageQuery()
+  const uploadType: any = query?.upload
 
   // 数组模式，多文件
   if (isMultiple || Array.isArray(links)) {
@@ -44,6 +47,7 @@ export const IFileAndImageEditor: React.FC<{
       type={type}
       fileUri={fileUri}
       onChange={onChange}
+      uploadType={uploadType}
       resourceLinkType={resourceLinkType}
     />
   )
@@ -55,9 +59,10 @@ export const IFileAndImageEditor: React.FC<{
 export const ISingleFileUploader: React.FC<{
   type: 'file' | 'image'
   fileUri: string
+  uploadType: 'hosting' | 'storage'
   onChange: (v: string | string[] | null) => void
   resourceLinkType: 'fileId' | 'https'
-}> = ({ type, fileUri, onChange, resourceLinkType }) => {
+}> = ({ type, fileUri, onChange, uploadType, resourceLinkType }) => {
   const [percent, setPercent] = useState(0)
   const [uploading, setUploading] = useState(false)
   const [fileList, setFileList] = useState<any[]>([])
@@ -127,14 +132,19 @@ export const ISingleFileUploader: React.FC<{
           setUploading(true)
           setPercent(0)
           // 上传文件
-          uploadFile(file, (percent) => {
-            setPercent(percent)
+          uploadFile({
+            file,
+            uploadType,
+            onProgress: (percent) => {
+              setPercent(percent)
+            },
           }).then((fileId: string) => {
             // 保存链接
             onChange(resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId))
             // 添加图片
             setFileList([
               {
+                url: fileIdToUrl(fileId),
                 uid: fileId,
                 name: file.name,
                 status: 'done',
@@ -256,8 +266,11 @@ const IMultipleEditor: React.FC<{
           setUploading(true)
           setPercent(0)
           // 上传文件
-          uploadFile(file, (percent) => {
-            setPercent(percent)
+          uploadFile({
+            file,
+            onProgress: (percent) => {
+              setPercent(percent)
+            },
           }).then((fileId: string) => {
             // 返回值
             const resourceLink = resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId)

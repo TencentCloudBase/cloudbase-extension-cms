@@ -1,9 +1,10 @@
+import Util from 'util'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
-import { randomId } from '@/utils'
-import { IFile } from './types'
+import { getCloudBaseManager, randomId } from '@/utils'
+import { getCosApp } from '@/utils/cos'
 
 // 本地时间
 dayjs.locale('zh-cn')
@@ -66,5 +67,43 @@ export class FileService {
       return prev
     }, {})
     return dataFormat(data)
+  }
+
+  // 上传文件到静态网站托管
+  async uploadFileToHosting(file: IFile) {
+    // 按照日期分类
+    const day = dayjs().format('YYYY-MM-DD')
+    // 文件名
+    let ext
+    if (file.originalname?.length && file.originalname.includes('.')) {
+      ext = file.originalname.split('.').pop()
+      ext = `.${ext}`
+    } else {
+      ext = file.originalname
+    }
+
+    // 文件路径
+    const cloudPath = `cloudbase-cms/upload/${day}/${randomId()}_${ext}`
+
+    // 使用 COS SDK 上传文件到静态网站托管
+    const managerApp = await getCloudBaseManager()
+    const cos = await getCosApp()
+    const putObject = Util.promisify(cos.putObject).bind(cos)
+    const hosting = await managerApp.hosting.getInfo()
+    const { Bucket, Regoin, CdnDomain } = hosting[0]
+
+    // 上传文件
+    await putObject({
+      Bucket,
+      Region: Regoin,
+      Key: cloudPath,
+      StorageClass: 'STANDARD',
+      ContentLength: file.size,
+      Body: file.buffer,
+    })
+
+    return {
+      url: `https://${CdnDomain}/${cloudPath}`,
+    }
   }
 }

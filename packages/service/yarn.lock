@@ -373,6 +373,11 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.6.tgz#146d3da57b3c636cc0d1769396ce1cfa8991147f"
   integrity sha512-6QlRuqsQ/Ox/aJEQWBEJG7A9+u7oSYl3mem/K8IzxXG/kAGbV1YPD9Bg9Zw3vyxC/YP+zONKwy8hGkSt1jxFMw==
 
+"@types/node@^14.14.20":
+  version "14.14.21"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.21.tgz#d934aacc22424fe9622ebf6857370c052eae464e"
+  integrity sha512-cHYfKsnwllYhjOzuC5q1VpguABBeecUp24yFluHpn/BQaVxB1CuQ1FSRZCzrPxrkIfWISXV2LbeoBthLWg0+0A==
+
 "@types/parse-json@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
@@ -1643,6 +1648,17 @@ cos-nodejs-sdk-v5@^2.5.20:
     conf "^7.1.2"
     mime-types "^2.1.24"
     request "^2.88.0"
+    xml2js "^0.4.19"
+
+cos-nodejs-sdk-v5@^2.8.6:
+  version "2.8.6"
+  resolved "https://registry.yarnpkg.com/cos-nodejs-sdk-v5/-/cos-nodejs-sdk-v5-2.8.6.tgz#5a8723db2a65d56c1aeb882d93d1ea8bf944c6a9"
+  integrity sha512-aCRjI5sysEyNHHc/odMlikCQe05ixS0JheiIKcE2oEh1UH8MQlliycS6BJn6zsC5hOykoJ+t3NT1paGvC7CFeA==
+  dependencies:
+    "@types/node" "^14.14.20"
+    conf "^7.1.2"
+    mime-types "^2.1.24"
+    request "^2.88.2"
     xml2js "^0.4.19"
 
 cosmiconfig@^6.0.0:
@@ -4558,7 +4574,7 @@ request-promise@^4.2.5:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@^2.87.0, request@^2.88.0:
+request@^2.87.0, request@^2.88.0, request@^2.88.2:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
