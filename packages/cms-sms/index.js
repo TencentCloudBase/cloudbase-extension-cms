@@ -136,7 +136,7 @@ exports.main = async (event = {}) => {
         message = '仅支持非个人主体小程序'
         break
       default:
-        message = e.message
+        message = err.message
     }
 
     return {
