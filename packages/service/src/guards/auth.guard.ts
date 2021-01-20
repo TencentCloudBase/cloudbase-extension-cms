@@ -52,7 +52,8 @@ export class GlobalAuthGuard implements CanActivate {
     let { userInfo } = await app.auth().getEndUserInfo(TCB_UUID)
 
     // 根据 credential 信息获取用户身份
-    if (request.path === `${config.globalPrefix}/upload` || isRunInServerMode()) {
+    const uploadPaths = [`${config.globalPrefix}/upload`, `${config.globalPrefix}/upload/hosting`]
+    if (uploadPaths.includes(request.path) || isRunInServerMode()) {
       const { headers } = request
       const credentials = headers['x-cloudbase-credentials'] as string
       if (credentials) {

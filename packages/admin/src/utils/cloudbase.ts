@@ -53,7 +53,9 @@ export async function getWxCloudApp(appConfig: any) {
   return wxCloudApp
 }
 
-// 初始化 app 实例
+/**
+ * 初始化云开发 app 实例
+ */
 function initCloudBaseApp() {
   if (!app) {
     const { envId } = window.TcbCmsConfig || {}
@@ -263,6 +265,9 @@ export async function downloadFile(fileId: string) {
   console.log('下载文件', fileId, result)
 }
 
+/**
+ * 判断一个 URL 是否为 FileId
+ */
 export const isFileId = (v: string) => /^cloud:\/\/\S+/.test(v)
 
 export const getFileNameFromUrl = (url: string) => {
@@ -311,4 +316,15 @@ export function fileIdToUrl(fileId: string) {
   }
 
   return `https://${trimBucket}.tcb.qcloud.la/${path}`
+}
+
+/**
+ * 获取 HTTP 网关访问地址
+ */
+export const getHttpAccessPath = () => {
+  return isDevEnv()
+    ? '/api/v1.0'
+    : SERVER_MODE
+    ? `https://${window.TcbCmsConfig.containerAccessPath}/api/v1.0`
+    : `https://${window.TcbCmsConfig.cloudAccessPath}/api/v1.0`
 }

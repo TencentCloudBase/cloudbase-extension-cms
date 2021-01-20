@@ -30,7 +30,7 @@ module.exports = {
 
     console.log('====> 部署静态网站成功 <=====')
   },
-  // 部署小程序
+  // 部署小程序模型
   async deploySchema(context) {
     // 仅微信环境下创建活动 schema
     if (!process.env.WX_MP) {

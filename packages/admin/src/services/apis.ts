@@ -1,4 +1,5 @@
-import { tcbRequest } from '@/utils'
+import request from 'umi-request'
+import { getAuthHeader, getHttpAccessPath, tcbRequest } from '@/utils'
 
 interface ApiRequestPayload {
   service: 'util' | 'file' | 'setting' | 'auth'
@@ -32,9 +33,13 @@ export const uploadFilesToHosting = (file: File) => {
   const formData = new FormData()
   formData.append('file', file)
 
-  return tcbRequest('/upload/hosting', {
+  const url = getHttpAccessPath()
+  const authHeader = getAuthHeader()
+
+  return request(`${url}/upload/hosting`, {
     data: formData,
     method: 'POST',
+    headers: authHeader,
   })
 }
 
