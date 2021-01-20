@@ -6,9 +6,9 @@ import { getCmsConfig, getPageQuery, loginWithPassword } from '@/utils'
 import Footer from '@/components/Footer'
 import { LoginParamsType } from '@/services/login'
 import styles from './index.less'
-import FormItem from 'antd/lib/form/FormItem'
 
 const { Title } = Typography
+const FormItem = Form.Item
 
 const LoginMessage: React.FC<{
   content: string

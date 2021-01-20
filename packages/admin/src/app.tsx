@@ -36,6 +36,7 @@ export async function getInitialState(): Promise<{
   // 没有登录，重新登录
   if (!isDevEnv() && !loginState) {
     history.push('/login')
+    message.error('您还没有登录或登录已过期，请登录后再操作！')
     // 移除 loading 元素
     document.getElementById('loading')?.remove()
     return {}

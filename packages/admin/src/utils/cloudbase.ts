@@ -1,5 +1,5 @@
 import { request, history } from 'umi'
-import { message, notification } from 'antd'
+import { notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
 import { codeMessage } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
@@ -19,7 +19,6 @@ export async function getCloudBaseApp() {
   const loginState = await auth.getLoginState()
 
   if (!loginState && !isDevEnv()) {
-    message.error('您还没有登录或登录已过期，请登录后再操作！')
     history.push('/login')
   }
 
