@@ -41,9 +41,6 @@ module.exports = {
     await addSchema(ActivitySchema, context)
     await addSchema(TaskSchema, context)
 
-    // 添加活动
-    await addDefaultActivity(context)
-
     // 保存 AppID
     await saveMiniAppID(context)
   },
@@ -115,31 +112,6 @@ async function addSchema(schema, context) {
   } else {
     // 记录不存在，添加
     await db.collection('wx-ext-cms-schemas').add(schema)
-  }
-}
-
-// 添加默认活动
-async function addDefaultActivity(context) {
-  // 添加 schema
-  const activityCollection = 'wx-ext-cms-sms-activities'
-  const { manager, db } = context
-
-  await manager.database.createCollectionIfNotExists(activityCollection)
-  const {
-    data: [record],
-  } = await db.collection(activityCollection).where({}).get()
-
-  // 添加默认活动
-  if (!record) {
-    const now = Date.now()
-    await db.collection(activityCollection).add({
-      activityName: '营销demo',
-      endTime: 1893456000000,
-      isActivityOpen: true,
-      startTime: 1610353674000,
-      _createTime: now,
-      _updateTime: now,
-    })
   }
 }
 

@@ -31,9 +31,10 @@
     "not ie <= 10"
   ],
   "dependencies": {
+    "@ant-design/charts": "^1.0.15",
     "@ant-design/icons": "4.3.0",
-    "@ant-design/pro-card": "^1.2.1",
-    "@ant-design/pro-layout": "6.4.19",
+    "@ant-design/pro-card": "^1.9.14",
+    "@ant-design/pro-layout": "^6.12.0",
     "@ant-design/pro-list": "^1.2.5",
     "@ant-design/pro-table": "2.9.3",
     "@umijs/hooks": "^1.9.3",

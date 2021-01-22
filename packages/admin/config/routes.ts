@@ -106,6 +106,11 @@ const routesConfig: IConfig = {
             },
             {
               exact: true,
+              path: '/:projectId/operation/analytics',
+              component: './project/operation/Analytics/index',
+            },
+            {
+              exact: true,
               path: '/:projectId/operation/message/create',
               component: './project/operation/Message/TaskCreator',
             },

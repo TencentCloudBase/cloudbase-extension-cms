@@ -1,5 +1,5 @@
 window.TcbCmsConfig = {
-  // 可用区，默认上海
+  // 可用区，默认上海，可选：ap-shanghai 或 ap-guangzhou
   region: 'ap-shanghai',
   // 路由方式：hash 或 browser
   history: 'hash',

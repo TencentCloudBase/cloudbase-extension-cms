@@ -1,5 +1,4 @@
-import { Spin } from 'antd'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { history, Link, matchPath, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
@@ -17,11 +16,12 @@ import { useConcent } from 'concent'
 import { ContentCtx, GlobalCtx } from 'typings/store'
 import { getCmsConfig } from '@/utils'
 import defaultSettings from '../../config/defaultSettings'
+import { Spin } from 'antd'
 
 // 设置图标颜色
 setTwoToneColor('#0052d9')
 
-const customMenuDate: MenuDataItem[] = [
+const customMenuData: MenuDataItem[] = [
   {
     authority: 'isLogin',
     path: '/:projectId/home',
@@ -58,7 +58,7 @@ const customMenuDate: MenuDataItem[] = [
 
 // 微信侧才支持发送短信的功能
 if (WX_MP) {
-  customMenuDate.splice(3, 0, {
+  customMenuData.splice(3, 0, {
     authority: 'canContent',
     path: '/:projectId/operation',
     name: '营销工具',
@@ -74,7 +74,7 @@ const layoutProps: BasicLayoutProps = {
   disableContentMargin: true,
   logo: getCmsConfig('cmsLogo'),
   rightContentRender: () => <RightContent />,
-  headerTitleRender: ({ collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
+  headerTitleRender: (logo, title, { collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
   // 面包屑渲染
   itemRender: () => null,
   ...defaultSettings,
@@ -83,31 +83,11 @@ const layoutProps: BasicLayoutProps = {
 const Layout: React.FC<any> = (props) => {
   const access = useAccess()
   const { children, location } = props
+  const [refresh, setRefresh] = useState({ n: 1 })
   const ctx = useConcent<{}, ContentCtx>('content')
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { schemas, loading } = ctx.state
   const { setting = {} } = globalCtx.state
-
-  // 添加菜单
-  useEffect(() => {
-    // 是否开启了营销工具
-    if (WX_MP && setting?.enableOperation) {
-      if (!customMenuDate[3].children?.length) {
-        customMenuDate[3].children?.push(
-          {
-            name: '营销活动',
-            path: '/:projectId/operation/activity',
-            component: './project/operation/Activity/index',
-          },
-          {
-            name: '发送短信',
-            path: '/:projectId/operation/message',
-            component: './project/operation/Message/index',
-          }
-        )
-      }
-    }
-  }, [setting])
 
   // 加载 schema 集合
   useEffect(() => {
@@ -128,37 +108,55 @@ const Layout: React.FC<any> = (props) => {
     ctx.mr.getContentSchemas(projectId)
   }, [])
 
-  const contentChildMenus = useMemo(
-    () =>
-      schemas?.map((schema: Schema) => ({
-        name: schema.displayName,
-        path: `/:projectId/content/${schema._id}`,
-      })),
-    [schemas]
-  )
+  // 内容集合菜单
+  const contentChildMenus = schemas?.map((schema: Schema) => ({
+    name: schema.displayName,
+    path: `/:projectId/content/${schema._id}`,
+  }))
+
+  // HACK: 强制菜单重新渲染，修复菜单栏在获取数据后不自动渲染的问题
+  useEffect(() => {
+    setRefresh({
+      n: refresh.n + 1,
+    })
+  }, [customMenuData, loading, schemas, setting])
+
+  // 添加菜单
+  useEffect(() => {
+    // 是否开启了营销工具
+    if (WX_MP && setting?.enableOperation) {
+      if (!customMenuData[3].children?.length) {
+        customMenuData[3].children = [
+          {
+            name: '营销活动',
+            path: '/:projectId/operation/activity',
+            component: './project/operation/Activity/index',
+          },
+          {
+            name: '发送短信',
+            path: '/:projectId/operation/message',
+            component: './project/operation/Message/index',
+          },
+          {
+            name: '统计分析',
+            path: '/:projectId/operation/analytics',
+            component: './project/operation/Analytics/index',
+          },
+        ]
+      }
+    }
+  }, [setting])
 
   return (
     <ProLayout
+      route={refresh}
       // 不自动折叠菜单
       openKeys={false}
       location={location}
-      menuContentRender={(_, dom) =>
-        loading ? (
-          <div
-            style={{
-              margin: '24px 0',
-              textAlign: 'center',
-            }}
-          >
-            <Spin tip="数据加载中" />
-          </div>
-        ) : (
-          dom
-        )
-      }
+      menuContentRender={(_, dom) => contentLoading({ dom, loading })}
       menuDataRender={(menuData: MenuDataItem[]) => {
-        customMenuDate[2].children = contentChildMenus
-        return customMenuDate.filter((_) => access[_.authority as string])
+        customMenuData[2].children = contentChildMenus
+        return customMenuData.filter((_) => access[_.authority as string])
       }}
       menuItemRender={(menuItemProps, defaultDom) => {
         const match = matchPath<{ projectId?: string }>(history.location.pathname, {
@@ -199,5 +197,27 @@ const Layout: React.FC<any> = (props) => {
     </ProLayout>
   )
 }
+
+const contentLoading = ({
+  dom,
+  loading,
+}: {
+  dom: React.ReactNode
+  loading: Boolean
+}): React.ReactNode =>
+  loading ? (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: '48px 0',
+      }}
+    >
+      <Spin tip="加载中" />
+    </div>
+  ) : (
+    dom
+  )
 
 export default Layout

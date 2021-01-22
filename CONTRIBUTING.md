@@ -23,38 +23,60 @@
 npm install -g @cloudbase/cli@latest
 ```
 
+### 登录 CLI
+
+具体的登录方法请参考 [CLI 的登录说明文档](https://docs.cloudbase.net/cli-v1/login.html)
+
+```bash
+tcb login
+```
+
 ### 配置
 
-复制 `packages/service/.env.example` 为 `packages/service/.env.local`，并配置
+**下面的配置仅为演示，不代表真实的配置，实际配置以项目最新源码中的配置文件为准。**
 
-```
-# 您的云开发环境 Id
-ENV_ID=xxx
-# 管理员账户名，账号名长度需要大于 4 位，支持字母和数字
-administratorName=xxxx
-# 管理员账号密码，8~32位，密码支持字母、数字、字符、不能由纯字母或存数字组成
-administratorPassword=xxxx
-# CMS 控制台路径，如 /tcb-cms/，建议使用根路径 /
-deployPath=/
-```
+1. 复制根目录下的 `.env.example` 为 `.env.local`，并根据文件中的内容进行配置
 
-复制 `packages/admin/public/config.example.js` 为 `packages/admin/public/config.js`，并配置
+   ```
+   # 您的云开发环境 Id
+   ENV_ID=
+   # 管理员账户名，账号名长度需要大于 4 位，支持字母和数字
+   administratorName=
+   # 管理员账号密码，8~32位，密码支持字母、数字、字符、不能由纯字母或存数字组成
+   administratorPassword=
+   # CMS 控制台路径，如 /tcb-cms/，建议使用根路径 /
+   deployPath=
+   # 云接入自定义域名（选填），如 tencent.com
+   accessDomain=
+   ```
 
-```js
-window.TcbCmsConfig = {
-  // 路由方式：hash 或 browser
-  history: 'hash',
-  // 环境 Id
-  envId: 'envId',
-  // 禁用通知
-  disableNotice: false,
-  // 禁用帮助按钮
-  disableHelpButton: false,
-  // 云接入默认域名/自定义域名 + 云接入路径，不带 https 协议符
-  // https://console.cloud.tencent.com/tcb/env/access
-  cloudAccessPath: 'xxx-xxx.service.tcloudbase.com/tcb-ext-cms-service',
-}
-```
+2. 复制 `packages/service/.env.example` 为 `packages/service/.env.local`，并根据文件中的内容进行配置
+
+   ```
+   TCB_ENVID=
+   SECRETID=
+   SECRETKEY=
+   ```
+
+3. 复制 `packages/admin/public/config.example.js` 为 `packages/admin/public/config.js`，并根据文件中的内容进行配置
+
+   ```js
+   window.TcbCmsConfig = {
+     // 可用区，默认上海，可选：ap-shanghai 或 ap-guangzhou
+     region: 'ap-shanghai',
+     // 路由方式：hash 或 browser
+     history: 'hash',
+     // 环境 Id
+     envId: 'envId',
+     // 禁用通知
+     disableNotice: false,
+     // 禁用帮助按钮
+     disableHelpButton: false,
+     // 云接入默认域名/自定义域名 + 云接入路径，不带 https 协议符
+     // https://console.cloud.tencent.com/tcb/env/access
+     cloudAccessPath: 'xxx-xxx.service.tcloudbase.com/tcb-ext-cms-service',
+   }
+   ```
 
 ### 安装依赖
 

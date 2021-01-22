@@ -1,26 +1,19 @@
 import { getSettings, updateSetting } from '@/services/global'
 import { getCloudBaseApp } from '@/utils'
 
-export interface SettingState {
-  miniappID?: string
-  miniappName?: string
-  miniappOriginalID?: string
-  enableOperation?: boolean
-}
-
 interface GlobalState {
-  setting: SettingState | null
+  setting: GlobalSetting
 }
 
 const state: GlobalState = {
-  setting: null,
+  setting: {},
 }
 
 export default {
   state,
   reducer: {
     // 更新设置信息
-    async updateSetting(setting: any, state: GlobalState) {
+    async updateSetting(setting: GlobalSetting, state: GlobalState) {
       await updateSetting(setting)
 
       return {

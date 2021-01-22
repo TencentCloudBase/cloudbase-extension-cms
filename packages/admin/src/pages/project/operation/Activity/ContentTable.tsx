@@ -9,10 +9,9 @@ import { getContents, deleteContent, batchDeleteContent } from '@/services/conte
 import { ContentCtx } from 'typings/store'
 import { getTableColumns } from '@/pages/project/content/columns'
 import ContentTableSearchForm from '@/pages/project/content/SearchForm'
-import DataImport from '@/pages/project/content/DataImport'
-import DataExport from '@/pages/project/content/DataExport'
 import { exportData, formatSearchParams } from '@/pages/project/content/common'
 import { useSetState } from 'react-use'
+import ActivityChannels from './Channel'
 
 const { Option } = Select
 
@@ -142,7 +141,6 @@ export const ContentTable: React.FC<{
             type="primary"
             key="edit"
             onClick={async () => {
-              console.log(row._id)
               setState({
                 activityId: row._id,
               })
@@ -213,13 +211,7 @@ export const ContentTable: React.FC<{
       >
         新建
       </Button>,
-      <DataImport key="import" collectionName={currentSchema.collectionName} />,
-      <DataExport
-        key="export"
-        schema={currentSchema}
-        searchParams={searchParams}
-        collectionName={currentSchema.collectionName}
-      />,
+      <ActivityChannels key="channel" />,
     ],
     [currentSchema, searchParams, searchFields]
   )

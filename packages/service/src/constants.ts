@@ -26,6 +26,9 @@ export const Collection = {
   // 数据导入导出的记录
   DataMigrateTasks: `${RESOURCE_PREFIX}-data-migrate`,
 
+  // 短信活动
+  MessageActivity: `${RESOURCE_PREFIX}-sms-activities`,
+
   // 发送短信记录
   MessageTasks: `${RESOURCE_PREFIX}-sms-tasks`,
 

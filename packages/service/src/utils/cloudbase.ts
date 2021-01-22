@@ -102,7 +102,7 @@ export const getUserFromCredential = async (credential: string, origin: string) 
     headers: {
       origin,
       'content-type': 'application/json',
-      'x-sdk-version': '@cloudbase/js-sdk/1.3.4-alpha.0',
+      'x-sdk-version': '@cloudbase/js-sdk/1.4.0',
       'x-tcb-region': region,
     },
     data: {

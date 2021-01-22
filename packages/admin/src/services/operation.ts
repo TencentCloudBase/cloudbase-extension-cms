@@ -26,3 +26,16 @@ export async function enableNonLogin(projectId: string) {
     method: 'POST',
   })
 }
+
+export async function getAnalyticsData(
+  projectId: string,
+  data: {
+    activityId: string
+    metricName: string
+  }
+) {
+  return tcbRequest(`/projects/${projectId}/operation/getAnalyticsData`, {
+    method: 'POST',
+    data,
+  })
+}

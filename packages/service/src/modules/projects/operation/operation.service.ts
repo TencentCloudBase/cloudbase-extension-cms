@@ -47,8 +47,10 @@ export class OperationService {
     console.log('创建未登录', res)
   }
 
-  // 更新安全规则
-  async writeSecurityRules() {
+  /**
+   * 更新安全规则
+   */
+  async updateSecurityRules() {
     const envId = getEnvIdString()
     const manager = await getCloudBaseManager()
 
@@ -65,7 +67,7 @@ export class OperationService {
 
     console.log(Rule)
 
-    // rule 为字符串
+    // rule 为 json5 字符串
     Rule = JSON.parse(Rule)
 
     // 设置 wx-ext-cms-sms 函数为免登录调用

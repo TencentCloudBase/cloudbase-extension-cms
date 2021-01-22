@@ -6,7 +6,7 @@ export const getSettings = async () => {
   })
 }
 
-export const updateSetting = async (payload: Record<string, string>) => {
+export const updateSetting = async (payload: Partial<GlobalSetting>) => {
   return tcbRequest('/setting', {
     method: 'PATCH',
     data: payload,

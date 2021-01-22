@@ -2,7 +2,7 @@ import React from 'react'
 import { Alert, Button, Col, Form, Input, message, notification, Row, Skeleton, Space } from 'antd'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
-import { history, SettingState, useParams, useRequest } from 'umi'
+import { history, useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
 import { enableNonLogin, enableOperationService, getOpenAPIToken } from '@/services/operation'
@@ -15,9 +15,6 @@ interface MiniApp {
   miniappOriginalID: string
 }
 
-/**
- *
- */
 export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
@@ -74,7 +71,7 @@ const OperationPageContainer: React.FC = ({ children }) => (
 /**
  * 开通营销工具
  */
-const OperationEnable: React.FC<{ setting: SettingState }> = ({ setting }) => {
+const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
   const { projectId } = useParams<any>()
 
   // 开通营销工具

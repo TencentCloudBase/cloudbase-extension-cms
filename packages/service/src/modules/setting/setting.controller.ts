@@ -1,4 +1,4 @@
-import { Controller, Get, Patch } from '@nestjs/common'
+import { Body, Controller, Get, Patch } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { Collection } from '@/constants'
 
@@ -25,15 +25,16 @@ export class SettingController {
   }
 
   @Patch()
-  async updateSystemSetting() {
+  async updateSystemSetting(@Body() payload: any) {
     let {
       data: [setting],
-      requestId,
     } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
-    return {
-      requestId,
-      data: setting,
+    // 添加配置
+    if (!setting) {
+      return this.cloudbaseService.collection(Collection.Settings).add(payload)
+    } else {
+      return this.cloudbaseService.collection(Collection.Settings).where({}).update(payload)
     }
   }
 }

@@ -2,6 +2,9 @@ import React, { MutableRefObject, useEffect } from 'react'
 import { Space, Modal, Image, Typography, Alert } from 'antd'
 import { useSetState } from 'react-use'
 import { generateQRCode } from '@/utils'
+import { useConcent } from 'concent'
+import { GlobalCtx } from 'typings/store'
+import ChannelSelector from '@/components/ChannelSelector'
 
 const { Paragraph } = Typography
 
@@ -12,13 +15,21 @@ export default (props: {
   }>
 }) => {
   const { activityId, actionRef } = props
-  const [{ dataUri, isModalVisible }, setState] = useSetState({
+  const ctx = useConcent<{}, GlobalCtx>('global')
+  const { setting } = ctx.state
+
+  const { activityChannels = [] } = setting
+
+  const [{ dataUri, isModalVisible, channel }, setState] = useSetState({
+    channel: '',
     dataUri: '',
     isModalVisible: false,
   })
 
+  // 渠道来源
+  const source = channel || activityChannels?.[0]?.value || ''
   let smsPageUrl = activityId
-    ? `https://${location.host}/cms-activities/index.html?activityId=${activityId}`
+    ? `https://${location.host}/cms-activities/index.html?activityId=${activityId}?source=${source}`
     : ''
 
   // 生成二维码
@@ -32,7 +43,7 @@ export default (props: {
     }
 
     return () => {}
-  }, [activityId])
+  }, [activityId, channel])
 
   useEffect(() => {
     const show = () =>
@@ -46,7 +57,7 @@ export default (props: {
         show,
       }
     }
-  })
+  }, [])
 
   return (
     <Modal
@@ -60,11 +71,16 @@ export default (props: {
       }
     >
       <Alert type="info" message="请使用手机扫码打开以下链接" />
-      <Space>
+
+      <div className="my-4">
+        <ChannelSelector onSelect={(v) => setState({ channel: v })} />
+      </div>
+
+      <Space size="large">
         <Image src={dataUri} height="200" />
         <div>
           <p>体验地址</p>
-          <Paragraph copyable style={{ maxWidth: '200px' }} ellipsis={{ rows: 4, symbol: '展开' }}>
+          <Paragraph copyable style={{ maxWidth: '280px' }} ellipsis={{ rows: 4, symbol: '展开' }}>
             {smsPageUrl}
           </Paragraph>
         </div>

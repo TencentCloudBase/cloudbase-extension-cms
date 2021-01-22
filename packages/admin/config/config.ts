@@ -36,7 +36,7 @@ const config: IConfig = {
     baseSeparator: '-',
   },
   dynamicImport: {
-    loading: '@/components/PageLoading/index',
+    loading: '@/components/Loading/PageLoading',
   },
   targets: {
     ie: 11,

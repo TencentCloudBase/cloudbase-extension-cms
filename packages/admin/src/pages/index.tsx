@@ -31,8 +31,8 @@ import AvatarDropdown from '@/components/AvatarDropdown'
 import { getProjects, createProject } from '@/services/project'
 import { getCmsNotices } from '@/services/notice'
 import { getCmsConfig, getFullDate } from '@/utils'
-import './index.less'
 import pkg from '../../package.json'
+import './index.less'
 
 // 设置图标颜色
 setTwoToneColor('#0052d9')

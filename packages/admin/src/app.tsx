@@ -49,19 +49,11 @@ export async function getInitialState(): Promise<{
   } = {}
   let currentUser = {} as any
 
-  // 如果是登录页面，不执行
-  if (history.location.pathname !== '/login') {
-    try {
-      currentUser = await getCurrentUser()
-    } catch (e) {
-      console.log(e)
-    }
-  } else {
-    try {
-      currentUser = await getCurrentUser()
-    } catch (e) {
-      console.log(e)
-    }
+  // 获取用户信息
+  try {
+    currentUser = await getCurrentUser()
+  } catch (e) {
+    console.log(e)
   }
 
   initialState = {
