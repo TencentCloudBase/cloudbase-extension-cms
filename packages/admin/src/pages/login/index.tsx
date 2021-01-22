@@ -117,7 +117,7 @@ const Login: React.FC<{}> = () => {
         window?.parent.postMessage(
           JSON.stringify({
             from: 'cms',
-            status: 'success',
+            message: 'received message',
           }),
           '*'
         )
