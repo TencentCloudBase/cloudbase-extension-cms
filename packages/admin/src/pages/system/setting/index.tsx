@@ -15,7 +15,7 @@ export default (): React.ReactNode => {
   const [selectedMenu, selectMenu] = useState<string>(targetTab)
 
   return (
-    <Row className="system-settings">
+    <Row className="system-settings pt-10">
       <Col flex="1 1 auto" />
       <Col flex="0 0 1000px">
         <div className="back" onClick={() => history.push('/home')}>
@@ -26,7 +26,7 @@ export default (): React.ReactNode => {
         </div>
         <Typography.Title level={3}>系统设置</Typography.Title>
         <ProCard split="vertical" gutter={[5, 5]} style={{ minHeight: '480px' }}>
-          <ProCard colSpan="208px" className="card-left">
+          <ProCard colSpan="208px" className="card-left pt-3">
             <Menu
               mode="inline"
               onClick={({ key }) => {

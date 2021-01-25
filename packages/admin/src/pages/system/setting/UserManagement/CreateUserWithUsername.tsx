@@ -48,7 +48,7 @@ export default ({
     }
   )
 
-  const { data: userRoles = [] } = useRequest(() => getUserRoles())
+  const { data: userRoles = [] } = useRequest(() => getUserRoles(1, 1000))
 
   return (
     <Modal
@@ -115,7 +115,15 @@ export default ({
           rules={[{ required: true, message: '请选择用户角色！' }]}
         >
           {/* 管理员角色不能修改 */}
-          <Select mode="multiple" disabled={selectedUser?.root} optionLabelProp="label">
+          <Select
+            showSearch
+            mode="multiple"
+            disabled={selectedUser?.root}
+            optionLabelProp="label"
+            filterOption={(input, option) => {
+              return (option?.label as string)?.includes(input)
+            }}
+          >
             {userRoles?.map((role: any, index: any) => (
               <Select.Option key={index} value={role._id} label={role.roleName}>
                 <h4>{role.roleName}</h4>
