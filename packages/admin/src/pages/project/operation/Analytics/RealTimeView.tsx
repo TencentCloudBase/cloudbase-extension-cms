@@ -1,25 +1,28 @@
 import React from 'react'
+import { useRequest } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { DualAxes } from '@ant-design/charts'
 import { DatePicker, Space, Spin } from 'antd'
 import ChannelSelector from '@/components/ChannelSelector'
 import { PieChartTwoTone } from '@ant-design/icons'
-import { useParams, useRequest } from 'umi'
 import { getAnalyticsData } from '@/services/operation'
+import { useSetState } from 'react-use'
 
 const { RangePicker } = DatePicker
 
 const cardStyle = { margin: '24px 0', height: '600px' }
 
 const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
-  const { projectId } = useParams<any>()
+  const [{ channel }, setState] = useSetState({
+    channel: '',
+    dateRange: '',
+  })
 
   // 获取统计数据
   const { data, loading } = useRequest(
     async () => {
-      //
       if (!activityId) return
-      const res = await getAnalyticsData(projectId, { activityId, metricName: 'realtimeView' })
+      const res = await getAnalyticsData({ activityId, metricName: 'realtimeView' })
       return res
     },
     {
@@ -33,7 +36,11 @@ const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
         <div className="flex justify-center items-center h-full">
           <Space direction="vertical" align="center" size="large">
             <PieChartTwoTone style={{ fontSize: '48px' }} />
-            {loading ? <Spin /> : <p className="text-xl">数据为空</p>}
+            {loading ? (
+              <Spin />
+            ) : (
+              <p className="text-xl">{activityId ? '数据为空' : '请选择活动'}</p>
+            )}
           </Space>
         </div>
       </ProCard>
@@ -44,8 +51,22 @@ const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
     <ProCard title="实时访问曲线" style={{ margin: '24px 0', height: '600px' }}>
       {/* 选择渠道和时间 */}
       <Space size="large">
-        <ChannelSelector onSelect={console.log} />
-        <RangePicker showTime />
+        <ChannelSelector
+          onSelect={(v) =>
+            setState({
+              channel: v,
+            })
+          }
+        />
+        <RangePicker
+          showTime
+          onChange={(_, v) => {
+            const [startTime, endTime] = v
+            // setState({
+            //   dateRange: v,
+            // })
+          }}
+        />
       </Space>
 
       {/* 限制图表的高度 */}
@@ -73,8 +94,6 @@ const AccessDualAxes: React.FC<{
   }
 }> = ({ data = {} }) => {
   const { webPageViewUsers = [], miniappViewUsers = [], conversionRate = [] } = data
-
-  console.log(conversionRate)
 
   const config = {
     data: [[...webPageViewUsers, ...miniappViewUsers], conversionRate],
@@ -106,6 +125,7 @@ const AccessDualAxes: React.FC<{
       },
       {
         geometry: 'line',
+        smooth: true,
       },
     ],
   }

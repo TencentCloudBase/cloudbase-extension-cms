@@ -49,6 +49,8 @@ interface ITcbCmsConfing {
   officialSiteLink: string
   // 产品名
   appName: string
+  // 微信小程序 ID
+  mpAppId: string
 }
 
 interface Window {

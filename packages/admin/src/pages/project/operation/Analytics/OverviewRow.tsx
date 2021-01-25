@@ -1,6 +1,6 @@
 import React from 'react'
 import { Col, Row, Card, Typography, Spin } from 'antd'
-import { useParams, useRequest } from 'umi'
+import { useRequest } from 'umi'
 import { getAnalyticsData } from '@/services/operation'
 
 const { Text } = Typography
@@ -15,13 +15,11 @@ const topColResponsiveProps = {
 }
 
 const OverviewRow: React.FC<{ activityId: string }> = ({ activityId }) => {
-  const { projectId } = useParams<any>()
-
   // 获取统计数据
   const { data, loading } = useRequest(
     async () => {
       if (!activityId) return
-      const res = await getAnalyticsData(projectId, { activityId, metricName: 'overviewCount' })
+      const res = await getAnalyticsData({ activityId, metricName: 'overviewCount' })
       return res
     },
     {

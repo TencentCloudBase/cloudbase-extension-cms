@@ -87,6 +87,46 @@ module.exports = {
 
     console.log('====> 部署 SMS 跳转页面 <=====')
   },
+  // 更新安全规则配置
+  async updateSecurityRules(context) {
+    const { manager } = context
+    try {
+      // 查询安全规则
+      let { Rule } = await manager.commonService().call({
+        Action: 'DescribeSecurityRule',
+        Param: {
+          EnvId: envId,
+          OnlyTag: false,
+          ResourceName: envId,
+          ResourceType: 'FUNCTION',
+        },
+      })
+
+      console.log(Rule)
+
+      // rule 为 json5 字符串
+      Rule = JSON.parse(Rule)
+
+      // 设置 wx-ext-cms-sms 函数为免登录调用
+      Rule['wx-ext-cms-openapi'] = {
+        invoke: true,
+      }
+
+      // 修改安全规则
+      await manager.commonService().call({
+        Action: 'ModifySecurityRule',
+        Param: {
+          EnvId: envId,
+          AclTag: 'CUSTOM',
+          ResourceName: envId,
+          ResourceType: 'FUNCTION',
+          Rule: JSON.stringify(Rule),
+        },
+      })
+    } catch (error) {
+      console.log('更新安全规则', error)
+    }
+  },
 }
 
 // 添加营销工具 schema

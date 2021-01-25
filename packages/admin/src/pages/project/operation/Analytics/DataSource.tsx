@@ -1,28 +1,28 @@
 import React from 'react'
+import { useRequest } from 'umi'
+import { Space, Spin } from 'antd'
 import ProCard from '@ant-design/pro-card'
-import { PieChart } from '@/components/Charts'
-import { useParams, useRequest } from 'umi'
 import { getAnalyticsData } from '@/services/operation'
 import { PieChartTwoTone } from '@ant-design/icons'
-import { Space, Spin } from 'antd'
 
 const cardStyle = {
   height: '480px',
 }
 
-const UserViewSource: React.FC<{ title: string; metricName: string; activityId: string }> = ({
+/**
+ * 获取 metric 对应的数据
+ */
+const DataSource: React.FC<{ activityId: string; title: string; metricName: string }> = ({
   title,
+  children,
   activityId,
   metricName,
 }) => {
-  const { projectId } = useParams<any>()
-
   // 获取统计数据
   const { data, loading } = useRequest(
     async () => {
-      //
       if (!activityId) return
-      const res = await getAnalyticsData(projectId, { activityId, metricName })
+      const res = await getAnalyticsData({ activityId, metricName })
       return res
     },
     {
@@ -30,24 +30,33 @@ const UserViewSource: React.FC<{ title: string; metricName: string; activityId: 
     }
   )
 
+  // 加载中
   if (!activityId || !data?.length) {
     return (
       <ProCard title={title} style={cardStyle}>
         <div className="flex justify-center items-center h-full">
           <Space direction="vertical" align="center" size="large">
             <PieChartTwoTone style={{ fontSize: '48px' }} />
-            {loading ? <Spin /> : <p className="text-xl">数据为空</p>}
+            {loading ? (
+              <Spin />
+            ) : (
+              <p className="text-xl">{activityId ? '数据为空' : '请选择活动'}</p>
+            )}
           </Space>
         </div>
       </ProCard>
     )
   }
 
-  return (
-    <ProCard title={title} style={cardStyle}>
-      <PieChart data={data} />
-    </ProCard>
-  )
+  // set data
+  const childrenWithProps = React.Children.map(children, (child) => {
+    if (React.isValidElement(child)) {
+      return React.cloneElement(child, { data })
+    }
+    return child
+  })
+
+  return <ProCard title={title}>{childrenWithProps}</ProCard>
 }
 
-export default UserViewSource
+export default DataSource

@@ -73,8 +73,28 @@
             {
               "name": "wx-ext-cms-sms",
               "timeout": 60,
-              "envVariables": {},
+              "envVariables": {
+                "NODE_ENV": "production"
+              },
               "functionDistPath": "cms-sms",
+              "installDependency": true,
+              "handler": "index.main"
+            }
+          ]
+        }
+      },
+      "openapi": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "wx-ext-cms-openapi",
+              "timeout": 60,
+              "envVariables": {
+                "NODE_ENV": "production"
+              },
+              "functionDistPath": "cms-openapi",
               "installDependency": true,
               "handler": "index.main"
             }

@@ -16,6 +16,8 @@ import DesktopWeb from './components/DesktopWeb.vue'
 import Loading from './components/Loading.vue'
 import WeDialog from './components/WeDialog.vue'
 
+const LOCAL_SESSIONID_KEY = 'CMS_SMS_USER_SESSIONID_KEY'
+
 export default {
   name: 'App',
   components: {
@@ -131,12 +133,20 @@ export default {
 
       try {
         const activityId = this.getQueryByName('activityId')
+        const channelId = this.getQueryByName('source')
+        let sessionId = localStorage.getItem(LOCAL_SESSIONID_KEY)
+        if (!sessionId) {
+          sessionId = this.uuidv4()
+          localStorage.setItem(LOCAL_SESSIONID_KEY, sessionId)
+        }
 
         // 查询活动信息
         const res = await this.cloudApp.callFunction({
           name: 'wx-ext-cms-sms',
           data: {
-            activityId: activityId,
+            channelId,
+            sessionId,
+            activityId,
             action: 'getUrlScheme',
           },
         })
@@ -211,6 +221,12 @@ export default {
         this.btnLoading = false
       }
     },
+    uuidv4() {
+      return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+      )
+    },
+
     /**
      * 打开小程序
      */

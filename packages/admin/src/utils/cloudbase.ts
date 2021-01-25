@@ -169,6 +169,40 @@ export async function tcbRequest<T = any>(
 }
 
 /**
+ * 调用微信 Open API
+ * @param action 行为
+ * @param data POST body 数据
+ */
+export async function callWxOpenAPI(action: string, data: Record<string, any>) {
+  if (isDevEnv()) {
+    return request(`/api/${action}`, {
+      data,
+      prefix: 'http://127.0.0.1:5003',
+      method: 'POST',
+    })
+  }
+
+  const wxCloudApp = await getWxCloudApp({
+    miniappID: window.TcbCmsConfig.mpAppId,
+  })
+
+  // 调用 open api
+  const { result } = await wxCloudApp.callFunction({
+    name: 'wx-ext-cms-openapi',
+    data: {
+      body: data,
+      httpMethod: 'POST',
+      queryStringParameters: '',
+      path: `/api/${action}`,
+    },
+  })
+
+  console.log('call wx open api', result)
+
+  return result
+}
+
+/**
  * 上传文件到文件存储、静态托管
  */
 export async function uploadFile(options: {

@@ -1,5 +1,6 @@
 /* eslint-disable */
 const cloud = require('wx-server-sdk')
+const { reportUserView } = require('./report')
 
 const MessageActivities = 'wx-ext-cms-sms-activities'
 
@@ -8,11 +9,19 @@ const MessageActivities = 'wx-ext-cms-sms-activities'
  * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
  */
 async function getUrlScheme(event) {
-  const { activityId } = event
+  const { activityId, channelId } = event
 
-  let query = ''
+  let query = `_activityId_=${activityId}&_source_=${channelId}`
   let path = ''
   let activity = ''
+
+  // 上报数据
+  try {
+    await reportUserView(event)
+    console.log('上报数据成功')
+  } catch (error) {
+    console.log('上报数据异常', error)
+  }
 
   // 查询活动
   if (activityId) {
@@ -22,7 +31,7 @@ async function getUrlScheme(event) {
 
     if (activity) {
       path = activity.appPath || path
-      query = activity.appPathQuery || query
+      query = activity.appPathQuery ? `${query}&${activity.appPathQuery}` : query
     }
   }
 

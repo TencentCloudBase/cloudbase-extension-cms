@@ -3,6 +3,7 @@ const cloud = require('wx-server-sdk')
 
 const { getUrlScheme } = require('./url')
 const { getAppBasicInfo } = require('./app')
+const { reportMessageTask } = require('./report')
 
 const MessageTasks = 'wx-ext-cms-sms-tasks'
 const MessageAuthToken = 'wx-ext-cms-sms-token'
@@ -10,7 +11,7 @@ const MessageAuthToken = 'wx-ext-cms-sms-token'
 /**
  * 下发短信 https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/cloudbase/cloudbase.sendSms.html
  */
-exports.main = async (event = {}) => {
+exports.main = async (event = {}, context) => {
   const { taskId, action } = event
   const { ENV } = cloud.getWXContext()
 
@@ -77,6 +78,17 @@ exports.main = async (event = {}) => {
       content: task.content,
       path: `/cms-activities/index.html?activityId=${task.activityId}`,
     })
+
+    // 上报短信下发任务
+    try {
+      await reportMessageTask({
+        taskId,
+        phoneCount: phoneNumberList.length,
+        activityId: task.activityId,
+      })
+    } catch (error) {
+      console.log('上报错误', error)
+    }
 
     // 发送结果列表
     const { sendStatusList } = result

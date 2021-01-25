@@ -7,13 +7,13 @@ import { GlobalCtx } from 'typings/store'
 import { getContents } from '@/services/content'
 import { useDebounceFn } from '@umijs/hooks'
 import { useSetState } from 'react-use'
+import { FunnelChart, PieChart } from '@/components/Charts'
 import { ActivitySchema } from '../Activity/schema'
+import DataSource from './DataSource'
 
 // 懒加载
 const OverviewRow = React.lazy(() => import('./OverviewRow'))
-const ConversionFunnel = React.lazy(() => import('./ConversionFunnel'))
 const RealTimeView = React.lazy(() => import('./RealTimeView'))
-const UserViewSource = React.lazy(() => import('./UserViewSource'))
 
 const { Option } = Select
 
@@ -110,36 +110,38 @@ export default (): React.ReactNode => {
       </Suspense>
 
       <Row gutter={[24, 24]}>
-        <LazyChartCol>
-          <UserViewSource
+        <Col {...colProps}>
+          <DataSource
             title="H5 访问累计用户数渠道占比"
             activityId={currentActivity}
             metricName="webPageViewSource"
-          />
-        </LazyChartCol>
-        <LazyChartCol>
-          <UserViewSource
+          >
+            <PieChart data={[]} />
+          </DataSource>
+        </Col>
+        <Col {...colProps}>
+          <DataSource
             title="跳转小程序累计 UV 渠道占比"
             activityId={currentActivity}
             metricName="miniappViewSource"
-          />
-        </LazyChartCol>
-        <LazyChartCol>
-          <ConversionFunnel activityId={currentActivity} />
-        </LazyChartCol>
+          >
+            <PieChart data={[]} />
+          </DataSource>
+        </Col>
+        <Col {...colProps}>
+          <DataSource
+            title="短信转化率"
+            activityId={currentActivity}
+            metricName="messageConversion"
+          >
+            <FunnelChart data={[]} />
+          </DataSource>
+        </Col>
       </Row>
 
       <Suspense fallback={<Spin />}>
         <RealTimeView activityId={currentActivity} />
       </Suspense>
     </PageContainer>
-  )
-}
-
-const LazyChartCol: React.FC = ({ children }) => {
-  return (
-    <Col {...colProps}>
-      <Suspense fallback={<Spin />}>{children}</Suspense>
-    </Col>
   )
 }

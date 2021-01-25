@@ -88,6 +88,19 @@ Resources:
       Runtime: Nodejs10.15
       Handler: index.main
       Role: TCB_QcsRole
+  # 短信服务
+  OpenapiFunction:
+    Type: CloudBase::Function
+    Properties:
+      FunctionName: wx-ext-cms-openapi
+      CodeUri: extension://c51b960ad2f640bf8477fae3ecdb84e2.zip
+      InstallDependency: true
+      Description: 提供调用微信 Openapi 接口的能力
+      MemorySize: 256
+      Timeout: 60
+      Runtime: Nodejs10.15
+      Handler: index.main
+      Role: TCB_QcsRole
   ProjectDB:
     Type: CloudBase::FlexDB
     Properties:
