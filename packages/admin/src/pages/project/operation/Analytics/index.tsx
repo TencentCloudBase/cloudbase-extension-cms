@@ -1,12 +1,13 @@
 import React, { Suspense } from 'react'
-import { Select, Col, Row, Skeleton, Space, Spin } from 'antd'
+import { Select, Col, Row, Skeleton, Space, Spin, Button, Result } from 'antd'
 import { PageContainer } from '@ant-design/pro-layout'
-import { useParams, useRequest } from 'umi'
+import { history, useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
 import { getContents } from '@/services/content'
 import { useDebounceFn } from '@umijs/hooks'
 import { useSetState } from 'react-use'
+import { AlertTwoTone } from '@ant-design/icons'
 import { FunnelChart, PieChart } from '@/components/Charts'
 import { ActivitySchema } from '../Activity/schema'
 import DataSource from './DataSource'
@@ -42,6 +43,7 @@ export default (): React.ReactNode => {
       setState({
         searching: true,
       })
+
       // 搜索参数
       const fuzzyFilter = searchKey
         ? {
@@ -53,6 +55,13 @@ export default (): React.ReactNode => {
         const { data = [] } = await getContents(projectId, ActivitySchema.collectionName, {
           fuzzyFilter,
         })
+
+        // 设置默认的活动
+        if (!currentActivity && data?.length) {
+          setState({
+            currentActivity: data[0]?._id,
+          })
+        }
 
         return {
           data,
@@ -79,6 +88,28 @@ export default (): React.ReactNode => {
     return (
       <PageContainer>
         <Skeleton active />
+      </PageContainer>
+    )
+  }
+
+  // 不存在活动，提示创建活动
+  if (!loading && !activities?.length) {
+    return (
+      <PageContainer>
+        <Result
+          icon={<AlertTwoTone />}
+          title="您还没有创建任何活动，统计数据为空！"
+          extra={
+            <Button
+              type="primary"
+              onClick={() => {
+                history.push(`/${projectId}/operation/activity`)
+              }}
+            >
+              创建活动
+            </Button>
+          }
+        />
       </PageContainer>
     )
   }

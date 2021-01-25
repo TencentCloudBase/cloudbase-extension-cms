@@ -44,7 +44,7 @@ Resources:
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
       Timeout: 15
-      HttpPath: /tcb-ext-cms-service
+      HttpPath: /wx-ext-cms-service
       Runtime: Nodejs10.15
       Handler: index.main
       Role: TCB_QcsRole

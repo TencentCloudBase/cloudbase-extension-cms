@@ -200,9 +200,7 @@ async function writeConfigJS(manager, dir, context) {
     // 环境 Id
     envId: '${envId}',
     // 云接入默认域名/自定义域名，不带 https 协议符
-    // https://console.cloud.tencent.com/tcb/env/access
-    cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
-    containerAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service-container',`
+    // https://console.cloud.tencent.com/tcb/env/access,`
 
   // 微信小程序，拼接更多信息
   console.log('微信 AppID', mpAppID, process.env.WX_MP)
@@ -219,13 +217,18 @@ async function writeConfigJS(manager, dir, context) {
     const officialSiteLink =
       process.env.CMS_OFFICIALSITE_LINK || 'https://mp.weixin.qq.com/cgi-bin/wx'
 
-    configFileContent += `mpAppID: '${mpAppID}',
+    configFileContent += `cloudAccessPath: '${accessDomain || DefaultDomain}/wx-ext-cms-service',
+    containerAccessPath: '${accessDomain || DefaultDomain}/wx-ext-cms-service-container',
+    mpAppID: '${mpAppID}',
     cmsTitle: '内容管理（CMS）',
     cmsLogo: './icon-wx.svg',
     cmsDocLink: '${docLink}',
     cmsHelpLink: '${helpLink}',
     officialSiteLink: '${officialSiteLink}',
     appName: '微信小程序云开发',`
+  } else {
+    configFileContent +=`cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
+    containerAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service-container',`
   }
 
   configFileContent += `}`

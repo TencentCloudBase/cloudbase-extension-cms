@@ -39,7 +39,7 @@ const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
             {loading ? (
               <Spin />
             ) : (
-              <p className="text-xl">{activityId ? '数据为空' : '请选择活动'}</p>
+              <p className="text-xl">{activityId ? '数据为空' : '加载中...'}</p>
             )}
           </Space>
         </div>
