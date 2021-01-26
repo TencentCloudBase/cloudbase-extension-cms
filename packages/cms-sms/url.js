@@ -25,13 +25,25 @@ async function getUrlScheme(event) {
 
   // 查询活动
   if (activityId) {
-    const { data } = await cloud.database().collection(MessageActivities).doc(activityId).get()
+    try {
+      const { data } = await cloud.database().collection(MessageActivities).doc(activityId).get()
+      activity = data
 
-    activity = data
-
-    if (activity) {
-      path = activity.appPath || path
-      query = activity.appPathQuery ? `${query}&${activity.appPathQuery}` : query
+      if (activity) {
+        path = activity.appPath || path
+        query = activity.appPathQuery ? `${query}&${activity.appPathQuery}` : query
+      }
+    } catch (e) {
+      // 查询不到数据，即活动不存在
+      if (e.message.includes('not exist')) {
+        return {
+          error: {
+            message: '活动不存在！',
+            code: e.errCode,
+            err: e.message,
+          },
+        }
+      }
     }
   }
 
