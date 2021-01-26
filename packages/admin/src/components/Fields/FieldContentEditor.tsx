@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { Spin, Form, Input, Switch, Button, Select, InputNumber } from 'antd'
+import { Spin, Form, Input, Switch, Button, Select, InputNumber, Typography } from 'antd'
 import { Rule } from 'antd/es/form'
 import { IConnectEditor, IDatePicker, IFileAndImageEditor } from '@/components/Fields'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
@@ -10,6 +10,7 @@ const RichTextEditor = React.lazy(() => import('@/components/Fields/RichText'))
 
 const { TextArea } = Input
 const { Option } = Select
+const { Text } = Typography
 
 const LazyMarkdownEditor: React.FC<{ id: number }> = (props: any) => (
   <Suspense fallback={<Spin />}>
@@ -227,7 +228,13 @@ export function getFieldFormItem(field: SchemaField, key: number) {
           key={key}
           name={name}
           rules={rules}
-          label={displayName}
+          label={
+            <Text strong>
+              {displayName}
+              &nbsp;
+              <Text type="secondary">{name}</Text>
+            </Text>
+          }
           extra={description}
           valuePropName="checked"
         >
@@ -237,7 +244,19 @@ export function getFieldFormItem(field: SchemaField, key: number) {
       break
     default:
       FormItem = (
-        <Form.Item key={key} name={name} rules={rules} label={displayName} extra={description}>
+        <Form.Item
+          key={key}
+          name={name}
+          rules={rules}
+          label={
+            <Text strong>
+              {displayName}
+              &nbsp;
+              <Text type="secondary">{name}</Text>
+            </Text>
+          }
+          extra={description}
+        >
           {FieldEditor}
         </Form.Item>
       )

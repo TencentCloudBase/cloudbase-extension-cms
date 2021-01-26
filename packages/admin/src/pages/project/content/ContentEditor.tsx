@@ -1,12 +1,14 @@
 import React from 'react'
 import { useParams, useRequest, history } from 'umi'
 import { useConcent } from 'concent'
-import { Form, message, Space, Button, Row, Col, Input } from 'antd'
+import { Form, message, Space, Button, Row, Col, Input, Typography, Tag } from 'antd'
 import { createContent, setContent } from '@/services/content'
 import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
+
+const { Text } = Typography
 
 const ContentEditor: React.FC = () => {
   const { schemaId, projectId } = useParams<any>()
@@ -70,7 +72,15 @@ const ContentEditor: React.FC = () => {
               onFinish={(v = {}) => run(v)}
             >
               {contentAction === 'edit' && (
-                <Form.Item label="文档 Id" name="_id">
+                <Form.Item
+                  label={
+                    <Text strong>
+                      文档 Id &nbsp;
+                      <Text type="secondary">_id</Text>
+                    </Text>
+                  }
+                  name="_id"
+                >
                   <Input type="text" disabled />
                 </Form.Item>
               )}

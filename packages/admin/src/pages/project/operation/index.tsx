@@ -93,9 +93,10 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
           },
         })
 
-        const { appid, nickname, username } = result || {}
+        const { appid, nickname, username, realnametype } = result || {}
 
         return {
+          realnametype,
           miniappID: appid,
           miniappName: nickname,
           miniappOriginalID: username,
@@ -111,6 +112,14 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
         await sleep(1000)
         // 获取小程序信息
         const appInfo = await getAppInfo()
+
+        // 校验是否为个人主题
+        if (Number(appInfo.realnametype) === 0) {
+          message.error('仅支持非个人主体开通营销工具！')
+          return
+        }
+
+        // 开通营销工具
         await enableOperationService(projectId, appInfo)
       } else {
         await enableOperationService(projectId, data)

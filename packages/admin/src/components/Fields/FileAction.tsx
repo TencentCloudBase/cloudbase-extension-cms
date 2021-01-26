@@ -61,6 +61,7 @@ export const FileAction: React.FC<{
 
           const url = fileIdToUrl(fileUri)
           copyToClipboard(url)
+          message.success('复制链接成功！')
         }}
       >
         访问链接
