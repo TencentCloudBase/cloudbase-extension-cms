@@ -5,8 +5,8 @@ import { PageContainer } from '@ant-design/pro-layout'
 import { history, useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
-import { enableNonLogin, enableOperationService, getOpenAPIToken } from '@/services/operation'
-import { getWxCloudApp, sleep } from '@/utils'
+import { enableNonLogin, enableOperationService } from '@/services/operation'
+import { callWxOpenAPI, sleep } from '@/utils'
 import { useToggle } from 'react-use'
 
 interface MiniApp {
@@ -79,21 +79,10 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
     async (data: MiniApp) => {
       // 获取小程序信息
       const getAppInfo = async () => {
-        const wxCloudApp = await getWxCloudApp({
-          miniappID: setting.miniappID,
-        })
-
-        const { token } = await getOpenAPIToken(projectId)
         // 获取小程序的名称和原始 ID
-        const { result } = await wxCloudApp.callFunction({
-          name: 'wx-ext-cms-sms',
-          data: {
-            token,
-            action: 'getAppBasicInfo',
-          },
-        })
+        const data = await callWxOpenAPI('getAppBasicInfo')
 
-        const { appid, nickname, username, realnametype } = result || {}
+        const { appid, nickname, username, realnametype } = data || {}
 
         return {
           realnametype,

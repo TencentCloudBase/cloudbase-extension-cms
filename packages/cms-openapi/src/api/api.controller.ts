@@ -1,44 +1,49 @@
 import _ from 'lodash'
-import { Post, Body, Get, Query, Param, UseGuards, Controller } from '@nestjs/common'
-import { IsJSON, IsNumber, IsOptional } from 'class-validator'
+import { Post, Body, UseGuards, Controller } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 
 import { AuthGuard } from '@/guards'
 import { Collection } from '@/constants'
-
-class IQuery {
-  @IsOptional()
-  @IsNumber()
-  limit?: number
-
-  @IsOptional()
-  @IsNumber()
-  skip?: number
-
-  @IsOptional()
-  @IsJSON()
-  fields?: string
-
-  @IsOptional()
-  @IsJSON()
-  sort?: string
-}
-
-class IPayload {
-  @IsOptional()
-  data?: Object | Object[]
-
-  @IsOptional()
-  query?: Object
-}
+import { getWxCloudApp } from '@/utils'
+import { ApiService } from './api.service'
 
 @Controller('/api')
 export class ApiController {
-  constructor(private readonly cloudbaseService: CloudBaseService) {}
+  constructor(
+    private readonly cloudbaseService: CloudBaseService,
+    private readonly apiService: ApiService
+  ) {}
 
-  @Post('')
-  async getDocument(@Param() params: { collectionName: string; docId: string }) {
-    const { collectionName, docId } = params
+  /**
+   * 获取小程序的名称、主体等信息
+   */
+  @UseGuards(AuthGuard)
+  @Post('getAppBasicInfo')
+  async getAppBasicInfo() {
+    try {
+      const wxCloudApp = getWxCloudApp()
+      const res = await wxCloudApp.openapi.auth.getBasicInfo()
+      console.log('小程序信息', res)
+      return res
+    } catch (e) {
+      return {
+        error: {
+          message: e.message,
+          code: e.errCode,
+        },
+      }
+    }
+  }
+
+  /**
+   * 创建下发短信任务
+   */
+  @UseGuards(AuthGuard)
+  @Post('sendSms')
+  async sendSms(@Body() body: { taskId: string }) {
+    console.log('使用 OpenAPI 发送短信')
+    const { taskId } = body
+    return this.apiService.sendSms(taskId)
   }
 
   // 获取访问数据

@@ -9,7 +9,7 @@ async function reportMessageTask(event = {}) {
   const { taskId, phoneCount, activityId } = event
 
   const { ENV } = cloud.getWXContext()
-  result = await cloud.openapi({ convertCase: false }).cloudbase.report({
+  await cloud.openapi({ convertCase: false }).cloudbase.report({
     reportAction: 'sendSmsTask', // 下发短信上报
     activityId, // 活动 ID
     taskId, // 任务 ID

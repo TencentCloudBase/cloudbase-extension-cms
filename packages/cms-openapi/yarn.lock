@@ -96,14 +96,15 @@
     lodash.set "4.3.2"
     lodash.unset "4.5.2"
 
-"@cloudbase/node-sdk@2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@cloudbase/node-sdk/-/node-sdk-2.3.4.tgz#53ff8b1d068587e260ed96a446d6411133c0e542"
-  integrity sha512-qk8DpZDILWjL3X97UGKPb4p/9AD8+iP26eOfegE+mtW9rhUNtWPSKI0MIQyuxlkey+9G3rquw0jsCqX/SYpGSw==
+"@cloudbase/node-sdk@2.4.7":
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/@cloudbase/node-sdk/-/node-sdk-2.4.7.tgz#206a4ce6cc3137cf46a9392ca372117b8243d6b3"
+  integrity sha512-gMtp+25nAJzpXTxpZzN7PTtsTdv6m7SNRszMwPpWB3pwAYyefbuOkR505iv+kYugsX6MkbgKjcCQ/F5dpNMMYw==
   dependencies:
     "@cloudbase/database" "1.2.2"
     "@cloudbase/signature-nodejs" "1.0.0-beta.0"
     "@types/retry" "^0.12.0"
+    agentkeepalive "^4.1.3"
     is-regex "^1.0.4"
     jsonwebtoken "^8.5.1"
     lodash.merge "^4.6.1"
@@ -3779,12 +3780,12 @@ wrappy@1:
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"
   integrity sha1-tSQ9jz7BqjXxNkYFvA0QNuMKtp8=
 
-wx-server-sdk@^2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/wx-server-sdk/-/wx-server-sdk-2.3.2.tgz#c58d550227f5f513b540db6ada8e55a9489b0f31"
-  integrity sha512-xtOah5ZdQVxZ7iZdkL6swGUqSToM1/Uy8bloEHktsLXIoIqB0uVvqeQH7sgKokZBBLZnzMOVModE2/ctR+tp7g==
+wx-server-sdk@^2.3.3:
+  version "2.3.3"
+  resolved "https://registry.yarnpkg.com/wx-server-sdk/-/wx-server-sdk-2.3.3.tgz#e5a5a866e07a5f7cef102d604a97eab1446b4591"
+  integrity sha512-78m3kU9xQpBanW1p3kbXjHSgowhV1GayfgOgCGQ9QkIlMfAP2GGQqxLRXLjsTanDbP09oGnUYkCt3K70GeZDJQ==
   dependencies:
-    "@cloudbase/node-sdk" "2.3.4"
+    "@cloudbase/node-sdk" "2.4.7"
     protobufjs "6.8.8"
     tcb-admin-node latest
     tslib "^1.9.3"

@@ -27,7 +27,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
     "serverless-http": "^2.7.0",
-    "wx-server-sdk": "^2.3.2"
+    "wx-server-sdk": "^2.3.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.4",

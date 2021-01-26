@@ -7,6 +7,13 @@ import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
 import { uploadFilesToHosting } from '@/services/apis'
 
+interface IntegrationRes {
+  statusCode: number
+  headers: Record<string, string>
+  body: string
+  isBase64Encoded: true | false
+}
+
 let app: any
 let auth: any
 
@@ -144,28 +151,7 @@ export async function tcbRequest<T = any>(
     // throw new Error('服务异常')
   }
 
-  // 转化响应值
-  let body
-  try {
-    body =
-      typeof res.result.body === 'string' && res.result.body?.length
-        ? JSON.parse(res.result.body)
-        : res.result.body
-  } catch (error) {
-    console.log(error)
-    body = res.result.body
-  }
-
-  if (body?.error) {
-    const errorText = codeMessage[res.result?.statusCode || 500]
-    notification.error({
-      message: errorText,
-      description: `请求错误：【${body.error.code}】: ${body.error.message}`,
-    })
-    throw new Error('服务异常')
-  }
-
-  return body
+  return parseIntegrationRes(res.result)
 }
 
 /**
@@ -173,7 +159,7 @@ export async function tcbRequest<T = any>(
  * @param action 行为
  * @param data POST body 数据
  */
-export async function callWxOpenAPI(action: string, data: Record<string, any>) {
+export async function callWxOpenAPI(action: string, data?: Record<string, any>) {
   if (isDevEnv()) {
     return request(`/api/${action}`, {
       data,
@@ -186,20 +172,48 @@ export async function callWxOpenAPI(action: string, data: Record<string, any>) {
     miniappID: window.TcbCmsConfig.mpAppId,
   })
 
+  // 添加 authHeader
+  const authHeader = getAuthHeader()
+
   // 调用 open api
   const { result } = await wxCloudApp.callFunction({
     name: 'wx-ext-cms-openapi',
     data: {
       body: data,
+      headers: authHeader,
       httpMethod: 'POST',
       queryStringParameters: '',
       path: `/api/${action}`,
     },
   })
 
-  console.log('call wx open api', result)
+  return parseIntegrationRes(result)
+}
 
-  return result
+/**
+ * 解析函数集成响应
+ */
+function parseIntegrationRes(result: IntegrationRes) {
+  // 转化响应值
+  let body
+  try {
+    body =
+      typeof result.body === 'string' && result.body?.length ? JSON.parse(result.body) : result.body
+  } catch (error) {
+    console.log(error)
+    body = result.body
+  }
+
+  if (body?.error) {
+    const errorText = codeMessage[result?.statusCode || 500]
+    notification.error({
+      message: errorText,
+      description: `请求错误：【${body.error.code}】: ${body.error.message}`,
+    })
+    throw new Error('服务异常')
+  }
+
+  return body
 }
 
 /**

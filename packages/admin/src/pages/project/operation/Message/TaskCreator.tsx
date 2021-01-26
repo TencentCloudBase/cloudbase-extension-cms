@@ -17,7 +17,7 @@ import {
   Typography,
 } from 'antd'
 import { useSetState } from 'react-use'
-import { getWxCloudApp } from '@/utils'
+import { callWxOpenAPI } from '@/utils'
 import { createBatchTask } from '@/services/operation'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
@@ -58,21 +58,19 @@ const MessageTask: React.FC = () => {
   const { run, loading } = useRequest(
     async (payload: any) => {
       const { currentUser } = initialState || {}
-      const wxCloudApp = await getWxCloudApp(setting)
+
       // 记录创建用户信息
-      const { taskId, token } = await createBatchTask(projectId, {
+      const { taskId } = await createBatchTask(projectId, {
         ...payload,
         createdUser: currentUser,
       })
 
       try {
-        const { result } = await wxCloudApp.callFunction({
-          name: 'wx-ext-cms-sms',
-          data: {
-            token,
-            taskId,
-          },
+        const result = await callWxOpenAPI('sendSms', {
+          taskId,
         })
+
+        console.log(result)
 
         // 失败
         if (result.code) {

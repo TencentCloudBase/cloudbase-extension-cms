@@ -92,7 +92,9 @@
               "name": "wx-ext-cms-openapi",
               "timeout": 60,
               "envVariables": {
-                "NODE_ENV": "production"
+                "WX_MP": "true",
+                "NODE_ENV": "production",
+                "CMS_RESOURCE_PREFIX": "wx-ext-cms"
               },
               "functionDistPath": "cms-openapi",
               "installDependency": true,
