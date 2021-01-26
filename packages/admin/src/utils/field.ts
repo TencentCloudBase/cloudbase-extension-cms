@@ -19,22 +19,18 @@ export const calculateFieldWidth = (field: Partial<SchemaField>) => {
     Image: 200,
     RichText: 150,
     Markdown: 150,
-    Connect: 250,
+    Connect: 200,
   }
 
-  const { displayName = '', type = 'String', isMultiple } = field
+  const { displayName = '', type = 'String' } = field
   // 计算列宽度
   const nameWidth = displayName.length * 25
 
-  let width
+  let width: number
   if (TypeWidthMap[type]) {
     width = nameWidth > TypeWidthMap[type] ? nameWidth : TypeWidthMap[type]
   } else {
-    width = nameWidth > 150 ? nameWidth : 150
-  }
-
-  if (isMultiple && type === 'Image') {
-    width += 50
+    width = nameWidth > 120 ? nameWidth : 120
   }
 
   return width
@@ -125,8 +121,6 @@ export const getMissingSystemFields = (schema: Schema) => {
       missingSystemFields.push(field)
     }
   })
-
-  console.log(missingSystemFields)
 
   return missingSystemFields.sort((prev, next) => {
     return fieldOrder(prev) - fieldOrder(next)

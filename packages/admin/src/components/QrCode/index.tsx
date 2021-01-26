@@ -29,7 +29,7 @@ export default (props: {
   // 渠道来源
   const source = channel || activityChannels?.[0]?.value || ''
   let smsPageUrl = activityId
-    ? `https://${location.host}/cms-activities/index.html?activityId=${activityId}?source=${source}`
+    ? `https://${location.host}/cms-activities/index.html?activityId=${activityId}&source=${source}`
     : ''
 
   // 生成二维码
@@ -61,6 +61,7 @@ export default (props: {
 
   return (
     <Modal
+      centered
       title="跳转页面体验二维码"
       footer={null}
       visible={isModalVisible}
