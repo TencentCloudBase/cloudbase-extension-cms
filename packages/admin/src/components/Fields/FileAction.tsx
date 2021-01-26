@@ -1,4 +1,4 @@
-import { copyToClipboard, downloadFile, getTempFileURL, isFileId } from '@/utils'
+import { copyToClipboard, downloadFile, fileIdToUrl, isFileId } from '@/utils'
 import { CopyTwoTone } from '@ant-design/icons'
 import { Button, message } from 'antd'
 import React, { useState } from 'react'
@@ -15,10 +15,7 @@ export const FileAction: React.FC<{
   const { index, fileUri, type } = props
   const tipText = type === 'file' ? '文件' : '图片'
 
-  let [copyLoading, setCopyLoading] = useState<number | boolean>(false)
   let [downloadLoading, setDownloadLoading] = useState<number | boolean>(false)
-
-  copyLoading = typeof index === 'undefined' ? copyLoading : copyLoading === index
   downloadLoading = typeof index === 'undefined' ? downloadLoading : downloadLoading === index
 
   return (
@@ -56,32 +53,14 @@ export const FileAction: React.FC<{
       <Button
         type="link"
         size="small"
-        loading={copyLoading as boolean}
         onClick={() => {
-          if (typeof index === 'undefined') {
-            setCopyLoading(true)
-          } else {
-            setCopyLoading(index)
-          }
-
           if (!isFileId(fileUri)) {
             copyToClipboard(fileUri)
-            setCopyLoading(false)
             return
           }
 
-          getTempFileURL(fileUri)
-            .then((url) => {
-              copyToClipboard(url)
-            })
-            .catch((e) => {
-              console.log(e)
-              console.log(e.message)
-              message.error(`获取链接失败 ${e.message}`)
-            })
-            .finally(() => {
-              setCopyLoading(false)
-            })
+          const url = fileIdToUrl(fileUri)
+          copyToClipboard(url)
         }}
       >
         访问链接
