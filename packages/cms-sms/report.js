@@ -1,4 +1,5 @@
 /* eslint-disable */
+const crypto = require('crypto')
 const cloud = require('wx-server-sdk')
 
 /**
@@ -17,6 +18,11 @@ async function reportMessageTask(event = {}) {
   })
 }
 
+const hashNode = (val) =>
+  new Promise((resolve) =>
+    setTimeout(() => resolve(crypto.createHash('sha256').update(val).digest('hex')), 0)
+  )
+
 const base64 = (v) => Buffer.from(v).toString('base64')
 
 /**
@@ -26,6 +32,10 @@ async function reportUserView(event = {}) {
   const { ENV } = cloud.getWXContext()
   let { activityId, channelId, sessionId } = event
   const clientIP = process.env.WX_CLIENTIP || process.env.WX_CLIENTIPV6 || '127.0.0.1'
+
+  if (!sessionId) {
+    sessionId = hashNode(clientIP).slice(0, 36)
+  }
 
   // 记录 IP 地址
   sessionId += `-${base64(clientIP)}`

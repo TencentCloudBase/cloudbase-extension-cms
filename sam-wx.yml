@@ -88,7 +88,7 @@ Resources:
       Runtime: Nodejs10.15
       Handler: index.main
       Role: TCB_QcsRole
-  # 短信服务
+  # OpenAPI 服务
   OpenapiFunction:
     Type: CloudBase::Function
     Properties:

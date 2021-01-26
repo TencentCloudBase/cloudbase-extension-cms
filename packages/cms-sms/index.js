@@ -86,6 +86,7 @@ exports.main = async (event = {}, context) => {
         phoneCount: phoneNumberList.length,
         activityId: task.activityId,
       })
+      console.log('短信下发任务，上报成功', task.activityId)
     } catch (error) {
       console.log('上报错误', error)
     }
