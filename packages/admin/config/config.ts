@@ -61,6 +61,8 @@ const config: IConfig = {
     require('postcss-import'),
     // eslint-disable-next-line
     require('tailwindcss'),
+    // eslint-disable-next-line
+    require('autoprefixer'),
   ],
   // 定义变量
   define: {

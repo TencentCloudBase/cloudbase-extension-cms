@@ -12,7 +12,7 @@ const routesConfig: IConfig = {
       path: '/home',
       layout: false,
       access: 'isLogin',
-      component: './index',
+      component: './home/index',
     },
     {
       path: '/settings',

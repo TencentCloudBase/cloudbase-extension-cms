@@ -47,11 +47,6 @@
     }
   }
 
-  .ant-card-body {
-    padding: 0;
-    min-height: 240px;
-  }
-
   .help-btn {
     position: fixed;
     bottom: 40px;
@@ -71,32 +66,11 @@
     }
   }
 
-  .project {
-    &-cards {
-      display: grid;
-      gap: 40px;
-      grid-template-columns: repeat(auto-fill, 180px);
-      margin-bottom: 60px;
-    }
-
-    &-desc {
-      max-width: 100px;
-      height: 30px;
-    }
-
-    &-logo {
-      background-color: #262f3e;
-      color: rgb(255, 255, 255);
-      font-size: 32px;
-      line-height: 80px;
-      text-align: center;
-      font-weight: 600;
-      width: 80px;
-      height: 80px;
-      min-height: 80px;
-      min-width: 80px;
-      display: block;
-      border-radius: 8px;
-    }
+  .project-cards {
+    gap: 30px 20px;
+    display: grid;
+    margin-left: -15px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(auto-fill, 110px);
   }
 }

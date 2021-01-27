@@ -3,6 +3,9 @@ import React, { useEffect } from 'react'
 import { history, useRequest } from 'umi'
 import { getCollectionInfo } from '@/services/apis'
 
+/**
+ * 重定向来自低码的访问，到对应的集合
+ */
 export default () => {
   const { collectionName, from, customId } = history.location.query || {}
 

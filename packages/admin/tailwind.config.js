@@ -1,7 +1,7 @@
 module.exports = {
   important: true,
   theme: {
-    textColor: theme => theme('colors'),
+    textColor: (theme) => theme('colors'),
     colors: {
       primary: '#0052d9',
     },
@@ -9,9 +9,9 @@ module.exports = {
       80: '80%',
     },
   },
-  purge: [
-    './src/**/*.tsx',
-  ],
-  variants: {},
+  purge: ['./src/**/*.tsx'],
+  variants: {
+    extend: {},
+  },
   plugins: [],
 }
