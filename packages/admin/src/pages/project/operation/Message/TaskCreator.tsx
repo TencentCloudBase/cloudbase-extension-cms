@@ -184,8 +184,8 @@ const MessageTask: React.FC = () => {
                     <div>短信内容最长支持 30 个字符。</div>
                     <div>
                       发送样例：【{setting.miniappName || '小程序名称'}】
-                      {form.getFieldValue('content')}，点击 https://dllzff.cn/xxxxxxxx 打开【
-                      {setting.miniappName || '小程序名称'}】小程序，回T退订。
+                      {form.getFieldValue('content')}，跳转小程序 https://dllzff.cn/xxxxxxxx
+                      回T退订。
                     </div>
                     {msgLongWarning && (
                       <Text type="warning">当前短信内容可能超过70字，将会分成2条短信发送</Text>
