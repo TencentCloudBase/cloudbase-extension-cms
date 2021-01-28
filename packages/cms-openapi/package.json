@@ -1,5 +1,5 @@
 {
-  "name": "cloudbase-cms-api",
+  "name": "cloudbase-cms-openapi",
   "version": "2.6.9",
   "description": "CloudBase content manager system service restful api",
   "author": "cwuyiqing@gmail.com",

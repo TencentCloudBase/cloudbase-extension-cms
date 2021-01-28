@@ -18,7 +18,7 @@ async function getUrlScheme(event) {
   // 上报数据
   try {
     await reportUserView(event)
-    console.log('上报数据成功')
+    console.log('上报数据成功', event)
   } catch (error) {
     console.log('上报数据异常', error)
   }
