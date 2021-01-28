@@ -1,18 +1,6 @@
-import React, { useState, useMemo } from 'react'
-import { useParams, useRequest } from 'umi'
-import {
-  Form,
-  Modal,
-  Button,
-  Dropdown,
-  Alert,
-  message,
-  Input,
-  Space,
-  Row,
-  Col,
-  Skeleton,
-} from 'antd'
+import React, { useState } from 'react'
+import { useRequest } from 'umi'
+import { Form, Modal, Button, Alert, message, Input, Space, Skeleton } from 'antd'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
@@ -49,6 +37,8 @@ const Channels: React.FC = () => {
     }
   )
 
+  const channels = setting?.activityChannels || []
+
   return (
     <>
       <Button type="primary" onClick={() => setVisible(true)}>
@@ -73,16 +63,24 @@ const Channels: React.FC = () => {
 
         <div className="flex">
           <h4 style={{ width: '45%' }}>渠道 ID</h4>
-          <h4>渠道名称</h4>
+          <h4 style={{ marginLeft: '5%' }}>渠道名称</h4>
         </div>
 
         <Form
           layout="vertical"
           onFinish={(v = {}) => run(v)}
           initialValues={{
-            channels: setting?.activityChannels || [],
+            channels,
           }}
         >
+          <Form.Item>
+            <Form.Item noStyle>
+              <Input disabled value="_cms_sms" style={{ width: '45%' }} />
+            </Form.Item>
+            <Form.Item noStyle>
+              <Input disabled value="短信" style={{ marginLeft: '5%', width: '40%' }} />
+            </Form.Item>
+          </Form.Item>
           <Form.Item>
             <Form.List name="channels">
               {(fields, { add, remove }) => {

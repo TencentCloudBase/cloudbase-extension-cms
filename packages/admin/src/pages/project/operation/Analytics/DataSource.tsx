@@ -1,8 +1,6 @@
 import React from 'react'
-import { useRequest } from 'umi'
 import { Space, Spin } from 'antd'
 import ProCard from '@ant-design/pro-card'
-import { getAnalyticsData } from '@/services/operation'
 import { PieChartTwoTone } from '@ant-design/icons'
 
 const cardStyle = {
@@ -12,26 +10,16 @@ const cardStyle = {
 /**
  * 获取 metric 对应的数据
  */
-const DataSource: React.FC<{ activityId: string; title: string; metricName: string }> = ({
+const DataSource: React.FC<{ data: any; title: string; loading: boolean }> = ({
   title,
   children,
-  activityId,
-  metricName,
+  data,
+  loading,
 }) => {
   // 获取统计数据
-  const { data, loading } = useRequest(
-    async () => {
-      if (!activityId) return
-      const res = await getAnalyticsData({ activityId, metricName })
-      return res
-    },
-    {
-      refreshDeps: [activityId],
-    }
-  )
 
   // 加载中
-  if (!activityId || !data?.length) {
+  if (loading || !data || data === -1) {
     return (
       <ProCard title={title} style={cardStyle}>
         <div className="flex justify-center items-center h-full">
@@ -40,7 +28,7 @@ const DataSource: React.FC<{ activityId: string; title: string; metricName: stri
             {loading ? (
               <Spin />
             ) : (
-              <p className="text-xl">{activityId ? '数据为空' : '加载中...'}</p>
+              <p className="text-xl">{data === -1 ? '数据为空' : '加载中...'}</p>
             )}
           </Space>
         </div>

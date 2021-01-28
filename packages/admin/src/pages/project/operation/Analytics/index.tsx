@@ -9,6 +9,7 @@ import { useDebounceFn } from '@umijs/hooks'
 import { useSetState } from 'react-use'
 import { AlertTwoTone } from '@ant-design/icons'
 import { FunnelChart, PieChart } from '@/components/Charts'
+import { getAnalyticsData } from '@/services/operation'
 import { ActivitySchema } from '../Activity/schema'
 import DataSource from './DataSource'
 
@@ -83,6 +84,17 @@ export default (): React.ReactNode => {
     run(key)
   }, 500)
 
+  // 获取统计数据
+  const { data = {}, loading: metricLoading } = useRequest(
+    async () => {
+      if (!currentActivity) return
+      return getAnalyticsData({ activityId: currentActivity })
+    },
+    {
+      refreshDeps: [currentActivity],
+    }
+  )
+
   // setting 还没有获取到
   if (!setting) {
     return (
@@ -137,15 +149,15 @@ export default (): React.ReactNode => {
       </Space>
 
       <Suspense fallback={<Spin />}>
-        <OverviewRow activityId={currentActivity} />
+        <OverviewRow data={data?.overviewCount} loading={metricLoading} />
       </Suspense>
 
       <Row gutter={[24, 24]}>
         <Col {...colProps}>
           <DataSource
             title="H5 访问累计用户数渠道占比"
-            activityId={currentActivity}
-            metricName="webPageViewSource"
+            loading={metricLoading}
+            data={data['webPageViewSource']}
           >
             <PieChart data={[]} />
           </DataSource>
@@ -153,26 +165,24 @@ export default (): React.ReactNode => {
         <Col {...colProps}>
           <DataSource
             title="跳转小程序累计 UV 渠道占比"
-            activityId={currentActivity}
-            metricName="miniappViewSource"
+            loading={metricLoading}
+            data={data['miniappViewSource']}
           >
             <PieChart data={[]} />
           </DataSource>
         </Col>
         <Col {...colProps}>
-          <DataSource
-            title="短信转化率"
-            activityId={currentActivity}
-            metricName="messageConversion"
-          >
+          <DataSource title="短信转化率" loading={metricLoading} data={data['messageConversion']}>
             <FunnelChart data={[]} />
           </DataSource>
         </Col>
       </Row>
 
+      {/* 实时访问数据 */}
+      {/* 
       <Suspense fallback={<Spin />}>
         <RealTimeView activityId={currentActivity} />
-      </Suspense>
+      </Suspense> */}
     </PageContainer>
   )
 }

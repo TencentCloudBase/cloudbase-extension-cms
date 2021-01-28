@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import { MessageOutlined, CodeSandboxOutlined } from '@ant-design/icons'
 import { Layout, Space, Button, Skeleton, Tooltip, Popover } from 'antd'
 import AvatarDropdown from '@/components/AvatarDropdown'
@@ -8,6 +9,12 @@ import './index.less'
 import pkg from '../../../package.json'
 
 const { Header, Content, Footer } = Layout
+
+const HelpButton = styled.div`
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+`
 
 const IconStyle: React.CSSProperties = {
   fontSize: '1.8em',
@@ -56,7 +63,7 @@ const HomePageContainer: React.FC<{ loading: boolean }> = ({ children, loading }
       </Footer>
 
       {/* 悬浮按钮 */}
-      <div className="help-btn">
+      <HelpButton>
         {window.TcbCmsConfig.disableHelpButton ? null : (
           <Popover
             placement="topLeft"
@@ -80,7 +87,7 @@ const HomePageContainer: React.FC<{ loading: boolean }> = ({ children, loading }
             <Button size="large" type="primary" shape="circle" icon={<MessageOutlined />} />
           </Popover>
         )}
-      </div>
+      </HelpButton>
     </Layout>
   )
 }

@@ -345,8 +345,7 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
  */
 const setPageQuery = (current = 1, pageSize = 10) => {
   const { pathname, query } = history.location
-  history.replace({
-    path: pathname,
+  history.replace(pathname, {
     query: {
       ...query,
       pageSize,

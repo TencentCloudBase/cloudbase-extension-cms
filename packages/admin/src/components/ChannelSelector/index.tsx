@@ -6,6 +6,13 @@ import { GlobalCtx } from 'typings/store'
 const { Option } = Select
 const { Text } = Typography
 
+const DefaultChannel = [
+  {
+    value: '_cms_sms_',
+    label: '短信',
+  },
+]
+
 const ChannelSelector: React.FC<{ onSelect: (v: string) => void }> = ({ onSelect }) => {
   const ctx = useConcent<{}, GlobalCtx>('global')
   const { setting } = ctx.state
@@ -18,17 +25,13 @@ const ChannelSelector: React.FC<{ onSelect: (v: string) => void }> = ({ onSelect
       <Select
         style={{ width: 200 }}
         onChange={(v) => onSelect(v)}
-        defaultValue={activityChannels?.[0]?.value || ''}
+        defaultValue={DefaultChannel[0].value}
       >
-        {activityChannels?.length ? (
-          activityChannels?.map((_: ActivityChannel, index) => (
-            <Option key={index} value={_.value}>
-              {_.label}
-            </Option>
-          ))
-        ) : (
-          <Option value="">空</Option>
-        )}
+        {DefaultChannel.concat(activityChannels)?.map((_: ActivityChannel, index) => (
+          <Option key={index} value={_.value}>
+            {_.label}
+          </Option>
+        ))}
       </Select>
     </Space>
   )

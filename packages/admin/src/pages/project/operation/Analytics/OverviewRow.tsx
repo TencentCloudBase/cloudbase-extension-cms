@@ -1,7 +1,5 @@
 import React from 'react'
 import { Col, Row, Card, Typography, Spin } from 'antd'
-import { useRequest } from 'umi'
-import { getAnalyticsData } from '@/services/operation'
 
 const { Text } = Typography
 
@@ -14,24 +12,16 @@ const topColResponsiveProps = {
   style: { marginBottom: 24 },
 }
 
-const OverviewRow: React.FC<{ activityId: string }> = ({ activityId }) => {
-  // 获取统计数据
-  const { data, loading } = useRequest(
-    async () => {
-      if (!activityId) return
-      const res = await getAnalyticsData({ activityId, metricName: 'overviewCount' })
-      return res
-    },
-    {
-      refreshDeps: [activityId],
-    }
-  )
-
+const OverviewRow: React.FC<{ data: any; loading: boolean }> = ({ data, loading }) => {
   return (
     <Row gutter={24}>
-      <ShowCardCol loading={loading} title="活动下发号码总数" count={data?.phoneNumberCount} />
-      <ShowCardCol loading={loading} title="H5 访问用户总数" count={data?.webPageViewCount} />
-      <ShowCardCol loading={loading} title="跳转小程序用户总数" count={data?.miniappViewCount} />
+      <ShowCardCol loading={loading} title="活动下发号码总数" count={data?.phoneNumberCount || 0} />
+      <ShowCardCol loading={loading} title="H5 访问用户总数" count={data?.webPageViewCount || 0} />
+      <ShowCardCol
+        loading={loading}
+        title="跳转小程序用户总数"
+        count={data?.miniappViewCount || 0}
+      />
     </Row>
   )
 }

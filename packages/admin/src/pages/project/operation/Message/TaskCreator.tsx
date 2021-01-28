@@ -310,7 +310,7 @@ const MessageTask: React.FC = () => {
           </Modal>
         </Col>
       </Row>
-      <QrCode activityId={activityId} actionRef={qrCodeRef} />
+      <QrCode disableChannel activityId={activityId} actionRef={qrCodeRef} />
     </PageContainer>
   )
 }

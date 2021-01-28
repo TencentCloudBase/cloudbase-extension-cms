@@ -6,7 +6,15 @@ import { PlusCircleTwoTone } from '@ant-design/icons'
 
 const { Title, Paragraph } = Typography
 
-const ProjectLogo = styled.div`
+const ProjectContainer = styled.div`
+  gap: 30px 20px;
+  display: grid;
+  margin-left: -15px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  grid-template-rows: repeat(auto-fill, 110px);
+`
+
+const ProjectIcon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -53,7 +61,7 @@ export default function ProjectListView({
   const { isAdmin } = useAccess()
 
   return (
-    <div className="project-cards">
+    <ProjectContainer>
       {projects.map((project, index) => (
         <ProjectItem
           key={index}
@@ -62,7 +70,7 @@ export default function ProjectListView({
           }}
         >
           <Card bordered={false} style={cardStyle} bodyStyle={cardBodyStyle}>
-            <ProjectLogo className="flex items-center">{project.name.slice(0, 1)}</ProjectLogo>
+            <ProjectIcon className="flex items-center">{project.name.slice(0, 1)}</ProjectIcon>
           </Card>
           <div className="ml-5 flex-1" style={{ maxWidth: '140px' }}>
             <Tooltip title={project.name} placement="topLeft">
@@ -79,7 +87,7 @@ export default function ProjectListView({
         </ProjectItem>
       ))}
       {isAdmin && <CreateProject onClick={onCreateProject} />}
-    </div>
+    </ProjectContainer>
   )
 }
 
@@ -87,9 +95,9 @@ const CreateProject: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
     <ProjectItem onClick={onClick}>
       <Card bordered={false} style={cardStyle} bodyStyle={cardBodyStyle}>
-        <ProjectLogo style={{ backgroundColor: '#fff' }}>
-          <PlusCircleTwoTone style={{ fontSize: '48px' }} />
-        </ProjectLogo>
+        <ProjectIcon style={{ backgroundColor: '#fff' }}>
+          <PlusCircleTwoTone style={{ fontSize: '46px' }} />
+        </ProjectIcon>
       </Card>
       <div className="ml-5 flex-1">
         <Typography.Title level={4} ellipsis={{ rows: 2, expandable: false }}>
