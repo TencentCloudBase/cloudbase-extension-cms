@@ -133,7 +133,7 @@ export default {
 
       try {
         const activityId = this.getQueryByName('activityId')
-        const channelId = this.getQueryByName('source')
+        const channelId = this.getQueryByName('source') || '_cms_sms_'
         let sessionId = localStorage.getItem(LOCAL_SESSIONID_KEY)
         if (!sessionId) {
           sessionId = this.uuidv4()

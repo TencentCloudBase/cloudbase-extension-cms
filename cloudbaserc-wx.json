@@ -15,6 +15,15 @@
           "cloudPath": "{{env.deployPath}}"
         }
       },
+      "sms-page": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "outputPath": "./packages/cms-sms-page/dist",
+          "installCommand": "echo \"Skip Install\"",
+          "buildCommand": "echo \"Skip Build\"",
+          "cloudPath": "/cms-activities/"
+        }
+      },
       "init": {
         "use": "@cloudbase/framework-plugin-function",
         "inputs": {

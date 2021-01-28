@@ -43,14 +43,14 @@ export class ApiService {
         env: ENV,
         phoneNumberList,
         content: task.content,
-        path: `/cms-activities/index.html?activityId=${task.activityId}`,
+        path: `/cms-activities/index.html?activityId=${task.activityId}&source=_cms_sms_`,
       })
 
       // 上报短信下发任务
       try {
         await this.reportMessageTask({
           taskId,
-          phoneCount: phoneNumberList.length,
+          phoneCount: String(phoneNumberList.length),
           activityId: task.activityId,
         })
         console.log('短信下发任务，上报成功', task.activityId)
@@ -125,7 +125,7 @@ export class ApiService {
   async reportMessageTask(
     event: {
       taskId?: string
-      phoneCount?: number
+      phoneCount?: string
       activityId?: string
     } = {}
   ) {
@@ -133,6 +133,8 @@ export class ApiService {
     const { ENV } = wxCloudApp.getWXContext()
 
     const { taskId, phoneCount, activityId } = event
+
+    console.log('上报短信下发任务', phoneCount)
 
     // TODO: update
     // @ts-ignore

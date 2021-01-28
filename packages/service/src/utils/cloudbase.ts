@@ -174,7 +174,7 @@ export const isRunInServerMode = () =>
   !!process.env.KUBERNETES_SERVICE_HOST
 
 // 是否在云函数中运行
-export const isInSCF = () => process.env.TENCENTCLOUD_RUNENV === 'scf'
+export const isInSCF = () => process.env.TENCENTCLOUD_RUNENV === 'SCF'
 
 // 是否在云托管中运行
 export const isRunInContainer = () => !!process.env.KUBERNETES_SERVICE_HOST

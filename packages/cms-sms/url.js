@@ -9,7 +9,7 @@ const MessageActivities = 'wx-ext-cms-sms-activities'
  * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
  */
 async function getUrlScheme(event) {
-  const { activityId, channelId } = event
+  const { activityId, channelId = '_cms_sms_' } = event
 
   let query = `_activityId_=${activityId}&_source_=${channelId}`
   let path = ''
