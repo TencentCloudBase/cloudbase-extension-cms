@@ -89,3 +89,14 @@ export const timestampToString = (time: number | string, type: DateFormatType = 
 
   return timeString
 }
+
+/**
+ * 获取昨天的日期
+ */
+export const getYesterday = () => {
+  return moment().subtract(1, 'day').format('YYYY-MM-DD')
+}
+
+export const getHour = () => {
+  return moment().hour()
+}

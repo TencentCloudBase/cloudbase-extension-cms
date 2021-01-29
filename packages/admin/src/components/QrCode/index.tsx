@@ -3,15 +3,9 @@ import { Space, Modal, Image, Typography, Alert } from 'antd'
 import { useSetState } from 'react-use'
 import { generateQRCode } from '@/utils'
 import ChannelSelector from '@/components/ChannelSelector'
+import { DefaultChannels } from '@/common'
 
 const { Paragraph } = Typography
-
-const DefaultChannel = [
-  {
-    value: '_cms_sms_',
-    label: '短信',
-  },
-]
 
 export default (props: {
   activityId: string
@@ -30,7 +24,7 @@ export default (props: {
   })
 
   // 渠道来源
-  const source = channel || DefaultChannel[0].value
+  const source = channel || DefaultChannels[0].value
   let smsPageUrl = activityId
     ? `https://${location.host}/cms-activities/index.html?activityId=${activityId}&source=${source}`
     : ''
@@ -65,7 +59,7 @@ export default (props: {
   return (
     <Modal
       centered
-      title="跳转页面体验二维码"
+      title={disableChannel ? '跳转页面体验二维码' : '渠道投放'}
       footer={null}
       visible={isModalVisible}
       onCancel={() =>
@@ -74,12 +68,18 @@ export default (props: {
         })
       }
     >
-      <Alert type="info" message="请使用手机扫码打开以下链接" className="mb-4" />
-
-      {!disableChannel && (
-        <div className="my-4">
-          <ChannelSelector onSelect={(v) => setState({ channel: v })} />
-        </div>
+      {disableChannel ? (
+        <Alert type="info" message="请使用手机扫码打开以下链接" className="mb-4" />
+      ) : (
+        <>
+          <Alert
+            type="info"
+            message="每个渠道都会生成对应的H5中间页链接，请将该链接投放到对应的渠道，系统可区分渠道统计数据"
+          />
+          <div className="my-4">
+            <ChannelSelector onSelect={(v) => setState({ channel: v })} />
+          </div>
+        </>
       )}
 
       <Space size="large">

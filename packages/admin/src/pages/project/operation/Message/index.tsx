@@ -27,7 +27,7 @@ export default (): React.ReactNode => {
   }
 
   return (
-    <PageContainer content="短信下发后，会默认附带当前账号所属小程序名称及跳转链接，支持用户直接点击访问你的小程序。">
+    <PageContainer content="短信下发后，会默认附带当前账号所属小程序名称及跳转链接，支持用户直接点击访问你的小程序">
       <ProCard>
         <ContentTable currentSchema={TaskSchema} />
       </ProCard>

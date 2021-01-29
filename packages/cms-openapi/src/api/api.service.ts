@@ -22,6 +22,30 @@ const emptyStatistic = {
   messageConversion: -1,
 }
 
+// 默认渠道
+const DefaultChannels = [
+  {
+    value: '_cms_sms_',
+    label: '短信',
+  },
+  {
+    value: 'zhihu',
+    label: '知乎',
+  },
+  {
+    value: 'qqvideo',
+    label: '腾讯视频',
+  },
+  {
+    value: 'wecom',
+    label: '企业微信',
+  },
+  {
+    value: 'qq',
+    label: 'QQ',
+  },
+]
+
 @Injectable()
 export class ApiService {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
@@ -184,8 +208,6 @@ export class ApiService {
       label: string
     }[] = setting?.activityChannels || []
 
-    console.log(setting, activityChannels)
-
     try {
       const query = {
         action: 'sms',
@@ -250,12 +272,14 @@ export class ApiService {
             // 此渠道的名称
             const channelId = item.dataValue[channelIdIndex]
             // 此渠道在设置中的名称
-            const channel = activityChannels.find((channel) => channel.value === channelId)
+            const channel = DefaultChannels.concat(activityChannels).find(
+              (channel) => channel?.value === channelId
+            )
 
             let label = channel?.label || channelId
 
-            if (label === '_cms_sms_') {
-              label = '短信'
+            if (label === '-') {
+              label = '未知渠道'
             }
 
             return {
@@ -269,9 +293,9 @@ export class ApiService {
       const smsChannelData = dataValue.find((_) => _.dataValue[channelIdIndex] === '_cms_sms_')
       // 短信转换率
       const messageConversion = [
-        { number: getMetricValue('sms_send_uercnt', smsChannelData), stage: '短信下发' },
-        { number: getMetricValue('h5_open_uercnt', smsChannelData), stage: 'H5 打开用户数' },
-        { number: getMetricValue('jump_wxapp_uercnt', smsChannelData), stage: '小程序打开用户数' },
+        { number: getMetricValue('sms_send_uercnt', smsChannelData), stage: '短信投放号码数' },
+        { number: getMetricValue('h5_open_uercnt', smsChannelData), stage: 'H5 访问用户数' },
+        { number: getMetricValue('jump_wxapp_uercnt', smsChannelData), stage: '跳转小程序用户数' },
       ]
 
       const data = {
@@ -282,8 +306,8 @@ export class ApiService {
           miniappViewCount: getMetricValue('jump_wxapp_uercnt'),
         },
         // h5 访问用户渠道
-        webPageViewSource: getChannelSource('h5_open_uercnt_percent'),
-        miniappViewSource: getChannelSource('jump_wxapp_uercnt_percent'),
+        webPageViewSource: getChannelSource('h5_open_uercnt'),
+        miniappViewSource: getChannelSource('jump_wxapp_uercnt'),
         messageConversion,
       }
 

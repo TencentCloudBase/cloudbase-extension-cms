@@ -228,13 +228,7 @@ export function getFieldFormItem(field: SchemaField, key: number) {
           key={key}
           name={name}
           rules={rules}
-          label={
-            <Text strong>
-              {displayName}
-              &nbsp;
-              <Text type="secondary">{name}</Text>
-            </Text>
-          }
+          label={<Text strong>{displayName}</Text>}
           extra={description}
           valuePropName="checked"
         >
@@ -248,13 +242,7 @@ export function getFieldFormItem(field: SchemaField, key: number) {
           key={key}
           name={name}
           rules={rules}
-          label={
-            <Text strong>
-              {displayName}
-              &nbsp;
-              <Text type="secondary">{name}</Text>
-            </Text>
-          }
+          label={<Text strong>{displayName}</Text>}
           extra={description}
         >
           {FieldEditor}

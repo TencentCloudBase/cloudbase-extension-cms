@@ -147,7 +147,7 @@ export const ContentTable: React.FC<{
               qrCodeRef.current?.show()
             }}
           >
-            体验
+            渠道投放
           </Button>,
           <Button
             danger

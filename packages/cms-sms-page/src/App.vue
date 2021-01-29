@@ -188,12 +188,21 @@ export default {
         // 添加跳转路径
         let jumpPath
         if (activity.appPath) {
-          jumpPath = activity.appPath + '.html?'
+          jumpPath = activity.appPath + '.html'
+        }
+
+        // 添加参数，jumpPath 可能为空
+        if (jumpPath) {
+          jumpPath += `?_activityId_=${activityId}&_source_=${channelId}`
+        } else {
+          jumpPath = `?_activityId_=${activityId}&_source_=${channelId}`
         }
 
         if (activity.appPathQuery) {
           jumpPath += activity.appPathQuery
         }
+
+        console.log('跳转链接', jumpPath)
 
         if (jumpPath) {
           this.appPath = jumpPath

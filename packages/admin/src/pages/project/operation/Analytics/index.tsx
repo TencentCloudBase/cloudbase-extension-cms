@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react'
-import { Select, Col, Row, Skeleton, Space, Spin, Button, Result } from 'antd'
+import React, { Suspense, useMemo } from 'react'
+import { Select, Col, Row, Skeleton, Space, Spin, Button, Result, Tooltip } from 'antd'
 import { PageContainer } from '@ant-design/pro-layout'
 import { history, useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
@@ -7,11 +7,12 @@ import { GlobalCtx } from 'typings/store'
 import { getContents } from '@/services/content'
 import { useDebounceFn } from '@umijs/hooks'
 import { useSetState } from 'react-use'
-import { AlertTwoTone } from '@ant-design/icons'
+import { AlertTwoTone, QuestionCircleOutlined } from '@ant-design/icons'
 import { FunnelChart, PieChart } from '@/components/Charts'
 import { getAnalyticsData } from '@/services/operation'
 import { ActivitySchema } from '../Activity/schema'
 import DataSource from './DataSource'
+import { getHour } from '@/utils'
 
 // 懒加载
 const OverviewRow = React.lazy(() => import('./OverviewRow'))
@@ -95,6 +96,8 @@ export default (): React.ReactNode => {
     }
   )
 
+  console.log(data)
+
   // setting 还没有获取到
   if (!setting) {
     return (
@@ -126,27 +129,39 @@ export default (): React.ReactNode => {
     )
   }
 
+  const nowHour = useMemo(() => getHour(), [])
+
   return (
-    <PageContainer>
-      <Space className="mb-5">
-        <span>活动名</span>
-        <Select
-          showSearch
-          loading={loading}
-          filterOption={false}
-          style={{ width: 300 }}
-          value={currentActivity}
-          onChange={(v) => setState({ currentActivity: v })}
-          onSearch={searchActivity}
-          notFoundContent={searching ? <Spin size="small" /> : null}
-        >
-          {activities.map((_, i) => (
-            <Option key={i} value={_._id}>
-              {_.activityName}
-            </Option>
-          ))}
-        </Select>
-      </Space>
+    <PageContainer content="数据统计分析将提供活动数据统计与转化率分析，助力运营成功">
+      <div className="flex items-center justify-between mb-5">
+        <Space>
+          <span>活动名</span>
+          <Select
+            showSearch
+            loading={loading}
+            filterOption={false}
+            style={{ width: 300 }}
+            value={currentActivity}
+            onChange={(v) => setState({ currentActivity: v })}
+            onSearch={searchActivity}
+            notFoundContent={searching ? <Spin size="small" /> : null}
+          >
+            {activities.map((_, i) => (
+              <Option key={i} value={_._id}>
+                {_.activityName}
+              </Option>
+            ))}
+          </Select>
+        </Space>
+        {data?.webPageViewSource === '-1' && nowHour < 6 && (
+          <Space>
+            <span>昨日数据尚未更新</span>
+            <Tooltip title="数据更新一般在每日 6 时左右完成">
+              <QuestionCircleOutlined style={{ fontSize: '14px' }} />
+            </Tooltip>
+          </Space>
+        )}
+      </div>
 
       <Suspense fallback={<Spin />}>
         <OverviewRow data={data?.overviewCount} loading={metricLoading} />
@@ -155,7 +170,14 @@ export default (): React.ReactNode => {
       <Row gutter={[24, 24]}>
         <Col {...colProps}>
           <DataSource
-            title="H5 访问累计用户数渠道占比"
+            title={
+              <Space>
+                <span>H5 访问用户总数（渠道占比）</span>
+                <Tooltip title="每个用户打开 H5 后访问会话都会生成一个会话 ID，会通过会话 ID 去重">
+                  <QuestionCircleOutlined style={{ fontSize: '14px' }} />
+                </Tooltip>
+              </Space>
+            }
             loading={metricLoading}
             data={data['webPageViewSource']}
           >
@@ -164,7 +186,14 @@ export default (): React.ReactNode => {
         </Col>
         <Col {...colProps}>
           <DataSource
-            title="跳转小程序累计 UV 渠道占比"
+            title={
+              <Space>
+                <span>跳转小程序用户总数（渠道占比）</span>
+                <Tooltip title="跳转小程序用户总数，会通过 OpenID 去重。如果前天，昨天同一个 OpenID 访问会被作为1个">
+                  <QuestionCircleOutlined style={{ fontSize: '14px' }} />
+                </Tooltip>
+              </Space>
+            }
             loading={metricLoading}
             data={data['miniappViewSource']}
           >
@@ -172,7 +201,18 @@ export default (): React.ReactNode => {
           </DataSource>
         </Col>
         <Col {...colProps}>
-          <DataSource title="短信转化率" loading={metricLoading} data={data['messageConversion']}>
+          <DataSource
+            title={
+              <Space>
+                <span>短信投放转化率</span>
+                <Tooltip title="漏斗异常说明：转化率大于1：H5页面在浏览器被访问算一次，存在2种情况会重复计算：链接分享给他人访问、用户换个浏览器访问。转化率为-∞：漏斗下一级数字为0">
+                  <QuestionCircleOutlined style={{ fontSize: '14px' }} />
+                </Tooltip>
+              </Space>
+            }
+            loading={metricLoading}
+            data={data['messageConversion']}
+          >
             <FunnelChart data={[]} />
           </DataSource>
         </Col>

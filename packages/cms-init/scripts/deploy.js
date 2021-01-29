@@ -89,7 +89,9 @@ module.exports = {
   },
   // 更新安全规则配置
   async updateSecurityRules(context) {
-    const { manager } = context
+    const { manager, config } = context
+    const { envId } = config
+
     try {
       // 查询安全规则
       let { Rule } = await manager.commonService().call({
@@ -227,7 +229,7 @@ async function writeConfigJS(manager, dir, context) {
     officialSiteLink: '${officialSiteLink}',
     appName: '微信小程序云开发',`
   } else {
-    configFileContent +=`cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
+    configFileContent += `cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
     containerAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service-container',`
   }
 

@@ -72,15 +72,7 @@ const ContentEditor: React.FC = () => {
               onFinish={(v = {}) => run(v)}
             >
               {contentAction === 'edit' && (
-                <Form.Item
-                  label={
-                    <Text strong>
-                      文档 Id &nbsp;
-                      <Text type="secondary">_id</Text>
-                    </Text>
-                  }
-                  name="_id"
-                >
+                <Form.Item label={<Text strong>文档 Id</Text>} name="_id">
                   <Input type="text" disabled />
                 </Form.Item>
               )}

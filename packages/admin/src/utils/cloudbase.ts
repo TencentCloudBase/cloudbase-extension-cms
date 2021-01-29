@@ -169,7 +169,7 @@ export async function callWxOpenAPI(action: string, data?: Record<string, any>) 
   }
 
   const wxCloudApp = await getWxCloudApp({
-    miniappID: window.TcbCmsConfig.mpAppId,
+    miniappID: window.TcbCmsConfig.mpAppID,
   })
 
   // 添加 authHeader

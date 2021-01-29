@@ -33,6 +33,11 @@ interface Task {
   phoneNumbers: string
 }
 
+const getMessageTemplate = (miniappName = '', content = '') => `【${
+  miniappName || '小程序名称'
+}】${content}，跳转小程序 https://dllzff.cn/xxxxxxxx
+回T退订`
+
 const MessageTask: React.FC = () => {
   const qrCodeRef = useRef<any>()
   const [form] = Form.useForm()
@@ -183,9 +188,8 @@ const MessageTask: React.FC = () => {
                   <div>
                     <div>短信内容最长支持 30 个字符。</div>
                     <div>
-                      发送样例：【{setting.miniappName || '小程序名称'}】
-                      {form.getFieldValue('content')}，跳转小程序 https://dllzff.cn/xxxxxxxx
-                      回T退订。
+                      发送样例：
+                      {getMessageTemplate(setting?.miniappName, form.getFieldValue('content'))}
                     </div>
                     {msgLongWarning && (
                       <Text type="warning">当前短信内容可能超过70字，将会分成2条短信发送</Text>
@@ -203,7 +207,7 @@ const MessageTask: React.FC = () => {
                   },
                   {
                     validator: (_, value) => {
-                      const template = `【${setting.miniappName}】，点击 https://dllzff.cn/xxxxxxxx 打开“${setting.miniappName}”小程序，回T退订。`
+                      const template = getMessageTemplate(setting.miniappName)
 
                       if (template.length + (value?.length || 0) > 70) {
                         setState({

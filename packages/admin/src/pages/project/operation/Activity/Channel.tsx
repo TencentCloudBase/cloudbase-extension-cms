@@ -4,6 +4,7 @@ import { Form, Modal, Button, Alert, message, Input, Space, Skeleton } from 'ant
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
+import { DefaultChannels } from '@/common'
 
 /**
  * 渠道管理
@@ -73,14 +74,17 @@ const Channels: React.FC = () => {
             channels,
           }}
         >
-          <Form.Item>
-            <Form.Item noStyle>
-              <Input disabled value="_cms_sms" style={{ width: '45%' }} />
+          {DefaultChannels.map((channel, index) => (
+            <Form.Item key={index}>
+              <Form.Item noStyle>
+                <Input disabled value={channel.value} style={{ width: '45%' }} />
+              </Form.Item>
+              <Form.Item noStyle>
+                <Input disabled value={channel.label} style={{ marginLeft: '5%', width: '40%' }} />
+              </Form.Item>
             </Form.Item>
-            <Form.Item noStyle>
-              <Input disabled value="短信" style={{ marginLeft: '5%', width: '40%' }} />
-            </Form.Item>
-          </Form.Item>
+          ))}
+
           <Form.Item>
             <Form.List name="channels">
               {(fields, { add, remove }) => {
@@ -125,7 +129,7 @@ const Channels: React.FC = () => {
                             validateTrigger={['onChange', 'onBlur']}
                           >
                             <Input
-                              placeholder="渠道名称，中国字符"
+                              placeholder="渠道名称，中文字符"
                               style={{ marginLeft: '5%', width: '40%' }}
                             />
                           </Form.Item>

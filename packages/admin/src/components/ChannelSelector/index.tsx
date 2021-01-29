@@ -2,16 +2,10 @@ import React from 'react'
 import { Space, Typography, Select } from 'antd'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
+import { DefaultChannels } from '@/common'
 
 const { Option } = Select
 const { Text } = Typography
-
-const DefaultChannel = [
-  {
-    value: '_cms_sms_',
-    label: '短信',
-  },
-]
 
 const ChannelSelector: React.FC<{ onSelect: (v: string) => void }> = ({ onSelect }) => {
   const ctx = useConcent<{}, GlobalCtx>('global')
@@ -25,9 +19,9 @@ const ChannelSelector: React.FC<{ onSelect: (v: string) => void }> = ({ onSelect
       <Select
         style={{ width: 200 }}
         onChange={(v) => onSelect(v)}
-        defaultValue={DefaultChannel[0].value}
+        defaultValue={DefaultChannels[0].value}
       >
-        {DefaultChannel.concat(activityChannels)?.map((_: ActivityChannel, index) => (
+        {DefaultChannels.concat(activityChannels)?.map((_: ActivityChannel, index) => (
           <Option key={index} value={_.value}>
             {_.label}
           </Option>
