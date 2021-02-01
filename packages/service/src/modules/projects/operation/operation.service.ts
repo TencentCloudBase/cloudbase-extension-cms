@@ -6,6 +6,7 @@ import { getCloudBaseManager, getEnvIdString } from '@/utils'
 import { CloudBaseService } from '@/services'
 import { CmsException } from '@/common'
 import { exec } from 'child_process'
+import { RESOURCE_PREFIX } from '@/constants'
 
 @Injectable()
 export class OperationService {
@@ -70,8 +71,8 @@ export class OperationService {
     // rule 为 json5 字符串
     Rule = JSON.parse(Rule)
 
-    // 设置 wx-ext-cms-sms 函数为免登录调用
-    Rule['wx-ext-cms-sms'] = {
+    // 设置 sms 函数为免登录调用
+    Rule[`${RESOURCE_PREFIX}-sms`] = {
       invoke: true,
     }
 

@@ -2,7 +2,9 @@
 const cloud = require('wx-server-sdk')
 const { reportUserView } = require('./report')
 
-const MessageActivities = 'wx-ext-cms-sms-activities'
+const CMS_RESOURCE_PREFIX = process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'
+
+const MessageActivities = `${CMS_RESOURCE_PREFIX}-sms-activities`
 
 /**
  * 生成 URL schema

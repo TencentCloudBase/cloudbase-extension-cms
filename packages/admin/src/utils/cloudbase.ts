@@ -1,11 +1,12 @@
 import { request, history } from 'umi'
 import { notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
-import { codeMessage } from '@/constants'
+import { codeMessage, RESOURCE_PREFIX } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
 import { uploadFilesToHosting } from '@/services/apis'
+import { getState } from 'concent'
 
 interface IntegrationRes {
   statusCode: number
@@ -118,7 +119,9 @@ export async function logout() {
   await auth.signOut()
 }
 
-// 兼容本地开发与云函数请求
+/**
+ * 兼容本地开发与云函数请求
+ */
 export async function tcbRequest<T = any>(
   url: string,
   options: RequestOptionsInit & { skipErrorHandler?: boolean } = {}
@@ -130,7 +133,7 @@ export async function tcbRequest<T = any>(
   const { method, params, data } = options
   const app = await getCloudBaseApp()
 
-  const functionName = WX_MP ? 'wx-ext-cms-service' : 'tcb-ext-cms-service'
+  const functionName = `${RESOURCE_PREFIX}-service`
 
   const res = await app.callFunction({
     parse: true,
@@ -160,6 +163,9 @@ export async function tcbRequest<T = any>(
  * @param data POST body 数据
  */
 export async function callWxOpenAPI(action: string, data?: Record<string, any>) {
+  // 全局 state
+  const state: any = getState()
+
   if (isDevEnv()) {
     return request(`/api/${action}`, {
       data,
@@ -168,16 +174,20 @@ export async function callWxOpenAPI(action: string, data?: Record<string, any>) 
     })
   }
 
+  const mpAppID = window.TcbCmsConfig.mpAppID || state?.global?.setting?.miniappID
+
   const wxCloudApp = await getWxCloudApp({
-    miniappID: window.TcbCmsConfig.mpAppID,
+    miniappID: mpAppID,
   })
 
   // 添加 authHeader
   const authHeader = getAuthHeader()
 
+  const functionName = `${RESOURCE_PREFIX}-openapi`
+
   // 调用 open api
   const { result } = await wxCloudApp.callFunction({
-    name: 'wx-ext-cms-openapi',
+    name: functionName,
     data: {
       body: data,
       headers: authHeader,
@@ -371,8 +381,8 @@ export function fileIdToUrl(fileId: string) {
  */
 export const getHttpAccessPath = () => {
   return isDevEnv()
-    ? '/api/v1.0'
+    ? defaultSettings.globalPrefix
     : SERVER_MODE
-    ? `https://${window.TcbCmsConfig.containerAccessPath}/api/v1.0`
-    : `https://${window.TcbCmsConfig.cloudAccessPath}/api/v1.0`
+    ? `https://${window.TcbCmsConfig.containerAccessPath}${defaultSettings.globalPrefix}`
+    : `https://${window.TcbCmsConfig.cloudAccessPath}${defaultSettings.globalPrefix}`
 }

@@ -14,6 +14,17 @@ module.exports.main = async (event, context) => {
     env: envId,
   })
 
+  const manager = new CloudBase({
+    secretId: process.env.TENCENTCLOUD_SECRETID,
+    secretKey: process.env.TENCENTCLOUD_SECRETKEY,
+    token: process.env.TENCENTCLOUD_SESSIONTOKEN,
+    envId,
+  })
+
+  // 是否为小程序的环境
+  const { EnvInfo } = await manager.env.getEnvInfo()
+  const isMpEnv = process.env.MP_ENV || process.env.WX_MP || EnvInfo.Source === 'miniapp'
+
   const {
     // 管理人员
     CMS_ADMIN_USER_NAME: adminUsername,
@@ -41,19 +52,15 @@ module.exports.main = async (event, context) => {
   // 注入全局的上下文
   const ctx = {
     app,
+    manager,
+    isMpEnv,
     db: app.database(),
-    manager: new CloudBase({
-      secretId: process.env.TENCENTCLOUD_SECRETID,
-      secretKey: process.env.TENCENTCLOUD_SECRETKEY,
-      token: process.env.TENCENTCLOUD_SESSIONTOKEN,
-      envId,
-    }),
     config: {
       envId,
       contentsCollectionName: `${RESOURCE_PREFIX}-contents`,
       usersCollectionName: `${RESOURCE_PREFIX}-users`,
       rolesCollectionName: `${RESOURCE_PREFIX}-user-roles`,
-      settingCollectionName: `${RESOURCE_PREFIX}-settings`
+      settingCollectionName: `${RESOURCE_PREFIX}-settings`,
     },
     // 用户信息
     adminUsername,

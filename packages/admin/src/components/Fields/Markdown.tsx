@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import VditorX from 'vditor'
 import 'vditor/dist/index.css'
-import { getAuthHeader, isDevEnv } from '@/utils'
+import { getAuthHeader, getHttpAccessPath } from '@/utils'
 
 // 默认的工具栏
 const DefaultToolbar = [
@@ -80,11 +80,7 @@ export const MarkdownEditor: React.FC<{
       },
       upload: {
         headers: authHeader,
-        url: isDevEnv()
-          ? '/api/v1.0/upload'
-          : SERVER_MODE
-          ? `https://${window.TcbCmsConfig.containerAccessPath}/api/v1.0/upload`
-          : `https://${window.TcbCmsConfig.cloudAccessPath}/api/v1.0/upload`,
+        url: `${getHttpAccessPath()}/upload`,
       },
       theme: 'classic',
       placeholder: '欢迎使用云开发 CMS Markdown编辑器',

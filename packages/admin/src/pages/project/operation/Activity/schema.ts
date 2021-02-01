@@ -1,3 +1,5 @@
+import { RESOURCE_PREFIX } from '@/constants'
+
 export const ActivitySchema: any = {
   fields: [
     {
@@ -69,7 +71,7 @@ export const ActivitySchema: any = {
       max: 64,
     },
   ],
-  collectionName: 'wx-ext-cms-sms-activities',
+  collectionName: `${RESOURCE_PREFIX}-sms-activities`,
   displayName: '营销活动',
   _id: 'b45a21d55ff939720430e24e0f94cb12',
 }

@@ -57,7 +57,7 @@ const customMenuData: MenuDataItem[] = [
 ]
 
 // 微信侧才支持发送短信的功能
-if (WX_MP) {
+if (WX_MP || window.TcbCmsConfig.isMpEnv) {
   customMenuData.splice(3, 0, {
     authority: 'canContent',
     path: '/:projectId/operation',
@@ -124,7 +124,7 @@ const Layout: React.FC<any> = (props) => {
   // 添加菜单
   useEffect(() => {
     // 是否开启了营销工具
-    if (WX_MP && setting?.enableOperation) {
+    if (window.TcbCmsConfig.isMpEnv && setting?.enableOperation) {
       if (!customMenuData[3].children?.length) {
         customMenuData[3].children = [
           {

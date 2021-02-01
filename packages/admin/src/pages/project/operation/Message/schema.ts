@@ -1,3 +1,5 @@
+import { RESOURCE_PREFIX } from '@/constants'
+
 export const TaskSchema: any = {
   fields: [
     {
@@ -63,7 +65,7 @@ export const TaskSchema: any = {
       type: 'DateTime',
     },
   ],
-  collectionName: 'wx-ext-cms-sms-tasks',
+  collectionName: `${RESOURCE_PREFIX}-sms-tasks`,
   displayName: '发送短信',
   _id: '21ded5cb5ff93faa0456bdef6be2a7d6',
 }

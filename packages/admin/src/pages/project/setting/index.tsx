@@ -26,14 +26,11 @@ export default (): React.ReactNode => {
             </TabPaneContent>
           </TabPane>
 
-          {/* 微信暂不支持 RESTful API */}
-          {!WX_MP && (
-            <TabPane tab="API 访问" key="2">
-              <TabPaneContent>
-                <ApiAccess />
-              </TabPaneContent>
-            </TabPane>
-          )}
+          <TabPane tab="API 访问" key="2">
+            <TabPaneContent>
+              <ApiAccess />
+            </TabPaneContent>
+          </TabPane>
         </Tabs>
       </ProCard>
     </PageContainer>

@@ -140,9 +140,11 @@ export default {
           localStorage.setItem(LOCAL_SESSIONID_KEY, sessionId)
         }
 
+        const functionName = WX_MP ? 'wx-ext-cms-sms' : 'tcb-ext-cms-sms'
+
         // 查询活动信息
         const res = await this.cloudApp.callFunction({
-          name: 'wx-ext-cms-sms',
+          name: functionName,
           data: {
             channelId,
             sessionId,

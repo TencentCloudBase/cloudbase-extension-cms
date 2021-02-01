@@ -1,3 +1,5 @@
+const resourcePrefix = process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'
+
 const ActivitySchema = {
   fields: [
     {
@@ -88,7 +90,7 @@ const ActivitySchema = {
       type: 'DateTime',
     },
   ],
-  collectionName: 'wx-ext-cms-sms-activities',
+  collectionName: `${resourcePrefix}-sms-activities`,
   displayName: '营销活动',
   _id: 'b45a21d55ff939720430e24e0f94cb12',
 }
@@ -158,7 +160,7 @@ const TaskSchema = {
       type: 'DateTime',
     },
   ],
-  collectionName: 'wx-ext-cms-sms-tasks',
+  collectionName: `${resourcePrefix}-sms-tasks`,
   displayName: '发送短信',
   _id: '21ded5cb5ff93faa0456bdef6be2a7d6',
 }

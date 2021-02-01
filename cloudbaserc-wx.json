@@ -83,7 +83,8 @@
               "name": "wx-ext-cms-sms",
               "timeout": 60,
               "envVariables": {
-                "NODE_ENV": "production"
+                "NODE_ENV": "production",
+                "CMS_RESOURCE_PREFIX": "wx-ext-cms"
               },
               "functionDistPath": "cms-sms",
               "installDependency": true,

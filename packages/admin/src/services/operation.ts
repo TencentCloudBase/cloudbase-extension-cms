@@ -14,13 +14,6 @@ export async function createBatchTask(projectId: string, data: any = {}) {
   })
 }
 
-export async function getOpenAPIToken(projectId: string, data: any = {}) {
-  return tcbRequest(`/projects/${projectId}/operation/getOpenAPIToken`, {
-    method: 'POST',
-    data,
-  })
-}
-
 export async function enableNonLogin(projectId: string) {
   return tcbRequest(`/projects/${projectId}/operation/enableNonLogin`, {
     method: 'POST',

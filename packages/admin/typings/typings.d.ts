@@ -49,6 +49,11 @@ interface ITcbCmsConfing {
   officialSiteLink: string
   // 产品名
   appName: string
+
+  /**
+   * 是否为小程序环境
+   */
+  isMpEnv: boolean
 }
 
 interface Window {
@@ -61,7 +66,6 @@ interface Window {
   cloudbase: any
   TcbCmsConfig: ITcbCmsConfing
   tinymce: any
-
   cloud: any
   // 禁用帮助按钮
 }

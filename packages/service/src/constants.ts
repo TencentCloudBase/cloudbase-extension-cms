@@ -47,6 +47,8 @@ export enum SYSTEM_ROLE_IDS {
   // 管理员
   ADMIN = 'administrator',
   // 运营
+  OPERATOR = 'operator',
+  // 内容管理员
   CONTENT_ADMIN = 'content:administrator',
   // 项目管理员
   PROJECT_ADMIN = 'project:administrator',
@@ -82,6 +84,28 @@ export const SystemUserRoles: UserRole[] = [
         projectId: '*',
         effect: 'allow',
         service: '*',
+        resource: ['*'],
+      },
+    ],
+    type: 'system',
+  },
+  {
+    _id: SYSTEM_ROLE_IDS.OPERATOR,
+    roleName: '运营人员',
+    description: '允许管理系统内，所有项目的所有内容文档，并使用运营工具',
+    permissions: [
+      {
+        action: ['*'],
+        projectId: '*',
+        effect: 'allow',
+        service: 'content',
+        resource: ['*'],
+      },
+      {
+        action: ['*'],
+        projectId: '*',
+        effect: 'allow',
+        service: 'operation',
         resource: ['*'],
       },
     ],

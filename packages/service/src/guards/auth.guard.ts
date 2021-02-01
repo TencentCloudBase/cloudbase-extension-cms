@@ -10,7 +10,10 @@ import {
   Injectable,
 } from '@nestjs/common'
 
-// 校验用户是否登录，是否存在
+/**
+ * 1. 校验用户是否登录
+ * 2. 校验登录的用户是否为 CMS 用户
+ */
 @Injectable()
 export class GlobalAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -28,8 +31,8 @@ export class GlobalAuthGuard implements CanActivate {
 
       // request.cmsUser = {
       //     _id: 'test',
-      //     roles: [SYSTEM_ROLE_IDS.ADMIN],
-      //     username: 'admin',
+      //     roles: [SYSTEM_ROLE_IDS.OPERATOR],
+      //     username: 'operator',
       //     createTime: 2020,
       //     uuid: 'xxx'
       // }

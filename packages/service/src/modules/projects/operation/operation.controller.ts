@@ -12,7 +12,7 @@ import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty, MaxLength } from 'class-validator'
 import { getEnvIdString, dateToUnixTimestampInMs, randomId } from '@/utils'
-import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
+import { Collection } from '@/constants'
 import { OperationService } from './operation.service'
 
 class MessageTaskBody {
@@ -43,7 +43,7 @@ class EnableServiceBody {
   miniappOriginalID: string
 }
 
-@UseGuards(PermissionGuard('content', [SYSTEM_ROLE_IDS.ADMIN]))
+@UseGuards(PermissionGuard('operation'))
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('projects/:projectId/operation')
 export class OperationController {
@@ -53,33 +53,10 @@ export class OperationController {
   ) {}
 
   /**
-   * 生成云调用 token
-   */
-  @Post('getOpenAPIToken')
-  async getOpenAPIToken() {
-    const token = randomId(128)
-    const envId = getEnvIdString()
-
-    // 生成一个 token，用于调用 openapi
-    await this.collection(Collection.MessageAuthToken).add({
-      // 环境 id，此 token 仅能触发此环境的任务
-      envId,
-      // 验证 token
-      token,
-      // 标志 token 类型
-      type: 'openapi',
-      // 创建时间
-      createTime: Date.now(),
-    })
-
-    return { token }
-  }
-
-  /**
    * 开启未登录
    */
   @Post('enableNonLogin')
-  async enableNonLogin() {
+  async createNonLogin() {
     // 开启未登录
     await this.operationService.enableNonLogin()
     // 修改安全规则
@@ -90,7 +67,7 @@ export class OperationController {
    * 开启营销工具
    */
   @Post('enableOperationService')
-  async enableOperationService(@Body() payload: EnableServiceBody) {
+  async createOperationService(@Body() payload: EnableServiceBody) {
     const { data: settings } = await this.collection(Collection.Settings).where({}).get()
 
     const appConfig = {

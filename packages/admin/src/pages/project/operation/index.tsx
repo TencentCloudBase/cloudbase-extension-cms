@@ -104,8 +104,7 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
 
         // 校验是否为个人主题
         if (Number(appInfo.realnametype) === 0) {
-          message.error('仅支持非个人主体开通营销工具！')
-          return
+          throw new Error('仅支持非个人主体开通营销工具！')
         }
 
         // 开通营销工具
@@ -135,11 +134,7 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
   )
 
   // 有 AppID 时使用快速开通
-  if (setting?.miniappID) {
-    return <AppForm hasAppId={true} onSubmit={enableService} />
-  }
-
-  return <AppForm onSubmit={enableService} />
+  return <AppForm hasAppId={Boolean(setting?.miniappID)} onSubmit={enableService} />
 }
 
 /**
@@ -175,7 +170,7 @@ const AppForm: React.FC<{ hasAppId?: boolean; onSubmit: (app: any) => Promise<vo
       >
         {hasAppId ? (
           <h3>确认开通营销工具？</h3>
-        ) : (
+        ) : WX_MP ? (
           <>
             <Form.Item
               label="小程序名称"
@@ -220,19 +215,24 @@ const AppForm: React.FC<{ hasAppId?: boolean; onSubmit: (app: any) => Promise<vo
               <Input placeholder="gh_xxxxxxxx" />
             </Form.Item>
           </>
+        ) : (
+          <h3>小程序信息不存在，请绑定小程序后再操作</h3>
         )}
 
-        <Form.Item>
-          <Row>
-            <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
-              <Space size="large">
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  开通
-                </Button>
-              </Space>
-            </Col>
-          </Row>
-        </Form.Item>
+        {/* 仅存在 AppID 时，或为微信小程序时，允许开通 */}
+        {(hasAppId || WX_MP) && (
+          <Form.Item>
+            <Row>
+              <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
+                <Space size="large">
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    开通
+                  </Button>
+                </Space>
+              </Col>
+            </Row>
+          </Form.Item>
+        )}
       </Form>
     </>
   )

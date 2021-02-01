@@ -163,6 +163,12 @@ const RolePermission: React.FC<{
                                 <h4>内容集合</h4>
                                 <div>指定内容集合的管理，如创建、修改内容等</div>
                               </Select.Option>
+                              <Select.Option value="operation" label="营销工具">
+                                <h4>营销工具</h4>
+                                <div>
+                                  营销工具使用权限，如创建营销活动、创建发送短信任务、查询活动数据等
+                                </div>
+                              </Select.Option>
                               <Select.Option value="webhook" label="Webhook">
                                 <h4>Webhook</h4>
                                 <div>Webhook 管理操作，如创建、修改 Webhook 等</div>

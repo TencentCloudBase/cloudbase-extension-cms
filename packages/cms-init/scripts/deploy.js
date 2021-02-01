@@ -32,8 +32,9 @@ module.exports = {
   },
   // 部署小程序模型
   async deploySchema(context) {
+    const { isMpEnv } = context
     // 仅微信环境下创建活动 schema
-    if (!process.env.WX_MP) {
+    if (!isMpEnv) {
       return
     }
 
@@ -46,8 +47,10 @@ module.exports = {
   },
   // 部署更新 sms 跳转页面
   async deploySmsPage(context) {
+    const { isMpEnv } = context
+
     // 仅微信环境下部署 sms 页面
-    if (!process.env.WX_MP) {
+    if (!isMpEnv) {
       return
     }
 
@@ -89,6 +92,14 @@ module.exports = {
   },
   // 更新安全规则配置
   async updateSecurityRules(context) {
+    const { isMpEnv } = context
+
+    // 仅微信环境下部署 sms 页面
+    if (!isMpEnv) {
+      return
+    }
+
+    // 更新安全规则
     const { manager, config } = context
     const { envId } = config
 
@@ -109,8 +120,8 @@ module.exports = {
       // rule 为 json5 字符串
       Rule = JSON.parse(Rule)
 
-      // 设置 wx-ext-cms-sms 函数为免登录调用
-      Rule['wx-ext-cms-openapi'] = {
+      // 设置 sms 函数为免登录调用
+      Rule[`${process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'}-openapi`] = {
         invoke: true,
       }
 
@@ -135,12 +146,15 @@ module.exports = {
 async function addSchema(schema, context) {
   // 添加 schema
   const { manager, db } = context
+  const resourcePrefix = process.env.CMS_RESOURCE_PREFIX || 'tcb-ext-cms'
 
-  await manager.database.createCollectionIfNotExists('wx-ext-cms-schemas')
+  const schemaCollectionName = `${resourcePrefix}-schemas`
+
+  await manager.database.createCollectionIfNotExists(schemaCollectionName)
   const {
     data: [record],
   } = await db
-    .collection('wx-ext-cms-schemas')
+    .collection(schemaCollectionName)
     .where({
       collectionName: schema.collectionName,
     })
@@ -150,10 +164,10 @@ async function addSchema(schema, context) {
     // 删除 schema 的
     delete schema._id
     // 记录存在，更新
-    await db.collection('wx-ext-cms-schemas').doc(record._id).update(schema)
+    await db.collection(schemaCollectionName).doc(record._id).update(schema)
   } else {
     // 记录不存在，添加
-    await db.collection('wx-ext-cms-schemas').add(schema)
+    await db.collection(schemaCollectionName).add(schema)
   }
 }
 
@@ -179,7 +193,7 @@ async function saveMiniAppID(context) {
 
 // 写入配置信息
 async function writeConfigJS(manager, dir, context) {
-  let { config, accessDomain = '', mpAppID } = context
+  let { config, accessDomain = '', mpAppID, isMpEnv } = context
   const { envId } = config
 
   // 获取默认的自定义域名
@@ -204,7 +218,7 @@ async function writeConfigJS(manager, dir, context) {
 
   // 微信小程序，拼接更多信息
   console.log('微信 AppID', mpAppID, process.env.WX_MP)
-  if (mpAppID || process.env.WX_MP) {
+  if (process.env.WX_MP) {
     // 文档链接
     const docLink =
       process.env.CMS_DOC_LINK ||
@@ -219,7 +233,6 @@ async function writeConfigJS(manager, dir, context) {
 
     configFileContent += `cloudAccessPath: '${accessDomain || DefaultDomain}/wx-ext-cms-service',
     containerAccessPath: '${accessDomain || DefaultDomain}/wx-ext-cms-service-container',
-    mpAppID: '${mpAppID}',
     cmsTitle: '内容管理（CMS）',
     cmsLogo: './icon-wx.svg',
     cmsDocLink: '${docLink}',
@@ -229,6 +242,12 @@ async function writeConfigJS(manager, dir, context) {
   } else {
     configFileContent += `cloudAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service',
     containerAccessPath: '${accessDomain || DefaultDomain}/tcb-ext-cms-service-container',`
+  }
+
+  // 是否为小程序的环境
+  if (isMpEnv) {
+    configFileContent += `mpAppID: ${mpAppID},
+    isMpEnv: true,`
   }
 
   configFileContent += `}`

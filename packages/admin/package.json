@@ -8,6 +8,7 @@
     "build": "umi build",
     "deploy": "npm run site && npm run gh-pages",
     "dev": "cross-env SERVER_MODE=true npm run start:dev",
+    "dev:fx": "cross-env npm run start:dev",
     "dev:wx": "cross-env WX_MP=true npm run start:dev",
     "postinstall": "umi g tmp",
     "start:dev": "cross-env REACT_APP_ENV=dev MOCK=none UMI_UI=none umi dev",

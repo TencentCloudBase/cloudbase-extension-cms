@@ -51,9 +51,17 @@ export class GlobalRoleGuard implements CanActivate {
       .get()
 
     // 内容管理员，添加内容访问权限
-    const isContentAdmin = cmsUser.roles.find((roleId) => roleId === SYSTEM_ROLE_IDS.CONTENT_ADMIN)
-    if (isContentAdmin) {
-      userRoles.push(SystemUserRoles[2])
+    const systemRoleId = cmsUser.roles.find((roleId) =>
+      Object.keys(SYSTEM_ROLE_IDS)
+        .filter((k) => typeof SYSTEM_ROLE_IDS[k as any] === 'string')
+        .map((k: string) => SYSTEM_ROLE_IDS[k as any])
+        .includes(roleId)
+    )
+
+    // 为系统内置角色
+    if (systemRoleId) {
+      const role = SystemUserRoles.find((_) => _._id === systemRoleId)
+      userRoles.push(role)
     }
 
     cmsUser.userRoles = userRoles

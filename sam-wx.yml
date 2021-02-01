@@ -75,6 +75,22 @@ Resources:
           CMS_OFFICIALSITE_LINK: "https://mp.weixin.qq.com/cgi-bin/wx"
           CMS_RESOURCE_PREFIX: wx-ext-cms
           CMS_DEPLOY_PATH: "/wx-cms/"
+  # Restful api 函数
+  RestfulApiFunction:
+    Type: CloudBase::Function
+    Properties:
+      FunctionName: wx-ext-cms-api
+      CodeUri: extension://591154e587804563b8594e0019de8d2f.zip
+      InstallDependency: true
+      Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
+      MemorySize: 256
+      Timeout: 15
+      Runtime: Nodejs10.15
+      Handler: index.main
+      Role: TCB_QcsRole
+      Environment:
+        Variables:
+          NODE_ENV: production
   # 短信服务
   SMSFunction:
     Type: CloudBase::Function
@@ -88,6 +104,10 @@ Resources:
       Runtime: Nodejs10.15
       Handler: index.main
       Role: TCB_QcsRole
+      Environment:
+        Variables:
+          NODE_ENV: production
+          CMS_RESOURCE_PREFIX: wx-ext-cms
   # OpenAPI 服务
   OpenapiFunction:
     Type: CloudBase::Function

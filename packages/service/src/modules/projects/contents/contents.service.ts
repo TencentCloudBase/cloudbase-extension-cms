@@ -20,6 +20,9 @@ export class ContentsService {
     private readonly schemaCacheService: SchemaCacheService
   ) {}
 
+  /**
+   * 查询
+   */
   async getMany(
     resource: string,
     options: {

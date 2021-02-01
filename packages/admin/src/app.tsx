@@ -7,7 +7,7 @@ import { codeMessage } from '@/constants'
 import { BasicLayoutProps, Settings as LayoutSettings, MenuDataItem } from '@ant-design/pro-layout'
 import { getCurrentUser } from './services/apis'
 import defaultSettings from '../config/defaultSettings'
-import { getAuthHeaderAsync, getCloudBaseApp, isDevEnv } from './utils'
+import { getAuthHeaderAsync, getCloudBaseApp, getHttpAccessPath, isDevEnv } from './utils'
 import * as models from './models'
 
 run(models)
@@ -171,9 +171,5 @@ export const request: RequestConfig = {
       }
     },
   },
-  prefix: isDevEnv()
-    ? defaultSettings.globalPrefix
-    : SERVER_MODE
-    ? `https://${window.TcbCmsConfig.containerAccessPath}${defaultSettings.globalPrefix}`
-    : `https://${window.TcbCmsConfig.cloudAccessPath}${defaultSettings.globalPrefix}`,
+  prefix: getHttpAccessPath(),
 }

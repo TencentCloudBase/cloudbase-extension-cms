@@ -91,7 +91,7 @@ const routesConfig: IConfig = {
           path: '/:projectId/operation',
           name: '营销工具',
           icon: 'shopping',
-          access: 'canContent',
+          access: 'canOperation',
           wrappers: ['../components/SecurityWrapper/index'],
           routes: [
             {
