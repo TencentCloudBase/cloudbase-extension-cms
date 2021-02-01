@@ -199,10 +199,8 @@ async function writeConfigJS(manager, dir, context) {
     version: '${pkg.version}',
     region: '${process.env.TENCENTCLOUD_REGION || 'ap-shanghai'}',
     history: 'hash',
-    // 环境 Id
     envId: '${envId}',
-    // 云接入默认域名/自定义域名，不带 https 协议符
-    // https://console.cloud.tencent.com/tcb/env/access,`
+    `
 
   // 微信小程序，拼接更多信息
   console.log('微信 AppID', mpAppID, process.env.WX_MP)
