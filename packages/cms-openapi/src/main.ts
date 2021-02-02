@@ -9,6 +9,7 @@ import { TimeoutInterceptor } from './interceptors/timeout.interceptor'
 import { AllExceptionsFilter } from './exceptions.filter'
 import { isRunInServerMode } from './utils'
 import { TimeCost } from './interceptors/timecost.interceptor'
+import { GlobalAuthGuard, GlobalRoleGuard } from './guards'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -34,6 +35,10 @@ export async function bootstrap() {
       },
     })
   )
+
+  // 鉴权
+  app.useGlobalGuards(new GlobalAuthGuard())
+  app.useGlobalGuards(new GlobalRoleGuard())
 
   // 超时时间
   app.useGlobalInterceptors(new TimeoutInterceptor(config.get('RES_TIMEOUT')))

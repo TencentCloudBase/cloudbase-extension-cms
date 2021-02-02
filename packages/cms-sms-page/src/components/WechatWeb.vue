@@ -1,7 +1,6 @@
 <template>
   <div id="wechat-web-container" class="center">
     <div :class="{ bottom: bgImg }">
-      <p>点击以下按钮打开{{ appName }}</p>
       <!-- replace -->
       <!-- 跳转小程序的开放标签。文档 https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_Open_Tag.html -->
       <!-- Vue 中处理开放标签 https://developers.weixin.qq.com/community/develop/article/doc/000c00b4490678f528baf2cf756413 -->

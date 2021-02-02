@@ -80,12 +80,14 @@ export class ApiService {
 
       console.log(phoneNumberList)
 
+      const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
+
       // 下发短信
       const result = await wxCloudApp.openapi.cloudbase.sendSms({
         env: ENV,
         phoneNumberList,
         content: task.content,
-        path: `/cms-activities/index.html?activityId=${task.activityId}&source=_cms_sms_`,
+        path: `/${activityPath}/index.html?activityId=${task.activityId}&source=_cms_sms_`,
       })
 
       // 上报短信下发任务

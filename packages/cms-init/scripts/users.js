@@ -37,14 +37,14 @@ async function createAdministrator(context) {
   const { adminUsername, adminPassword, config, db, manager } = context
 
   return saveUser({
+    db,
+    config,
     manager,
+    root: true,
     createTime: Date.now(),
     username: adminUsername,
     password: adminPassword,
     roles: ['administrator'],
-    config,
-    db,
-    root: true,
   })
 }
 
@@ -55,13 +55,14 @@ async function createOperator(context) {
   if (!operatorUsername || !operatorPassword) return
 
   return saveUser({
+    db,
+    config,
     manager,
     createTime: Date.now(),
     username: operatorUsername,
     password: operatorPassword,
-    roles: ['content:administrator'],
-    config,
-    db,
+    // 低码平台使用 operator 权限
+    roles: process.env.FROM_LOWCODE ? ['operator'] : ['content:administrator'],
   })
 }
 
@@ -78,14 +79,28 @@ async function saveUser({ createTime, username, password, roles, db, config, man
 
   // 用户已存在，更新账号密码
   if (dbRecord && dbRecord.uuid) {
+    console.log('用户存在，更新用户', dbRecord.uuid)
     try {
       await manager.user.modifyEndUser({
-        uuid: dbRecord.uuid,
         password,
+        uuid: dbRecord.uuid,
       })
     } catch (error) {
       console.log('更新用户异常', error)
     }
+
+    // 低码升级，更新用户的角色
+    if (process.env.FROM_LOWCODE) {
+      await db
+        .collection(config.usersCollectionName)
+        .where({
+          username,
+        })
+        .update({
+          roles,
+        })
+    }
+
     return
   }
 

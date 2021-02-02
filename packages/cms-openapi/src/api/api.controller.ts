@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { Post, Body, UseGuards, Controller } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 
-import { AuthGuard } from '@/guards'
+import { PermissionGuard } from '@/guards'
 import { getWxCloudApp } from '@/utils'
 import { ApiService } from './api.service'
 
@@ -16,7 +16,7 @@ export class ApiController {
   /**
    * 获取小程序的名称、主体等信息
    */
-  @UseGuards(AuthGuard)
+  @UseGuards(PermissionGuard('operation'))
   @Post('getAppBasicInfo')
   async getAppBasicInfo() {
     try {
@@ -37,16 +37,16 @@ export class ApiController {
   /**
    * 创建下发短信任务
    */
-  @UseGuards(AuthGuard)
+  @UseGuards(PermissionGuard('operation'))
   @Post('sendSms')
-  async sendSms(@Body() body: { taskId: string }) {
+  async createSendSmsTask(@Body() body: { taskId: string }) {
     console.log('使用 OpenAPI 发送短信')
     const { taskId } = body
     return this.apiService.sendSms(taskId)
   }
 
   // 获取访问数据
-  @UseGuards(AuthGuard)
+  @UseGuards(PermissionGuard('operation'))
   @Post('getAnalyticsData')
   async getAnalyticsData(@Body() body: { activityId: string; metricName?: string }) {
     const { activityId, metricName } = body

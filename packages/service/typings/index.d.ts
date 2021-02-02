@@ -4,6 +4,8 @@ declare namespace NodeJS {
     TCB_ENVID: string
     SECRETID: string
     SECRETKEY: string
+    TCB_CMS: string
+    WX_MP: string
   }
 }
 

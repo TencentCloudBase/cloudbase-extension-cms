@@ -86,7 +86,8 @@ module.exports = {
 
     // 部署 SMS 跳转页面
     console.log('====> 部署 SMS 跳转页面 <====')
-    await deployHostingFile(manager, '/tmp/sms-dist', '/cms-activities')
+    const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
+    await deployHostingFile(manager, '/tmp/sms-dist', `/${activityPath}`)
 
     console.log('====> 部署 SMS 跳转页面 <=====')
   },
@@ -248,6 +249,11 @@ async function writeConfigJS(manager, dir, context) {
   if (isMpEnv) {
     configFileContent += `mpAppID: ${mpAppID},
     isMpEnv: true,`
+  }
+
+  // 低码
+  if (process.env.FROM_LOWCODE) {
+    configFileContent += `fromLowCode: true,`
   }
 
   configFileContent += `}`

@@ -25,8 +25,10 @@ export default (props: {
 
   // 渠道来源
   const source = channel || DefaultChannels[0].value
+  const activityPage = WX_MP ? 'cms-activities' : 'tcb-cms-activities'
+
   let smsPageUrl = activityId
-    ? `https://${location.host}/cms-activities/index.html?activityId=${activityId}&source=${source}`
+    ? `https://${location.host}/${activityPage}/index.html?activityId=${activityId}&source=${source}`
     : ''
 
   // 生成二维码

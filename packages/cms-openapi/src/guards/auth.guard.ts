@@ -1,4 +1,4 @@
-import { Collection } from '@/constants'
+import { Collection, SystemUserRoles, SYSTEM_ROLE_IDS } from '@/constants'
 import { getCloudBaseApp, getUserFromCredential, isDevEnv } from '@/utils'
 import {
   CanActivate,
@@ -10,7 +10,7 @@ import {
 
 // 校验用户是否登录，是否存在
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class GlobalAuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<IRequest>()
 
@@ -62,19 +62,6 @@ export class AuthGuard implements CanActivate {
           error: {
             code: 'AUTH_EXPIRED',
             message: '用户不存在，请确认登录信息！',
-          },
-        },
-        HttpStatus.FORBIDDEN
-      )
-    }
-
-    // 管理员才能调用 open api 服务
-    if (!userRecord.roles?.includes('administrator')) {
-      throw new HttpException(
-        {
-          error: {
-            code: 'FORBIDDEN',
-            message: '你没有权限访问此服务！',
           },
         },
         HttpStatus.FORBIDDEN

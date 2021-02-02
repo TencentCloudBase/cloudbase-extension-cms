@@ -54,6 +54,11 @@ interface ITcbCmsConfing {
    * 是否为小程序环境
    */
   isMpEnv: boolean
+
+  /**
+   * 是否为低码创建的 CMS
+   */
+  fromLowCode: boolean
 }
 
 interface Window {

@@ -130,6 +130,7 @@ export default {
     async getActivityInfo() {
       this.btnLoading = true
       const { cloudResource = {} } = window
+      const { envID } = cloudResource
 
       try {
         const activityId = this.getQueryByName('activityId')
@@ -195,9 +196,9 @@ export default {
 
         // 添加参数，jumpPath 可能为空
         if (jumpPath) {
-          jumpPath += `?_activityId_=${activityId}&_source_=${channelId}`
+          jumpPath += `?_activityId_=${activityId}&_source_=${channelId}&_envId_=${envID}`
         } else {
-          jumpPath = `?_activityId_=${activityId}&_source_=${channelId}`
+          jumpPath = `?_activityId_=${activityId}&_source_=${channelId}&_envId=${envID}`
         }
 
         if (activity.appPathQuery) {

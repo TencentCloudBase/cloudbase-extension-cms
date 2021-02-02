@@ -3,8 +3,10 @@ const { DefinePlugin } = require('webpack')
 // vue.config.js
 const isDev = process.env.NODE_ENV === 'development'
 
+const activityPath = process.env.WX_MP ? 'cms-activities' : 'tcb-cms-activities'
+
 module.exports = {
-  publicPath: isDev ? '/' : '/cms-activities/',
+  publicPath: isDev ? '/' : `/${activityPath}/`,
   css: {
     extract: false,
   },

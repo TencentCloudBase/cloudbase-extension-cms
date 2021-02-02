@@ -11,9 +11,10 @@ const MessageActivities = `${CMS_RESOURCE_PREFIX}-sms-activities`
  * https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/url-scheme/urlscheme.generate.html
  */
 async function getUrlScheme(event) {
+  const { ENV } = cloud.getWXContext()
   const { activityId, channelId = '_cms_sms_' } = event
 
-  let query = `_activityId_=${activityId}&_source_=${channelId}`
+  let query = `_activityId_=${activityId}&_source_=${channelId}&_envId_=${ENV}`
   let path = ''
   let activity = ''
 

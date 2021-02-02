@@ -134,7 +134,7 @@ export class OperationService {
     // 上传模板文件
     await manager.hosting.uploadFiles({
       localPath: '/tmp/template',
-      cloudPath: '/cms-activities',
+      cloudPath: process.env.TCB_CMS ? '/tcb-cms-activities' : '/cms-activities',
     })
   }
 }

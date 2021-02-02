@@ -1,5 +1,18 @@
 import React from 'react'
-import { Alert, Button, Col, Form, Input, message, notification, Row, Skeleton, Space } from 'antd'
+import {
+  Alert,
+  Button,
+  Col,
+  Form,
+  Input,
+  message,
+  notification,
+  Row,
+  Skeleton,
+  Space,
+  Steps,
+  Typography,
+} from 'antd'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { history, useParams, useRequest } from 'umi'
@@ -8,6 +21,9 @@ import { GlobalCtx } from 'typings/store'
 import { enableNonLogin, enableOperationService } from '@/services/operation'
 import { callWxOpenAPI, sleep } from '@/utils'
 import { useToggle } from 'react-use'
+
+const { Step } = Steps
+const { Link } = Typography
 
 interface MiniApp {
   miniappID: string
@@ -170,7 +186,35 @@ const AppForm: React.FC<{ hasAppId?: boolean; onSubmit: (app: any) => Promise<vo
       >
         {hasAppId ? (
           <h3>确认开通营销工具？</h3>
-        ) : WX_MP ? (
+        ) : window.TcbCmsConfig.fromLowCode ? (
+          <>
+            <h3>营销工具可帮助您从多种渠道推广小程序，请先按照以下步骤完成小程序的绑定。</h3>
+            <Steps direction="vertical" className="mt-5">
+              <Step
+                status="process"
+                title="绑定小程序"
+                description={
+                  <div>
+                    登录
+                    <Link href="https://console.cloud.tencent.com/developer">腾讯云账号中心，</Link>
+                    在面板【登录方式】中，在【微信公众平台】处绑定待开发的小程序。
+                  </div>
+                }
+              />
+              <Step
+                status="process"
+                title="开通云开发"
+                description={
+                  <div>
+                    使用待开发的小程序登录
+                    <Link href="https://mp.weixin.qq.com">微信公众平台</Link>
+                    ，点击左侧【开发】-【云开发】，立即开通云开发。
+                  </div>
+                }
+              />
+            </Steps>
+          </>
+        ) : (
           <>
             <Form.Item
               label="小程序名称"
@@ -215,12 +259,11 @@ const AppForm: React.FC<{ hasAppId?: boolean; onSubmit: (app: any) => Promise<vo
               <Input placeholder="gh_xxxxxxxx" />
             </Form.Item>
           </>
-        ) : (
-          <h3>小程序信息不存在，请绑定小程序后再操作</h3>
         )}
 
-        {/* 仅存在 AppID 时，或为微信小程序时，允许开通 */}
-        {(hasAppId || WX_MP) && (
+        {window.TcbCmsConfig.fromLowCode && !hasAppId ? (
+          ''
+        ) : (
           <Form.Item>
             <Row>
               <Col flex="1 1 auto" style={{ textAlign: 'right' }}>

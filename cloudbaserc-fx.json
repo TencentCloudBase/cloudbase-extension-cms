@@ -21,7 +21,7 @@
           "outputPath": "./packages/cms-sms-page/dist",
           "installCommand": "echo \"Skip Install\"",
           "buildCommand": "echo \"Skip Build\"",
-          "cloudPath": "/cms-activities/"
+          "cloudPath": "/tcb-cms-activities/"
         }
       },
       "init": {
@@ -34,6 +34,7 @@
               "timeout": 60,
               "functionDistPath": "cms-init",
               "envVariables": {
+                "TCB_CMS": true,
                 "CMS_RESOURCE_PREFIX": "tcb-ext-cms",
                 "CMS_ADMIN_USER_NAME": "{{env.administratorName}}",
                 "CMS_ADMIN_PASS_WORD": "{{env.administratorPassword}}",
@@ -61,6 +62,7 @@
               "runtime": "Nodejs10.15",
               "functionDistPath": "service",
               "envVariables": {
+                "TCB_CMS": true,
                 "NODE_ENV": "production"
               }
             }
@@ -93,6 +95,7 @@
               "name": "tcb-ext-cms-sms",
               "timeout": 60,
               "envVariables": {
+                "TCB_CMS": true,
                 "NODE_ENV": "production"
               },
               "functionDistPath": "cms-sms",
@@ -111,7 +114,7 @@
               "name": "tcb-ext-cms-openapi",
               "timeout": 60,
               "envVariables": {
-                "WX_MP": "true",
+                "TCB_CMS": true,
                 "NODE_ENV": "production",
                 "CMS_RESOURCE_PREFIX": "tcb-ext-cms"
               },
