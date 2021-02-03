@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.7.1
+Version: 2.7.2
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -19,7 +19,7 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.7.1
+  - Title: 2.7.2
     Content:
       - 小程序环境支持使用营销工具
 Author:
@@ -57,7 +57,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-init
-      CodeUri: extension://a9c085b608444ba9a3b3d256a17a0bea.zip
+      CodeUri: extension://461af09877d34f4784c5884332c6dc84.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
