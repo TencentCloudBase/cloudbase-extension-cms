@@ -4,7 +4,7 @@ import 'dayjs/locale/zh-cn'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { Collection } from '@/constants'
-import { getEnvIdString, getWxCloudApp } from '@/utils'
+import { getCloudBaseManager, getEnvIdString, getWxCloudApp } from '@/utils'
 
 dayjs.locale('zh-cn')
 
@@ -51,7 +51,7 @@ export class ApiService {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
 
   /**
-   *
+   * 通过号码列表，发送短信
    * @param taskId
    */
   async sendSms(taskId: string) {
@@ -192,7 +192,7 @@ export class ApiService {
   }
 
   /**
-   * 从 openapi 获取数据
+   * 从 openapi 获取分析数据
    */
   async getStatistics(options: { activityId: string }) {
     const { activityId } = options
@@ -325,6 +325,27 @@ export class ApiService {
 
       throw e
     }
+  }
+
+  /**
+   * 查询短信用量信息
+   */
+  async getSmsUsage(): Promise<{
+    Usage: number
+    EnvId: string
+    Quota: number
+  }> {
+    const envId = getEnvIdString()
+    const manager = await getCloudBaseManager()
+
+    const { SmsUsageData } = await manager.commonService().call({
+      Action: 'DescribeSmsUsage',
+      Param: {
+        EnvIds: [envId],
+      },
+    })
+
+    return SmsUsageData[0]
   }
 
   private collection(name: string) {

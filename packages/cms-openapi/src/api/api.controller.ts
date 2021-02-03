@@ -3,7 +3,7 @@ import { Post, Body, UseGuards, Controller } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 
 import { PermissionGuard } from '@/guards'
-import { getWxCloudApp } from '@/utils'
+import { getCloudBaseApp, getWxCloudApp } from '@/utils'
 import { ApiService } from './api.service'
 
 @Controller('/api')
@@ -45,7 +45,9 @@ export class ApiController {
     return this.apiService.sendSms(taskId)
   }
 
-  // 获取访问数据
+  /**
+   * 获取访问数据
+   */
   @UseGuards(PermissionGuard('operation'))
   @Post('getAnalyticsData')
   async getAnalyticsData(@Body() body: { activityId: string; metricName?: string }) {
@@ -56,6 +58,26 @@ export class ApiController {
     })
 
     return { data }
+  }
+
+  /**
+   *
+   * @param name
+   */
+  @UseGuards(PermissionGuard('operation'))
+  @Post('getSmsTaskAnalysisData')
+  async getSmsTaskAnalysisData(@Body() body: { fileId: string }) {
+    const { fileId } = body
+
+    // 下载文件
+    const app = getCloudBaseApp()
+    const { fileContent } = await app.downloadFile({
+      fileID: fileId,
+    })
+
+    const usage = await this.apiService.getSmsUsage()
+
+    return { fileId, usage }
   }
 
   private collection(name: string) {

@@ -112,7 +112,7 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
       await enableNonLogin(projectId)
 
       // 存储 appId
-      if (setting?.miniappID) {
+      if (setting?.miniappID || window.TcbCmsConfig.mpAppID) {
         // 开通未登录
         await sleep(1000)
         // 获取小程序信息
@@ -150,7 +150,12 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
   )
 
   // 有 AppID 时使用快速开通
-  return <AppForm hasAppId={Boolean(setting?.miniappID)} onSubmit={enableService} />
+  return (
+    <AppForm
+      hasAppId={Boolean(setting?.miniappID || window.TcbCmsConfig.mpAppID)}
+      onSubmit={enableService}
+    />
+  )
 }
 
 /**

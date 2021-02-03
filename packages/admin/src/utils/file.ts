@@ -1,3 +1,6 @@
+import { message } from 'antd'
+import request from 'umi-request'
+
 /**
  * 将字符串保存为文件并下载
  */
@@ -26,6 +29,20 @@ export const saveFile = (file: Blob, fileName: string) => {
       document.body.removeChild(a)
       window.URL.revokeObjectURL(url)
     }, 0)
+  }
+}
+
+/**
+ * 下载文件
+ */
+export const downloadAndSaveFile = async (url: string, fileName: string) => {
+  try {
+    const data = await request(url, {
+      responseType: 'blob',
+    })
+    saveFile(data, fileName)
+  } catch (e) {
+    message.error(`下载文件失败：${e.message}`)
   }
 }
 

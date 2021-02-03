@@ -1,12 +1,12 @@
+import { getState } from 'concent'
 import { request, history } from 'umi'
 import { notification } from 'antd'
 import { RequestOptionsInit } from 'umi-request'
+import { uploadFilesToHosting } from '@/services/apis'
 import { codeMessage, RESOURCE_PREFIX } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
-import { uploadFilesToHosting } from '@/services/apis'
-import { getState } from 'concent'
 
 interface IntegrationRes {
   statusCode: number
@@ -38,8 +38,11 @@ let wxCloudApp: any
 /**
  * 处理微信 Web SDK 的登录
  */
-export async function getWxCloudApp(appConfig: any) {
-  const { envId } = window.TcbCmsConfig || {}
+export function getWxCloudApp() {
+  // 全局 state
+  const state: any = getState()
+  const { envId, mpAppID } = window.TcbCmsConfig || {}
+  const miniappID = mpAppID || state?.global?.setting?.miniappID
 
   if (!wxCloudApp) {
     // 声明新的 cloud 实例
@@ -49,12 +52,12 @@ export async function getWxCloudApp(appConfig: any) {
       // 资源方环境 ID
       resourceEnv: envId,
       // 资源方 AppID
-      resourceAppid: appConfig.miniappID,
+      resourceAppid: miniappID,
     })
 
     wxCloudApp.init({
       env: envId,
-      appid: appConfig.miniappID,
+      appid: miniappID,
     })
   }
 
@@ -163,9 +166,6 @@ export async function tcbRequest<T = any>(
  * @param data POST body 数据
  */
 export async function callWxOpenAPI(action: string, data?: Record<string, any>) {
-  // 全局 state
-  const state: any = getState()
-
   if (isDevEnv()) {
     return request(`/api/${action}`, {
       data,
@@ -174,11 +174,7 @@ export async function callWxOpenAPI(action: string, data?: Record<string, any>) 
     })
   }
 
-  const mpAppID = window.TcbCmsConfig.mpAppID || state?.global?.setting?.miniappID
-
-  const wxCloudApp = await getWxCloudApp({
-    miniappID: mpAppID,
-  })
+  const wxCloudApp = getWxCloudApp()
 
   // 添加 authHeader
   const authHeader = getAuthHeader()
@@ -231,17 +227,18 @@ function parseIntegrationRes(result: IntegrationRes) {
  */
 export async function uploadFile(options: {
   file: File
-  onProgress: (v: number) => void
   filePath?: string
+  filenameLength?: number
+  onProgress?: (v: number) => void
   uploadType?: 'hosting' | 'storage'
 }): Promise<string> {
-  const { file, onProgress, filePath, uploadType } = options
+  const { file, onProgress, filePath, uploadType, filenameLength = 32 } = options
 
   // 上传文件到静态托管
   if (uploadType === 'hosting') {
     // 返回 URL 信息数组
     const ret = await uploadFilesToHosting(file)
-    onProgress(100)
+    onProgress?.(100)
     return ret[0].url
   }
 
@@ -257,14 +254,14 @@ export async function uploadFile(options: {
     ext = file.name
   }
 
-  const uploadFilePath = filePath || `upload/${day}/${random(32)}_${ext}`
+  const uploadFilePath = filePath || `upload/${day}/${random(filenameLength)}_${ext}`
 
   const result = await app.uploadFile({
     filePath: file,
     cloudPath: `cloudbase-cms/${uploadFilePath}`,
     onUploadProgress: (progressEvent: ProgressEvent) => {
       const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
-      onProgress(percentCompleted)
+      onProgress?.(percentCompleted)
     },
   })
 

@@ -1,10 +1,11 @@
 import Axios from 'axios'
 import wxCloud from 'wx-server-sdk'
-import cloudbase from '@cloudbase/node-sdk'
+import cloudbase, { CloudBase } from '@cloudbase/node-sdk'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
+import CloudBaseManager from '@cloudbase/manager-node'
 import { isDevEnv } from './tools'
 
-let nodeApp
+let nodeApp: CloudBase
 
 // 从环境变量中读取
 export const getEnvIdString = (): string => {
@@ -31,7 +32,7 @@ export const getCredential = () => {
 /**
  * 获取初始化后的 cloudbase node sdk 实例
  */
-export const getCloudBaseApp = () => {
+export const getCloudBaseApp = (): CloudBase => {
   if (nodeApp) {
     return nodeApp
   }
@@ -66,6 +67,33 @@ export const getWxCloudApp = () => {
   })
 
   return wxCloud
+}
+
+let managerApp
+let secretExpire: number
+
+/**
+ * 获取初始化后的 cloudbase manager sdk 实例
+ */
+export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
+  const envId = getEnvIdString()
+
+  let options: ICloudBaseConfig = {
+    envId,
+  }
+
+  if (isDevEnv()) {
+    options = {
+      ...options,
+      secretId: process.env.SECRETID,
+      secretKey: process.env.SECRETKEY,
+    }
+  }
+
+  const manager = new CloudBaseManager(options)
+  managerApp = manager
+
+  return manager
 }
 
 /**
