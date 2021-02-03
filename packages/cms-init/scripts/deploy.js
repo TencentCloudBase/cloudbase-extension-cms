@@ -247,7 +247,7 @@ async function writeConfigJS(manager, dir, context) {
 
   // 是否为小程序的环境
   if (isMpEnv) {
-    configFileContent += `mpAppID: '${mpAppID}',
+    configFileContent += `mpAppID: '${mpAppID || ''}',
     isMpEnv: true,`
   }
 
