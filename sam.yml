@@ -80,7 +80,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-api
-      CodeUri: extension://1f7bdc846dea4099916e9e132f737c76.zip
+      CodeUri: extension://91a3f891ac0c4e039b0dd604cb6b71e4.zip
       InstallDependency: true
       Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
       MemorySize: 256
