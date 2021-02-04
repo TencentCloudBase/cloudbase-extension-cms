@@ -94,17 +94,26 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
   const { run: enableService } = useRequest(
     async (data: MiniApp) => {
       // 获取小程序信息
-      const getAppInfo = async () => {
-        // 获取小程序的名称和原始 ID
-        const data = await callWxOpenAPI('getAppBasicInfo')
-
-        const { appid, nickname, username, realnametype } = data || {}
-
-        return {
-          realnametype,
-          miniappID: appid,
-          miniappName: nickname,
-          miniappOriginalID: username,
+      const getAppInfo = async (retry = 1): Promise<any> => {
+        try {
+          // 获取小程序的名称和原始 ID
+          const data = await callWxOpenAPI('getAppBasicInfo')
+          const { appid, nickname, username, realnametype } = data || {}
+          return {
+            realnametype,
+            miniappID: appid,
+            miniappName: nickname,
+            miniappOriginalID: username,
+          }
+        } catch (error) {
+          // 可能出现异常，最大尝试 2 分钟
+          if (retry <= 24) {
+            await sleep(5000)
+            return getAppInfo(retry + 1)
+          } else {
+            // 抛出错误
+            throw error
+          }
         }
       }
 
@@ -117,6 +126,11 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
         await sleep(1000)
         // 获取小程序信息
         const appInfo = await getAppInfo()
+
+        if (!appInfo?.miniappID) {
+          message.error('获取小程序信息异常，请重试！')
+          return
+        }
 
         // 校验是否为个人主题
         if (Number(appInfo.realnametype) === 0) {
