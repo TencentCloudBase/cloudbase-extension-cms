@@ -75,7 +75,7 @@ let secretExpire: number
 /**
  * 获取初始化后的 cloudbase manager sdk 实例
  */
-export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
+export const getCloudBaseManager = (): CloudBaseManager => {
   const envId = getEnvIdString()
 
   let options: ICloudBaseConfig = {

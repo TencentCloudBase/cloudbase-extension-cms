@@ -22,22 +22,22 @@ export const getTableColumns = (schema: Schema): ProColumns[] => {
   columns.push(...systemFieldColumns)
 
   // 插入序号列
-  columns.unshift({
-    title: '序号',
-    width: 72,
-    align: 'center',
-    valueType: 'indexBorder',
-    render: (
-      text: React.ReactNode,
-      record: any,
-      index: number,
-      action: any
-    ): React.ReactNode | React.ReactNode[] => {
-      const { current, pageSize } = action
-      const serial = Number(pageSize) * (Number(current) - 1) + index + 1
-      return serial
-    },
-  })
+  // columns.unshift({
+  //   title: '序号',
+  //   width: 72,
+  //   align: 'center',
+  //   valueType: 'indexBorder',
+  //   render: (
+  //     text: React.ReactNode,
+  //     record: any,
+  //     index: number,
+  //     action: any
+  //   ): React.ReactNode | React.ReactNode[] => {
+  //     const { current, pageSize } = action
+  //     const serial = Number(pageSize) * (Number(current) - 1) + index + 1
+  //     return serial
+  //   },
+  // })
 
   return columns
 }

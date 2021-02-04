@@ -7,6 +7,8 @@ export const getFullDate = (v = Date.now()) => moment(v).format('YYYY-MM-DD')
 
 export const getDateValue = (v?: string | number) => moment(v).valueOf()
 
+export const getYear = () => moment().year()
+
 /**
  * 格式化保存到数据库中的时间
  * @param v

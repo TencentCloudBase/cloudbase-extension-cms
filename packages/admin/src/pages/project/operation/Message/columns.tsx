@@ -20,22 +20,6 @@ export const ActivityField: any = {
 
 export const columns: ProColumns[] = [
   {
-    title: '序号',
-    width: 72,
-    align: 'center',
-    valueType: 'indexBorder',
-    render: (
-      text: React.ReactNode,
-      record: any,
-      index: number,
-      action: any
-    ): React.ReactNode | React.ReactNode[] => {
-      const { current, pageSize } = action
-      const serial = Number(pageSize) * (Number(current) - 1) + index + 1
-      return serial
-    },
-  },
-  {
     title: '短信内容',
     width: 200,
     align: 'center',

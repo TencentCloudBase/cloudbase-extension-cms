@@ -101,6 +101,7 @@
             {
               "name": "wx-ext-cms-openapi",
               "timeout": 60,
+              "memory": 2048,
               "envVariables": {
                 "WX_MP": "true",
                 "NODE_ENV": "production",

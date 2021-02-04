@@ -1,10 +1,21 @@
 import _ from 'lodash'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
+import XLSX from 'xlsx'
+import Axios from 'axios'
+import Papa from 'papaparse'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { Collection } from '@/constants'
-import { getCloudBaseManager, getEnvIdString, getWxCloudApp } from '@/utils'
+import {
+  base64,
+  getCloudBaseApp,
+  getCloudBaseManager,
+  getEnvIdString,
+  getWxCloudApp,
+  md5Base64,
+} from '@/utils'
+import { CmsException } from '@/common'
 
 dayjs.locale('zh-cn')
 
@@ -336,7 +347,7 @@ export class ApiService {
     Quota: number
   }> {
     const envId = getEnvIdString()
-    const manager = await getCloudBaseManager()
+    const manager = getCloudBaseManager()
 
     const { SmsUsageData } = await manager.commonService().call({
       Action: 'DescribeSmsUsage',
@@ -346,6 +357,134 @@ export class ApiService {
     })
 
     return SmsUsageData[0]
+  }
+
+  /**
+   * 解析 xlsx 文件
+   */
+  async analysisAndUploadCSV(fileId: string, activityId: string, amount: number) {
+    // 下载文件
+    const app = getCloudBaseApp()
+    console.time('download')
+    let { fileContent } = await app.downloadFile({
+      fileID: fileId,
+    })
+    console.timeEnd('download')
+
+    // buffer 转 string
+    const fileContentString = fileContent.toString('utf-8')
+
+    // 读取文件内容
+    const { data, errors }: { data: string[][]; errors: any[] } = Papa.parse(fileContentString)
+
+    // 解析文件错误
+    if (errors?.length) {
+      const message = errors.map((_) => _.message).join('; ')
+      // 删除文件
+      await app.deleteFile({ fileList: [fileId] })
+      throw new CmsException('PARSE_ERROR', `解析 CSV 文件异常：${message}`)
+    }
+
+    // 判断首行是否为标题，并减去首行的标题
+    const firstLine = data[0]
+    const isFirstLineTitle = firstLine[0]?.length ? !/\d/.test(firstLine[0]) : false
+    // 发送号码总量
+    const total = isFirstLineTitle ? data?.length - 1 : data?.length
+
+    // 余额不足，不继续上传文件
+    if (total > amount || amount <= 0) {
+      // 删除文件
+      await app.deleteFile({ fileList: [fileId] })
+      return { total }
+    }
+
+    const jumpPath = this.getSmsPagePath(activityId)
+
+    // 填充跳转路径
+    const supplementData = data.map((line: string[], index) => {
+      if (isFirstLineTitle && index === 0) return line
+      line[2] = jumpPath
+      return line
+    })
+
+    // 将数据转换成 CSV
+    const supplementCSV = Papa.unparse(supplementData)
+
+    // TODO: 临时上传文件
+    await app.uploadFile({
+      cloudPath: `tmp/test.csv`,
+      fileContent: Buffer.from(supplementCSV),
+    })
+
+    // 上传文件
+    const fileName = fileId.split('/').pop()
+    const fileUri = await this.uploadFile(Buffer.from(supplementCSV), fileName)
+
+    // 删除文件
+    await app.deleteFile({ fileList: [fileId] })
+
+    // 返回总数量
+    return {
+      total,
+      fileUri,
+    }
+  }
+
+  /**
+   * 创建短信发送任务
+   */
+  async createSendSmsTask() {}
+
+  // 获取上传链接
+  private async uploadFile(file: Buffer, fileName: string) {
+    // 获取上传链接
+    const manager = getCloudBaseManager()
+
+    const {
+      FilesData,
+    }: {
+      FilesData: {
+        CodeUri: string
+        UploadUrl: string
+        CustomKey: string
+        MaxSize: number
+      }[]
+    } = await manager.commonService().call({
+      Action: 'DescribeExtensionUploadInfo',
+      Param: {
+        ExtensionFiles: [
+          {
+            FileType: 'FUNCTION',
+            FileName: fileName,
+          },
+        ],
+      },
+    })
+
+    const { CodeUri, UploadUrl, CustomKey } = FilesData[0]
+
+    let headers = {
+      'Content-Type': 'text/csv',
+    }
+
+    if (CustomKey) {
+      headers['x-cos-server-side-encryption-customer-algorithm'] = 'AES256'
+      headers['x-cos-server-side-encryption-customer-key'] = base64(CustomKey)
+      headers['x-cos-server-side-encryption-customer-key-MD5'] = md5Base64(CustomKey)
+    }
+
+    await Axios.put(UploadUrl, file, {
+      headers,
+      maxBodyLength: Infinity,
+      maxContentLength: Infinity,
+    })
+
+    return CodeUri
+  }
+
+  private getSmsPagePath(activityId: string) {
+    const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
+    return `/${activityPath}/index.html?activityId=${activityId}&source=_cms_sms_`
   }
 
   private collection(name: string) {

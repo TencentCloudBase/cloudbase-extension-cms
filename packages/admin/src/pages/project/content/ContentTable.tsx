@@ -1,7 +1,8 @@
-import React, { useRef, useCallback, useMemo, useState } from 'react'
 import { useConcent } from 'concent'
+import { stringify } from 'querystring'
 import { useParams, history } from 'umi'
-import ProTable, { ProColumns } from '@ant-design/pro-table'
+import React, { useRef, useCallback, useMemo, useState } from 'react'
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select } from 'antd'
 import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
@@ -31,13 +32,7 @@ export const ContentTable: React.FC<{
   const { searchFields, searchParams } = ctx.state
 
   // 表格引用，重置、操作表格
-  const tableRef = useRef<{
-    reload: (resetPageIndex?: boolean) => void
-    reloadAndRest: () => void
-    fetchMore: () => void
-    reset: () => void
-    clearSelected: () => void
-  }>()
+  const tableRef = useRef<ActionType>()
 
   // 表格数据请求
   const tableRequest = useCallback(
@@ -112,7 +107,7 @@ export const ContentTable: React.FC<{
       ...columns,
       {
         title: '操作',
-        width: 150,
+        width: 220,
         align: 'center',
         fixed: 'right',
         valueType: 'option',
@@ -238,7 +233,7 @@ export const ContentTable: React.FC<{
         rowSelection={{}}
         actionRef={tableRef}
         dateFormatter="string"
-        scroll={{ x: 1000 }}
+        scroll={{ x: 'max-content' }}
         request={tableRequest}
         columns={memoTableColumns}
         toolBarRender={() => toolBarRender}
@@ -247,6 +242,7 @@ export const ContentTable: React.FC<{
           ...pagination,
           // 翻页时，将分页数据保存在 URL 中
           onChange: (current = 1, pageSize = 10) => {
+            console.log(current, pageSize)
             setPageQuery(current, pageSize)
           },
         }}
@@ -345,11 +341,13 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
  */
 const setPageQuery = (current = 1, pageSize = 10) => {
   const { pathname, query } = history.location
-  history.replace(pathname, {
-    query: {
+
+  history.replace({
+    pathname,
+    search: stringify({
       ...query,
       pageSize,
       current,
-    },
+    }),
   })
 }

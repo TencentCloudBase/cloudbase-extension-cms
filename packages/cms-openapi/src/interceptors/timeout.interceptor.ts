@@ -6,7 +6,7 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 export class TimeoutInterceptor implements NestInterceptor {
   timeout: number
 
-  constructor(timeout = 15000) {
+  constructor(timeout = 600000) {
     this.timeout = timeout
   }
 

@@ -1,8 +1,9 @@
-import React, { useRef, useCallback, useMemo, useState } from 'react'
 import { useConcent } from 'concent'
 import { useParams, history } from 'umi'
+import { stringify } from 'querystring'
 import QrCode from '@/components/QrCode'
-import ProTable, { ProColumns } from '@ant-design/pro-table'
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
+import React, { useRef, useCallback, useMemo, useState } from 'react'
 import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select } from 'antd'
 import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
@@ -36,13 +37,7 @@ export const ContentTable: React.FC<{
   const { searchFields, searchParams } = ctx.state
 
   // 表格引用，重置、操作表格
-  const tableRef = useRef<{
-    reload: (resetPageIndex?: boolean) => void
-    reloadAndRest: () => void
-    fetchMore: () => void
-    reset: () => void
-    clearSelected: () => void
-  }>()
+  const tableRef = useRef<ActionType>()
 
   // 表格数据请求
   const tableRequest = useCallback(
@@ -245,10 +240,12 @@ export const ContentTable: React.FC<{
       <ProTable
         rowKey="_id"
         search={false}
-        rowSelection={{}}
+        rowSelection={{
+          columnWidth: '64px',
+        }}
         actionRef={tableRef}
         dateFormatter="string"
-        scroll={{ x: 1000 }}
+        scroll={{ x: 'max-content' }}
         request={tableRequest}
         columns={memoTableColumns}
         toolBarRender={() => toolBarRender}
@@ -357,11 +354,13 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
  */
 const setPageQuery = (current = 1, pageSize = 10) => {
   const { pathname, query } = history.location
-  history.replace(pathname, {
-    query: {
+
+  history.replace({
+    pathname,
+    search: stringify({
       ...query,
       pageSize,
       current,
-    },
+    }),
   })
 }

@@ -1,11 +1,12 @@
 import { useConcent } from 'concent'
+import { stringify } from 'querystring'
 import { useSetState } from 'react-use'
 import { history, useParams } from 'umi'
 import { ContentCtx, GlobalCtx } from 'typings/store'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useRef, useCallback, useMemo } from 'react'
-import ProTable, { ProColumns } from '@ant-design/pro-table'
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { getContents } from '@/services/content'
 import { Button, Modal, message, Space, Menu, List, Typography, Popover } from 'antd'
 import { PlusOutlined, QuestionCircleTwoTone } from '@ant-design/icons'
@@ -56,13 +57,7 @@ export const ContentTable: React.FC<{
   const { searchFields, searchParams } = ctx.state
 
   // 表格引用，重置、操作表格
-  const tableRef = useRef<{
-    reload: (resetPageIndex?: boolean) => void
-    reloadAndRest: () => void
-    fetchMore: () => void
-    reset: () => void
-    clearSelected: () => void
-  }>()
+  const tableRef = useRef<ActionType>()
 
   // 表格数据请求
   const tableRequest = useCallback(
@@ -217,7 +212,7 @@ export const ContentTable: React.FC<{
         search={false}
         actionRef={tableRef}
         dateFormatter="string"
-        scroll={{ x: 1000 }}
+        scroll={{ x: 'max-content' }}
         request={tableRequest}
         columns={memoTableColumns}
         toolBarRender={() => toolBarRender}
@@ -293,11 +288,13 @@ export const ContentTable: React.FC<{
  */
 const setPageQuery = (current = 1, pageSize = 10) => {
   const { pathname, query } = history.location
-  history.replace(pathname, {
-    query: {
+
+  history.replace({
+    pathname,
+    search: stringify({
       ...query,
       pageSize,
       current,
-    },
+    }),
   })
 }

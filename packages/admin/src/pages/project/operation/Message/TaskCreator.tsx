@@ -17,6 +17,8 @@ import {
   Typography,
   Radio,
   Upload,
+  Progress,
+  Alert,
 } from 'antd'
 import { useSetState } from 'react-use'
 import { callWxOpenAPI, downloadAndSaveFile, uploadFile } from '@/utils'
@@ -33,7 +35,7 @@ interface Task {
   content: string
   activityId: string
   phoneNumbers: string
-  phoneNumberFile: File[]
+  phoneNumberFile: any[]
 }
 
 const getMessageTemplate = (miniappName = '', content = '') => `【${
@@ -182,81 +184,81 @@ const MessageTask: React.FC = () => {
                 } else {
                   setState({
                     task: {
-                      content,
                       activityId,
-                      phoneNumberFile: phoneNumberFile?.[0],
+                      phoneNumberFile: phoneNumberFile?.[0]?.originFileObj,
                     },
                   })
                   modalRef?.current.show()
                 }
               }}
             >
-              <Form.Item
-                shouldUpdate
-                label="短信内容"
-                name="content"
-                extra={
-                  <div>
-                    <div>短信内容最长支持 30 个字符。</div>
-                    <div>
-                      发送样例：
-                      {getMessageTemplate(setting?.miniappName, form.getFieldValue('content'))}
-                    </div>
-                    {msgLongWarning && (
-                      <Text type="warning">当前短信内容可能超过70字，将会分成2条短信发送</Text>
-                    )}
-                  </div>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: '请填写短信内容',
-                  },
-                  {
-                    message: '短信内容最长支持 30 个字符',
-                    max: 30,
-                  },
-                  {
-                    validator: (_, value) => {
-                      const template = getMessageTemplate(setting.miniappName)
-
-                      if (template.length + (value?.length || 0) > 70) {
-                        setState({
-                          msgLongWarning: true,
-                        })
-                      } else {
-                        setState({
-                          msgLongWarning: false,
-                        })
-                      }
-
-                      return Promise.resolve()
-                    },
-                  },
-                ]}
-              >
-                <TextArea placeholder="短信内容" />
-              </Form.Item>
-
               {sendMessageType === 'manual' ? (
-                <Form.Item
-                  required
-                  label="手机号码"
-                  name="phoneNumbers"
-                  extra="仅支持国内号码，如 12345678900。多个手机号码，每行一个号码，或使用英文逗号 , 分隔，目前最大支持 1000 个手机号码。"
-                  rules={[
-                    {
-                      required: true,
-                      message: '请填写短信号码',
-                    },
-                    {
-                      pattern: /^(1[0-9]\d{9}(\n|,)?)+$/,
-                      message: '仅支持国内号码，仅支持换行或英文分号 , 分隔',
-                    },
-                  ]}
-                >
-                  <TextArea placeholder="短信号码列表" />
-                </Form.Item>
+                <>
+                  <Form.Item
+                    shouldUpdate
+                    label="短信内容"
+                    name="content"
+                    extra={
+                      <div>
+                        <div>短信内容最长支持 30 个字符。</div>
+                        <div>
+                          发送样例：
+                          {getMessageTemplate(setting?.miniappName, form.getFieldValue('content'))}
+                        </div>
+                        {msgLongWarning && (
+                          <Text type="warning">当前短信内容可能超过70字，将会分成2条短信发送</Text>
+                        )}
+                      </div>
+                    }
+                    rules={[
+                      {
+                        required: true,
+                        message: '请填写短信内容',
+                      },
+                      {
+                        message: '短信内容最长支持 30 个字符',
+                        max: 30,
+                      },
+                      {
+                        validator: (_, value) => {
+                          const template = getMessageTemplate(setting.miniappName)
+
+                          if (template.length + (value?.length || 0) > 70) {
+                            setState({
+                              msgLongWarning: true,
+                            })
+                          } else {
+                            setState({
+                              msgLongWarning: false,
+                            })
+                          }
+
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
+                  >
+                    <TextArea placeholder="短信内容" />
+                  </Form.Item>
+                  <Form.Item
+                    required
+                    label="手机号码"
+                    name="phoneNumbers"
+                    extra="仅支持国内号码，如 12345678900。多个手机号码，每行一个号码，或使用英文逗号 , 分隔，目前最大支持 1000 个手机号码。"
+                    rules={[
+                      {
+                        required: true,
+                        message: '请填写短信号码',
+                      },
+                      {
+                        pattern: /^(1[0-9]\d{9}(\n|,)?)+$/,
+                        message: '仅支持国内号码，仅支持换行或英文分号 , 分隔',
+                      },
+                    ]}
+                  >
+                    <TextArea placeholder="短信号码列表" />
+                  </Form.Item>
+                </>
               ) : (
                 <Form.Item required label="手机号码包文件">
                   <Form.Item
@@ -290,7 +292,7 @@ const MessageTask: React.FC = () => {
                     }}
                     className="mb-3"
                   >
-                    <Upload.Dragger maxCount={1} accept=".xlsx,.csv">
+                    <Upload.Dragger maxCount={1} accept=".csv">
                       <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                       </p>
@@ -298,17 +300,16 @@ const MessageTask: React.FC = () => {
                     </Upload.Dragger>
                   </Form.Item>
                   <Text strong>
-                    单次群发任务最多支持 100 万条号码，请上传 XLSX 文件，大小 30M 以内
+                    单次群发任务最多支持 100 万条号码，请上传 CSV 文件，大小 30M 以内
                   </Text>
                   <br />
                   <Text strong>
                     请在模板内填写手机号码，
                     <Link
                       onClick={() => {
-                        downloadAndSaveFile(
-                          './cmsSmsTemplate.xlsx',
-                          'cmsSmsTemplate.xlsx'
-                        ).then(() => message.success('下载模板文件成功'))
+                        downloadAndSaveFile('./cmsSmsTemplate.csv', 'cmsSmsTemplate.csv').then(() =>
+                          message.success('下载模板文件成功')
+                        )
                       }}
                     >
                       下载模板
@@ -385,7 +386,7 @@ const MessageTask: React.FC = () => {
               共计 {task?.phoneNumberList?.length || 0} 个号码，是否创建发送任务？
             </Modal>
           ) : (
-            <BatchTaskConfirmModal actionRef={modalRef} phoneNumberFile={task?.phoneNumberFile} />
+            <BatchTaskConfirmModal actionRef={modalRef} task={task} />
           )}
         </Col>
       </Row>
@@ -401,16 +402,20 @@ const BatchTaskConfirmModal: React.FC<{
   actionRef: MutableRefObject<{
     show: () => void
   }>
-  phoneNumberFile: any
-}> = ({ actionRef, phoneNumberFile }) => {
-  const [{ visible }, setState] = useSetState({
+  task: {
+    phoneNumberFile: any
+    activityId: string
+  }
+}> = ({ actionRef, task = {} }) => {
+  const { phoneNumberFile, activityId } = task
+  const [{ visible, uploadPercent }, setState] = useSetState({
     visible: false,
+    uploadPercent: 0,
   })
 
-  const show = () =>
-    setState({
-      visible: true,
-    })
+  // 弹窗控制
+  const show = () => setState({ visible: true })
+  const hideModal = () => setState({ visible: false })
 
   useEffect(() => {
     if (actionRef.current) {
@@ -423,24 +428,25 @@ const BatchTaskConfirmModal: React.FC<{
   }, [])
 
   // 分析号码包
-  const { data, loading } = useRequest(
+  const { data: analysisResult, loading } = useRequest(
     async () => {
-      if (!phoneNumberFile || !visible) return
+      if (!visible || !activityId) return
+      // 重置上传进度
+      setState({ uploadPercent: 0 })
 
-      // 上传文件
+      // 上传文件到云存储
       const fileId = await uploadFile({
         file: phoneNumberFile,
         // 生成较长的文件名
         filenameLength: 128,
+        onProgress: (v) => setState({ uploadPercent: v }),
       })
 
-      console.log(fileId)
-
+      // 获取文件分析结果
       const res = await callWxOpenAPI('getSmsTaskAnalysisData', {
         fileId,
+        activityId,
       })
-
-      console.log(res)
 
       let rest = 0
 
@@ -449,14 +455,43 @@ const BatchTaskConfirmModal: React.FC<{
         rest = res.usage.Quota - res.usage.Usage
       }
 
-      console.log(rest)
-
       return {
-        data: { rest },
+        data: { rest, total: res.total, fileUri: res.fileUri },
       }
     },
     {
       refreshDeps: [phoneNumberFile, visible],
+      onError: (e) => {
+        hideModal()
+        message.error(`文件分析失败：${e.message}`)
+      },
+    }
+  )
+
+  const sendDisable = analysisResult?.rest <= 0 || analysisResult?.total > analysisResult?.rest
+
+  // 创建发送任务
+  const { loading: taskLoading, run: createSendingTask } = useRequest(
+    async ({ fileUri }: { fileUri: string }) => {
+      // 文件不存在
+      if (!fileUri) {
+        message.error('文件检测结果不存在')
+        return
+      }
+
+      // TODO: 创建群发任务
+      const res = await callWxOpenAPI('createSendSmsTaskByFile', {
+        fileUri,
+      })
+    },
+    {
+      manual: true,
+      refreshDeps: [analysisResult],
+      onSuccess: () => {
+        hideModal()
+        message.success('创建任务成功')
+      },
+      onError: (e) => message.error(`创建任务失败：${e.message}`),
     }
   )
 
@@ -465,30 +500,51 @@ const BatchTaskConfirmModal: React.FC<{
       centered
       visible={visible}
       title="创建发送短信任务"
-      onOk={() => {}}
-      okButtonProps={{ disabled: loading }}
+      onOk={() => {
+        // 创建发送任务
+        createSendingTask({
+          fileUri: analysisResult?.fileUri,
+        })
+      }}
+      okButtonProps={{ loading: loading || taskLoading, disabled: sendDisable }}
       onCancel={() => setState({ visible: false })}
     >
+      {analysisResult?.rest <= 0 && <Alert message="短信余量不足，无法发送" type="error" />}
+      {analysisResult?.total > analysisResult?.rest && (
+        <Alert message="短信发送人数超过可用余量，无法发送" type="error" />
+      )}
       {loading ? (
-        <p className="text-center">文件分析中，请稍等...</p>
+        <div>
+          {uploadPercent !== 100 && (
+            <Space>
+              <span>文件上传中</span>
+              <Progress type="line" percent={uploadPercent} style={{ width: '300px' }} />
+            </Space>
+          )}
+          <p className="text-center mt-3">文件分析中，请稍等...</p>
+        </div>
       ) : (
-        <>
-          <p>将短信发送给 {} 人</p>
+        <div className="mt-3">
           <p>
-            当前国内文本短信剩余量 <Text type="danger">{data?.rest}</Text> 条
+            将短信发送给 <Text type="danger">{analysisResult?.total}</Text> 人
+          </p>
+          <p>
+            当前国内文本短信剩余量 <Text type="danger">{analysisResult?.rest}</Text> 条
           </p>
           <p>
             若短信发送人数超过余量，会导致超出部分发送失败，请及时
-            <Link href="https://cloud.tencent.com/act/pro/tcbsms">续订套餐包</Link>
+            <Link href="https://cloud.tencent.com/act/pro/tcbsms" target="_blank">
+              续订套餐包
+            </Link>
           </p>
-        </>
+        </div>
       )}
     </Modal>
   )
 }
 
 /**
- * 解析号码列表
+ * 从输入字符串中解析号码列表
  */
 const resolveAndCheckPhoneNumbers = (phoneNumbers: string): string[] | undefined => {
   if (phoneNumbers.includes('\n') && phoneNumbers.includes(',')) {

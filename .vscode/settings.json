@@ -15,12 +15,14 @@
     "sider",
     "tinymce",
     "umijs",
+    "unparse",
     "vditor"
   ],
   "search.exclude": {
     "**/dist": true,
     "**/node_modules": true,
     "**/bower_components": true,
-    "**/*.code-search": true
+    "**/*.code-search": true,
+    "**/*.lock": true
   }
 }

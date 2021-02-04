@@ -2,7 +2,7 @@ import { useParams } from 'umi'
 import React, { useRef, useState } from 'react'
 import { PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
-import ProTable, { ProColumns } from '@ant-design/pro-table'
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { getWebhooks, deleteWebhook } from '@/services/webhook'
 import { Typography, Button, Modal, Space, Tag, Tabs, Popover, message, Tooltip } from 'antd'
 import { WebhookModal } from './WebhookModal'
@@ -111,13 +111,7 @@ export default (): React.ReactNode => {
   const [selectedWebhook, setSelectedWebhook] = useState<Webhook>()
   const [webhookAction, setWebhookAction] = useState<'create' | 'edit'>('create')
 
-  const tableRef = useRef<{
-    reload: (resetPageIndex?: boolean) => void
-    reloadAndRest: () => void
-    fetchMore: () => void
-    reset: () => void
-    clearSelected: () => void
-  }>()
+  const tableRef = useRef<ActionType>()
 
   // 获取 webhooks
   const tableRequest = async (
@@ -167,7 +161,7 @@ export default (): React.ReactNode => {
             defaultData={[]}
             actionRef={tableRef}
             dateFormatter="string"
-            scroll={{ x: 1200 }}
+            scroll={{ x: 'max-content' }}
             request={tableRequest}
             pagination={{
               showSizeChanger: true,
@@ -212,7 +206,7 @@ export default (): React.ReactNode => {
                             },
                           })
                           message.success('删除 Webhook 成功')
-                          tableRef?.current?.reloadAndRest()
+                          tableRef?.current?.reloadAndRest?.()
                         },
                       })
                     }}
@@ -250,7 +244,7 @@ export default (): React.ReactNode => {
         onClose={() => setModalVisible(false)}
         onSuccess={() => {
           setModalVisible(false)
-          tableRef?.current?.reloadAndRest()
+          tableRef?.current?.reloadAndRest?.()
         }}
       />
     </PageContainer>

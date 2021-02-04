@@ -287,6 +287,7 @@ img {
   position: absolute;
   height: calc(100% - constant(safe-area-inset-bottom));
   height: calc(100% - env(safe-area-inset-bottom));
+  object-fit: cover;
   width: 100%;
   top: 0;
   left: 0;

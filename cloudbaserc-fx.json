@@ -113,6 +113,7 @@
             {
               "name": "tcb-ext-cms-openapi",
               "timeout": 60,
+              "memorySize": 1024,
               "envVariables": {
                 "TCB_CMS": true,
                 "NODE_ENV": "production",

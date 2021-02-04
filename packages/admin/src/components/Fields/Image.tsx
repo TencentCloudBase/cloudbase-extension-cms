@@ -8,6 +8,8 @@ const DefaultHeight = '60px'
 const DefaultWidth = '200px'
 
 const ImageContainerStyle = {
+  // 居中
+  margin: 'auto',
   overflow: 'hidden',
 }
 

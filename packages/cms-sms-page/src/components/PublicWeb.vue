@@ -1,7 +1,6 @@
 <template>
   <div id="public-web-container" class="center">
     <div :class="{ bottom: bgImg }">
-      <p>正在打开{{ appName }}...</p>
       <a
         href="javascript:"
         @click="this.onOpenWeapp"

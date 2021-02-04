@@ -1,7 +1,7 @@
 import { useParams } from 'umi'
 import React, { useRef } from 'react'
 import { PageContainer } from '@ant-design/pro-layout'
-import ProTable, { ProColumns } from '@ant-design/pro-table'
+import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { getMigrateJobs } from '@/services/content'
 
 const StatusMap = {
@@ -69,13 +69,7 @@ const columns: ProColumns<MigrateJobDto>[] = MigrateJobColumns.map((item) => ({
 export default (): React.ReactNode => {
   const { projectId } = useParams<any>()
 
-  const tableRef = useRef<{
-    reload: (resetPageIndex?: boolean) => void
-    reloadAndRest: () => void
-    fetchMore: () => void
-    reset: () => void
-    clearSelected: () => void
-  }>()
+  const tableRef = useRef<ActionType>()
 
   // 获取 jobs
   const tableRequest = async (
@@ -115,7 +109,7 @@ export default (): React.ReactNode => {
         defaultData={[]}
         actionRef={tableRef}
         dateFormatter="string"
-        scroll={{ x: 1200 }}
+        scroll={{ x: 'max-content' }}
         request={tableRequest}
         pagination={{
           showSizeChanger: true,
