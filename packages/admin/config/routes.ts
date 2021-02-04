@@ -115,6 +115,11 @@ const routesConfig: IConfig = {
               component: './project/operation/Message/TaskCreator',
             },
             {
+              exact: true,
+              path: '/:projectId/operation/message/result',
+              component: './project/operation/Message/TaskResult',
+            },
+            {
               component: './project/operation/index',
             },
           ],

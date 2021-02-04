@@ -2,15 +2,15 @@ import { callWxOpenAPI, tcbRequest } from '@/utils'
 
 export async function enableOperationService(projectId: string, data: any = {}) {
   return tcbRequest(`/projects/${projectId}/operation/enableOperationService`, {
-    method: 'POST',
     data,
+    method: 'POST',
   })
 }
 
 export async function createBatchTask(projectId: string, data: any = {}) {
   return tcbRequest(`/projects/${projectId}/operation/createBatchTask`, {
-    method: 'POST',
     data,
+    method: 'POST',
   })
 }
 
@@ -22,4 +22,14 @@ export async function enableNonLogin(projectId: string) {
 
 export async function getAnalyticsData(data: { activityId: string; metricName?: string }) {
   return callWxOpenAPI('getAnalyticsData', data)
+}
+
+export async function getSmsTaskResult(
+  projectId: string,
+  data: { queryId: string; pageSize: number; page: number }
+) {
+  return tcbRequest(`/projects/${projectId}/operation/getSmsTaskResult`, {
+    data,
+    method: 'POST',
+  })
 }

@@ -185,3 +185,122 @@ export const columns: ProColumns[] = [
     },
   },
 ]
+
+/**
+ * 发送结果列
+ */
+
+export const taskResultColumns: ProColumns[] = [
+  {
+    title: '手机号码',
+    width: 200,
+    align: 'center',
+    dataIndex: 'Mobile',
+    render: (
+      text: React.ReactNode,
+      record: any,
+      index: number,
+      action: any
+    ): React.ReactNode | React.ReactNode[] => (
+      <Tooltip title={text}>
+        <Text ellipsis style={{ width: '200px' }}>
+          {text}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  {
+    title: '短信内容',
+    width: 200,
+    align: 'center',
+    dataIndex: 'Content',
+    render: (
+      text: React.ReactNode,
+      record: any,
+      index: number,
+      action: any
+    ): React.ReactNode | React.ReactNode[] => (
+      <Tooltip title={text}>
+        <Text ellipsis style={{ width: '200px' }}>
+          {text}
+        </Text>
+      </Tooltip>
+    ),
+  },
+  {
+    title: '短信长度',
+    width: 100,
+    align: 'center',
+    dataIndex: 'ContentSize',
+  },
+  {
+    title: '计费条数',
+    width: 100,
+    align: 'center',
+    dataIndex: 'Fee',
+  },
+  {
+    title: '创建时间',
+    width: 200,
+    align: 'center',
+    dataIndex: 'CreateTime',
+    render: (
+      text: React.ReactNode,
+      record: any,
+      index: number,
+      action: any
+    ): React.ReactNode | React.ReactNode[] => {
+      const date =
+        typeof record.CreateTime === 'undefined'
+          ? '-'
+          : formatDisplayTimeByType(record.CreateTime, 'timestamp-ms', 'DateTime')
+      return <Text>{date}</Text>
+    },
+  },
+  {
+    title: '用户接受时间',
+    width: 200,
+    align: 'center',
+    dataIndex: 'ReceivedTime',
+    render: (
+      text: React.ReactNode,
+      record: any,
+      index: number,
+      action: any
+    ): React.ReactNode | React.ReactNode[] => {
+      const date =
+        typeof record.ReceivedTime === 'undefined'
+          ? '-'
+          : formatDisplayTimeByType(record.ReceivedTime, 'timestamp-ms', 'DateTime')
+      return <Text>{date}</Text>
+    },
+  },
+
+  {
+    title: '发送状态',
+    width: 200,
+    align: 'center',
+    dataIndex: 'Status',
+    render: (
+      text: React.ReactNode,
+      record: any,
+      index: number,
+      action: any
+    ): React.ReactNode | React.ReactNode[] => {
+      const statusMap = {
+        sent: '发送成功',
+        error: '发送失败',
+      }
+
+      const status = record.Status
+
+      return <Text type={status === 'error' ? 'danger' : 'success'}>{statusMap[status]}</Text>
+    },
+  },
+  {
+    title: '备注',
+    width: 200,
+    align: 'center',
+    dataIndex: 'Remarks',
+  },
+]
