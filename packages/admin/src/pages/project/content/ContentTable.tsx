@@ -1,7 +1,8 @@
 import { useConcent } from 'concent'
 import { stringify } from 'querystring'
 import { useParams, history } from 'umi'
-import React, { useRef, useCallback, useMemo, useState } from 'react'
+import { useSetState } from 'react-use'
+import React, { useRef, useCallback, useMemo } from 'react'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select } from 'antd'
 import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@ant-design/icons'
@@ -264,75 +265,76 @@ const getTableAlertRender = (projectId: string, currentSchema: Schema, tableRef:
   selectedRows: any[]
 }) => {
   // 导出文件类型
-  const [fileType, setExportFileType] = useState<'json' | 'csv'>('json')
+  const [{ visible, fileType }, setState] = useSetState<any>({
+    visible: false,
+    fileType: 'json',
+  })
+
+  const closeModal = () => setState({ visible: false })
 
   return (
-    <Row>
-      <Col flex="0 0 auto">
-        <Space>
-          <span>已选中</span>
-          <a style={{ fontWeight: 600 }}>{selectedRowKeys?.length}</a>
-          <span>项</span>
-        </Space>
-      </Col>
-      <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
-        <Space>
-          <Button
-            danger
-            size="small"
-            type="primary"
-            onClick={() => {
-              const modal = Modal.confirm({
-                title: '确认删除选中的内容？',
-                onCancel: () => {
-                  modal.destroy()
-                },
-                onOk: async () => {
-                  try {
-                    const ids = selectedRows.map((_: any) => _._id)
-                    await batchDeleteContent(projectId, currentSchema.collectionName, ids)
-                    tableRef?.current?.reload()
-                    message.success('删除内容成功')
-                  } catch (error) {
-                    message.error('删除内容失败')
-                  }
-                },
-              })
-            }}
-          >
-            <DeleteOutlined /> 删除文档
-          </Button>
-          <Button
-            size="small"
-            type="primary"
-            onClick={() => {
-              const modal = Modal.confirm({
-                title: '确认导出选中的内容？',
-                content: (
-                  <Select defaultValue="json" onChange={setExportFileType} className="mt-3">
-                    <Option value="csv">导出为 CSV 文件</Option>
-                    <Option value="json">导出为 JSON 文件</Option>
-                  </Select>
-                ),
-                onCancel: () => {
-                  modal.destroy()
-                },
-                onOk: async () => {
-                  try {
-                    await exportData(selectedRows, fileType)
-                    message.success('导出数据成功')
-                  } catch (error) {
-                    message.error('导出数据失败')
-                  }
-                },
-              })
-            }}
-          >
-            <ExportOutlined /> 导出数据
-          </Button>
-        </Space>
-      </Col>
-    </Row>
+    <>
+      <Row>
+        <Col flex="0 0 auto">
+          <Space>
+            <span>已选中</span>
+            <a style={{ fontWeight: 600 }}>{selectedRowKeys?.length}</a>
+            <span>项</span>
+          </Space>
+        </Col>
+        <Col flex="1 1 auto" style={{ textAlign: 'right' }}>
+          <Space>
+            <Button
+              danger
+              size="small"
+              type="primary"
+              onClick={() => {
+                const modal = Modal.confirm({
+                  title: '确认删除选中的内容？',
+                  onCancel: () => {
+                    modal.destroy()
+                  },
+                  onOk: async () => {
+                    try {
+                      const ids = selectedRows.map((_: any) => _._id)
+                      await batchDeleteContent(projectId, currentSchema.collectionName, ids)
+                      tableRef?.current?.reload()
+                      message.success('删除内容成功')
+                    } catch (error) {
+                      message.error('删除内容失败')
+                    }
+                  },
+                })
+              }}
+            >
+              <DeleteOutlined /> 删除文档
+            </Button>
+            <Button size="small" type="primary" onClick={() => setState({ visible: true })}>
+              <ExportOutlined /> 导出数据
+            </Button>
+          </Space>
+        </Col>
+      </Row>
+      <Modal
+        visible={visible}
+        title="确认导出选中的内容？"
+        onCancel={closeModal}
+        onOk={async () => {
+          try {
+            await exportData(selectedRows, fileType)
+            message.success('导出数据成功')
+          } catch (error) {
+            message.error('导出数据失败')
+          }
+          closeModal()
+        }}
+      >
+        <Select defaultValue="json" onChange={(v) => setState({ fileType: v })} className="mt-3">
+          <Option value="csv">导出为 CSV 文件</Option>
+          <Option value="json">导出为 JSON 文件</Option>
+        </Select>
+      </Modal>
+    </>
   )
 }
 

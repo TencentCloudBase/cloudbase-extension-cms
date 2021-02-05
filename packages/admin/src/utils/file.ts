@@ -4,8 +4,11 @@ import request from 'umi-request'
 /**
  * 将字符串保存为文件并下载
  */
-export const saveContentToFile = (content: string, fileName: string) => {
-  return saveFile(new Blob([content]), fileName)
+export const saveContentToFile = (content: string, fileName: string, type = 'application/json') => {
+  if (!/\.json$/.test(fileName) && type === 'application/json') {
+    throw new Error('文件格式指定错误')
+  }
+  return saveFile(new Blob([content], { type }), fileName)
 }
 
 /**
