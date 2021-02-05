@@ -7,11 +7,12 @@ import {
   Controller,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Request,
 } from '@nestjs/common'
 import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty, MaxLength } from 'class-validator'
-import { getEnvIdString, dateToUnixTimestampInMs, randomId, getCloudBaseManager } from '@/utils'
+import { getEnvIdString, dateToUnixTimestampInMs, getCloudBaseManager } from '@/utils'
 import { Collection } from '@/constants'
 import { OperationService } from './operation.service'
 
@@ -109,9 +110,12 @@ export class OperationController {
    * 创建发送短信的任务
    */
   @Post('createBatchTask')
-  async createBatchTask(@Param('projectId') projectId, @Body() body: MessageTaskBody) {
-    const envId = getEnvIdString()
-    const { content, phoneNumberList, activityId, createdUser } = body
+  async createBatchTask(
+    @Param('projectId') projectId,
+    @Body() body: MessageTaskBody,
+    @Request() req: IRequest
+  ) {
+    const { content, phoneNumberList, activityId } = body
 
     // 写入 task 记录
     const taskRes = await this.collection(Collection.MessageTasks).add({
@@ -120,34 +124,18 @@ export class OperationController {
       projectId,
       // 关联的活动 ID
       activityId,
-      // 创建用户
-      createdUser,
+      // 号码列表
       phoneNumberList,
       // 已创建
       status: 'created',
       total: phoneNumberList.length,
+      // 创建用户
+      createdUser: req.cmsUser,
       createTime: dateToUnixTimestampInMs(),
     })
 
-    const taskId = taskRes.id
-    const token = randomId(128)
-
-    // 生成一个 token，用于下发短信任务的鉴权
-    await this.collection(Collection.MessageAuthToken).add({
-      // 环境 id，此 token 仅能触发此环境的任务
-      envId,
-      // 验证 token
-      token,
-      // 任务 Id
-      taskId,
-      type: 'smstask',
-      // 创建时间
-      createTime: Date.now(),
-    })
-
     return {
-      taskId,
-      token,
+      taskId: taskRes.id,
     }
   }
 

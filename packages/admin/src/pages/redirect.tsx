@@ -21,7 +21,7 @@ export default () => {
       schema: Schema
       project: Project
     }
-  }>(() => getCollectionInfo(customId, collectionName))
+  }>(() => getCollectionInfo(customId as string, collectionName as string))
 
   useEffect(() => {
     if (!data) return

@@ -31,9 +31,6 @@ export const Collection = {
 
   // 发送短信记录
   MessageTasks: `${RESOURCE_PREFIX}-sms-tasks`,
-
-  // 生成可以发送短信的 token
-  MessageAuthToken: `${RESOURCE_PREFIX}-sms-token`,
 }
 
 /**

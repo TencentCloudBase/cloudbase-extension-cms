@@ -1,9 +1,5 @@
 import { tcbRequest } from '@/utils'
 
-export async function queryNotices(): Promise<any> {
-  return tcbRequest<{ data: API.NoticeIconData[] }>('/notices')
-}
-
 export const getUsers = async (page = 1, pageSize = 10) => {
   return tcbRequest('/user', {
     method: 'GET',

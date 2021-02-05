@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useEffect, useRef } from 'react'
-import { useParams, useRequest, history, useModel } from 'umi'
+import { useParams, useRequest, history } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { InboxOutlined, LeftCircleTwoTone } from '@ant-design/icons'
@@ -27,6 +27,7 @@ import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
 import { IConnectEditor } from './Connect'
 import { ActivityField } from './columns'
+import { resolveAndCheckPhoneNumbers } from './util'
 
 const { Text, Link } = Typography
 const { TextArea } = Input
@@ -38,12 +39,13 @@ interface Task {
   phoneNumberFile: any[]
 }
 
+// 短信模板
 const getMessageTemplate = (miniappName = '', content = '') => `【${
   miniappName || '小程序名称'
 }】${content}，跳转小程序 https://dllzff.cn/xxxxxxxx
 回T退订`
 
-// 30M
+// 号码包文件最大值：30M
 const MAX_FILE_SIZE = 30 * 1024 * 1024
 
 const MessageTask: React.FC = () => {
@@ -51,7 +53,6 @@ const MessageTask: React.FC = () => {
   const modalRef = useRef<any>(null)
   const [form] = Form.useForm()
   const { projectId } = useParams<any>()
-  const { initialState } = useModel('@@initialState')
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
 
@@ -75,13 +76,7 @@ const MessageTask: React.FC = () => {
   // 创建发送任务
   const { run, loading } = useRequest(
     async (payload: any) => {
-      const { currentUser } = initialState || {}
-
-      // 记录创建用户信息
-      const { taskId } = await createBatchTask(projectId, {
-        ...payload,
-        createdUser: currentUser,
-      })
+      const { taskId } = await createBatchTask(projectId, payload)
 
       try {
         const result = await callWxOpenAPI('sendSms', {
@@ -117,7 +112,7 @@ const MessageTask: React.FC = () => {
       manual: true,
       onError: (e) => {
         console.error(e)
-        // 创建任务，生成 token 失败
+        // 创建任务失败
         message.error(`创建任务失败 ${e.message}`)
       },
     }
@@ -386,7 +381,7 @@ const MessageTask: React.FC = () => {
               共计 {task?.phoneNumberList?.length || 0} 个号码，是否创建发送任务？
             </Modal>
           ) : (
-            <BatchTaskConfirmModal actionRef={modalRef} task={task} />
+            <SmsFileTaskModal actionRef={modalRef} task={task} />
           )}
         </Col>
       </Row>
@@ -396,9 +391,9 @@ const MessageTask: React.FC = () => {
 }
 
 /**
- * 文件批量发送短信确认弹窗
+ * 通过号码包文件发送短信分析、创建任务
  */
-const BatchTaskConfirmModal: React.FC<{
+const SmsFileTaskModal: React.FC<{
   actionRef: MutableRefObject<{
     show: () => void
   }>
@@ -407,6 +402,7 @@ const BatchTaskConfirmModal: React.FC<{
     activityId: string
   }
 }> = ({ actionRef, task = {} }) => {
+  const { projectId } = useParams<any>()
   const { phoneNumberFile, activityId } = task
   const [{ visible, uploadPercent }, setState] = useSetState({
     visible: false,
@@ -443,20 +439,21 @@ const BatchTaskConfirmModal: React.FC<{
       })
 
       // 获取文件分析结果
-      const res = await callWxOpenAPI('getSmsTaskAnalysisData', {
+      const res = await callWxOpenAPI('getSmsFileAnalysisData', {
         fileId,
         activityId,
+        projectId,
       })
 
-      let rest = 0
+      let restAmount = 0
 
       // 短信剩余量
       if (res.usage) {
-        rest = res.usage.Quota - res.usage.Usage
+        restAmount = res.usage.Quota - res.usage.Usage
       }
 
       return {
-        data: { rest, total: res.total, fileUri: res.fileUri },
+        data: { restAmount, ...res },
       }
     },
     {
@@ -468,13 +465,15 @@ const BatchTaskConfirmModal: React.FC<{
     }
   )
 
-  const sendDisable = analysisResult?.rest <= 0 || analysisResult?.total > analysisResult?.rest
+  // 余量不足时，禁用发送按钮
+  const sendDisable =
+    analysisResult?.restAmount <= 0 || analysisResult?.total > analysisResult?.restAmount
 
   // 创建发送任务
   const { loading: taskLoading, run: createSendingTask } = useRequest(
-    async ({ fileUri }: { fileUri: string }) => {
+    async ({ fileUri, taskId }: { fileUri: string; taskId: string }) => {
       // 文件不存在
-      if (!fileUri) {
+      if (!fileUri || !taskId) {
         message.error('文件检测结果不存在')
         return
       }
@@ -482,6 +481,7 @@ const BatchTaskConfirmModal: React.FC<{
       // TODO: 创建群发任务
       const res = await callWxOpenAPI('createSendSmsTaskByFile', {
         fileUri,
+        taskId,
       })
     },
     {
@@ -503,14 +503,15 @@ const BatchTaskConfirmModal: React.FC<{
       onOk={() => {
         // 创建发送任务
         createSendingTask({
+          taskId: analysisResult?.taskId,
           fileUri: analysisResult?.fileUri,
         })
       }}
-      okButtonProps={{ loading: loading || taskLoading, disabled: sendDisable }}
       onCancel={() => setState({ visible: false })}
+      okButtonProps={{ loading: loading || taskLoading, disabled: sendDisable }}
     >
-      {analysisResult?.rest <= 0 && <Alert message="短信余量不足，无法发送" type="error" />}
-      {analysisResult?.total > analysisResult?.rest && (
+      {analysisResult?.restAmount <= 0 && <Alert message="短信余量不足，无法发送" type="error" />}
+      {analysisResult?.total > analysisResult?.restAmount && (
         <Alert message="短信发送人数超过可用余量，无法发送" type="error" />
       )}
       {loading ? (
@@ -529,7 +530,7 @@ const BatchTaskConfirmModal: React.FC<{
             将短信发送给 <Text type="danger">{analysisResult?.total}</Text> 人
           </p>
           <p>
-            当前国内文本短信剩余量 <Text type="danger">{analysisResult?.rest}</Text> 条
+            当前国内文本短信剩余量 <Text type="danger">{analysisResult?.restAmount}</Text> 条
           </p>
           <p>
             若短信发送人数超过余量，会导致超出部分发送失败，请及时
@@ -541,41 +542,6 @@ const BatchTaskConfirmModal: React.FC<{
       )}
     </Modal>
   )
-}
-
-/**
- * 从输入字符串中解析号码列表
- */
-const resolveAndCheckPhoneNumbers = (phoneNumbers: string): string[] | undefined => {
-  if (phoneNumbers.includes('\n') && phoneNumbers.includes(',')) {
-    message.error('请勿混用换行和英文分号 ,')
-    return
-  }
-
-  let phoneNumberList: string[] = [phoneNumbers]
-
-  if (phoneNumbers.includes('\n')) {
-    phoneNumberList = phoneNumbers
-      .split('\n')
-      .filter((_) => _)
-      .map((num) => num.trim())
-  }
-  if (phoneNumbers.includes(',')) {
-    phoneNumberList = phoneNumbers
-      .split(',')
-      .filter((_) => _)
-      .map((num) => num.trim())
-  }
-
-  if (!phoneNumberList?.length) {
-    message.error('号码不能为空')
-    return
-  }
-
-  // 去重
-  phoneNumberList = phoneNumberList.filter((num, i, arr) => arr.findIndex((_) => _ === num) === i)
-
-  return phoneNumberList
 }
 
 export default MessageTask

@@ -18,7 +18,7 @@ export const ActivityField: any = {
   type: 'Connect',
 }
 
-export const columns: ProColumns[] = [
+export const taskColumns: ProColumns[] = [
   {
     title: '短信内容',
     width: 200,
@@ -34,7 +34,7 @@ export const columns: ProColumns[] = [
     ): React.ReactNode | React.ReactNode[] => (
       <Tooltip title={text}>
         <Text ellipsis style={{ width: '200px' }}>
-          {text}
+          {text || '-'}
         </Text>
       </Tooltip>
     ),
@@ -66,7 +66,7 @@ export const columns: ProColumns[] = [
     ): React.ReactNode | React.ReactNode[] => {
       const { phoneNumberList } = record || {}
       if (!phoneNumberList?.length) {
-        return text
+        return '-'
       }
 
       if (phoneNumberList?.length < 5) {
@@ -102,7 +102,9 @@ export const columns: ProColumns[] = [
       action: any
     ): React.ReactNode | React.ReactNode[] => {
       const statusMap = {
+        uploaded: '号码包已处理',
         created: '创建任务成功',
+        create_fail: '创建任务失败',
         send_success: '发送成功',
         send_fail: '发送失败',
       }

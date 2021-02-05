@@ -13,7 +13,7 @@ import { PlusOutlined, QuestionCircleTwoTone } from '@ant-design/icons'
 import { formatSearchParams } from '../../content/common'
 import ContentTableSearchForm from '../../content/SearchForm'
 import { TaskSchema } from './schema'
-import { columns } from './columns'
+import { taskColumns } from './columns'
 
 const { Text } = Typography
 
@@ -132,7 +132,7 @@ export const ContentTable: React.FC<{
   // 缓存 Table Columns 配置
   const memoTableColumns: ProColumns[] = useMemo(() => {
     return [
-      ...columns,
+      ...taskColumns,
       {
         title: '操作',
         width: 150,
@@ -145,10 +145,15 @@ export const ContentTable: React.FC<{
             type="primary"
             key="edit"
             onClick={() => {
-              setState({
-                visible: true,
-                sendStatusList: record?.sendStatusList || [],
-              })
+              // 存在 queryId，则使用结果展示表格
+              if (record.queryId) {
+                history.push(`/${projectId}/operation/message/result?queryId=${record.queryId}`)
+              } else {
+                setState({
+                  visible: true,
+                  sendStatusList: record?.sendStatusList || [],
+                })
+              }
             }}
           >
             发送结果
@@ -271,7 +276,12 @@ export const ContentTable: React.FC<{
             renderItem={(item: any, i) => (
               <List.Item key={i}>
                 <List.Item.Meta title={item.phoneNumber} />
-                <Text type={item.code !== 'Ok' ? 'danger' : 'success'}>{item.message}</Text>
+                <Text
+                  style={{ maxWidth: '450px' }}
+                  type={item.code !== 'Ok' ? 'danger' : 'success'}
+                >
+                  {item.message}
+                </Text>
               </List.Item>
             )}
           >

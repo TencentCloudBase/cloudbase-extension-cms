@@ -187,11 +187,6 @@
               "aclTag": "ADMINONLY"
             },
             {
-              "collectionName": "tcb-ext-cms-sms-token",
-              "description": "CMS 短信发送任务云函数调用凭证记录（请不要手动修改）",
-              "aclTag": "ADMINONLY"
-            },
-            {
               "collectionName": "tcb-ext-cms-sms-activities",
               "description": "CMS 营销活动记录（请不要手动修改）",
               "aclTag": "ADMINONLY"

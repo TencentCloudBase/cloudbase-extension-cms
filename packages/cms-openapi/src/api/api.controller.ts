@@ -1,17 +1,21 @@
 import _ from 'lodash'
 import { IsNotEmpty } from 'class-validator'
-import { Post, Body, UseGuards, Controller } from '@nestjs/common'
+import { Post, Body, UseGuards, Controller, Request } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { PermissionGuard } from '@/guards'
 import { getWxCloudApp } from '@/utils'
 import { ApiService } from './api.service'
+import { Collection } from '@/constants'
 
-class MessageBody {
+class SmsFileBody {
   @IsNotEmpty()
   fileId: string
 
   @IsNotEmpty()
   activityId: string
+
+  @IsNotEmpty()
+  projectId: string
 }
 
 @Controller('/api')
@@ -47,10 +51,10 @@ export class ApiController {
    */
   @UseGuards(PermissionGuard('operation'))
   @Post('sendSms')
-  async createSendSms(@Body() body: { taskId: string }) {
+  async createSendSmsTask(@Body() body: { taskId: string }) {
     console.log('使用 OpenAPI 发送短信')
     const { taskId } = body
-    return this.apiService.sendSms(taskId)
+    return this.apiService.sendSmsByNumbers(taskId)
   }
 
   /**
@@ -72,9 +76,9 @@ export class ApiController {
    * 分析短信 CSV 文件
    */
   @UseGuards(PermissionGuard('operation'))
-  @Post('getSmsTaskAnalysisData')
-  async getSmsTaskAnalysisData(@Body() body: MessageBody) {
-    const { fileId, activityId } = body
+  @Post('getSmsFileAnalysisData')
+  async getSmsFileAnalysisData(@Body() body: SmsFileBody, @Request() req: IRequest) {
+    const { fileId, activityId, projectId } = body
 
     // 获取短信用量
     const usage = await this.apiService.getSmsUsage()
@@ -85,7 +89,27 @@ export class ApiController {
     // 获取 excel 文件号码数量
     const analysis = await this.apiService.analysisAndUploadCSV(fileId, activityId, amount)
 
-    return { usage, ...analysis }
+    // 写入 task 记录
+    const taskRes = await this.collection(Collection.MessageTasks).add({
+      // 短信内容
+      content: '',
+      projectId,
+      // 关联的活动 ID
+      activityId,
+      // 创建用户
+      phoneNumberList: [],
+      // 号码包文件
+      fileUri: analysis.fileUri,
+      // 创建用户名
+      createdUser: req.cmsUser,
+      // 号码包文件已上传
+      status: 'uploaded',
+      // 号码总量
+      total: analysis.total,
+      createTime: Date.now(),
+    })
+
+    return { usage, taskId: taskRes.id, ...analysis }
   }
 
   /**
@@ -93,8 +117,12 @@ export class ApiController {
    */
   @UseGuards(PermissionGuard('operation'))
   @Post('createSendSmsTaskByFile')
-  async createSendSmsTaskByFile(@Body() body: { fileUri: string }) {
-    const { fileUri } = body
+  async createSendSmsTaskByFile(@Body() body: { fileUri: string; taskId: string }) {
+    const { fileUri, taskId } = body
+
+    // TODO 创建发送短信的任务
+
+    await this.apiService.sendSmsByFile(fileUri, taskId)
 
     return { ok: '1' }
   }

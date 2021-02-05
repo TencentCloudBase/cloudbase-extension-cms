@@ -65,7 +65,7 @@ export class ApiService {
    * 通过号码列表，发送短信
    * @param taskId
    */
-  async sendSms(taskId: string) {
+  async sendSmsByNumbers(taskId: string) {
     const wxCloudApp = getWxCloudApp()
     const { ENV } = wxCloudApp.getWXContext()
 
@@ -117,9 +117,10 @@ export class ApiService {
       const { sendStatusList } = result
 
       // 更新任务记录
+      // TODO: 存储 queryId
       await this.collection(Collection.MessageTasks).doc(taskId).update({
-        status: 'send_success',
         sendStatusList,
+        status: 'send_success',
       })
 
       console.log('下发结果', result)
@@ -173,6 +174,11 @@ export class ApiService {
       }
     }
   }
+
+  /**
+   * 通过号码包文件创建发送短信的任务
+   */
+  async sendSmsByFile(fileUri: string, taskId: string) {}
 
   /**
    * 上报短信下发任务

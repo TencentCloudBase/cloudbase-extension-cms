@@ -4,8 +4,8 @@ import { PageContainer } from '@ant-design/pro-layout'
 import React, { useRef, useCallback, useMemo } from 'react'
 import ProTable, { ActionType } from '@ant-design/pro-table'
 import { getSmsTaskResult } from '@/services/operation'
-import { taskResultColumns } from './columns'
 import ProCard from '@ant-design/pro-card'
+import { taskResultColumns } from './columns'
 
 export default (): React.ReactNode => {
   // 短信发送任务查询 ID

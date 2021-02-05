@@ -178,12 +178,6 @@ Resources:
       CollectionName: tcb-ext-cms-sms-tasks
       Description: CMS 短信发送任务记录（请不要手动修改）
       AclTag: ADMINONLY
-  MessageAuthTokenDB:
-    Type: CloudBase::FlexDB
-    Properties:
-      CollectionName: tcb-ext-cms-sms-token
-      Description: CMS 短信发送任务云函数调用凭证记录（请不要手动修改）
-      AclTag: ADMINONLY
   MessageActivityDB:
     Type: CloudBase::FlexDB
     Properties:
