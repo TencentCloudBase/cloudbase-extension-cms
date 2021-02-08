@@ -6,6 +6,8 @@ import { isDateType } from './field'
 
 dayjs.locale('zh-cn')
 
+export const dayJS = dayjs
+
 /**
  * 将时间转换成毫秒级的 unix timestamp Date.now()
  */

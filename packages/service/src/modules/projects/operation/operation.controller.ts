@@ -12,7 +12,7 @@ import {
 import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty, MaxLength } from 'class-validator'
-import { getEnvIdString, dateToUnixTimestampInMs, getCloudBaseManager } from '@/utils'
+import { getEnvIdString, dateToUnixTimestampInMs, getCloudBaseManager, dayJS } from '@/utils'
 import { Collection } from '@/constants'
 import { OperationService } from './operation.service'
 
@@ -29,7 +29,6 @@ class MessageTaskBody {
   @IsNotEmpty()
   activityId: string
 
-  @IsNotEmpty()
   createdUser: any
 }
 
@@ -149,6 +148,9 @@ export class OperationController {
     const envId = getEnvIdString()
     const manager = await getCloudBaseManager()
 
+    const nowDate = dayJS().format('YYYY-MM-DD')
+    const twoMonthAgo = dayJS().subtract(60, 'day').format('YYYY-MM-DD')
+
     const { SmsRecords, TotalCount } = await manager.commonService().call({
       Action: 'DescribeSmsRecords',
       Param: {
@@ -156,6 +158,8 @@ export class OperationController {
         QueryId: queryId,
         PageNumber: page,
         PageSize: pageSize,
+        StartDate: twoMonthAgo,
+        EndDate: nowDate,
       },
     })
 

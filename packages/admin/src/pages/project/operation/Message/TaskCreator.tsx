@@ -42,7 +42,7 @@ interface Task {
 // 短信模板
 const getMessageTemplate = (miniappName = '', content = '') => `【${
   miniappName || '小程序名称'
-}】${content}，跳转小程序 https://dllzff.cn/xxxxxxxx
+}】${content}，跳转小程序 https://tcbe.cn/xxxxxxxx
 回T退订`
 
 // 号码包文件最大值：30M
@@ -56,16 +56,12 @@ const MessageTask: React.FC = () => {
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
 
-  const [
-    { visible, task, msgLongWarning, activityId, sendMessageType },
-    setState,
-  ] = useSetState<any>({
+  const [{ visible, task, activityId, sendMessageType }, setState] = useSetState<any>({
     task: {},
     totalNumber: 0,
     visible: false,
     activityId: '',
-    msgLongWarning: false,
-    sendMessageType: 'file',
+    sendMessageType: 'manual',
   })
 
   if (!setting?.enableOperation) {
@@ -160,7 +156,6 @@ const MessageTask: React.FC = () => {
                   phoneNumberFile: [],
                 }
               ) => {
-                console.log(v)
                 // 任务信息
                 const { phoneNumbers, phoneNumberFile, content, activityId } = v
 
@@ -194,16 +189,17 @@ const MessageTask: React.FC = () => {
                     label="短信内容"
                     name="content"
                     extra={
-                      <div>
-                        <div>短信内容最长支持 30 个字符。</div>
-                        <div>
-                          发送样例：
-                          {getMessageTemplate(setting?.miniappName, form.getFieldValue('content'))}
-                        </div>
-                        {msgLongWarning && (
-                          <Text type="warning">当前短信内容可能超过70字，将会分成2条短信发送</Text>
+                      <Form.Item shouldUpdate className="mb-0">
+                        {() => (
+                          <Text type="secondary">
+                            短信预览：
+                            {getMessageTemplate(
+                              setting?.miniappName,
+                              form.getFieldValue('content')
+                            )}
+                          </Text>
                         )}
-                      </div>
+                      </Form.Item>
                     }
                     rules={[
                       {
@@ -211,21 +207,11 @@ const MessageTask: React.FC = () => {
                         message: '请填写短信内容',
                       },
                       {
-                        message: '短信内容最长支持 30 个字符',
-                        max: 30,
-                      },
-                      {
                         validator: (_, value) => {
                           const template = getMessageTemplate(setting.miniappName)
 
                           if (template.length + (value?.length || 0) > 70) {
-                            setState({
-                              msgLongWarning: true,
-                            })
-                          } else {
-                            setState({
-                              msgLongWarning: false,
-                            })
+                            return Promise.reject('短信超出 70 个字符，无法发送，请精简短信内容')
                           }
 
                           return Promise.resolve()

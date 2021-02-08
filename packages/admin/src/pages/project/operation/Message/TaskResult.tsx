@@ -9,7 +9,8 @@ import { taskResultColumns } from './columns'
 
 export default (): React.ReactNode => {
   // 短信发送任务查询 ID
-  const { projectId, queryId } = useParams<any>()
+  const { projectId } = useParams<any>()
+  const queryId = history.location.query?.queryId as string
 
   // 表格引用，重置、操作表格
   const tableRef = useRef<ActionType>()
@@ -31,7 +32,10 @@ export default (): React.ReactNode => {
         })
 
         return {
-          data,
+          data: data.map((_: any, index: number) => ({
+            id: index,
+            ..._,
+          })),
           total,
           success: true,
         }
@@ -62,7 +66,7 @@ export default (): React.ReactNode => {
       <ProCard>
         {/* 数据 Table */}
         <ProTable
-          rowKey="_id"
+          rowKey="id"
           search={false}
           actionRef={tableRef}
           dateFormatter="string"

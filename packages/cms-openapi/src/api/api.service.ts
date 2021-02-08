@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import dayjs from 'dayjs'
 import 'dayjs/locale/zh-cn'
-import XLSX from 'xlsx'
 import Axios from 'axios'
 import Papa from 'papaparse'
 import { Injectable } from '@nestjs/common'
@@ -113,12 +112,12 @@ export class ApiService {
         console.log('上报错误', error)
       }
 
-      // 发送结果列表
-      const { sendStatusList } = result
+      // 发送结果列表、结果查看 ID
+      const { sendStatusList, queryId } = result
 
       // 更新任务记录
-      // TODO: 存储 queryId
       await this.collection(Collection.MessageTasks).doc(taskId).update({
+        queryId,
         sendStatusList,
         status: 'send_success',
       })
@@ -178,7 +177,43 @@ export class ApiService {
   /**
    * 通过号码包文件创建发送短信的任务
    */
-  async sendSmsByFile(fileUri: string, taskId: string) {}
+  async sendSmsByFile(fileUri: string, taskId: string) {
+    const wxCloudApp = getWxCloudApp()
+    const envId = getEnvIdString()
+
+    // 查询任务记录
+    const {
+      data: [task],
+    } = await this.collection(Collection.MessageTasks).doc(taskId).get()
+
+    if (!task) {
+      return {
+        code: 'TASK_NOT_FOUND',
+        message: '发送短信的任务未找到',
+      }
+    }
+
+    // 创建发送任务
+    const result = await wxCloudApp.openapi.cloudbase.createSendSmsTask({
+      env: envId,
+      file_url: fileUri,
+    })
+
+    console.log('发送结果', result)
+
+    // 上报数据
+    await this.reportMessageTask({
+      taskId,
+      phoneCount: task.total,
+      activityId: task.activityId,
+    })
+
+    // 更新任务记录
+    await this.collection(Collection.MessageTasks).doc(taskId).update({
+      queryId: result.queryId,
+      status: 'send_success',
+    })
+  }
 
   /**
    * 上报短信下发任务
@@ -381,7 +416,9 @@ export class ApiService {
     const fileContentString = fileContent.toString('utf-8')
 
     // 读取文件内容
-    const { data, errors }: { data: string[][]; errors: any[] } = Papa.parse(fileContentString)
+    let { data, errors }: { data: string[][]; errors: any[] } = Papa.parse(fileContentString)
+    // 过滤空行
+    data = data.filter((_) => _?.length && _.filter((_) => _?.length)?.length)
 
     // 解析文件错误
     if (errors?.length) {
@@ -416,12 +453,6 @@ export class ApiService {
     // 将数据转换成 CSV
     const supplementCSV = Papa.unparse(supplementData)
 
-    // TODO: 临时上传文件
-    await app.uploadFile({
-      cloudPath: `tmp/test.csv`,
-      fileContent: Buffer.from(supplementCSV),
-    })
-
     // 上传文件
     const fileName = fileId.split('/').pop()
     const fileUri = await this.uploadFile(Buffer.from(supplementCSV), fileName)
@@ -435,11 +466,6 @@ export class ApiService {
       fileUri,
     }
   }
-
-  /**
-   * 创建短信发送任务
-   */
-  async createSendSmsTask() {}
 
   // 获取上传链接
   private async uploadFile(file: Buffer, fileName: string) {
