@@ -273,7 +273,7 @@ const MessageTask: React.FC = () => {
                     }}
                     className="mb-3"
                   >
-                    <Upload.Dragger maxCount={1} accept=".csv">
+                    <Upload.Dragger maxCount={1} accept=".csv" beforeUpload={() => false}>
                       <p className="ant-upload-drag-icon">
                         <InboxOutlined />
                       </p>
@@ -285,7 +285,7 @@ const MessageTask: React.FC = () => {
                   </Text>
                   <br />
                   <Text strong>
-                    请在模板内填写手机号码，
+                    请在模板内填写手机号码、短信内容，
                     <Link
                       onClick={() => {
                         downloadAndSaveFile('./cmsSmsTemplate.csv', 'cmsSmsTemplate.csv').then(() =>
@@ -420,7 +420,7 @@ const SmsFileTaskModal: React.FC<{
       const fileId = await uploadFile({
         file: phoneNumberFile,
         // 生成较长的文件名
-        filenameLength: 128,
+        filenameLength: 24,
         onProgress: (v) => setState({ uploadPercent: v }),
       })
 
@@ -464,8 +464,7 @@ const SmsFileTaskModal: React.FC<{
         return
       }
 
-      // TODO: 创建群发任务
-      const res = await callWxOpenAPI('createSendSmsTaskByFile', {
+      await callWxOpenAPI('createSendSmsTaskByFile', {
         fileUri,
         taskId,
       })
@@ -476,6 +475,7 @@ const SmsFileTaskModal: React.FC<{
       onSuccess: () => {
         hideModal()
         message.success('创建任务成功')
+        history.goBack()
       },
       onError: (e) => message.error(`创建任务失败：${e.message}`),
     }

@@ -191,7 +191,6 @@ export const taskColumns: ProColumns[] = [
 /**
  * 发送结果列
  */
-
 export const taskResultColumns: ProColumns[] = [
   {
     title: '手机号码',

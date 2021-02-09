@@ -97,7 +97,7 @@ export class ApiService {
         env: ENV,
         phoneNumberList,
         content: task.content,
-        path: `/${activityPath}/index.html?activityId=${task.activityId}&source=_cms_sms_`,
+        path: `/${activityPath}/index.html?source=_cms_sms_&activityId=${task.activityId}`,
       })
 
       // 上报短信下发任务
@@ -406,11 +406,10 @@ export class ApiService {
   async analysisAndUploadCSV(fileId: string, activityId: string, amount: number) {
     // 下载文件
     const app = getCloudBaseApp()
-    console.time('download')
+
     let { fileContent } = await app.downloadFile({
       fileID: fileId,
     })
-    console.timeEnd('download')
 
     // buffer 转 string
     const fileContentString = fileContent.toString('utf-8')
@@ -486,7 +485,7 @@ export class ApiService {
       Param: {
         ExtensionFiles: [
           {
-            FileType: 'FUNCTION',
+            FileType: 'SMS',
             FileName: fileName,
           },
         ],
@@ -516,7 +515,7 @@ export class ApiService {
 
   private getSmsPagePath(activityId: string) {
     const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
-    return `/${activityPath}/index.html?activityId=${activityId}&source=_cms_sms_`
+    return `/${activityPath}/index.html?source=_cms_sms_&activityId=${activityId}`
   }
 
   private collection(name: string) {
