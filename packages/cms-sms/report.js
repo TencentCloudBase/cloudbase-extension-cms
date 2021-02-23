@@ -18,10 +18,7 @@ async function reportMessageTask(event = {}) {
   })
 }
 
-const hashNode = (val) =>
-  new Promise((resolve) =>
-    setTimeout(() => resolve(crypto.createHash('sha256').update(val).digest('hex')), 0)
-  )
+const hashNode = (val) => crypto.createHash('sha256').update(val).digest('hex')
 
 const base64 = (v) => Buffer.from(v).toString('base64')
 
