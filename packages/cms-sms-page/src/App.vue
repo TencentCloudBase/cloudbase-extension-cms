@@ -1,10 +1,29 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ long: isLongImg }">
+    <!-- 加载动画 -->
     <loading v-if="pageLoading" />
-    <img v-if="bgImg" id="bgImg" :src="bgImg" />
-    <wechat-web v-if="isWeixin" :appPath="appPath" :bgImg="bgImg" />
-    <desktop-web v-else-if="isDesktop" />
-    <public-web v-else :bgImg="bgImg" :openWeapp="openWeapp" :btnLoading="btnLoading" />
+
+    <!-- 内容 -->
+    <template v-else>
+      <!-- 背景图 -->
+      <img v-if="bgImg" id="bgImg" :src="bgImg" :class="{ long: isLongImg, full: !isLongImg }" />
+
+      <desktop-web v-if="isDesktop" />
+      <!-- 跳转按钮 -->
+      <div v-else class="btn-box" :class="{ bottom: bgImg, middle: !bgImg }">
+        <wechat-web v-if="isWeixin" :appPath="appPath" :bgImg="bgImg" :btnImg="btnImg" />
+        <public-web
+          v-else
+          :bgImg="bgImg"
+          :btnImg="btnImg"
+          :openWeapp="openWeapp"
+          :btnLoading="btnLoading"
+        />
+      </div>
+    </template>
+
+    <div class="bottom-box" v-if="isLongImg" />
+
     <we-dialog :onOk="openWeapp" :visible="dialogVisible" :message="dialogMsg" />
   </div>
 </template>
@@ -37,6 +56,8 @@ export default {
       // 小程序路径
       appPath: '',
       bgImg: '',
+      btnImg: '',
+      isLongImg: false,
       pageLoading: true,
       // 加载中
       btnLoading: false,
@@ -154,8 +175,6 @@ export default {
           },
         })
 
-        console.log(res)
-
         const { result } = res
 
         // 函数执行错误
@@ -167,13 +186,13 @@ export default {
 
         this.openlink = res.result.openlink
 
-        // 动态修改 Path
+        // 活动信息
         const activity = res.result.activity || {}
 
-        // 添加背景图片
-        if (activity.jumpImg) {
-          this.bgImg = activity.jumpImg
-        }
+        // 活动配置信息
+        this.bgImg = activity.jumpImg
+        this.isLongImg = activity.isLongImg
+        this.btnImg = activity.btnImg
 
         // 活动状态
         let status = ''
@@ -259,11 +278,18 @@ export default {
 
 <style lang="less">
 #app {
+  position: relative;
+  text-align: center;
+  color: #2c3e50;
+  height: calc(100% - constant(safe-area-inset-bottom));
+  height: calc(100% - env(safe-area-inset-bottom));
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
-  text-align: center;
-  color: #2c3e50;
+
+  &.long {
+    overflow: auto;
+  }
 }
 
 html,
@@ -272,29 +298,46 @@ body {
   margin: 0;
 }
 
-#app {
-  height: calc(100% - constant(safe-area-inset-bottom));
-  height: calc(100% - env(safe-area-inset-bottom));
-  position: relative;
-}
-
 body {
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-img {
-  position: absolute;
-  height: calc(100% - constant(safe-area-inset-bottom));
-  height: calc(100% - env(safe-area-inset-bottom));
-  object-fit: cover;
+img#bgImg {
+  display: block;
   width: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: -1;
-  bottom: constant(safe-area-inset-bottom);
-  bottom: env(safe-area-inset-bottom);
+
+  &.full {
+    width: 100%;
+    display: block;
+    height: calc(100% - constant(safe-area-inset-bottom));
+    height: calc(100% - env(safe-area-inset-bottom));
+    object-fit: cover;
+    bottom: constant(safe-area-inset-bottom);
+    bottom: env(safe-area-inset-bottom);
+  }
+}
+
+.btn-box {
+  &.middle {
+    height: 100%;
+    width: 100%;
+  }
+
+  &.bottom {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+  }
+}
+
+.bottom-box {
+  content: ' ';
+  height: 3rem;
+  width: 100%;
 }
 
 .center {
