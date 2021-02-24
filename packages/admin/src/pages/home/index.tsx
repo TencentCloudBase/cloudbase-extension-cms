@@ -1,10 +1,10 @@
 import React from 'react'
-import { setTwoToneColor, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons'
-import { Modal, Form, Input, Space, Button, message, Tooltip, Typography, Empty } from 'antd'
-
+import styled from 'styled-components'
 import { useSetState } from 'react-use'
 import { useRequest, useAccess } from 'umi'
-import styled from 'styled-components'
+import { useLocalStorageState } from '@umijs/hooks'
+import { setTwoToneColor, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { Modal, Form, Input, Space, Button, message, Tooltip, Typography, Empty } from 'antd'
 import { getProjects, createProject } from '@/services/project'
 import ProjectListView from './ProjectListView'
 import ProjectCardView from './ProjectCardView'
@@ -15,7 +15,7 @@ import './index.less'
 setTwoToneColor('#0052d9')
 
 const toggleIconStyle: React.CSSProperties = {
-  fontSize: '1.5em',
+  fontSize: '1.6em',
   fontWeight: 'bold',
   color: '#0052d9',
 }
@@ -30,10 +30,11 @@ const ToggleIcon = styled.div`
 `
 
 export default (): React.ReactNode => {
-  const [{ currentLayout, modalVisible, reload }, setState] = useSetState({
+  // 布局设置持久化到本地
+  const [currentLayout, setLocalLayout] = useLocalStorageState('TCB_CMS_PROJECT_LAYOUT', 'card')
+  const [{ modalVisible, reload }, setState] = useSetState({
     reload: 0,
     modalVisible: false,
-    currentLayout: 'card',
   })
   const { isAdmin } = useAccess()
 
@@ -55,9 +56,7 @@ export default (): React.ReactNode => {
           <ToggleIcon
             className="flex items-center justify-between cursor-pointer"
             onClick={() => {
-              setState({
-                currentLayout: currentLayout === 'card' ? 'list' : 'card',
-              })
+              setLocalLayout(currentLayout === 'card' ? 'list' : 'card')
             }}
           >
             {currentLayout === 'card' ? (
