@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-service",
-  "version": "2.7.3",
+  "version": "2.8.0",
   "description": "CloudBase content manager system service",
   "author": "cwuyiqing@gmail.com",
   "private": true,
