@@ -290,6 +290,7 @@ export const taskResultColumns: ProColumns[] = [
     ): React.ReactNode | React.ReactNode[] => {
       const statusMap = {
         sent: '发送成功',
+        sending: '发送中',
         error: '发送失败',
       }
 

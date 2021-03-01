@@ -13,49 +13,10 @@ import {
   getEnvIdString,
   getWxCloudApp,
   md5Base64,
-  unixToDateString,
 } from '@/utils'
 import { CmsException } from '@/common'
 
 dayjs.locale('zh-cn')
-
-// 数据不存在
-const emptyStatistic = {
-  // 概览数据
-  overviewCount: {
-    phoneNumberCount: 0,
-    webPageViewCount: 0,
-    miniappViewCount: 0,
-  },
-  // h5 访问用户渠道
-  webPageViewSource: -1,
-  miniappViewSource: -1,
-  messageConversion: -1,
-}
-
-// 默认渠道
-const DefaultChannels = [
-  {
-    value: '_cms_sms_',
-    label: '短信',
-  },
-  {
-    value: 'zhihu',
-    label: '知乎',
-  },
-  {
-    value: 'qqvideo',
-    label: '腾讯视频',
-  },
-  {
-    value: 'wecom',
-    label: '企业微信',
-  },
-  {
-    value: 'qq',
-    label: 'QQ',
-  },
-]
 
 @Injectable()
 export class ApiService {
@@ -77,19 +38,17 @@ export class ApiService {
 
       if (!task) {
         return {
-          code: 'TASK_NOT_FOUND',
-          message: '发送短信的任务未找到',
+          error: {
+            code: 'TASK_NOT_FOUND',
+            message: '发送短信的任务未找到',
+          },
         }
       }
-
-      console.log(task)
 
       // 获取号码列表，补充 +86 前缀
       const phoneNumberList = task.phoneNumberList.map((num) =>
         num.match(/^\+86/) ? num : `+86${num}`
       )
-
-      console.log(phoneNumberList)
 
       const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
 
@@ -189,8 +148,10 @@ export class ApiService {
 
     if (!task) {
       return {
-        code: 'TASK_NOT_FOUND',
-        message: '发送短信的任务未找到',
+        error: {
+          code: 'TASK_NOT_FOUND',
+          message: '发送短信的任务未找到',
+        },
       }
     }
 
@@ -245,207 +206,6 @@ export class ApiService {
   }
 
   /**
-   * 从 openapi 获取分析数据
-   */
-  async getStatistics(options: { activityId: string }) {
-    const { activityId } = options
-    const wxCloudApp = getWxCloudApp()
-    const envId = await getEnvIdString()
-
-    const beginDate = dayjs().subtract(1, 'day').startOf('day').unix()
-    const endDate = dayjs().subtract(1, 'day').endOf('day').unix()
-
-    const {
-      data: [setting],
-    } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
-    let activityChannels: {
-      value: string
-      label: string
-    }[] = setting?.activityChannels || []
-
-    try {
-      const query = {
-        action: 'sms',
-        beginDate,
-        endDate,
-        pageOffset: 0,
-        pageLimit: 1000,
-        condition: {
-          envId,
-          activityId,
-        },
-      }
-
-      const res = await wxCloudApp.openapi.cloudbase.getStatistics(query)
-
-      const {
-        errCode,
-        errMsg,
-        dataColumn,
-        dataValue,
-      }: {
-        errCode: number
-        errMsg: string
-        dataColumn: { colId: string; colName: string; colDataType: string }[]
-        dataValue: { dataValue: string[] }[]
-      } = res
-
-      // 数据不存在
-      if (!dataValue?.length) {
-        return emptyStatistic
-      }
-
-      // 全部渠道数据的 index
-      const channelIdIndex = dataColumn.findIndex((_) => _.colId === 'channel_id')
-
-      // 全渠道数据
-      const allChannelData = dataValue.find((_) => _.dataValue[channelIdIndex] === 'all')
-
-      // 获取指标的数据
-      const getMetricValue = (metricName: string, data?: { dataValue: string[] }) => {
-        const index = dataColumn.findIndex((_) => _.colId === metricName)
-
-        if (!index) {
-          return -1
-        }
-
-        if (data) return Number(data.dataValue[index]) || 0
-
-        return Number(allChannelData.dataValue[index]) || 0
-      }
-
-      // 获取渠道数据占比
-      const getChannelSource = (metricName: string) => {
-        const metricIndex = dataColumn.findIndex((_) => _.colId === metricName)
-
-        // 过滤掉全部渠道的数据，依次获取每个渠道的数据，聚合为最终数据
-        return dataValue
-          .filter((_) => _.dataValue[channelIdIndex] !== 'all')
-          .map((item) => {
-            // 此渠道的名称
-            const channelId = item.dataValue[channelIdIndex]
-            // 此渠道在设置中的名称
-            const channel = DefaultChannels.concat(activityChannels).find(
-              (channel) => channel?.value === channelId
-            )
-
-            let label = channel?.label || channelId
-
-            if (label === '-') {
-              label = '未知渠道'
-            }
-
-            return {
-              label,
-              value: Number(item.dataValue[metricIndex]),
-            }
-          })
-      }
-
-      // 短信渠道数据
-      const smsChannelData = dataValue.find((_) => _.dataValue[channelIdIndex] === '_cms_sms_')
-      // 短信转换率
-      const messageConversion = [
-        { number: getMetricValue('sms_send_uercnt', smsChannelData), stage: '短信投放号码数' },
-        { number: getMetricValue('h5_open_uercnt', smsChannelData), stage: 'H5 访问用户数' },
-        { number: getMetricValue('jump_wxapp_uercnt', smsChannelData), stage: '跳转小程序用户数' },
-      ]
-
-      const data = {
-        // 概览数据
-        overviewCount: {
-          phoneNumberCount: getMetricValue('sms_send_uercnt'),
-          webPageViewCount: getMetricValue('h5_open_uercnt'),
-          miniappViewCount: getMetricValue('jump_wxapp_uercnt'),
-        },
-        // h5 访问用户渠道
-        webPageViewSource: getChannelSource('h5_open_uercnt'),
-        miniappViewSource: getChannelSource('jump_wxapp_uercnt'),
-        messageConversion,
-      }
-
-      console.log(data)
-
-      return data
-    } catch (e) {
-      console.log('查询数据异常', e)
-      // 查不到数据
-      if (e.errCode === 10011) {
-        return emptyStatistic
-      }
-
-      throw e
-    }
-  }
-
-  /**
-   * 查询实时统计数据
-   */
-  async getRealtimeStatistics(options: {
-    activityId: string
-    startTime: number
-    endTime: number
-    channelId: string
-  }) {
-    const { activityId, startTime, endTime, channelId = '_cms_sms_' } = options
-    const wxCloudApp = getWxCloudApp()
-    const envId = await getEnvIdString()
-
-    console.log(startTime, endTime)
-    const getQuery = (type: 'h5' | 'wxapp') => ({
-      action: 'realTime',
-      beginDate: startTime,
-      endDate: endTime,
-      condition: {
-        envId,
-        activityId,
-        channelId,
-        act_type: type,
-      },
-    })
-
-    let webPageViewUsers = []
-    let miniappViewUsers = []
-    let conversionRateData = []
-
-    try {
-      const { dataValue } = await wxCloudApp.openapi.cloudbase.getStatistics(getQuery('h5'))
-
-      webPageViewUsers = dataValue.map(({ dateValue }) => ({
-        time: unixToDateString(dateValue[0]),
-        value: Number(dateValue[1]),
-        type: 'webPageView',
-      }))
-    } catch (e) {
-      if (e.errCode !== 10011) {
-        // 抛出错误
-        throw e
-      }
-    }
-
-    try {
-      const { dataValue } = await wxCloudApp.openapi.cloudbase.getStatistics(getQuery('wxapp'))
-      miniappViewUsers = dataValue.map(({ dateValue }) => ({
-        time: unixToDateString(dateValue[0]),
-        value: Number(dateValue[1]),
-        type: 'miniappView',
-      }))
-    } catch (e) {
-      if (e.errCode !== 10011) {
-        // 抛出错误
-        throw e
-      }
-    }
-
-    // 同时存在数据，计算转换率
-
-    return {
-      webPageViewUsers,
-      miniappViewUsers,
-    }
-  }
-
-  /**
    * 查询短信用量信息
    */
   async getSmsUsage(): Promise<{
@@ -472,13 +232,19 @@ export class ApiService {
   async analysisAndUploadCSV(fileId: string, activityId: string, amount: number) {
     // 下载文件
     const app = getCloudBaseApp()
+    let fileContentString
 
-    let { fileContent } = await app.downloadFile({
-      fileID: fileId,
-    })
-
-    // buffer 转 string
-    const fileContentString = fileContent.toString('utf-8')
+    try {
+      console.time('download')
+      let { fileContent } = await app.downloadFile({
+        fileID: fileId,
+      })
+      console.timeEnd('download')
+      // buffer 转 string
+      fileContentString = fileContent.toString('utf-8')
+    } catch (e) {
+      throw new CmsException('DOWNLOAD_ERROR', `下载文件失败：${e.message}`)
+    }
 
     // 读取文件内容
     let { data, errors }: { data: string[][]; errors: any[] } = Papa.parse(fileContentString)
@@ -488,8 +254,6 @@ export class ApiService {
     // 解析文件错误
     if (errors?.length) {
       const message = errors.map((_) => _.message).join('; ')
-      // 删除文件
-      await app.deleteFile({ fileList: [fileId] })
       throw new CmsException('PARSE_ERROR', `解析 CSV 文件异常：${message}`)
     }
 
@@ -501,16 +265,21 @@ export class ApiService {
 
     // 余额不足，不继续上传文件
     if (total > amount || amount <= 0) {
-      // 删除文件
-      await app.deleteFile({ fileList: [fileId] })
-      return { total }
+      throw new CmsException(
+        'ResourceInsufficient',
+        `短信配置不足，无法创建发送任务：可用余量：${amount}，短信总数：${total}`
+      )
     }
 
     const jumpPath = this.getSmsPagePath(activityId)
 
+    // 如果首行是标题，则删除首行
+    if (isFirstLineTitle) {
+      data.splice(0, 1)
+    }
+
     // 填充跳转路径
-    const supplementData = data.map((line: string[], index) => {
-      if (isFirstLineTitle && index === 0) return line
+    const supplementData = data.map((line: string[]) => {
       line[2] = jumpPath
       return line
     })
@@ -522,9 +291,6 @@ export class ApiService {
     const fileName = fileId.split('/').pop()
     const fileUri = await this.uploadFile(Buffer.from(supplementCSV), fileName)
 
-    // 删除文件
-    await app.deleteFile({ fileList: [fileId] })
-
     // 返回总数量
     return {
       total,
@@ -532,7 +298,9 @@ export class ApiService {
     }
   }
 
-  // 获取上传链接
+  /**
+   * 上传号码包文件到后台
+   */
   private async uploadFile(file: Buffer, fileName: string) {
     // 获取上传链接
     const manager = getCloudBaseManager()

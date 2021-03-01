@@ -21,7 +21,7 @@
         <!-- replace -->
         <script type="text/wxtag-template">
           <button
-            style="width: 100%; height: 3rem; font-size: 18px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 0; background-color: #07c160; color:#fff;"
+            style="width: 100%; height: 3rem; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center; border: none; border-radius: 0; background-color: #07c160; color:#fff;"
           >
             打开小程序
           </button>
@@ -30,7 +30,7 @@
       <wx-open-launch-weapp v-else :username="originalID" :path="appPath">
         <!-- replace -->
         <script type="text/wxtag-template">
-          <button v-else style="width: 200px; height: 45px; text-align: center; font-size: 17px; display: block; margin: 0 auto; padding: 8px 24px; border: none; border-radius: 4px; background-color: #07c160; color:#fff;">
+          <button v-else style="width: 200px; height: 45px; text-align: center; font-size: 17px; font-weight: bold; display: block; margin: 0 auto; padding: 8px 24px; border: none; border-radius: 4px; background-color: #07c160; color:#fff;">
             打开小程序
           </button>
         </script>

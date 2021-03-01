@@ -9,6 +9,10 @@ export const getDateValue = (v?: string | number) => moment(v).valueOf()
 
 export const getYear = () => moment().year()
 
+export const getUnixInSecond = (v: string | number) => moment(v).unix()
+
+export const Moment = moment
+
 /**
  * 格式化保存到数据库中的时间
  * @param v
@@ -35,10 +39,15 @@ export const formatStoreTimeByType = (
 
   // 字符串
   if (dateType === 'string') {
-    formatDate =
-      valueType === 'Date'
-        ? moment(v).format('YYYY-MM-DD')
-        : moment(v).format('YYYY-MM-DD HH:mm:ss')
+    // 空字符串无法转换成时间
+    if (v === '') {
+      formatDate = v
+    } else {
+      formatDate =
+        valueType === 'Date'
+          ? moment(v).format('YYYY-MM-DD')
+          : moment(v).format('YYYY-MM-DD HH:mm:ss')
+    }
   }
 
   return formatDate

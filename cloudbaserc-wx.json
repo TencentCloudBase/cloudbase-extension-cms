@@ -114,6 +114,26 @@
           ]
         }
       },
+      "openapi-fx": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "./packages",
+          "functions": [
+            {
+              "name": "wx-ext-cms-fx-openapi",
+              "timeout": 60,
+              "memory": 1024,
+              "envVariables": {
+                "NODE_ENV": "production",
+                "CMS_RESOURCE_PREFIX": "wx-ext-cms"
+              },
+              "functionDistPath": "cms-fx-openapi",
+              "installDependency": true,
+              "handler": "index.main"
+            }
+          ]
+        }
+      },
       "db": {
         "use": "@cloudbase/framework-plugin-database",
         "inputs": {

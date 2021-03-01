@@ -17,9 +17,6 @@ const config: IConfig = {
   // 是否让生成的文件包含 hash 后缀
   hash: true,
   antd: {},
-  alias: {
-    '@lang': '@/locales',
-  },
   dva: {
     hmr: true,
   },

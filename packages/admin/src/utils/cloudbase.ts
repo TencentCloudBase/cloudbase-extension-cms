@@ -166,6 +166,8 @@ export async function tcbRequest<T = any>(
  * @param data POST body 数据
  */
 export async function callWxOpenAPI(action: string, data?: Record<string, any>) {
+  console.log(`callWxOpenAPI 发送参数`, data)
+
   if (isDevEnv()) {
     return request(`/api/${action}`, {
       data,
@@ -374,7 +376,7 @@ export function fileIdToUrl(fileId: string) {
 }
 
 /**
- * 获取 HTTP 网关访问地址
+ * 获取 HTTP 访问地址
  */
 export const getHttpAccessPath = () => {
   return isDevEnv()

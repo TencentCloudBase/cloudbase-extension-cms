@@ -96,8 +96,6 @@ export default (): React.ReactNode => {
     }
   )
 
-  console.log(data)
-
   // setting 还没有获取到
   if (!setting) {
     return (
@@ -219,9 +217,8 @@ export default (): React.ReactNode => {
       </Row>
 
       {/* 实时访问数据 */}
-      {/* 
-      <Suspense fallback={<Spin />}>
-        <RealTimeView activityId={currentActivity} />
+      {/* <Suspense fallback={<Spin />}>
+        <RealTimeView activityId={currentActivity}/>
       </Suspense> */}
     </PageContainer>
   )

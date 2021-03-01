@@ -20,8 +20,17 @@ export async function enableNonLogin(projectId: string) {
   })
 }
 
-export async function getAnalyticsData(data: { activityId: string; metricName?: string }) {
+export async function getAnalyticsData(data: { activityId: string }) {
   return callWxOpenAPI('getAnalyticsData', data)
+}
+
+export async function getRealtimeAnalyticsData(data: {
+  activityId: string
+  startTime: number
+  endTime: number
+  channelId: string
+}) {
+  return callWxOpenAPI('getRealtimeAnalyticsData', data)
 }
 
 export async function getSmsTaskResult(

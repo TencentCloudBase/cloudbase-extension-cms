@@ -73,6 +73,18 @@ export class ApiController {
   }
 
   /**
+   * 获取访问数据
+   */
+  @UseGuards(PermissionGuard('operation'))
+  @Post('getRealtimeAnalyticsData')
+  async getRealtimeAnalyticsData(
+    @Body() body: { activityId: string; startTime: number; endTime: number; channelId: string }
+  ) {
+    const data = await this.apiService.getRealtimeStatistics(body)
+    return { data }
+  }
+
+  /**
    * 分析短信 CSV 文件
    */
   @UseGuards(PermissionGuard('operation'))
