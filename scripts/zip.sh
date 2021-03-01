@@ -38,6 +38,7 @@ zipFunction cms-init
 zipFunction cms-api
 zipFunction cms-sms
 zipFunction cms-openapi
+zipFunction cms-fx-openapi
 
 cd $__ABS_PATH__
 rm -rf packages/cms-init/build
