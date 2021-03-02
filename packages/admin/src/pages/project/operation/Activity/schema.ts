@@ -82,7 +82,7 @@ export const ActivitySchema: any = {
     },
     {
       description:
-        "通过 scheme 码进入小程序时的 query，最长支持 512 个字符。只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~",
+        "通过 scheme 码进入小程序时的参数，例如 /page/index?demo=123 中的 demo=123即为该参数，最长支持 512 个字符。只支持数字，大小写英文以及部分特殊字符：!#$&'()*+,/:;=?@-._~",
       displayName: '小程序页面 query',
       id: 'jfdtuq306rdh0k6bleuckmmvg0joig7p',
       name: 'appPathQuery',
