@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import request from 'request'
-import cloudbase from '@cloudbase/node-sdk'
+import cloudbase, { CloudBase, ICallFunctionRes } from '@cloudbase/node-sdk'
 import CloudBaseManager from '@cloudbase/manager-node'
 import { ICloudBaseConfig } from '@cloudbase/node-sdk/lib/type'
 import { Collection } from '@/constants'
@@ -9,13 +9,15 @@ import { MemoryCache } from './cache'
 import { getUnixTimestamp } from './date'
 import { logger } from './log'
 
-let nodeApp
+let nodeApp: CloudBase
 let managerApp
 let secretExpire: number
 let secretManager: SecretManager
 const schemaCache = new MemoryCache()
 
-// 从环境变量中获取 envId
+/**
+ * 从环境变量中获取 envId
+ */
 export const getEnvIdString = (): string => {
   const { TCB_ENV, SCF_NAMESPACE, TCB_ENVID, ENV_ID } = process.env
   return TCB_ENV || SCF_NAMESPACE || TCB_ENVID || ENV_ID
@@ -86,6 +88,18 @@ export const getCloudBaseManager = async (): Promise<CloudBaseManager> => {
   managerApp = manager
 
   return manager
+}
+
+/**
+ * 调用云函数
+ */
+export const callFunction = async (functionName: string, data: any): Promise<ICallFunctionRes> => {
+  const app = getCloudBaseApp()
+
+  return app.callFunction({
+    data,
+    name: functionName,
+  })
 }
 
 /**

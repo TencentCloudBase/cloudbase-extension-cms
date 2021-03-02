@@ -12,6 +12,8 @@ import {
 } from '@/utils'
 import { BadRequestException, RecordNotExistException, getSchemaSystemFields } from '@/common'
 
+const IGNORE_SCHEMA_COLLECTIONS = [Collection.WebhookLog, Collection.Webhooks]
+
 @Injectable()
 export class ContentsService {
   constructor(
@@ -162,7 +164,7 @@ export class ContentsService {
 
     updateData = await formatPayloadDate(updateData, resource)
 
-    if (resource !== Collection.Webhooks) {
+    if (!IGNORE_SCHEMA_COLLECTIONS.includes(resource)) {
       // 查询 schema 信息
       const schema = await this.schemaCacheService.getCollectionSchema(resource)
 

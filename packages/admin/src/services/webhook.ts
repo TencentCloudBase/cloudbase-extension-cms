@@ -31,6 +31,16 @@ export const getWebhooks = async (projectId: string, options?: Partial<Options>)
   })
 }
 
+export const getWebhookLog = async (projectId: string, options?: Partial<Options>) => {
+  return tcbRequest(`/projects/${projectId}/webhooks/log`, {
+    method: 'POST',
+    data: {
+      options,
+      action: 'getMany',
+    },
+  })
+}
+
 export const createWebhook = async (projectId: string, options?: Partial<Options>) => {
   return tcbRequest(`/projects/${projectId}/webhooks`, {
     method: 'POST',

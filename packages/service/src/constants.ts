@@ -14,6 +14,9 @@ export const Collection = {
   // Webhooks 集合
   Webhooks: `${RESOURCE_PREFIX}-webhooks`,
 
+  // Webhooks 执行记录集合
+  WebhookLog: `${RESOURCE_PREFIX}-webhook-log`,
+
   // 系统设置
   Settings: `${RESOURCE_PREFIX}-settings`,
 

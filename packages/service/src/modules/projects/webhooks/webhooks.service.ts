@@ -1,10 +1,12 @@
+import _ from 'lodash'
 import axios from 'axios'
+import config from '@/config'
+import util from 'util'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { Collection } from '@/constants'
-import config from '@/config'
+import { callFunction, logger } from '@/utils'
 import { Webhook } from './type'
-import { logger } from '@/utils'
 
 export interface WebhookCallOptions {
   // 项目 Id
@@ -36,6 +38,15 @@ export interface WebhookCallOptions {
     }
     payload?: Record<string, any>
   }
+
+  user: RequestUser
+}
+
+interface WebhookLog extends Webhook {
+  status: 'success' | 'fail'
+
+  // 执行时间
+  timestamp: number
 }
 
 @Injectable()
@@ -44,7 +55,7 @@ export class WebhooksService {
 
   // 处理 webhook
   async callWebhook(options: WebhookCallOptions) {
-    const { projectId, resource, action, actionRes, actionOptions } = options
+    const { projectId, resource, action, actionRes, actionOptions, user } = options
 
     const $ = this.cloudbaseService.db.command
     const webhookEvent = action.replace('One', '').replace('Many', '')
@@ -76,44 +87,104 @@ export class WebhooksService {
 
     logger.info(webhooks, 'Webhook 获取成功')
 
+    /**
+     * 批量执行
+     */
     const executions = webhooks.map(async (webhook: Webhook) => {
-      const { method, url, headers = [] } = webhook
+      const { type, functionName, method, url, headers = [] } = webhook
 
-      // 拼接请求 Header
-      const httpHeaders = headers?.reduce((prev, cur) => {
-        const { key, value } = cur
+      const webhookLogInfo: any = _.omit(webhook, ['_id', '_createTime', '_updateTime'])
+      // 触发用户信息
+      webhookLogInfo.triggerUser = user
 
-        if (key in prev) {
-          const oldValue = prev[key]
-          if (Array.isArray(oldValue)) {
-            prev[key].push(value)
-          } else {
-            prev[key] = typeof oldValue === 'undefined' ? [value] : [oldValue, value]
-          }
+      try {
+        // 云函数
+        if (type === 'function') {
+          const { result } = await callFunction(functionName, {
+            action,
+            actionRes,
+            collection: resource,
+            source: 'CMS_WEBHOOK_FUNCTION',
+            actionFilter: actionOptions?.filter,
+          })
+
+          // 添加 webhook 执行 log
+          await this.collection(Collection.WebhookLog).add({
+            ...webhookLogInfo,
+            action,
+            status: 'success',
+            collection: resource,
+            timestamp: Date.now(),
+            result: util.format(result),
+          })
         } else {
-          prev[key] = value
+          // http 请求
+          // 拼接请求 Header
+          const httpHeaders = headers?.reduce((prev, cur) => {
+            const { key, value } = cur
+
+            if (key in prev) {
+              const oldValue = prev[key]
+              if (Array.isArray(oldValue)) {
+                prev[key].push(value)
+              } else {
+                prev[key] = typeof oldValue === 'undefined' ? [value] : [oldValue, value]
+              }
+            } else {
+              prev[key] = value
+            }
+
+            return prev
+          }, {})
+
+          const { data } = await axios({
+            method,
+            url,
+            headers: httpHeaders,
+            data: {
+              action,
+              actionRes,
+              source: 'CMS_WEBHOOK_HTTP',
+              collection: resource,
+              actionFilter: actionOptions?.filter,
+            },
+            timeout: config.webhookTimeout,
+          })
+
+          // 添加 webhook 执行 log
+          await this.collection(Collection.WebhookLog).add({
+            ...webhookLogInfo,
+            action,
+            status: 'success',
+            collection: resource,
+            timestamp: Date.now(),
+            result: util.format(data),
+          })
         }
+      } catch (error) {
+        // 触发错误
+        logger.info(error, 'webhook 调用错误')
 
-        return prev
-      }, {})
-
-      await axios({
-        method,
-        url,
-        headers: httpHeaders,
-        data: {
+        // 添加 webhook 执行 log
+        await this.collection(Collection.WebhookLog).add({
+          ...webhookLogInfo,
           action,
-          actionRes,
+          status: 'error',
           collection: resource,
-          actionFilter: actionOptions?.filter,
-        },
-        timeout: config.webhookTimeout,
-      })
+          timestamp: Date.now(),
+          result: util.format(error) || '触发 Webhook 异常',
+        })
+      }
     })
 
     // TODO: 隔离处理，不影响请求
     await Promise.all(executions)
 
     logger.info('Webhook 触发成功！')
+  }
+
+  // 简写
+  private collection(collection: string) {
+    return this.cloudbaseService.collection(collection)
   }
 }

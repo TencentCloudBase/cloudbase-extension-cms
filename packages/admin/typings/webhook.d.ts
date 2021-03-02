@@ -1,10 +1,7 @@
-import { Method } from 'axios'
-import { Schema } from '../schemas/types'
-
 /**
  * webhook 定义
  */
-export interface Webhook {
+interface Webhook {
   _id: string
 
   name: string
@@ -23,7 +20,7 @@ export interface Webhook {
    */
   url: string
 
-  method: Method
+  method: string
 
   headers: { key: string; value: string }[]
 

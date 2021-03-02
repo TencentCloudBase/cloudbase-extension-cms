@@ -153,6 +153,13 @@ Resources:
       CollectionName: tcb-ext-cms-webhooks
       Description: CMS 系统 webhook 集合，存储 CMS 系统的回调接口配置，CMS 系统数据的变更可以通过回调来进行同步 （请不要手动修改）
       AclTag: ADMINONLY
+  # webhook 执行记录
+  WebhookLogDB:
+    Type: CloudBase::FlexDB
+    Properties:
+      CollectionName: tcb-ext-cms-webhook-log
+      Description: CMS webhook 执行记录集合（请不要手动修改）
+      AclTag: ADMINONLY
   # 系统设置
   SettingDB:
     Type: CloudBase::FlexDB
