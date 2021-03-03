@@ -3,8 +3,8 @@ import VditorX from 'vditor'
 import 'vditor/dist/index.css'
 import { getAuthHeader, getHttpAccessPath } from '@/utils'
 
-// 默认的工具栏
-const DefaultToolbar = [
+// 工具栏
+const Toolbar = [
   'emoji',
   'headings',
   'bold',
@@ -50,17 +50,6 @@ const DefaultToolbar = [
   },
 ]
 
-const getToolBarWithoutUpload = () => {
-  DefaultToolbar.splice(
-    DefaultToolbar.findIndex((_) => _ === 'upload'),
-    1
-  )
-  return DefaultToolbar
-}
-
-// 在小程序侧隐藏上传文件的选项
-const toolbar: any[] = WX_MP ? getToolBarWithoutUpload() : DefaultToolbar
-
 export const MarkdownEditor: React.FC<{
   id: number
   value?: any
@@ -74,7 +63,7 @@ export const MarkdownEditor: React.FC<{
     // eslint-disable-next-line
     new VditorX(`${id}-editor`, {
       value,
-      toolbar,
+      toolbar: Toolbar,
       input: (text, html) => {
         onChange(text)
       },
