@@ -86,10 +86,10 @@
     lodash.set "4.3.2"
     lodash.unset "4.5.2"
 
-"@cloudbase/node-sdk@^2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@cloudbase/node-sdk/-/node-sdk-2.4.0.tgz#c082da0a7d3a87020e448a834e90c253788805e1"
-  integrity sha512-fy5eXPbgmNoUqBjB44AafvwjRtOQAV3cOW99UyQrlf96GzFHcKjErGFd0q0qrUfzbgNFAsUw0aPahQj3iqpZ8g==
+"@cloudbase/node-sdk@2.4.6-beta":
+  version "2.4.6-beta"
+  resolved "https://registry.yarnpkg.com/@cloudbase/node-sdk/-/node-sdk-2.4.6-beta.tgz#5848f7d943ffa7a4a4ec39029e2b2da608fcaf15"
+  integrity sha512-rnfDqVqC/LjC1rwDqwi/zIFf+kPtMvZZvItyP1HHAmZ9cwSqVuijnm46r5EHAviqeb24Noq8LB7ISOVkGMi6Mg==
   dependencies:
     "@cloudbase/database" "1.2.2"
     "@cloudbase/signature-nodejs" "1.0.0-beta.0"

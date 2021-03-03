@@ -217,9 +217,9 @@ export default (): React.ReactNode => {
       </Row>
 
       {/* 实时访问数据 */}
-      {/* <Suspense fallback={<Spin />}>
-        <RealTimeView activityId={currentActivity}/>
-      </Suspense> */}
+      <Suspense fallback={<Spin />}>
+        <RealTimeView activityId={currentActivity} />
+      </Suspense>
     </PageContainer>
   )
 }

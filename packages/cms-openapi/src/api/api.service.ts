@@ -391,7 +391,6 @@ export class ApiService {
     const wxCloudApp = getWxCloudApp()
     const envId = await getEnvIdString()
 
-    console.log(startTime, endTime)
     const getQuery = (type: 'h5' | 'wxapp') => ({
       action: 'realTime',
       beginDate: startTime,
@@ -406,16 +405,38 @@ export class ApiService {
 
     let webPageViewUsers = []
     let miniappViewUsers = []
-    let conversionRateData = []
+
+    // 补充数据
+    const translateData = (data, type: 'webPageView' | 'miniappView') => {
+      const fullData: {
+        time: string
+        value: number
+        type: 'webPageView' | 'miniappView'
+      }[] = []
+
+      for (let i = Number(startTime); i <= endTime; i = i + 300) {
+        // 读取时间
+        const item = data.find(({ dataValue }) => Number(dataValue[0]) === i)
+        let value = 0
+
+        if (item) {
+          value = Number(item.dataValue[1]) || 0
+        }
+
+        fullData.push({
+          type,
+          value,
+          time: unixToDateString(i),
+        })
+      }
+
+      return fullData
+    }
 
     try {
       const { dataValue } = await wxCloudApp.openapi.cloudbase.getStatistics(getQuery('h5'))
 
-      webPageViewUsers = dataValue.map(({ dateValue }) => ({
-        time: unixToDateString(dateValue[0]),
-        value: Number(dateValue[1]),
-        type: 'webPageView',
-      }))
+      webPageViewUsers = translateData(dataValue, 'webPageView')
     } catch (e) {
       if (e.errCode !== 10011) {
         // 抛出错误
@@ -425,11 +446,8 @@ export class ApiService {
 
     try {
       const { dataValue } = await wxCloudApp.openapi.cloudbase.getStatistics(getQuery('wxapp'))
-      miniappViewUsers = dataValue.map(({ dateValue }) => ({
-        time: unixToDateString(dateValue[0]),
-        value: Number(dateValue[1]),
-        type: 'miniappView',
-      }))
+
+      miniappViewUsers = translateData(dataValue, 'miniappView')
     } catch (e) {
       if (e.errCode !== 10011) {
         // 抛出错误
@@ -438,8 +456,15 @@ export class ApiService {
     }
 
     // 同时存在数据，计算转换率
+    const conversionRate: { time: string; percent: number | string }[] = webPageViewUsers.map(
+      (v, i) => ({
+        time: v.time,
+        percent: v.value === 0 ? 0 : Number(miniappViewUsers[i]?.value / v.value).toFixed(4),
+      })
+    )
 
     return {
+      conversionRate,
       webPageViewUsers,
       miniappViewUsers,
     }

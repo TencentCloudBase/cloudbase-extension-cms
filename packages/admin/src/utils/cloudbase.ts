@@ -166,7 +166,7 @@ export async function tcbRequest<T = any>(
  * @param data POST body 数据
  */
 export async function callWxOpenAPI(action: string, data?: Record<string, any>) {
-  console.log(`callWxOpenAPI 发送参数`, data)
+  console.log(`callWxOpenAPI 参数`, data)
 
   if (isDevEnv()) {
     return request(`/api/${action}`, {

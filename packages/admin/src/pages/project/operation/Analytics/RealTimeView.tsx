@@ -1,17 +1,20 @@
 import React from 'react'
 import { useRequest } from 'umi'
 import ProCard from '@ant-design/pro-card'
-import { Line } from '@ant-design/charts'
+import { DualAxes } from '@ant-design/charts'
 import { DatePicker, Space, Spin } from 'antd'
 import ChannelSelector from '@/components/ChannelSelector'
 import { PieChartTwoTone } from '@ant-design/icons'
 import { getRealtimeAnalyticsData } from '@/services/operation'
 import { useSetState } from 'react-use'
 import { Moment } from '@/utils'
+import { DualAxesConfig } from '@ant-design/charts/es/dualAxes'
 
 const { RangePicker } = DatePicker
 
 const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
+  const latestMinute = Math.floor(Moment().get('minute') / 5) * 5
+
   const [{ channelId, dateRange }, setState] = useSetState<any>({
     channelId: '_cms_sms_',
     dateRange: [],
@@ -21,15 +24,24 @@ const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
   const { data = {}, loading } = useRequest(
     async () => {
       if (!activityId) return
-      const [startTime, endTime] = dateRange
+      let [startTime, endTime] = dateRange
+
+      // 初次加载时，时间为空
+      if (!startTime || !endTime) {
+        const latestMinute = Math.floor(Moment().get('minute') / 5) * 5
+        console.log(latestMinute, Moment().set('second', 0).set('minute', latestMinute).unix())
+        endTime = Moment().set('second', 0).set('minute', latestMinute).unix()
+        startTime = Moment(endTime * 1000)
+          .subtract(12, 'hour')
+          .unix()
+      }
 
       const res = await getRealtimeAnalyticsData({
-        activityId,
+        endTime,
+        startTime,
         channelId,
-        startTime: startTime ? Moment(startTime).unix() : Moment().subtract(1, 'day').unix(),
-        endTime: Moment(endTime).unix(),
+        activityId,
       })
-      console.log(res)
       return res
     },
     {
@@ -50,7 +62,12 @@ const RealTimeView: React.FC<{ activityId: string }> = ({ activityId }) => {
         />
         <RangePicker
           showTime
-          defaultValue={[Moment().subtract(1, 'day'), Moment()]}
+          format="YYYY-MM-DD HH:mm"
+          minuteStep={5}
+          defaultValue={[
+            Moment().set('second', 0).set('minute', latestMinute).subtract(12, 'hour'),
+            Moment().set('second', 0).set('minute', latestMinute),
+          ]}
           onChange={(v) => {
             console.log(v?.[0]?.unix())
 
@@ -89,17 +106,17 @@ interface DataItem {
  */
 const AccessDualAxes: React.FC<{
   data: {
+    conversionRate: any[]
     webPageViewUsers: DataItem[]
     miniappViewUsers: DataItem[]
   }
 }> = ({ data = {} }) => {
-  const { webPageViewUsers = [], miniappViewUsers = [] } = data
+  const { webPageViewUsers = [], miniappViewUsers = [], conversionRate = [] } = data
 
-  const config = {
-    data: [...webPageViewUsers, ...miniappViewUsers],
+  const config: DualAxesConfig = {
+    data: [[...webPageViewUsers, ...miniappViewUsers], conversionRate],
     xField: 'time',
-    yField: 'value',
-    seriesField: 'type',
+    yField: ['value', 'percent'],
     meta: {
       type: {
         formatter: (v: string) => {
@@ -110,59 +127,52 @@ const AccessDualAxes: React.FC<{
           return mapping[v]
         },
       },
+      percent: {
+        alias: '转换率',
+        formatter: (v: string) => {
+          return `${Number(v) * 100}%`
+        },
+      },
     },
-    smooth: true,
+    geometryOptions: [
+      {
+        geometry: 'line',
+        seriesField: 'type',
+        smooth: true,
+      },
+      {
+        geometry: 'line',
+        smooth: true,
+        lineStyle: {
+          stroke: '#FAAD14',
+        },
+      },
+    ],
   }
 
   return (
-    <Line
+    <DualAxes
       {...config}
-      yAxis={{
-        title: {
-          text: '访问用户数',
-          style: {
-            fontSize: 18,
+      yAxis={[
+        {
+          title: {
+            text: '访问用户数',
+            style: {
+              fontSize: 18,
+            },
           },
         },
-      }}
+        {
+          title: {
+            text: '转换率',
+            style: {
+              fontSize: 18,
+            },
+          },
+        },
+      ]}
     />
   )
 }
-
-// 双曲线配置
-// const config = {
-//   data: [[...webPageViewUsers, ...miniappViewUsers]],
-//   xField: 'time',
-//   yField: ['value', 'percent'],
-//   meta: {
-//     type: {
-//       formatter: (v: string) => {
-//         const mapping = {
-//           webPageView: 'H5 访问用户数',
-//           miniappView: '小程序跳转用户数',
-//         }
-//         return mapping[v]
-//       },
-//     },
-//     percent: {
-//       alias: '转换率',
-//     },
-//   },
-//   geometryOptions: [
-//     {
-//       geometry: 'line',
-//       seriesField: 'type',
-//       lineStyle: {
-//         lineWidth: 3,
-//         lineDash: [5, 5],
-//       },
-//       smooth: true,
-//     },
-//     {
-//       geometry: 'line',
-//       smooth: true,
-//     },
-//   ],
-// }
 
 export default RealTimeView

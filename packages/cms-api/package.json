@@ -12,7 +12,7 @@
     "debug": "nest start --debug --watch"
   },
   "dependencies": {
-    "@cloudbase/node-sdk": "^2.4.0",
+    "@cloudbase/node-sdk": "2.4.6-beta",
     "@cloudbase/signature-nodejs": "^1.1.0",
     "@nestjs/common": "^7.3.2",
     "@nestjs/config": "^0.5.0",

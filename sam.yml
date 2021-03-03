@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.7.2
+Version: 2.8.0
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -19,9 +19,12 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.7.2
+  - Title: 2.8.0
     Content:
-      - 小程序环境支持使用营销工具
+      - 短信营销工具支持开放 API
+      - 短信跳转页面支持设置长图
+      - Webhook 支持触发云函数
+      - 新增 Webhook 执行日志
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -116,7 +119,7 @@ Resources:
       CodeUri: extension://9210bea25bd9461c8406f868658a8d02.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
-      MemorySize: 256
+      MemorySize:  2048
       Timeout: 60
       Runtime: Nodejs10.15
       Handler: index.main
@@ -124,6 +127,23 @@ Resources:
       Environment:
         Variables:
           TCB_CMS: "true"
+          NODE_ENV: production
+          CMS_RESOURCE_PREFIX: tcb-ext-cms
+  # 营销工具 OpenAPI 服务
+  OpenapiFxFunction:
+    Type: CloudBase::Function
+    Properties:
+      FunctionName: tcb-ext-cms-fx-openapi
+      CodeUri: extension://a5c9037e618b4e188ba2d1ae15435586.zip
+      InstallDependency: true
+      Description: 提供调用微信 Openapi 接口的能力
+      MemorySize: 1024
+      Timeout: 60
+      Runtime: Nodejs10.15
+      Handler: index.main
+      Role: TCB_QcsRole
+      Environment:
+        Variables:
           NODE_ENV: production
           CMS_RESOURCE_PREFIX: tcb-ext-cms
   ProjectDB:
