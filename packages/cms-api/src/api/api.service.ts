@@ -236,10 +236,11 @@ export class ApiService {
     // query 不参与签名
     const { authorization, sessionToken, timestamp } = this.getOpenApiSignature()
     const envId = getEnvIdString()
+    const region = process.env.TENCENTCLOUD_REGION || 'ap-shanghai'
 
     // 将 query 转换成字符串
     const qs = querystring.stringify(query)
-    const url = `https://tcb-api.tencentcloudapi.com/api/v2/envs/${envId}/databases/${collectionName}/documents:${action}?${qs}`
+    const url = `https://${envId}.${region}.tcb-api.tencentcloudapi.com/api/v2/envs/${envId}/databases/${collectionName}/documents:${action}?${qs}`
 
     const body: any = {}
 
