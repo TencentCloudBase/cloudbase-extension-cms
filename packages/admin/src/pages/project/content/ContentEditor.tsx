@@ -1,7 +1,7 @@
-import React from 'react'
-import { useParams, useRequest, history } from 'umi'
+import React, { useState } from 'react'
 import { useConcent } from 'concent'
-import { Form, message, Space, Button, Row, Col, Input, Typography, Tag } from 'antd'
+import { useParams, useRequest, history } from 'umi'
+import { Form, message, Space, Button, Row, Col, Input, Typography } from 'antd'
 import { createContent, setContent } from '@/services/content'
 import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
@@ -18,6 +18,14 @@ const ContentEditor: React.FC = () => {
     state: { schemas, currentSchema },
   } = ctx
 
+  /**
+   * 记录变更的内容
+   * 1. 只更新变化的字段，防止多端操作时互相覆盖
+   * 2. JSON 更新时要整个替换，确保删除的字段也会从数据库删除
+   *   （update 时，不会删除对象中缺失的字段）
+   */
+  const [changedValues, setChangedValues] = useState({})
+
   const schema: Schema = schemas?.find((item: Schema) => item._id === schemaId) || currentSchema
 
   // 表单初始值
@@ -31,7 +39,8 @@ const ContentEditor: React.FC = () => {
       }
 
       if (contentAction === 'edit') {
-        await setContent(projectId, schema?.collectionName, selectedContent._id, payload)
+        // 只更新变更过的字段
+        await setContent(projectId, schema?.collectionName, selectedContent._id, changedValues)
       }
     },
     {
@@ -70,6 +79,12 @@ const ContentEditor: React.FC = () => {
               layout="vertical"
               initialValues={initialValues}
               onFinish={(v = {}) => run(v)}
+              onValuesChange={(changed) => {
+                setChangedValues({
+                  ...changedValues,
+                  ...changed,
+                })
+              }}
             >
               {contentAction === 'edit' && (
                 <Form.Item label={<Text strong>文档 Id</Text>} name="_id">

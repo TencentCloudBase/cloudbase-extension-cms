@@ -38,12 +38,17 @@ export const getFullDate = (date?: string) => {
 /**
  * 格式化 data 中的时间类型，转换成 Native Date 类型
  */
-export const formatPayloadDate = async (payload: Object | Object[], collectionName: string) => {
-  const schema = await getCollectionSchema(collectionName)
+export const formatPayloadDate = async (
+  payload: Object | Object[],
+  collectionName: string,
+  docSchema?: Schema
+) => {
+  const schema = docSchema || (await getCollectionSchema(collectionName))
 
   // Webhook，或没有 Schema 信息，直接返回
   if (!schema) return payload
 
+  // schema 中的 'date' 时间类型
   const dateFields = R.filter(
     R.where({ type: isDateType, dateFormatType: R.equals('date') }),
     schema.fields

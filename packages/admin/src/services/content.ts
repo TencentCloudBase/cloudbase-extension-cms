@@ -115,6 +115,30 @@ export async function setContent(
   })
 }
 
+/**
+ *
+ */
+export async function updateContent(
+  projectId: string,
+  resource: string,
+  id: string,
+  payload: Record<string, any>
+) {
+  return tcbRequest(`/projects/${projectId}/contents`, {
+    method: 'POST',
+    data: {
+      resource,
+      options: {
+        payload,
+        filter: {
+          _id: id,
+        },
+      },
+      action: 'setOne',
+    },
+  })
+}
+
 export async function getMigrateJobs(projectId: string, page = 1, pageSize = 10) {
   return tcbRequest(`/projects/${projectId}/migrate`, {
     method: 'GET',

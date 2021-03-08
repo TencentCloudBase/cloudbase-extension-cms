@@ -12,6 +12,9 @@ import {
 } from '@/utils'
 import { BadRequestException, RecordNotExistException, getSchemaSystemFields } from '@/common'
 
+/**
+ * CMS 系统使用的集合，不存在 schema 定义
+ */
 const IGNORE_SCHEMA_COLLECTIONS = [Collection.WebhookLog, Collection.Webhooks]
 
 @Injectable()
@@ -138,142 +141,36 @@ export class ContentsService {
     return { ...res, total: countRes.total }
   }
 
+  /**
+   * 更新 doc 内容
+   */
   async updateOne(
     resource: string,
     options: { filter: { _id: string }; payload: Record<string, any> }
   ) {
-    const { filter, payload } = options
-    const collection = this.collection(resource)
-
-    if (!filter?._id) {
-      throw new BadRequestException('Id 不存在，更新失败！')
-    }
-
-    // 查询记录是否存在
-    let {
-      data: [record],
-    } = await collection.where(filter).limit(1).get()
-
-    if (!record) {
-      return {}
-    }
-
-    let updateData = _.omit(payload, '_id')
-
-    const schema = await getCollectionSchema(resource)
-
-    updateData = await formatPayloadDate(updateData, resource)
-
-    if (!IGNORE_SCHEMA_COLLECTIONS.includes(resource)) {
-      // 查询 schema 信息
-      const schema = await this.schemaCacheService.getCollectionSchema(resource)
-
-      if (!schema) {
-        throw new RecordNotExistException('模型记录不存在')
-      }
-
-      updateData = _.mapValues(updateData, (value, key) => {
-        const field = schema.fields.find((item) => item.name === key)
-
-        // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
-        if (field?.type === 'Connect' && value) {
-          // 多关联
-          if (Array.isArray(value) && _.isObject(value?.[0])) {
-            return value.map((_) => (_?._id ? _._id : _))
-          }
-
-          // 单关联
-          if (!Array.isArray(value) && _.isObject(value)) {
-            return (value as any)._id
-          }
-
-          // value 为 null
-          return value
-        }
-
-        return value
-      })
-    }
-
-    this.appendSystemField(updateData, schema, '_updateTime')
+    const { filter } = options
+    const doc = await this.formatUpdatedDoc(resource, options)
 
     // 更新记录
-    return collection.doc(record._id).update(updateData)
+    return this.collection(resource).doc(filter._id).update(doc)
   }
 
-  // 替换更新一条记录
+  /**
+   * 替换更新一条 doc
+   */
   async setOne(
     resource: string,
     options: { filter: { _id: string }; payload: Record<string, any> }
   ) {
-    const { filter, payload } = options
-    const collection = this.collection(resource)
-
-    if (!filter?._id) {
-      throw new BadRequestException('Id 不存在，更新失败！')
-    }
-
-    // 查询记录是否存在
-    let {
-      data: [record],
-    } = await collection.where(filter).limit(1).get()
-
-    if (!record) {
-      throw new RecordNotExistException('文档不存在')
-    }
-
-    let updateData = await formatPayloadDate(payload, resource)
-
-    if (resource !== Collection.Webhooks) {
-      // 查询 schema 信息
-      const schema = await this.schemaCacheService.getCollectionSchema(resource)
-
-      if (!schema) {
-        throw new RecordNotExistException('模型记录不存在')
-      }
-
-      updateData = _.mapValues(updateData, (value, key) => {
-        const field = schema.fields.find((item) => item.name === key)
-
-        // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
-        if (field?.type === 'Connect' && value) {
-          // 多关联
-          if (Array.isArray(value) && _.isObject(value?.[0])) {
-            return value.map((_) => (_?._id ? _._id : _))
-          }
-
-          // 单关联
-          if (!Array.isArray(value) && _.isObject(value)) {
-            return (value as any)._id
-          }
-
-          // value 为 null
-          return value
-        }
-
-        return value
-      })
-    }
-
-    const schema = await getCollectionSchema(resource)
-
-    // 不能更新 _id
-    const doc = _.omit(
-      {
-        ...record,
-        ...updateData,
-      },
-      '_id'
-    )
-
-    this.appendSystemField(doc, schema, '_updateTime')
+    const { filter } = options
+    const doc = await this.formatUpdatedDoc(resource, options)
 
     // 替换记录
-    return collection.doc(record._id).set(doc)
+    return this.collection(resource).doc(filter._id).set(doc)
   }
 
   /**
-   * 创建一个记录
+   * 创建一个 doc
    */
   async createOne(
     resource: string,
@@ -465,6 +362,67 @@ export class ContentsService {
     return resData
   }
 
+  /**
+   * 格式化需要更新的 doc
+   */
+  private async formatUpdatedDoc(
+    resource: string,
+    options: { filter: { _id: string }; payload: Record<string, any> }
+  ) {
+    const { filter, payload } = options
+
+    if (!filter?._id) {
+      throw new BadRequestException('Id 不存在，更新失败！')
+    }
+
+    // 不能更新 _id
+    let doc = _.omit(payload, '_id')
+
+    if (!IGNORE_SCHEMA_COLLECTIONS.includes(resource)) {
+      // 查询 schema 信息
+      const schema = await this.schemaCacheService.getCollectionSchema(resource)
+
+      if (!schema) {
+        throw new RecordNotExistException('模型记录不存在')
+      }
+
+      // 格式化 payload 中的时间
+      doc = await formatPayloadDate(doc, resource, schema)
+
+      doc = _.mapValues(doc, (value, key) => {
+        const field = schema.fields.find((item) => item.name === key)
+
+        // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
+        if (field?.type === 'Connect' && value) {
+          // 多关联
+          if (Array.isArray(value) && _.isObject(value?.[0])) {
+            return value.map((_) => (_?._id ? _._id : _))
+          }
+
+          // 单关联
+          if (!Array.isArray(value) && _.isObject(value)) {
+            return (value as any)._id
+          }
+
+          // value 为 null
+          return value
+        }
+
+        return value
+      })
+
+      // 设置更新时间
+      this.appendSystemField(doc, schema, '_updateTime')
+    } else {
+      this.appendSystemField(doc, null, '_updateTime')
+    }
+
+    return doc
+  }
+
+  /**
+   * 添加系统字段
+   */
   private appendSystemField(
     doc: Record<string, any>,
     schema: Schema,
@@ -480,6 +438,9 @@ export class ContentsService {
   }
 }
 
+/**
+ * doc 处理 ctx 记录
+ */
 function getDocProcessContext(schema: Schema) {
   const now = Date.now()
 

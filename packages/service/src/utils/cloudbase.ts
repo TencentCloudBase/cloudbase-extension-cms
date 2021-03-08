@@ -13,6 +13,10 @@ let nodeApp: CloudBase
 let managerApp
 let secretExpire: number
 let secretManager: SecretManager
+
+/**
+ * 内存缓存
+ */
 const schemaCache = new MemoryCache()
 
 /**
@@ -136,7 +140,7 @@ export const getUserFromCredential = async (credential: string, origin: string) 
 }
 
 /**
- * 获取集合的 Schema
+ * 获取并缓存集合对应 Schema
  */
 export async function getCollectionSchema(collection: string): Promise<Schema>
 export async function getCollectionSchema(): Promise<Schema[]>

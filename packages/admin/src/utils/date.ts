@@ -80,6 +80,11 @@ export const formatDisplayTimeByType = (
     return moment(Number(v) * 1000).format(format)
   }
 
+  // 使用 number 转换可能的字符串
+  if (dateType === 'timestamp-ms') {
+    return moment(Number(v)).format(format)
+  }
+
   return moment(v).format(format)
 }
 
