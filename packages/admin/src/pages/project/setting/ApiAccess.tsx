@@ -101,7 +101,11 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
           ]}
         >
           <Input
-            addonBefore={`https://${accessDomain}`}
+            addonBefore={
+              <Text ellipsis style={{ maxWidth: '400px' }}>
+                {`https://${accessDomain}`}
+              </Text>
+            }
             placeholder="API 访问的路径，如 rest-api"
           />
         </Form.Item>
@@ -158,7 +162,8 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
   project,
   onReload,
 }) => {
-  const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace('tcb-ext-cms-service', '')
+  const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace(/(tcb|wx)-ext-cms-service/, '')
+
   const { projectId } = useParams<any>()
   // 使用 content module 的数据，获取 layout 时，必然被加载、刷新
   const {
@@ -242,11 +247,12 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
             {initialValues.path && (
               <Button
                 type="link"
-                onClick={() =>
+                onClick={() => {
                   copyToClipboard(
                     `https://${accessDomain}${initialValues.path}/v1.0/${schema.collectionName}`
                   )
-                }
+                  message.success('复制成功')
+                }}
               >
                 复制访问链接
                 <CopyOutlined className="ml-2" />
