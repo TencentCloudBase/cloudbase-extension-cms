@@ -58,11 +58,14 @@ export const SchemaFieldEditorModal: React.FC<{
   const { run: createField, loading } = useRequest(
     async (fieldAttr: SchemaField) => {
       // 判断是否存在同名字段
-      const existSameName = currentSchema?.fields?.find(
+      const sameNameField = currentSchema?.fields?.find(
         (_: SchemaField) => _.name === fieldAttr.name
       )
 
-      if (existSameName && fieldAction === 'create') {
+      if (
+        sameNameField &&
+        (fieldAction === 'create' || (fieldAction === 'edit' && sameNameField.id !== fieldAttr.id))
+      ) {
         throw new Error(`已存在同名字段 ${fieldAttr.name}，请勿重复创建`)
       }
 
