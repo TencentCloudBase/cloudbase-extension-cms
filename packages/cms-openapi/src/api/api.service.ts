@@ -231,7 +231,7 @@ export class ApiService {
 
     const { taskId, phoneCount, activityId } = event
 
-    console.log('上报短信下发任务', phoneCount)
+    console.log('上报短信下发任务', event)
 
     // TODO: update
     // @ts-ignore
@@ -239,8 +239,9 @@ export class ApiService {
       reportAction: 'sendSmsTask', // 下发短信上报
       activityId, // 活动 ID
       taskId, // 任务 ID
-      phoneCount, // 手机数量
       envId: ENV, // 环境 ID
+      // 号码数只支持数字
+      phoneCount: String(phoneCount), // 手机数量
     })
   }
 
