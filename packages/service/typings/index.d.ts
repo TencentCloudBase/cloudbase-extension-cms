@@ -6,6 +6,7 @@ declare namespace NodeJS {
     SECRETKEY: string
     TCB_CMS: string
     WX_MP: string
+    FROM_LOWCODE: string
   }
 }
 

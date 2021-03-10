@@ -4,7 +4,7 @@ import { PageContainer } from '@ant-design/pro-layout'
 import { history, useParams } from 'umi'
 import { useConcent } from 'concent'
 import { ContentCtx, GlobalCtx } from 'typings/store'
-import { ContentTable } from './ContentTable'
+import { ActivityTable } from './ActivityTable'
 import { ActivitySchema } from './schema'
 
 export default (): React.ReactNode => {
@@ -30,7 +30,7 @@ export default (): React.ReactNode => {
       content="创建营销活动，将自动生成对应的中间页，可从短信、邮件、微信内H5、微信外部H5调起小程序指定路径，活动下发后可更新配置并实时生效"
     >
       <ProCard>
-        <ContentTable currentSchema={ActivitySchema} />
+        <ActivityTable currentSchema={ActivitySchema} />
       </ProCard>
     </PageContainer>
   )

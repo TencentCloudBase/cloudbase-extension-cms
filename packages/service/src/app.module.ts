@@ -16,7 +16,7 @@ import { GlobalModule } from './global.module'
     ProjectsModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: process.env.NODE_ENV === 'development' ? '.env.local' : '.env',
+      envFilePath: 'WX' in process.env ? '.env.wx.local' : '.env.local',
     }),
     RoleModule,
     SettingModule,

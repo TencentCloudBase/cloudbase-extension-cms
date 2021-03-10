@@ -5,18 +5,35 @@
 
     <!-- 内容 -->
     <template v-else>
+      <iframe
+        id="bgFrame"
+        frameborder="0"
+        :src="jumpPageUrl"
+        v-if="fromLowCode && jumpPageType === 'lowcode' && jumpPageUrl"
+      />
+
       <!-- 背景图 -->
-      <img v-if="bgImg" id="bgImg" :src="bgImg" :class="{ long: isLongImg, full: !isLongImg }" />
+      <img
+        v-else-if="bgImg"
+        id="bgImg"
+        :src="bgImg"
+        :class="{ long: isLongImg, full: !isLongImg }"
+      />
 
       <desktop-web v-if="isDesktop" />
       <!-- 跳转按钮 -->
-      <div v-else class="btn-box" :class="{ bottom: bgImg, middle: !bgImg }">
-        <wechat-web v-if="isWeixin" :appPath="appPath" :bgImg="bgImg" :btnImg="btnImg" />
+      <div v-else class="btn-box" :class="{ bottom: placeBtnBottom, middle: !placeBtnBottom }">
+        <wechat-web
+          v-if="isWeixin"
+          :appPath="appPath"
+          :btnImg="btnImg"
+          :placeBottom="placeBtnBottom"
+        />
         <public-web
           v-else
-          :bgImg="bgImg"
           :btnImg="btnImg"
           :openWeapp="openWeapp"
+          :placeBottom="placeBtnBottom"
           :btnLoading="btnLoading"
         />
       </div>
@@ -67,7 +84,18 @@ export default {
       dialogMsg: '',
       // 生成跳转路径错误
       generateSchemaError: false,
+      // 低码自定义页面
+      fromLowCode: false,
+      jumpPageType: 'image',
+      jumpPageUrl: '',
     }
+  },
+  computed: {
+    placeBtnBottom() {
+      return Boolean(
+        this.btnImg || (this.fromLowCode && this.jumpPageType === 'lowcode' && this.jumpPageUrl)
+      )
+    },
   },
   created() {
     // 获取 UA 信息
@@ -156,12 +184,15 @@ export default {
       try {
         const activityId = this.getQueryByName('activityId')
         const channelId = this.getQueryByName('source') || '_cms_sms_'
+
+        // 本地用户随机 id
         let sessionId = localStorage.getItem(LOCAL_SESSIONID_KEY)
         if (!sessionId) {
           sessionId = this.uuidv4()
           localStorage.setItem(LOCAL_SESSIONID_KEY, sessionId)
         }
 
+        // 触发云函数的名称
         const functionName = WX_MP ? 'wx-ext-cms-sms' : 'tcb-ext-cms-sms'
 
         // 查询活动信息
@@ -189,10 +220,15 @@ export default {
         // 活动信息
         const activity = res.result.activity || {}
 
+        const { jumpImg, isLongImg, btnImg, jumpPageType, jumpPageUrl, fromLowCode } = activity
+
         // 活动配置信息
-        this.bgImg = activity.jumpImg
-        this.isLongImg = activity.isLongImg
-        this.btnImg = activity.btnImg
+        this.bgImg = jumpImg
+        this.isLongImg = isLongImg
+        this.btnImg = btnImg
+        this.jumpPageType = jumpPageType
+        this.fromLowCode = fromLowCode
+        this.jumpPageUrl = jumpPageUrl
 
         // 活动状态
         let status = ''
@@ -303,6 +339,15 @@ body {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+#bgFrame {
+  position: absolute;
+  overflow: auto;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
 img#bgImg {
   display: block;
   width: 100%;
@@ -330,7 +375,7 @@ img#bgImg {
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 1;
+    z-index: 10;
   }
 }
 

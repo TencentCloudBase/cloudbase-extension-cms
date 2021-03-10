@@ -7,6 +7,7 @@ import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
+import { getDocInitialValues } from '@/utils'
 
 const { Text } = Typography
 
@@ -29,7 +30,7 @@ const ContentEditor: React.FC = () => {
   const schema: Schema = schemas?.find((item: Schema) => item._id === schemaId) || currentSchema
 
   // 表单初始值
-  const initialValues = getInitialValues(contentAction, schema, selectedContent)
+  const initialValues = getDocInitialValues(contentAction, schema, selectedContent)
 
   // 创建/更新内容
   const { run, loading } = useRequest(
@@ -120,42 +121,6 @@ const ContentEditor: React.FC = () => {
       </Row>
     </PageContainer>
   )
-}
-
-const getInitialValues = (action: string, schema: Schema, selectedContent: any) => {
-  const initialValues =
-    action === 'create'
-      ? schema?.fields?.reduce((prev, field) => {
-          let { type, defaultValue } = field
-          // 布尔值默认为 false
-          if (type === 'Boolean' && typeof defaultValue !== 'boolean') {
-            defaultValue = false
-          }
-          return {
-            ...prev,
-            [field.name]: defaultValue,
-          }
-        }, {})
-      : selectedContent
-
-  if (action === 'edit') {
-    schema?.fields?.forEach((field) => {
-      let { type, name, isMultiple } = field
-
-      const fieldValue = selectedContent[name]
-
-      // 布尔值默认为 false
-      if (type === 'Boolean' && typeof fieldValue !== 'boolean') {
-        selectedContent[name] = false
-      }
-
-      // 如果字段是 multiple 类型，将异常的字符串值，转换为正常的数组
-      if (isMultiple && typeof fieldValue === 'string') {
-        selectedContent[name] = [fieldValue]
-      }
-    })
-  }
-  return initialValues
 }
 
 export default ContentEditor

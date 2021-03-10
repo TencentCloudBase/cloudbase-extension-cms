@@ -22,7 +22,7 @@ const negativeTypes = ['File', 'Image']
 /**
  * 内容展示表格
  */
-export const ContentTable: React.FC<{
+export const ActivityTable: React.FC<{
   currentSchema: Schema
 }> = (props) => {
   const { currentSchema } = props
@@ -31,7 +31,7 @@ export const ContentTable: React.FC<{
   const [{ activityId }, setState] = useSetState({
     activityId: '',
   })
-  const { projectId, schemaId = 'default' } = useParams<any>()
+  const { projectId } = useParams<any>()
 
   // 检索的字段
   const { searchFields, searchParams } = ctx.state
@@ -126,7 +126,7 @@ export const ContentTable: React.FC<{
                 contentAction: 'edit',
                 selectedContent: row,
               })
-              history.push(`/${projectId}/content/${schemaId}/edit?upload=hosting`)
+              history.push(`/${projectId}/operation/activity/edit?upload=hosting`)
             }}
           >
             编辑
@@ -201,7 +201,7 @@ export const ContentTable: React.FC<{
             contentAction: 'create',
             selectedContent: null,
           })
-          history.push(`/${projectId}/content/${schemaId}/edit?upload=hosting`)
+          history.push(`/${projectId}/operation/activity/edit?upload=hosting`)
         }}
       >
         新建

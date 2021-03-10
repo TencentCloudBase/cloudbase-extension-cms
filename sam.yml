@@ -57,6 +57,7 @@ Resources:
         Variables:
           TCB_CMS: "true"
           NODE_ENV: production
+          FROM_LOWCODE: ""
   # 初始化函数
   InitFunction:
     Type: CloudBase::Function
@@ -78,7 +79,6 @@ Resources:
           CMS_OPERATOR_USER_NAME: ""
           CMS_OPERATOR_PASS_WORD: ""
           CMS_DEPLOY_PATH: "/tcb-cms/"
-          CMS_RESOURCE_PREFIX: ""
       Role: TCB_QcsRole
   # Restful api 函数
   RestfulApiFunction:

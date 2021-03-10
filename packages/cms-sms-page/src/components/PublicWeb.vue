@@ -1,6 +1,6 @@
 <template>
   <div id="public-web-container" class="center">
-    <div :class="{ bottom: bgImg }">
+    <div :class="{ bottom: placeBottom }">
       <template v-if="btnImg">
         <img id="btnImg" :src="btnImg" @click="onOpenWeapp" />
       </template>
@@ -23,10 +23,10 @@
 <script>
 export default {
   props: {
-    bgImg: String,
     btnImg: String,
     loading: Boolean,
     openWeapp: Function,
+    placeBottom: Boolean,
   },
   data() {
     const { cloudResource = {} } = window
@@ -55,6 +55,7 @@ export default {
 
 .bottom {
   width: 100%;
+
   .weui-btn {
     width: 100%;
     height: 3rem;

@@ -42,3 +42,9 @@ export async function getSmsTaskResult(
     method: 'POST',
   })
 }
+
+export async function getLowCodeAppInfo(projectId: string) {
+  return tcbRequest(`/projects/${projectId}/operation/getLowCodeAppInfo`, {
+    method: 'POST',
+  })
+}

@@ -72,7 +72,6 @@ Resources:
       Environment:
         Variables:
           WX_MP: "true"
-          WX_MP_APP_ID: ""
           CMS_DOC_LINK: "https://developers.weixin.qq.com/miniprogram/dev/wxcloud/guide/extensions/cms/introduction.html"
           CMS_HELP_LINK: "https://developers.weixin.qq.com/community/minihome/mixflow/1286298401038155776"
           CMS_OFFICIALSITE_LINK: "https://mp.weixin.qq.com/cgi-bin/wx"

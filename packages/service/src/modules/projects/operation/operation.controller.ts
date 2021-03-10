@@ -3,16 +3,22 @@ import {
   Post,
   Body,
   Param,
+  Request,
   UseGuards,
   Controller,
   UseInterceptors,
   ClassSerializerInterceptor,
-  Request,
 } from '@nestjs/common'
 import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { IsNotEmpty, MaxLength } from 'class-validator'
-import { getEnvIdString, dateToUnixTimestampInMs, getCloudBaseManager, dayJS } from '@/utils'
+import {
+  getEnvIdString,
+  dateToUnixTimestampInMs,
+  getCloudBaseManager,
+  dayJS,
+  getLowCodeAppInfo,
+} from '@/utils'
 import { Collection } from '@/constants'
 import { OperationService } from './operation.service'
 
@@ -67,7 +73,7 @@ export class OperationController {
    * 开启营销工具
    */
   @Post('enableOperationService')
-  async createOperationService(@Body() payload: EnableServiceBody) {
+  async createOperationService(@Param('projectId') projectId, @Body() payload: EnableServiceBody) {
     const { data: settings } = await this.collection(Collection.Settings).where({}).get()
 
     const appConfig = {
@@ -94,14 +100,46 @@ export class OperationController {
     // 添加默认活动
     if (!record) {
       const now = Date.now()
-      await this.collection(Collection.MessageActivity).add({
-        activityName: '营销demo',
-        endTime: 1893456000000,
-        isActivityOpen: true,
-        startTime: 1610353674000,
-        _createTime: now,
-        _updateTime: now,
-      })
+      // 来自低码，添加页面活动、单图片活动
+      if (process.env.FROM_LOWCODE) {
+        const { data } = await getLowCodeAppInfo(projectId)
+        const records: any[] = [
+          // 图片示例
+          {
+            _createTime: now,
+            _updateTime: now,
+            activityName: '活动示例 - 图片',
+            endTime: 1893456000000,
+            isActivityOpen: true,
+            jumpImg: 'https://main.qcloudimg.com/raw/50240777c0b7596a598c5b432ec4f005.png',
+          },
+        ]
+
+        // 存在已发布的页面
+        if (data?.pages?.length) {
+          records.push({
+            _createTime: now,
+            _updateTime: now,
+            endTime: 1893456000000,
+            fromLowCode: true,
+            isActivityOpen: true,
+            jumpPageType: 'lowcode',
+            activityName: '活动示例 - 低码页面',
+            lowcodePage: data?.pages[0].url,
+          })
+        }
+
+        await this.collection(Collection.MessageActivity).add(records)
+      } else {
+        await this.collection(Collection.MessageActivity).add({
+          activityName: '营销活动示例',
+          endTime: 1893456000000,
+          isActivityOpen: true,
+          startTime: 1610353674000,
+          _createTime: now,
+          _updateTime: now,
+        })
+      }
     }
   }
 
@@ -167,6 +205,15 @@ export class OperationController {
       total: TotalCount,
       data: SmsRecords,
     }
+  }
+
+  /**
+   * 获取低码应用已发布页面列表
+   */
+  @Post('getLowCodeAppInfo')
+  async getLowCodeAppInfo(@Param('projectId') projectId) {
+    // 此处 projectId 即为 appId
+    return getLowCodeAppInfo(projectId)
   }
 
   collection(collection = Collection.DataMigrateTasks) {

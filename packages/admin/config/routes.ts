@@ -101,6 +101,11 @@ const routesConfig: IConfig = {
             },
             {
               exact: true,
+              path: '/:projectId/operation/activity/edit',
+              component: './project/operation/Activity/ActivityEditor',
+            },
+            {
+              exact: true,
               path: '/:projectId/operation/message',
               component: './project/operation/Message/index',
             },
