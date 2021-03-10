@@ -1,11 +1,30 @@
 type SystemControlFields = '_createTime' | '_updateTime'
 
+type SchemaFieldType =
+  | 'String'
+  | 'MultiLineString'
+  | 'Number'
+  | 'Boolean'
+  | 'DateTime'
+  | 'Date'
+  | 'File'
+  | 'Image'
+  | 'Email'
+  | 'Tel'
+  | 'Url'
+  | 'RichText'
+  | 'Markdown'
+  | 'Connect'
+  | 'Array'
+  | 'Enum'
+  | 'Object'
+
 interface SchemaField {
   // 32 位 Id，需要手动生成
   id: string
 
   // 字段类型
-  type: string
+  type: SchemaFieldType
 
   // 展示标题
   displayName: string
@@ -112,25 +131,6 @@ interface Schema {
 
   _updateTime: number
 }
-
-type SchemaFieldType =
-  | 'String'
-  | 'MultiLineString'
-  | 'Number'
-  | 'Boolean'
-  | 'DateTime'
-  | 'Date'
-  | 'File'
-  | 'Image'
-  | 'Email'
-  | 'Tel'
-  | 'Url'
-  | 'RichText'
-  | 'Markdown'
-  | 'Connect'
-  | 'Array'
-  | 'Enum'
-  | 'Object'
 
 interface Project {
   _id: string

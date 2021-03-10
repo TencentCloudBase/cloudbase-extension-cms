@@ -10,7 +10,7 @@ import { LeftCircleTwoTone } from '@ant-design/icons'
 import { generateQRCode, getDocInitialValues } from '@/utils'
 import { getFieldFormItem } from '@/components/Fields'
 import { getLowCodeAppInfo } from '@/services/operation'
-import { createContent, setContent } from '@/services/content'
+import { createContent, updateContent } from '@/services/content'
 import { ActivitySchema } from './schema'
 
 const { Paragraph } = Typography
@@ -45,8 +45,7 @@ const MessageTask: React.FC = () => {
       }
 
       if (contentAction === 'edit') {
-        // 只更新变更过的字段
-        await setContent(projectId, ActivitySchema?.collectionName, selectedContent._id, payload)
+        await updateContent(projectId, ActivitySchema?.collectionName, selectedContent._id, payload)
       }
     },
     {

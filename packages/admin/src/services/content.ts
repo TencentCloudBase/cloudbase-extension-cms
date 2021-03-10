@@ -94,29 +94,8 @@ export async function batchDeleteContent(projectId: string, resource: string, id
   })
 }
 
-export async function setContent(
-  projectId: string,
-  resource: string,
-  id: string,
-  payload: Record<string, any>
-) {
-  return tcbRequest(`/projects/${projectId}/contents`, {
-    method: 'POST',
-    data: {
-      resource,
-      options: {
-        payload,
-        filter: {
-          _id: id,
-        },
-      },
-      action: 'setOne',
-    },
-  })
-}
-
 /**
- *
+ * 更新内容
  */
 export async function updateContent(
   projectId: string,
@@ -134,7 +113,7 @@ export async function updateContent(
           _id: id,
         },
       },
-      action: 'setOne',
+      action: 'updateOne',
     },
   })
 }

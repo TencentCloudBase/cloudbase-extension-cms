@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Alert, Button, Col, Divider, Form, Input, Modal, Row, Space, Switch } from 'antd'
+import { Alert, Button, Col, Form, Input, Modal, Row, Space, Switch } from 'antd'
 import ReactJson from 'react-json-view'
 
 export const IObjectEditor: React.FC<{
@@ -55,6 +55,7 @@ export const IObjectEditor: React.FC<{
         onAdd={(e) => {
           onChange(e.updated_src)
         }}
+        collapseStringsAfterLength={64}
       />
 
       <Modal
@@ -138,6 +139,7 @@ export const IObjectRender: React.FC<{
           }}
           collapsed={true}
           displayDataTypes={false}
+          collapseStringsAfterLength={32}
         />
       </Modal>
     </>

@@ -389,7 +389,9 @@ export class ContentsService {
       // 格式化 payload 中的时间
       doc = await formatPayloadDate(doc, resource, schema)
 
+      // 处理 doc 中的特殊值
       doc = _.mapValues(doc, (value, key) => {
+        // 查询 field 属性
         const field = schema.fields.find((item) => item.name === key)
 
         // 当更新 Connect 类型数据时，如果请求的数据对象，则提取 id 存储
@@ -406,6 +408,11 @@ export class ContentsService {
 
           // value 为 null
           return value
+        }
+
+        // 对象需要更新整个值
+        if (field?.type === 'Object') {
+          return this.cloudbaseService.db.command.set(value)
         }
 
         return value
