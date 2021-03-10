@@ -7,6 +7,7 @@ import { codeMessage, RESOURCE_PREFIX } from '@/constants'
 import defaultSettings from '../../config/defaultSettings'
 import { isDevEnv, random } from './common'
 import { getFullDate } from './date'
+import { downloadFileFromUrl } from './file'
 
 interface IntegrationRes {
   statusCode: number
@@ -313,13 +314,12 @@ export async function batchGetTempFileURL(
 
 // 下载文件
 export async function downloadFile(fileId: string) {
-  const app = await getCloudBaseApp()
+  const tmpUrl = await getTempFileURL(fileId)
+  const fileUrl =
+    tmpUrl + `${tmpUrl.includes('?') ? '&' : '?'}response-content-disposition=attachment`
+  const fileName = decodeURIComponent(new URL(fileUrl).pathname.split('/').pop() || '')
 
-  const result = await app.downloadFile({
-    fileID: fileId,
-  })
-
-  console.log('下载文件', fileId, result)
+  downloadFileFromUrl(fileUrl, fileName)
 }
 
 /**

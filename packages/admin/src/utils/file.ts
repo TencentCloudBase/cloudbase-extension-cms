@@ -19,20 +19,26 @@ export const saveFile = (file: Blob, fileName: string) => {
     // IE10+
     window.navigator.msSaveOrOpenBlob(file, fileName)
   } else {
-    // 其他
-    const a = document.createElement('a')
     const url = URL.createObjectURL(file)
-
-    a.href = url
-    a.download = fileName
-    document.body.appendChild(a)
-    a.click()
-
-    setTimeout(function () {
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
-    }, 0)
+    downloadFileFromUrl(url, fileName)
   }
+}
+
+/**
+ * 通过链接下载文件
+ */
+export const downloadFileFromUrl = (url: string, fileName: string) => {
+  // 创建一个链接
+  const a = document.createElement('a')
+  a.href = url
+  a.download = fileName
+  document.body.appendChild(a)
+  a.click()
+
+  setTimeout(function () {
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+  }, 0)
 }
 
 /**
