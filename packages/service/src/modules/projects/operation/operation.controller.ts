@@ -109,6 +109,7 @@ export class OperationController {
             _createTime: now,
             _updateTime: now,
             activityName: '活动示例 - 图片',
+            startTime: 1610353674000,
             endTime: 1893456000000,
             isActivityOpen: true,
             jumpImg: 'https://main.qcloudimg.com/raw/50240777c0b7596a598c5b432ec4f005.png',
@@ -120,6 +121,7 @@ export class OperationController {
           records.push({
             _createTime: now,
             _updateTime: now,
+            startTime: 1610353674000,
             endTime: 1893456000000,
             fromLowCode: true,
             isActivityOpen: true,

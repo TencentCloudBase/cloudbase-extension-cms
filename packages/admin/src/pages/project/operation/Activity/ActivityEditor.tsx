@@ -125,12 +125,7 @@ const MessageTask: React.FC = () => {
                   if (isFromLowCode && form.getFieldValue('jumpPageType') === 'lowcode') {
                     return (
                       <>
-                        <Form.Item
-                          required
-                          name="jumpPageUrl"
-                          label="高级跳转中间页"
-                          style={{ marginBottom: 0 }}
-                        >
+                        <Form.Item label="高级跳转中间页" style={{ marginBottom: 0 }}>
                           <Space align="start" size="large">
                             <Form.Item
                               name="lowcodePage"

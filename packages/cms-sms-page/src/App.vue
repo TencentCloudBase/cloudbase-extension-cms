@@ -8,8 +8,8 @@
       <iframe
         id="bgFrame"
         frameborder="0"
-        :src="jumpPageUrl"
-        v-if="fromLowCode && jumpPageType === 'lowcode' && jumpPageUrl"
+        :src="lowcodePage"
+        v-if="fromLowCode && jumpPageType === 'lowcode' && lowcodePage"
       />
 
       <!-- 背景图 -->
@@ -87,13 +87,13 @@ export default {
       // 低码自定义页面
       fromLowCode: false,
       jumpPageType: 'image',
-      jumpPageUrl: '',
+      lowcodePage: '',
     }
   },
   computed: {
     placeBtnBottom() {
       return Boolean(
-        this.bgImg || (this.fromLowCode && this.jumpPageType === 'lowcode' && this.jumpPageUrl)
+        this.bgImg || (this.fromLowCode && this.jumpPageType === 'lowcode' && this.lowcodePage)
       )
     },
   },
@@ -220,7 +220,7 @@ export default {
         // 活动信息
         const activity = res.result.activity || {}
 
-        const { jumpImg, isLongImg, btnImg, jumpPageType, jumpPageUrl, fromLowCode } = activity
+        const { jumpImg, isLongImg, btnImg, jumpPageType, lowcodePage, fromLowCode } = activity
 
         // 活动配置信息
         this.bgImg = jumpImg
@@ -228,7 +228,7 @@ export default {
         this.btnImg = btnImg
         this.jumpPageType = jumpPageType
         this.fromLowCode = fromLowCode
-        this.jumpPageUrl = jumpPageUrl
+        this.lowcodePage = lowcodePage
 
         // 活动状态
         let status = ''
