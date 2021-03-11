@@ -251,11 +251,7 @@ export const taskResultColumns: ProColumns[] = [
       index: number,
       action: any
     ): React.ReactNode | React.ReactNode[] => {
-      const date =
-        typeof record.CreateTime === 'undefined'
-          ? '-'
-          : formatDisplayTimeByType(record.CreateTime, 'timestamp-ms', 'DateTime')
-      return <Text>{date}</Text>
+      return <Text>{record.CreateTime || '-'}</Text>
     },
   },
   {
@@ -269,14 +265,9 @@ export const taskResultColumns: ProColumns[] = [
       index: number,
       action: any
     ): React.ReactNode | React.ReactNode[] => {
-      const date =
-        typeof record.ReceivedTime === 'undefined'
-          ? '-'
-          : formatDisplayTimeByType(record.ReceivedTime, 'timestamp-ms', 'DateTime')
-      return <Text>{date}</Text>
+      return <Text>{record.ReceivedTime || '-'}</Text>
     },
   },
-
   {
     title: '发送状态',
     width: 200,

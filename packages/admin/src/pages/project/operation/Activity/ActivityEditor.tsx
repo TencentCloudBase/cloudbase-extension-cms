@@ -16,6 +16,8 @@ import { ActivitySchema } from './schema'
 const { Paragraph } = Typography
 
 const MessageTask: React.FC = () => {
+  // 是否为低码创建的 CMS
+  const isFromLowCode = window.TcbCmsConfig.fromLowCode
   const modalRef = useRef<any>(null)
   const [form] = Form.useForm()
   const { projectId } = useParams<any>()
@@ -25,8 +27,10 @@ const MessageTask: React.FC = () => {
 
   // 表单初始值
   const initialValues = getDocInitialValues(contentAction, ActivitySchema, selectedContent)
-  initialValues.jumpPageType =
-    initialValues.jumpPageType || contentAction === 'create' ? 'lowcode' : 'image'
+  if (isFromLowCode) {
+    initialValues.jumpPageType =
+      initialValues.jumpPageType || contentAction === 'create' ? 'lowcode' : 'image'
+  }
 
   const [{ pageUrl }, setState] = useSetState<any>({
     pageUrl: '',
@@ -36,7 +40,7 @@ const MessageTask: React.FC = () => {
   const { run, loading } = useRequest(
     async (payload: any) => {
       // 设置低码标识
-      if (window.TcbCmsConfig.fromLowCode) {
+      if (isFromLowCode) {
         payload.fromLowCode = true
       }
 
@@ -63,7 +67,7 @@ const MessageTask: React.FC = () => {
 
   // 获取低码页面数据
   const { data: lowCodeApp = {} } = useRequest(async () => {
-    if (!window.TcbCmsConfig.fromLowCode) return
+    if (!isFromLowCode) return
     return getLowCodeAppInfo(projectId)
   })
 
@@ -96,7 +100,7 @@ const MessageTask: React.FC = () => {
                 .map((filed: SchemaField, index: number) => getFieldFormItem(filed, index))}
 
               {/* 低码配置 */}
-              {window.TcbCmsConfig.fromLowCode && (
+              {isFromLowCode && (
                 <Form.Item
                   shouldUpdate
                   name="jumpPageType"
@@ -118,7 +122,7 @@ const MessageTask: React.FC = () => {
               {/* 其他配置 */}
               <Form.Item shouldUpdate>
                 {() => {
-                  if (form.getFieldValue('jumpPageType') === 'lowcode') {
+                  if (isFromLowCode && form.getFieldValue('jumpPageType') === 'lowcode') {
                     return (
                       <>
                         <Form.Item
@@ -195,7 +199,7 @@ const MessageTask: React.FC = () => {
                         取消
                       </Button>
                       <Button type="primary" htmlType="submit" loading={loading}>
-                        创建
+                        {contentAction === 'create' ? '创建' : '更新'}
                       </Button>
                     </Space>
                   </Col>

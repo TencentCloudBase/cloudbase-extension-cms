@@ -93,7 +93,7 @@ export default {
   computed: {
     placeBtnBottom() {
       return Boolean(
-        this.btnImg || (this.fromLowCode && this.jumpPageType === 'lowcode' && this.jumpPageUrl)
+        this.bgImg || (this.fromLowCode && this.jumpPageType === 'lowcode' && this.jumpPageUrl)
       )
     },
   },
