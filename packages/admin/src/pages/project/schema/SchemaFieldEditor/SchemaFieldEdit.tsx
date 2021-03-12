@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useParams, useRequest } from 'umi'
 import { useConcent } from 'concent'
+import { useParams, useRequest } from 'umi'
+import React, { useState, useEffect, useMemo } from 'react'
 import { updateSchema } from '@/services/schema'
 import {
   Row,
@@ -24,6 +24,7 @@ import {
   isAssetType,
   formatStoreTimeByType,
   getMissingSystemFields,
+  getSchemaCustomFields,
 } from '@/utils'
 import { getFieldDefaultValueInput, getFieldFormItem } from './Field'
 
@@ -50,7 +51,7 @@ export const SchemaFieldEditorModal: React.FC<{
   const [connectSchema, setConnectSchema] = useState<Schema>()
 
   const {
-    state: { currentSchema, schemas, fieldAction, selectedField },
+    state: { currentSchema, schemas, fieldAction, selectedField, selectedFieldIndex },
   } = ctx
 
   // 新增字段
@@ -58,13 +59,19 @@ export const SchemaFieldEditorModal: React.FC<{
   const { run: createField, loading } = useRequest(
     async (fieldAttr: SchemaField) => {
       // 判断是否存在同名字段
-      const sameNameField = currentSchema?.fields?.find(
+      const schemaFields = getSchemaCustomFields(currentSchema)
+      const sameNameFieldIndex = schemaFields.findIndex(
         (_: SchemaField) => _.name === fieldAttr.name
       )
 
+      const sameNameField = sameNameFieldIndex > -1 ? schemaFields[sameNameFieldIndex] : null
+
       if (
         sameNameField &&
-        (fieldAction === 'create' || (fieldAction === 'edit' && sameNameField.id !== fieldAttr.id))
+        (fieldAction === 'create' ||
+          (fieldAction === 'edit' &&
+            sameNameField.id !== fieldAttr.id &&
+            sameNameFieldIndex !== selectedFieldIndex))
       ) {
         throw new Error(`已存在同名字段 ${fieldAttr.name}，请勿重复创建`)
       }
@@ -97,7 +104,6 @@ export const SchemaFieldEditorModal: React.FC<{
       }
 
       // 编辑字段
-      console.log(fieldAction, field)
       if (fieldAction === 'edit') {
         const index = fields.findIndex(
           (_: any) => _.id === selectedField?.id || _.name === selectedField?.name

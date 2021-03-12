@@ -143,7 +143,10 @@ export const SYSTEM_FIELDS: any[] = [
   },
 ]
 
-export const getCustomSystemFields = (options: {
+/**
+ * CMS 系统字段
+ */
+export const getCmsSystemFields = (options: {
   docCreateTimeField?: string
   docUpdateTimeField?: string
 }): any[] => {

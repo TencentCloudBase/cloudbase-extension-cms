@@ -103,6 +103,15 @@ export const getSchemaSystemFields = (schema: Schema) => {
   })
 }
 
+/**
+ * 过滤 schema 中的系统字段，返回用户自定义的字段，并排序
+ */
+export const getSchemaCustomFields = (schema: Schema) => {
+  return (
+    schema?.fields?.filter((_) => !_.isSystem).sort((prev, next) => prev.order - next.order) || []
+  )
+}
+
 // 获取 Schema 中缺失的系统字段数组
 export const getMissingSystemFields = (schema: Schema) => {
   const fields = schema?.fields

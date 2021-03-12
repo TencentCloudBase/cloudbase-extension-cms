@@ -7,7 +7,7 @@ import { ExclamationCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/ico
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 import { updateSchema } from '@/services/schema'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
-import { getSchemaSystemFields } from '@/utils'
+import { getSchemaCustomFields, getSchemaSystemFields } from '@/utils'
 
 export interface FieldType {
   icon: React.ReactNode
@@ -17,10 +17,10 @@ export interface FieldType {
 
 const { Paragraph, Text, Title } = Typography
 
-export const SchemaFieldRender: React.FC<{
+export const SchemaFieldListRender: React.FC<{
   schema: Schema
-  onFiledClick: (filed: SchemaField) => void
-  actionRender: (field: SchemaField) => React.ReactNode
+  onFiledClick: (filed: SchemaField, index: number) => void
+  actionRender: (field: SchemaField, index: number) => React.ReactNode
 }> = (props) => {
   const { schema, actionRender, onFiledClick } = props
   const [sortLoading, setSortLoading] = useState(false)
@@ -45,9 +45,7 @@ export const SchemaFieldRender: React.FC<{
     }
 
     // 获取字段排序后的列表，系统字段不参与排序
-    let resortedFields = schema?.fields
-      .filter((_) => _ && !_.isSystem)
-      .sort((prev, next) => prev.order - next.order)
+    let resortedFields = getSchemaCustomFields(schema)
 
     // 将被移动的字段移到对应的位置
     const moveField = resortedFields.splice(source, 1)?.[0]
@@ -82,50 +80,47 @@ export const SchemaFieldRender: React.FC<{
           <Droppable droppableId="droppable">
             {(droppableProvided) => (
               <div ref={droppableProvided.innerRef}>
-                {schema?.fields
-                  ?.filter((_) => _ && !_.isSystem)
-                  .sort((prev, next) => prev.order - next.order)
-                  .map((field, index) => {
-                    const type = FieldTypes.find((_) => _.type === field.type)
+                {getSchemaCustomFields(schema).map((field, index) => {
+                  const type = FieldTypes.find((_) => _.type === field.type)
 
-                    return (
-                      <Draggable key={field.id} draggableId={field.id} index={index}>
-                        {(draggableProvided) => (
-                          <div
-                            className="schema-field-card"
-                            ref={draggableProvided.innerRef}
-                            {...draggableProvided.draggableProps}
-                            {...draggableProvided.dragHandleProps}
-                          >
-                            <Card hoverable key={index} onClick={() => onFiledClick(field)}>
-                              <Space style={{ flex: '1 1 auto' }}>
-                                <div className="icon">{type?.icon}</div>
-                                <div className="flex-column">
-                                  <Space align="center" style={{ marginBottom: '10px' }}>
-                                    <Tooltip title={field.displayName}>
-                                      <Title ellipsis level={4} style={{ marginBottom: 0 }}>
-                                        {field.displayName}
-                                      </Title>
+                  return (
+                    <Draggable key={field.id} draggableId={field.id} index={index}>
+                      {(draggableProvided) => (
+                        <div
+                          className="schema-field-card"
+                          ref={draggableProvided.innerRef}
+                          {...draggableProvided.draggableProps}
+                          {...draggableProvided.dragHandleProps}
+                        >
+                          <Card hoverable key={index} onClick={() => onFiledClick(field, index)}>
+                            <Space style={{ flex: '1 1 auto' }}>
+                              <div className="icon">{type?.icon}</div>
+                              <div className="flex-column">
+                                <Space align="center" style={{ marginBottom: '10px' }}>
+                                  <Tooltip title={field.displayName}>
+                                    <Title ellipsis level={4} style={{ marginBottom: 0 }}>
+                                      {field.displayName}
+                                    </Title>
+                                  </Tooltip>
+                                  <Text strong># {field.name}</Text>
+                                  {field.description && (
+                                    <Tooltip title={field.description}>
+                                      <ExclamationCircleTwoTone style={{ fontSize: '16px' }} />
                                     </Tooltip>
-                                    <Text strong># {field.name}</Text>
-                                    {field.description && (
-                                      <Tooltip title={field.description}>
-                                        <ExclamationCircleTwoTone style={{ fontSize: '16px' }} />
-                                      </Tooltip>
-                                    )}
-                                  </Space>
-                                  <Space>
-                                    <Tag>{type?.name}</Tag>
-                                  </Space>
-                                </div>
-                              </Space>
-                              {actionRender(field)}
-                            </Card>
-                          </div>
-                        )}
-                      </Draggable>
-                    )
-                  })}
+                                  )}
+                                </Space>
+                                <Space>
+                                  <Tag>{type?.name}</Tag>
+                                </Space>
+                              </div>
+                            </Space>
+                            {actionRender(field, index)}
+                          </Card>
+                        </div>
+                      )}
+                    </Draggable>
+                  )
+                })}
                 {droppableProvided.placeholder}
               </div>
             )}

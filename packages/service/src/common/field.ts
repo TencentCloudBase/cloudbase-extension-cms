@@ -22,34 +22,6 @@ export const SYSTEM_FIELDS: any[] = [
   },
 ]
 
-export const getCustomSystemFields = (options: {
-  docCreateTimeField?: string
-  docUpdateTimeField?: string
-}): any[] => {
-  const { docCreateTimeField = '_createTime', docUpdateTimeField = '_updateTime' } = options
-
-  return [
-    {
-      displayName: '创建时间',
-      id: '_createTime',
-      name: docCreateTimeField,
-      type: 'DateTime',
-      isSystem: true,
-      dateFormatType: 'timestamp-ms',
-      description: '系统字段，请勿随意修改',
-    },
-    {
-      displayName: '修改时间',
-      id: '_updateTime',
-      name: docUpdateTimeField,
-      type: 'DateTime',
-      isSystem: true,
-      dateFormatType: 'timestamp-ms',
-      description: '系统字段，请勿随意修改',
-    },
-  ]
-}
-
 // 字段排序，数字越大，越靠后
 const SYSTEM_FIELD_ORDER = {
   _createTime: 1,

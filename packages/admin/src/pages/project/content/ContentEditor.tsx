@@ -7,7 +7,7 @@ import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
-import { getDocInitialValues } from '@/utils'
+import { getDocInitialValues, getSchemaCustomFields } from '@/utils'
 
 const { Text } = Typography
 
@@ -80,9 +80,7 @@ const ContentEditor: React.FC = () => {
                 </Form.Item>
               )}
 
-              {schema?.fields
-                ?.filter((_) => !_.isSystem)
-                .map((filed, index) => getFieldFormItem(filed, index))}
+              {getSchemaCustomFields(schema).map((filed, index) => getFieldFormItem(filed, index))}
 
               <Form.Item>
                 <Row>

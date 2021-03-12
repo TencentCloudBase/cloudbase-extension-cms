@@ -1,6 +1,6 @@
 import { ProColumns } from '@ant-design/pro-table'
 import { getFieldRender } from '@/components/Fields'
-import { calculateFieldWidth, getSchemaSystemFields } from '@/utils'
+import { calculateFieldWidth, getSchemaCustomFields, getSchemaSystemFields } from '@/utils'
 
 type DateTime = 'dateTime' | 'date' | 'textarea'
 
@@ -10,11 +10,10 @@ const hideInSearchType = ['File', 'Image', 'Array', 'Date', 'DateTime']
  * 获取表格 column 渲染配置
  */
 export const getTableColumns = (schema: Schema): ProColumns[] => {
-  const { fields = [] } = schema
   // 用户自定义字段，过滤掉系统字段，重复字段
-  const customFields = fields
-    ?.filter((_) => !_.isSystem)
-    ?.filter((field, i, arr) => field && arr.findIndex((_) => _.name === field.name) === i)
+  const customFields = getSchemaCustomFields(schema)?.filter(
+    (field, i, arr) => field && arr.findIndex((_) => _.name === field.name) === i
+  )
 
   // 将系统字段放到表格的末尾列
   const columns: ProColumns[] = customFields.map(fieldToColumn)

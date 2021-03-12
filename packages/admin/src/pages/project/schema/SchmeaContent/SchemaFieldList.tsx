@@ -2,7 +2,7 @@ import { useConcent } from 'concent'
 import React, { useCallback } from 'react'
 import { Button, Empty, Space } from 'antd'
 import { SchmeaCtx } from 'typings/store'
-import { SchemaFieldRender } from './FieldItemRender'
+import { SchemaFieldListRender } from './FieldListRender'
 
 export interface TableListItem {
   key: number
@@ -21,26 +21,27 @@ const SchemaFields: React.FC = () => {
   } = ctx
 
   // 编辑字段
-  const editFiled = useCallback((field: SchemaField) => {
+  const editFiled = useCallback((field: SchemaField, index: number) => {
     ctx.setState({
       fieldAction: 'edit',
       selectedField: field,
       editFieldVisible: true,
+      selectedFieldIndex: index,
     })
   }, [])
 
   return currentSchema?.fields?.length ? (
-    <SchemaFieldRender
+    <SchemaFieldListRender
       schema={currentSchema}
-      onFiledClick={(field) => editFiled(field)}
-      actionRender={(field) => (
+      onFiledClick={(field, index) => editFiled(field, index)}
+      actionRender={(field, index) => (
         <Space>
           <Button
             size="small"
             type="primary"
             onClick={(e) => {
               e.stopPropagation()
-              editFiled(field)
+              editFiled(field, index)
             }}
           >
             编辑

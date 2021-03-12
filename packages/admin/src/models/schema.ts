@@ -19,6 +19,7 @@ interface SchemaState {
     icon: React.ReactNode
     desc: string
   } & SchemaField
+  selectedFieldIndex: number
   // 删除字段弹窗
   deleteFieldVisible: boolean
   // 编辑字段弹窗
@@ -35,6 +36,7 @@ const state: SchemaState = {
   selectedField: {} as any,
   deleteFieldVisible: false,
   editFieldVisible: false,
+  selectedFieldIndex: -1,
 }
 
 export default {
