@@ -97,15 +97,21 @@ export class WebhooksService {
       // 触发用户信息
       webhookLogInfo.triggerUser = user
 
+      // webhook 发送内容
+      const webhookPayload = {
+        action,
+        actionRes,
+        collection: resource,
+        payload: actionOptions?.payload,
+        actionFilter: actionOptions?.filter,
+      }
+
       try {
         // 云函数
         if (type === 'function') {
           const { result } = await callFunction(functionName, {
-            action,
-            actionRes,
-            collection: resource,
+            ...webhookPayload,
             source: 'CMS_WEBHOOK_FUNCTION',
-            actionFilter: actionOptions?.filter,
           })
 
           // 添加 webhook 执行 log
@@ -142,11 +148,8 @@ export class WebhooksService {
             url,
             headers: httpHeaders,
             data: {
-              action,
-              actionRes,
+              ...webhookPayload,
               source: 'CMS_WEBHOOK_HTTP',
-              collection: resource,
-              actionFilter: actionOptions?.filter,
             },
             timeout: config.webhookTimeout,
           })

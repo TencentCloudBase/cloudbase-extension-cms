@@ -168,8 +168,8 @@ export class ContentsController {
         resource,
         action,
         actionRes: res,
-        actionOptions: options,
         user: req.cmsUser,
+        actionOptions: options,
       })
     } catch (error) {
       logger.error(error, 'Webhook 触发失败')
