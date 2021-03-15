@@ -12,7 +12,7 @@ import { getTableColumns } from './columns'
 import ContentTableSearchForm from './SearchForm'
 import DataImport from './DataImport'
 import DataExport from './DataExport'
-import { exportData, formatSearchParams } from './common'
+import { exportData, formatSearchParams } from './tool'
 
 const { Option } = Select
 

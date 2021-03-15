@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react'
 import { useParams, useRequest } from 'umi'
 import { getContents } from '@/services/content'
 import { Menu, Modal, Button, Dropdown, Alert, message } from 'antd'
-import { exportData, formatSearchParams } from './common'
+import { exportData, formatSearchParams } from './tool'
 
 type ExportFileType = 'csv' | 'json'
 

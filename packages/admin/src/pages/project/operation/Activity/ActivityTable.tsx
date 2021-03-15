@@ -10,7 +10,7 @@ import { getContents, deleteContent, batchDeleteContent } from '@/services/conte
 import { ContentCtx } from 'typings/store'
 import { getTableColumns } from '@/pages/project/content/columns'
 import ContentTableSearchForm from '@/pages/project/content/SearchForm'
-import { exportData, formatSearchParams } from '@/pages/project/content/common'
+import { exportData, formatSearchParams } from '@/pages/project/content/tool'
 import { useSetState } from 'react-use'
 import ActivityChannels from './Channel'
 

@@ -17842,11 +17842,6 @@ use-memo-one@^1.1.1:
   resolved "https://registry.yarnpkg.com/use-memo-one/-/use-memo-one-1.1.2.tgz#0c8203a329f76e040047a35a1197defe342fab20"
   integrity sha512-u2qFKtxLsia/r8qG0ZKkbytbztzRb317XCkT7yP8wxL0tZ/CzK2G+WWie5vWvpyeP7+YoPIwbJoIHJ4Ba4k0oQ==
 
-use-merge-value@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/use-merge-value/-/use-merge-value-1.0.2.tgz#6da9de949a1ec9d08cbc2b43832fe2a214f502dc"
-  integrity sha512-xY9IHP56kjyGsXYk8r5/ZPgpvFuM4lfoN6dFRA60WEa+Xc5izR/N/zOKMO/2j4x5lZALVv19u8+r59CS6+X+Yw==
-
 use-subscription@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/use-subscription/-/use-subscription-1.4.1.tgz#edcbcc220f1adb2dd4fa0b2f61b6cc308e620069"

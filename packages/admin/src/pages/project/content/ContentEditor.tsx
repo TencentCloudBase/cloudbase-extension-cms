@@ -8,6 +8,7 @@ import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
 import { getDocInitialValues, getSchemaCustomFields } from '@/utils'
+import { getDocChangedValues } from './tool'
 
 const { Text } = Typography
 
@@ -34,7 +35,8 @@ const ContentEditor: React.FC = () => {
 
       if (contentAction === 'edit') {
         // 只更新变更过的字段
-        await updateContent(projectId, schema?.collectionName, selectedContent._id, payload)
+        const updatedData = getDocChangedValues(initialValues, payload)
+        await updateContent(projectId, schema?.collectionName, selectedContent._id, updatedData)
       }
     },
     {
