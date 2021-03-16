@@ -42,6 +42,18 @@ const customMenuData: MenuDataItem[] = [
     children: [],
   },
   {
+    name: '微应用',
+    icon: <RocketTwoTone />,
+    authority: 'isLogin',
+    path: '/:projectId/microapp',
+    children: [
+      {
+        name: '页面 1',
+        path: '/:projectId/microapp/app',
+      },
+    ],
+  },
+  {
     authority: 'canWebhook',
     path: '/:projectId/webhook',
     name: 'Webhook',

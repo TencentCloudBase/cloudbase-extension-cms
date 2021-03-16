@@ -65,6 +65,11 @@ const config: IConfig = {
   define: {
     ...platformConfig.define,
   },
+  // 微前端
+  qiankun: {
+    master: {},
+  },
+  mountElementId: 'root',
 }
 
 // webpack chunk 合并

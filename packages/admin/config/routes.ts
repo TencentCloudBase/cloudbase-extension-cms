@@ -39,6 +39,7 @@ const routesConfig: IConfig = {
       component: './redirect',
     },
     {
+      path: '/:projectId/',
       component: '../layout/index',
       layout: false,
       routes: [
@@ -146,6 +147,17 @@ const routesConfig: IConfig = {
           access: 'isAdmin',
           wrappers: ['../components/SecurityWrapper/index'],
           component: './project/setting/index',
+        },
+        {
+          name: 'MicroApp',
+          access: 'isLogin',
+          path: '/:projectId/microapp',
+          wrappers: ['../components/SecurityWrapper/index'],
+          routes: [
+            {
+              component: './project/micro-app-container/index',
+            },
+          ],
         },
       ],
     },
