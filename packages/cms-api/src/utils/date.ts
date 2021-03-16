@@ -1,3 +1,4 @@
+import { Collection } from '@/constants'
 import { getCloudBaseApp } from './cloudbase'
 
 export const isDateType = (type: string): boolean => type === 'Date' || type === 'DateTime'
@@ -12,7 +13,7 @@ export const formatPayloadDate = async (
     data: [schema],
   }: { data: Schema[] } = await app
     .database()
-    .collection('tcb-ext-cms-schemas')
+    .collection(Collection.Schemas)
     .where({
       collectionName,
     })
