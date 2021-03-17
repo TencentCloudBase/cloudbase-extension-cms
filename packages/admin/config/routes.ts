@@ -148,16 +148,20 @@ const routesConfig: IConfig = {
           wrappers: ['../components/SecurityWrapper/index'],
           component: './project/setting/index',
         },
+        // {
+        //   name: 'MicroApp',
+        //   access: 'isLogin',
+        //   path: '/:projectId/microapp',
+        //   wrappers: ['../components/SecurityWrapper/index'],
+        //   routes: [
+        //     {
+        //       component: './project/micro-app-container/index',
+        //     },
+        //   ],
+        // },
+        // 所有的微应用
         {
-          name: 'MicroApp',
-          access: 'isLogin',
-          path: '/:projectId/microapp',
-          wrappers: ['../components/SecurityWrapper/index'],
-          routes: [
-            {
-              component: './project/micro-app-container/index',
-            },
-          ],
+          component: './project/micro-app-container/index',
         },
       ],
     },

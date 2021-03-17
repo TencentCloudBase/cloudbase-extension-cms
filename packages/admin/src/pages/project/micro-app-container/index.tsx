@@ -27,35 +27,14 @@ async function loadApp() {
   }
 }
 
-// const MicroApp = () => {
-//   useEffect(() => {
-//     loadApp()
-//     // try {
-//     //   registerMicroApps([
-//     //     {
-//     //       name: 'micro-app',
-//     //       entry: 'http://localhost:3002/',
-//     //       container: '#micro-app',
-//     //       // hash 路由
-//     //       activeRule: '/#/:projectId/app',
-//     //     },
-//     //   ])
-
-//     //   start({
-//     //     singular: false,
-//     //   })
-//     // } catch (error) {
-//     //   console.log(error)
-//     // }
-//   }, [])
-
-//   return <div id="micro-app" />
-// }
-
 /**
  * 挂载微应用
  */
 const MicroContainer = () => {
+  window.addEventListener('_FROM_CMS_MICRO_APP_SLAVE_', (e: Event) => {
+    console.log('收到信息', e)
+  })
+
   return (
     <PageContainer>
       Containers
