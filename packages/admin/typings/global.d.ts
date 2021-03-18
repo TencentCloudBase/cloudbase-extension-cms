@@ -2,7 +2,7 @@
  *  URL 参数
  */
 interface UrlParams {
-  projectId: string
+  schemaId: string
 }
 
 /**

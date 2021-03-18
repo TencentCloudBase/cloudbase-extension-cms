@@ -1,8 +1,8 @@
-import { useParams } from 'umi'
 import React, { useRef } from 'react'
 import { PageContainer } from '@ant-design/pro-layout'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { getMigrateJobs } from '@/services/content'
+import { getProjectId } from '@/utils'
 
 const StatusMap = {
   waiting: '等待中',
@@ -67,7 +67,7 @@ const columns: ProColumns<MigrateJobDto>[] = MigrateJobColumns.map((item) => ({
 }))
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
 
   const tableRef = useRef<ActionType>()
 

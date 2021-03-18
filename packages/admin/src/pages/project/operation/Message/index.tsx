@@ -1,13 +1,14 @@
 import { useConcent } from 'concent'
 import { stringify } from 'querystring'
 import { useSetState } from 'react-use'
-import { history, useParams } from 'umi'
+import { history } from 'umi'
 import { ContentCtx, GlobalCtx } from 'typings/store'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useRef, useCallback, useMemo } from 'react'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { getContents } from '@/services/content'
+import { getProjectId, redirectTo } from '@/utils'
 import { Button, Modal, message, Space, Menu, List, Typography, Popover } from 'antd'
 import { PlusOutlined, QuestionCircleTwoTone } from '@ant-design/icons'
 import { formatSearchParams } from '../../content/tool'
@@ -18,12 +19,11 @@ import { taskColumns } from './columns'
 const { Text } = Typography
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<any>()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state
 
   if (!setting?.enableOperation) {
-    history.push(`/${projectId}/operation`)
+    redirectTo('operation')
     return ''
   }
 
@@ -46,7 +46,7 @@ export const ContentTable: React.FC<{
   currentSchema: Schema
 }> = (props) => {
   const { currentSchema } = props
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const [{ visible, sendStatusList }, setState] = useSetState<any>({
     visible: false,
     sendStatusList: [],
@@ -147,7 +147,11 @@ export const ContentTable: React.FC<{
             onClick={() => {
               // 存在 queryId，则使用结果展示表格
               if (record.queryId) {
-                history.push(`/${projectId}/operation/message/result?queryId=${record.queryId}`)
+                redirectTo('operation/message/result', {
+                  query: {
+                    queryId: record.queryId,
+                  },
+                })
               } else {
                 setState({
                   visible: true,
@@ -177,7 +181,7 @@ export const ContentTable: React.FC<{
         type="primary"
         icon={<PlusOutlined />}
         onClick={() => {
-          history.push(`/${projectId}/operation/message/create`)
+          redirectTo('operation/message/create')
         }}
       >
         发送短信

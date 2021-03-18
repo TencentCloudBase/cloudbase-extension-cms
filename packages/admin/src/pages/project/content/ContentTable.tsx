@@ -7,6 +7,7 @@ import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { Button, Modal, message, Space, Row, Col, Dropdown, Menu, Select } from 'antd'
 import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@ant-design/icons'
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
+import { getProjectId, redirectTo } from '@/utils'
 import { ContentCtx } from 'typings/store'
 import { getTableColumns } from './columns'
 import ContentTableSearchForm from './SearchForm'
@@ -25,9 +26,10 @@ const negativeTypes = ['File', 'Image']
 export const ContentTable: React.FC<{
   currentSchema: Schema
 }> = (props) => {
+  const projectId = getProjectId()
   const { currentSchema } = props
   const ctx = useConcent<{}, ContentCtx>('content')
-  const { projectId, schemaId = 'default' } = useParams<any>()
+  const { schemaId = 'default' } = useParams<UrlParams>()
 
   // 检索的字段
   const { searchFields, searchParams } = ctx.state
@@ -122,7 +124,7 @@ export const ContentTable: React.FC<{
                 contentAction: 'edit',
                 selectedContent: row,
               })
-              history.push(`/${projectId}/content/${schemaId}/edit`)
+              redirectTo(`content/${schemaId}/edit`)
             }}
           >
             编辑
@@ -185,8 +187,7 @@ export const ContentTable: React.FC<{
             contentAction: 'create',
             selectedContent: null,
           })
-
-          history.push(`/${projectId}/content/${schemaId}/edit`)
+          redirectTo(`content/${schemaId}/edit`)
         }}
       >
         新建

@@ -1,5 +1,5 @@
 import { useConcent } from 'concent'
-import { useParams, useRequest } from 'umi'
+import { useRequest } from 'umi'
 import React, { useState, useEffect, useMemo } from 'react'
 import { updateSchema } from '@/services/schema'
 import {
@@ -25,6 +25,7 @@ import {
   formatStoreTimeByType,
   getMissingSystemFields,
   getSchemaCustomFields,
+  getProjectId,
 } from '@/utils'
 import { getFieldDefaultValueInput, getFieldFormItem } from './Field'
 
@@ -44,7 +45,7 @@ export const SchemaFieldEditorModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const [formValue, setFormValue] = useState<any>()

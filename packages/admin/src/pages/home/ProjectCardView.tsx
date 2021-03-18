@@ -3,6 +3,7 @@ import { history, useAccess } from 'umi'
 import styled from 'styled-components'
 import { Card, Tooltip, Typography } from 'antd'
 import { PlusCircleTwoTone } from '@ant-design/icons'
+import { redirectTo } from '@/utils'
 
 const { Title, Paragraph } = Typography
 
@@ -66,7 +67,9 @@ export default function ProjectListView({
         <ProjectItem
           key={index}
           onClick={() => {
-            history.push(`/${project._id}/home`)
+            redirectTo('home', {
+              projectId: project._id,
+            })
           }}
         >
           <Card bordered={false} style={cardStyle} bodyStyle={cardBodyStyle}>

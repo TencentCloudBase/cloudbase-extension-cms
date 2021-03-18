@@ -1,9 +1,8 @@
-import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useCallback, useMemo, useState } from 'react'
 import { Modal, Typography, Upload, message, Checkbox, Space, Alert } from 'antd'
 import { SchmeaCtx, ContentCtx } from 'typings/store'
-import { random, readFile, saveContentToFile } from '@/utils'
+import { getProjectId, random, readFile, saveContentToFile } from '@/utils'
 import { InboxOutlined } from '@ant-design/icons'
 import { createSchema } from '@/services/schema'
 
@@ -104,7 +103,7 @@ export const SchemaImportModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const { schemas } = ctx.state

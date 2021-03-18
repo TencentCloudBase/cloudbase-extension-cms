@@ -1,13 +1,13 @@
 import { useSetState } from 'react-use'
 import { useConcent } from 'concent'
-import { useParams, useRequest, history } from 'umi'
+import { useRequest, history } from 'umi'
 import React, { MutableRefObject, useEffect, useRef } from 'react'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { Form, message, Space, Button, Row, Col, Typography, Modal, Image, Select } from 'antd'
 import { LeftCircleTwoTone } from '@ant-design/icons'
 
-import { generateQRCode, getDocInitialValues } from '@/utils'
+import { generateQRCode, getDocInitialValues, getProjectId } from '@/utils'
 import { getFieldFormItem } from '@/components/Fields'
 import { getLowCodeAppInfo } from '@/services/operation'
 import { createContent, updateContent } from '@/services/content'
@@ -20,7 +20,7 @@ const MessageTask: React.FC = () => {
   const isFromLowCode = window.TcbCmsConfig.fromLowCode
   const modalRef = useRef<any>(null)
   const [form] = Form.useForm()
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent('content')
 
   const { selectedContent, contentAction } = ctx.state

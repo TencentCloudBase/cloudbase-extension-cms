@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import { useRequest, useParams, history } from 'umi'
+import { useRequest, history } from 'umi'
 import { getProject, updateProject, deleteProject } from '@/services/project'
 import { Divider, Button, Space, Typography, Form, Input, Skeleton, Modal, message } from 'antd'
+import { getProjectId } from '@/utils'
 
 const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const [modalVisible, setModalVisible] = useState(false)
   const [projectName, setProjectName] = useState('')
 
@@ -66,7 +67,7 @@ const ProjectDangerAction: React.FC<{ project: Project }> = ({ project }) => {
 }
 
 export default (): React.ReactElement => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const [reload, setReload] = useState(0)
   const [changed, setChanged] = useState(false)
   const { data: project, loading } = useRequest<{ data: Project }>(() => getProject(projectId), {

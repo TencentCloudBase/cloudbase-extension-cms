@@ -1,9 +1,9 @@
-import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useState } from 'react'
 import { Modal, message } from 'antd'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
 import { updateSchema } from '@/services/schema'
+import { getProjectId } from '@/utils'
 
 /**
  * 删除字段
@@ -12,7 +12,7 @@ export const SchemaFieldDeleteModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const [loading, setLoading] = useState(false)

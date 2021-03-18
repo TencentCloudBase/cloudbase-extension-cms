@@ -1,7 +1,7 @@
 import React, { Suspense, useMemo } from 'react'
 import { Select, Col, Row, Skeleton, Space, Spin, Button, Result, Tooltip } from 'antd'
 import { PageContainer } from '@ant-design/pro-layout'
-import { history, useParams, useRequest } from 'umi'
+import { useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
 import { getContents } from '@/services/content'
@@ -10,9 +10,9 @@ import { useSetState } from 'react-use'
 import { AlertTwoTone, QuestionCircleOutlined } from '@ant-design/icons'
 import { FunnelChart, PieChart } from '@/components/Charts'
 import { getAnalyticsData } from '@/services/operation'
+import { getHour, getProjectId, redirectTo } from '@/utils'
 import { ActivitySchema } from '../Activity/schema'
 import DataSource from './DataSource'
-import { getHour } from '@/utils'
 
 // 懒加载
 const OverviewRow = React.lazy(() => import('./OverviewRow'))
@@ -30,7 +30,7 @@ const colProps = {
 }
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state
 
@@ -116,7 +116,7 @@ export default (): React.ReactNode => {
             <Button
               type="primary"
               onClick={() => {
-                history.push(`/${projectId}/operation/activity`)
+                redirectTo('operation/activity')
               }}
             >
               创建活动

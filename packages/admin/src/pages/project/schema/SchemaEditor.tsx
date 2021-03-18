@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react'
-import { useParams, useRequest } from 'umi'
+import { useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { SchmeaCtx } from 'typings/store'
 import { createSchema, updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Typography, Tooltip } from 'antd'
 import { QuestionCircleTwoTone } from '@ant-design/icons'
 import { getCmsSystemFields } from '@/common'
+import { getProjectId } from '@/utils'
 
 const { TextArea } = Input
 
@@ -41,7 +42,7 @@ const getSchemaInitialValues = (action: string, currentSchema: Schema) => {
  * 新建/更新模型
  */
 const SchemaEditor: React.FC = () => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent('content')
   const { schemaEditAction, schemaEditVisible, currentSchema } = ctx.state

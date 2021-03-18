@@ -2,6 +2,7 @@ import { Spin } from 'antd'
 import React, { useEffect } from 'react'
 import { history, useRequest } from 'umi'
 import { getCollectionInfo } from '@/services/apis'
+import { redirectTo } from '@/utils'
 
 /**
  * 重定向来自低码的访问，到对应的集合
@@ -30,9 +31,13 @@ export default () => {
 
     // 跳转到对应的集合管理页面
     if (schema?._id) {
-      history.push(`/${projectId}/content/${schema._id}`)
+      redirectTo(`content/${schema._id}`, {
+        projectId,
+      })
     } else if (project) {
-      history.push(`/${projectId}/home`)
+      redirectTo('home', {
+        projectId,
+      })
     } else {
       history.push('/home')
     }

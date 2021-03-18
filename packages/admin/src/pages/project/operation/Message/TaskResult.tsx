@@ -1,15 +1,16 @@
 import { stringify } from 'querystring'
-import { history, useParams } from 'umi'
+import { history } from 'umi'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { useRef, useCallback, useMemo } from 'react'
 import ProTable, { ActionType } from '@ant-design/pro-table'
 import { getSmsTaskResult } from '@/services/operation'
 import ProCard from '@ant-design/pro-card'
 import { taskResultColumns } from './columns'
+import { getProjectId } from '@/utils'
 
 export default (): React.ReactNode => {
   // 短信发送任务查询 ID
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const queryId = history.location.query?.queryId as string
 
   // 表格引用，重置、操作表格

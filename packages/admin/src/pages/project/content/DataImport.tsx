@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, history } from 'umi'
 import {
   Button,
   Modal,
@@ -14,7 +13,7 @@ import {
 } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
 import { createMigrateJobs } from '@/services/content'
-import { random, uploadFile } from '@/utils'
+import { getProjectId, random, redirectTo, uploadFile } from '@/utils'
 
 const { Dragger } = Upload
 const { Title } = Typography
@@ -24,7 +23,7 @@ const { Option } = Select
  * 导入数据
  */
 const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const [visible, setVisible] = useState(false)
   const [percent, setPercent] = useState(0)
   const [uploading, setUploading] = useState(false)
@@ -43,10 +42,13 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
         overlay={
           <Menu
             onClick={({ key }) => {
+              // 查看导出记录
               if (key === 'record') {
-                history.push(`/${projectId}/content/migrate`)
+                redirectTo('content/migrate')
                 return
               }
+
+              // 导入数据
               setVisible(true)
               setDataType(key as string)
             }}

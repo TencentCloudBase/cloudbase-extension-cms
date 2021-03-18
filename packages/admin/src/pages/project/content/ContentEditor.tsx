@@ -7,13 +7,14 @@ import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
-import { getDocInitialValues, getSchemaCustomFields } from '@/utils'
+import { getDocInitialValues, getProjectId, getSchemaCustomFields } from '@/utils'
 import { getDocChangedValues } from './tool'
 
 const { Text } = Typography
 
 const ContentEditor: React.FC = () => {
-  const { schemaId, projectId } = useParams<any>()
+  const projectId = getProjectId()
+  const { schemaId } = useParams<UrlParams>()
   const ctx = useConcent('content')
   const { selectedContent, contentAction } = ctx.state
   const {

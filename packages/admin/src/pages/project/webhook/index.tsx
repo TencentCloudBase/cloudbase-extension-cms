@@ -1,10 +1,10 @@
-import { useParams } from 'umi'
 import React, { useRef, useState } from 'react'
 import { PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
+import { Button, Modal, Tabs, message, Drawer } from 'antd'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
 import { getWebhooks, deleteWebhook } from '@/services/webhook'
-import { Button, Modal, Tabs, message, Drawer } from 'antd'
+import { getProjectId } from '@/utils'
 import { WebhookForm } from './WebhookForm'
 import WebhookExecLog from './WebhookExecLog'
 import { WebhookColumns } from './columns'
@@ -17,7 +17,7 @@ const columns: ProColumns<Webhook>[] = WebhookColumns.map((item) => ({
 }))
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<UrlParams>()
+  const projectId = getProjectId()
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [selectedWebhook, setSelectedWebhook] = useState<Webhook>()
   const [webhookAction, setWebhookAction] = useState<'create' | 'edit'>('create')

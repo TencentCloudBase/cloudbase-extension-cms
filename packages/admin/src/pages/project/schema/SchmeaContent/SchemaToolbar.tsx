@@ -1,9 +1,8 @@
-import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useState, useCallback, useEffect } from 'react'
 import { Modal, message, Space, Checkbox, Typography, Tooltip } from 'antd'
 import { EditTwoTone, DeleteTwoTone, ExportOutlined, CopyOutlined } from '@ant-design/icons'
-import { random, saveContentToFile } from '@/utils'
+import { getProjectId, random, saveContentToFile } from '@/utils'
 import { deleteSchema } from '@/services/schema'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
 
@@ -91,7 +90,7 @@ export const DeleteSchemaModal: React.FC<{
   visible: boolean
   onClose: () => void
 }> = ({ visible, onClose }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const { currentSchema } = ctx.state

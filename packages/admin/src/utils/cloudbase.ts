@@ -66,7 +66,7 @@ export function getWxCloudApp() {
 }
 
 /**
- * 初始化云开发 app 实例
+ * 初始化云开发 app、auth 实例
  */
 function initCloudBaseApp() {
   if (!app) {
@@ -85,12 +85,27 @@ function initCloudBaseApp() {
   }
 }
 
-// 用户名密码登录
+/**
+ * 用户名密码登录
+ * @param username
+ * @param password
+ */
 export async function loginWithPassword(username: string, password: string) {
   // 登陆
   await auth.signInWithUsernameAndPassword(username, password)
 }
 
+/**
+ * 获取当前登录态信息
+ */
+export async function getLoginState() {
+  // 获取登录态
+  return auth.getLoginState()
+}
+
+/**
+ * 同步获取 x-cloudbase-credentials
+ */
 export function getAuthHeader() {
   return auth.getAuthHeader()
 }
@@ -98,7 +113,7 @@ export function getAuthHeader() {
 let gotAuthHeader = false
 let gotAuthTime = 0
 /**
- * 获取 x-cloudbase-credentials 请求 Header
+ * 异步获取 x-cloudbase-credentials 请求 Header
  */
 export async function getAuthHeaderAsync() {
   // 直接读取本地

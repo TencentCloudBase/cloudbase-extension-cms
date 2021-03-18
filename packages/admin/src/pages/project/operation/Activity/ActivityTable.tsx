@@ -1,5 +1,5 @@
 import { useConcent } from 'concent'
-import { useParams, history } from 'umi'
+import { history } from 'umi'
 import { stringify } from 'querystring'
 import QrCode from '@/components/QrCode'
 import ProTable, { ActionType, ProColumns } from '@ant-design/pro-table'
@@ -12,6 +12,7 @@ import { getTableColumns } from '@/pages/project/content/columns'
 import ContentTableSearchForm from '@/pages/project/content/SearchForm'
 import { exportData, formatSearchParams } from '@/pages/project/content/tool'
 import { useSetState } from 'react-use'
+import { getProjectId, redirectTo } from '@/utils'
 import ActivityChannels from './Channel'
 
 const { Option } = Select
@@ -31,7 +32,7 @@ export const ActivityTable: React.FC<{
   const [{ activityId }, setState] = useSetState({
     activityId: '',
   })
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
 
   // 检索的字段
   const { searchFields, searchParams } = ctx.state
@@ -126,7 +127,11 @@ export const ActivityTable: React.FC<{
                 contentAction: 'edit',
                 selectedContent: row,
               })
-              history.push(`/${projectId}/operation/activity/edit?upload=hosting`)
+              redirectTo('operation/activity/edit', {
+                query: {
+                  upload: 'hosting',
+                },
+              })
             }}
           >
             编辑
@@ -201,7 +206,12 @@ export const ActivityTable: React.FC<{
             contentAction: 'create',
             selectedContent: null,
           })
-          history.push(`/${projectId}/operation/activity/edit?upload=hosting`)
+
+          redirectTo('operation/activity/edit', {
+            query: {
+              upload: 'hosting',
+            },
+          })
         }}
       >
         新建

@@ -1,4 +1,3 @@
-import { useParams } from 'umi'
 import { useConcent } from 'concent'
 import React, { useMemo, useState } from 'react'
 import { FieldTypes } from '@/common'
@@ -7,7 +6,7 @@ import { ExclamationCircleTwoTone, QuestionCircleTwoTone } from '@ant-design/ico
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd'
 import { updateSchema } from '@/services/schema'
 import { ContentCtx, SchmeaCtx } from 'typings/store'
-import { getSchemaCustomFields, getSchemaSystemFields } from '@/utils'
+import { getProjectId, getSchemaCustomFields, getSchemaSystemFields } from '@/utils'
 
 export interface FieldType {
   icon: React.ReactNode
@@ -24,7 +23,7 @@ export const SchemaFieldListRender: React.FC<{
 }> = (props) => {
   const { schema, actionRender, onFiledClick } = props
   const [sortLoading, setSortLoading] = useState(false)
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
   const contentCtx = useConcent<{}, ContentCtx>('content')
 

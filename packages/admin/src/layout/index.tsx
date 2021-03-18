@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { history, Link, matchPath, useAccess } from 'umi'
+import { history, Link, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
 import RightContent from '@/components/RightContent'
 import ProLayout, { MenuDataItem, BasicLayoutProps } from '@ant-design/pro-layout'
@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons'
 import { useConcent } from 'concent'
 import { ContentCtx, GlobalCtx } from 'typings/store'
-import { getCmsConfig } from '@/utils'
+import { getCmsConfig, getProjectId } from '@/utils'
 import defaultSettings from '../../config/defaultSettings'
 import { Spin } from 'antd'
 
@@ -24,19 +24,19 @@ setTwoToneColor('#0052d9')
 const customMenuData: MenuDataItem[] = [
   {
     authority: 'isLogin',
-    path: '/:projectId/home',
+    path: '/project/home',
     name: '概览',
     icon: <EyeTwoTone />,
   },
   {
     authority: 'canSchema',
-    path: '/:projectId/schema',
+    path: '/project/schema',
     name: '内容模型',
     icon: <GoldTwoTone />,
   },
   {
     authority: 'canContent',
-    path: '/:projectId/content',
+    path: '/project/content',
     name: '内容集合',
     icon: <DatabaseTwoTone />,
     children: [],
@@ -45,24 +45,24 @@ const customMenuData: MenuDataItem[] = [
     name: '微应用',
     icon: <RocketTwoTone />,
     authority: 'isLogin',
-    path: '/:projectId/microapp/app',
+    path: '/project/microapp/app',
     // children: [
     //   {
     //     name: '页面 1',
-    //     path: '/:projectId/microapp/app',
+    //     path: '/project/microapp/app',
     //   },
     // ],
   },
   {
     authority: 'canWebhook',
-    path: '/:projectId/webhook',
+    path: '/project/webhook',
     name: 'Webhook',
     icon: <RocketTwoTone />,
     children: [],
   },
   {
     authority: 'isAdmin',
-    path: '/:projectId/setting',
+    path: '/project/setting',
     name: '项目设置',
     icon: <SettingTwoTone />,
   },
@@ -72,7 +72,7 @@ const customMenuData: MenuDataItem[] = [
 if (WX_MP || window.TcbCmsConfig.isMpEnv) {
   customMenuData.splice(3, 0, {
     authority: 'canContent',
-    path: '/:projectId/operation',
+    path: '/project/operation',
     name: '营销工具',
     icon: <ShoppingTwoTone />,
     children: [],
@@ -103,16 +103,10 @@ const Layout: React.FC<any> = (props) => {
 
   // 加载 schema 集合
   useEffect(() => {
-    // 匹配 Path，获取 projectId
-    const match = matchPath<{ projectId?: string }>(history.location.pathname, {
-      path: '/:projectId/*',
-      exact: true,
-      strict: false,
-    })
-
     // projectId 无效时，重定向到首页
-    const { projectId = '' } = match?.params || {}
-    if (projectId === ':projectId' || !projectId) {
+    const projectId = getProjectId()
+
+    if (projectId === 'project' || !projectId) {
       history.push('/home')
       return
     }
@@ -123,7 +117,7 @@ const Layout: React.FC<any> = (props) => {
   // 内容集合菜单
   const contentChildMenus = schemas?.map((schema: Schema) => ({
     name: schema.displayName,
-    path: `/:projectId/content/${schema._id}`,
+    path: `/project/content/${schema._id}`,
   }))
 
   // HACK: 强制菜单重新渲染，修复菜单栏在获取数据后不自动渲染的问题
@@ -141,17 +135,17 @@ const Layout: React.FC<any> = (props) => {
         customMenuData[3].children = [
           {
             name: '营销活动',
-            path: '/:projectId/operation/activity',
+            path: '/project/operation/activity',
             component: './project/operation/Activity/index',
           },
           {
             name: '发送短信',
-            path: '/:projectId/operation/message',
+            path: '/project/operation/message',
             component: './project/operation/Message/index',
           },
           {
             name: '统计分析',
-            path: '/:projectId/operation/analytics',
+            path: '/project/operation/analytics',
             component: './project/operation/Analytics/index',
           },
         ]
@@ -171,23 +165,20 @@ const Layout: React.FC<any> = (props) => {
         return customMenuData.filter((_) => access[_.authority as string])
       }}
       menuItemRender={(menuItemProps, defaultDom) => {
-        const match = matchPath<{ projectId?: string }>(history.location.pathname, {
-          path: '/:projectId/*',
-          exact: true,
-          strict: false,
-        })
-
-        // 项目 Id
-        const { projectId = '' } = match?.params || {}
+        const projectId = getProjectId()
 
         if (menuItemProps.isUrl || menuItemProps.children) {
           return defaultDom
         }
 
         if (menuItemProps.path) {
+          const menuPath = menuItemProps.path?.includes('?pid')
+            ? menuItemProps.path
+            : menuItemProps.path + `?pid=${projectId}`
+
           return (
             <Link
-              to={menuItemProps.path.replace(':projectId', projectId)}
+              to={menuPath}
               onClick={() => {
                 // 清空搜索数据
                 ctx.setState({

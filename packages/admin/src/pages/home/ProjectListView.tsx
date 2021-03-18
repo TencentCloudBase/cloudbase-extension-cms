@@ -1,9 +1,10 @@
 import React from 'react'
-import { history, useAccess } from 'umi'
+import { useAccess } from 'umi'
 import styled from 'styled-components'
 import ProCard from '@ant-design/pro-card'
 import { Tooltip, Typography } from 'antd'
 import { PlusCircleOutlined } from '@ant-design/icons'
+import { redirectTo } from '@/utils'
 
 const { Title, Paragraph } = Typography
 
@@ -60,7 +61,9 @@ export default function ProjectListView({
           key={index}
           className="flex items-center py-5 px-5"
           onClick={() => {
-            history.push(`/${_._id}/home`)
+            redirectTo('home', {
+              projectId: _._id,
+            })
           }}
         >
           <div className="w-2/4 flex items-center">

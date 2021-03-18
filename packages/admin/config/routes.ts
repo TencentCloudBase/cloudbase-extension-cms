@@ -39,13 +39,13 @@ const routesConfig: IConfig = {
       component: './redirect',
     },
     {
-      path: '/:projectId/',
+      path: '/project/',
       component: '../layout/index',
       layout: false,
       routes: [
         {
           exact: true,
-          path: '/:projectId/home',
+          path: '/project/home',
           name: '概览',
           icon: 'eye',
           access: 'isLogin',
@@ -54,7 +54,7 @@ const routesConfig: IConfig = {
         },
         {
           exact: true,
-          path: '/:projectId/schema',
+          path: '/project/schema',
           name: '内容模型',
           icon: 'gold',
           access: 'canSchema',
@@ -62,7 +62,7 @@ const routesConfig: IConfig = {
           component: './project/schema/index',
         },
         {
-          path: '/:projectId/content',
+          path: '/project/content',
           name: '内容集合',
           icon: 'database',
           access: 'canContent',
@@ -70,17 +70,17 @@ const routesConfig: IConfig = {
           routes: [
             {
               exact: true,
-              path: '/:projectId/content/migrate',
+              path: '/project/content/migrate',
               component: './project/migrate',
             },
             {
               exact: true,
-              path: '/:projectId/content/:schemaId',
+              path: '/project/content/:schemaId',
               component: './project/content/index',
             },
             {
               exact: true,
-              path: '/:projectId/content/:schemaId/edit',
+              path: '/project/content/:schemaId/edit',
               component: './project/content/ContentEditor',
             },
             {
@@ -89,7 +89,7 @@ const routesConfig: IConfig = {
           ],
         },
         {
-          path: '/:projectId/operation',
+          path: '/project/operation',
           name: '营销工具',
           icon: 'shopping',
           access: 'canOperation',
@@ -97,32 +97,32 @@ const routesConfig: IConfig = {
           routes: [
             {
               exact: true,
-              path: '/:projectId/operation/activity',
+              path: '/project/operation/activity',
               component: './project/operation/Activity/index',
             },
             {
               exact: true,
-              path: '/:projectId/operation/activity/edit',
+              path: '/project/operation/activity/edit',
               component: './project/operation/Activity/ActivityEditor',
             },
             {
               exact: true,
-              path: '/:projectId/operation/message',
+              path: '/project/operation/message',
               component: './project/operation/Message/index',
             },
             {
               exact: true,
-              path: '/:projectId/operation/analytics',
+              path: '/project/operation/analytics',
               component: './project/operation/Analytics/index',
             },
             {
               exact: true,
-              path: '/:projectId/operation/message/create',
+              path: '/project/operation/message/create',
               component: './project/operation/Message/TaskCreator',
             },
             {
               exact: true,
-              path: '/:projectId/operation/message/result',
+              path: '/project/operation/message/result',
               component: './project/operation/Message/TaskResult',
             },
             {
@@ -132,7 +132,7 @@ const routesConfig: IConfig = {
         },
         {
           exact: true,
-          path: '/:projectId/webhook',
+          path: '/project/webhook',
           name: 'Webhook',
           icon: 'deployment-unit',
           access: 'canWebhook',
@@ -141,27 +141,16 @@ const routesConfig: IConfig = {
         },
         {
           exact: true,
-          path: '/:projectId/setting',
+          path: '/project/setting',
           name: '项目设置',
           icon: 'setting',
           access: 'isAdmin',
           wrappers: ['../components/SecurityWrapper/index'],
           component: './project/setting/index',
         },
-        // {
-        //   name: 'MicroApp',
-        //   access: 'isLogin',
-        //   path: '/:projectId/microapp',
-        //   wrappers: ['../components/SecurityWrapper/index'],
-        //   routes: [
-        //     {
-        //       component: './project/micro-app-container/index',
-        //     },
-        //   ],
-        // },
         // 所有的微应用
         {
-          component: './project/micro-app-container/index',
+          component: './project/microapp/index',
         },
       ],
     },

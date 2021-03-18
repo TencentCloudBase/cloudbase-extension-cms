@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react'
-import { useParams, useRequest } from 'umi'
+import { useRequest } from 'umi'
 import { getContents } from '@/services/content'
 import { Menu, Modal, Button, Dropdown, Alert, message } from 'antd'
 import { exportData, formatSearchParams } from './tool'
+import { getProjectId } from '@/utils'
 
 type ExportFileType = 'csv' | 'json'
 
@@ -14,7 +15,7 @@ const DataExport: React.FC<{ schema: Schema; collectionName: string; searchParam
   searchParams = {},
   collectionName,
 }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const searchKeys = Object.keys(searchParams)
   const [visible, setVisible] = useState(false)
   const [fileType, setFileType] = useState<ExportFileType>('json')

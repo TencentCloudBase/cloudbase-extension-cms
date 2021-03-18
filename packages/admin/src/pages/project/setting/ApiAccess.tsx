@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { useRequest, useParams } from 'umi'
+import { useRequest } from 'umi'
 import { useSetState } from 'react-use'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getProject, updateProject } from '@/services/project'
@@ -19,7 +19,7 @@ import {
 } from 'antd'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
-import { copyToClipboard } from '@/utils'
+import { copyToClipboard, getProjectId } from '@/utils'
 import { CopyOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
@@ -29,7 +29,7 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
   onReload,
 }) => {
   const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace('tcb-ext-cms-service', '')
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const [state, setState] = useSetState({
     apiPath: '',
     modalVisible: false,
@@ -164,7 +164,7 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
 }) => {
   const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace(/(tcb|wx)-ext-cms-service/, '')
 
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   // 使用 content module 的数据，获取 layout 时，必然被加载、刷新
   const {
     state: { schemas },
@@ -270,7 +270,7 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
 }
 
 export default (): React.ReactElement => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const [reloadFlag, setReloadFlag] = useState(0)
   // 重新加载 project 信息
   const reload = useCallback(() => setReloadFlag(reloadFlag + 1), [reloadFlag])

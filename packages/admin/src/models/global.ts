@@ -1,4 +1,4 @@
-import { getSettings, updateSetting } from '@/services/global'
+import { getSetting, updateSetting } from '@/services/global'
 import { getCloudBaseApp } from '@/utils'
 
 interface GlobalState {
@@ -32,7 +32,7 @@ export default {
       if (!loginState) return {}
 
       // 获取全局设置
-      const { data = {} } = await getSettings()
+      const { data = {} } = await getSetting()
       return {
         setting: data,
       }

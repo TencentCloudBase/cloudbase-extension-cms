@@ -1,10 +1,10 @@
-import { useParams } from 'umi'
 import React, { useState, useEffect } from 'react'
 import { useConcent } from 'concent'
 import ProCard from '@ant-design/pro-card'
 import { Layout, Button, Space } from 'antd'
 import { ExportOutlined, ImportOutlined, PlusOutlined } from '@ant-design/icons'
 import { PageContainer } from '@ant-design/pro-layout'
+import { getProjectId } from '@/utils'
 import { SchmeaCtx } from 'typings/store'
 
 import { SchemaExportModal, SchemaImportModal } from './SchemaShare'
@@ -24,7 +24,7 @@ export interface TableListItem {
 }
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, SchmeaCtx>('schema')
 
   // 模型导入导出

@@ -13,14 +13,14 @@ import {
   Steps,
   Typography,
 } from 'antd'
+import { useToggle } from 'react-use'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
-import { history, useParams, useRequest } from 'umi'
+import { history, useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
 import { enableNonLogin, enableOperationService } from '@/services/operation'
-import { callWxOpenAPI, sleep } from '@/utils'
-import { useToggle } from 'react-use'
+import { callWxOpenAPI, getProjectId, redirectTo, sleep } from '@/utils'
 
 const { Step } = Steps
 const { Link } = Typography
@@ -32,7 +32,6 @@ interface MiniApp {
 }
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<any>()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state
 
@@ -54,7 +53,7 @@ export default (): React.ReactNode => {
   }
 
   // 重定向到活动页面
-  history.push(`/${projectId}/operation/activity`)
+  redirectTo('operation/activity')
 
   return (
     <PageContainer>
@@ -88,7 +87,7 @@ const OperationPageContainer: React.FC = ({ children }) => (
  * 开通营销工具
  */
 const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
 
   // 开通营销工具
   const { run: enableService } = useRequest(
@@ -147,7 +146,7 @@ const OperationEnable: React.FC<{ setting: GlobalSetting }> = ({ setting }) => {
       manual: true,
       onSuccess: () => {
         message.success('营销工具开通成功')
-        history.push(`/${projectId}/operation/activity`)
+        redirectTo('operation/activity')
         setTimeout(() => {
           window.location.reload()
         }, 200)

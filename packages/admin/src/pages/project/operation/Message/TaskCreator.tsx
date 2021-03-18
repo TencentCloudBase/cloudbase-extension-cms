@@ -1,5 +1,5 @@
 import React, { MutableRefObject, useEffect, useRef } from 'react'
-import { useParams, useRequest, history } from 'umi'
+import { useRequest, history } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { InboxOutlined, LeftCircleTwoTone } from '@ant-design/icons'
@@ -21,7 +21,7 @@ import {
   Alert,
 } from 'antd'
 import { useSetState } from 'react-use'
-import { callWxOpenAPI, downloadAndSaveFile, uploadFile } from '@/utils'
+import { callWxOpenAPI, downloadAndSaveFile, getProjectId, redirectTo, uploadFile } from '@/utils'
 import { createBatchTask } from '@/services/operation'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
@@ -52,7 +52,7 @@ const MessageTask: React.FC = () => {
   const qrCodeRef = useRef<any>()
   const modalRef = useRef<any>(null)
   const [form] = Form.useForm()
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
 
@@ -65,7 +65,7 @@ const MessageTask: React.FC = () => {
   })
 
   if (!setting?.enableOperation) {
-    history.push(`/${projectId}/operation`)
+    redirectTo('operation')
     return <span />
   }
 
@@ -388,7 +388,7 @@ const SmsFileTaskModal: React.FC<{
     activityId: string
   }
 }> = ({ actionRef, task = {} }) => {
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const { phoneNumberFile, activityId } = task
   const [{ visible, uploadPercent }, setState] = useSetState({
     visible: false,

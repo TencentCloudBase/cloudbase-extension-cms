@@ -1,14 +1,16 @@
 import { Empty, Button, Skeleton } from 'antd'
-import { history, useAccess, useParams } from 'umi'
+import { useAccess, useParams } from 'umi'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import React, { ReactNode, useEffect, useState } from 'react'
+import { getProjectId, redirectTo } from '@/utils'
 import { ContentTable } from './ContentTable'
 
 export default (): React.ReactNode => {
-  const { schemaId, projectId } = useParams<any>()
+  const projectId = getProjectId()
+  const { schemaId } = useParams<UrlParams>()
   const ctx = useConcent<{}, ContentCtx>('content')
   const [contentLoading, setContentLoading] = useState(false)
 
@@ -92,7 +94,7 @@ const EmptyTip: React.FC<{ projectId: string; desc: ReactNode; btnText: string }
         <Button
           type="primary"
           onClick={() => {
-            history.push(`/${projectId}/schema`)
+            redirectTo('schema')
           }}
         >
           {btnText}

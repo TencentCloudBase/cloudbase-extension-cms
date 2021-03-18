@@ -1,14 +1,13 @@
 import React, { useEffect } from 'react'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
-import { history, useParams } from 'umi'
 import { useConcent } from 'concent'
+import { redirectTo } from '@/utils'
 import { ContentCtx, GlobalCtx } from 'typings/store'
 import { ActivityTable } from './ActivityTable'
 import { ActivitySchema } from './schema'
 
 export default (): React.ReactNode => {
-  const { projectId } = useParams<any>()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const contentCtx = useConcent<{}, ContentCtx>('content')
   const { setting } = globalCtx.state
@@ -20,7 +19,7 @@ export default (): React.ReactNode => {
   }, [])
 
   if (!setting?.enableOperation) {
-    history.push(`/${projectId}/operation`)
+    redirectTo('operation')
     return ''
   }
 

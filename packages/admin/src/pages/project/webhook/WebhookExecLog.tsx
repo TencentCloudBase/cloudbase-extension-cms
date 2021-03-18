@@ -1,7 +1,7 @@
 import React from 'react'
-import { useParams } from 'umi'
 import ProTable, { ProColumns } from '@ant-design/pro-table'
 import { getWebhookLog } from '@/services/webhook'
+import { getProjectId } from '@/utils'
 import { WebhookLogColumns } from './columns'
 
 const columns: ProColumns<any>[] = WebhookLogColumns.map((item) => ({
@@ -10,7 +10,7 @@ const columns: ProColumns<any>[] = WebhookLogColumns.map((item) => ({
 }))
 
 export default () => {
-  const { projectId } = useParams<UrlParams>()
+  const projectId = getProjectId()
 
   // 获取 webhooks
   const tableRequest = async (

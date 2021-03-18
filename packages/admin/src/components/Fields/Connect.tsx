@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Typography, message, Tag, Select, Spin } from 'antd'
-import { useParams, useRequest } from 'umi'
+import { useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { getContentSchema, getContents, Options } from '@/services/content'
-import { calculateFieldWidth } from '@/utils'
+import { calculateFieldWidth, getProjectId } from '@/utils'
 import { ContentCtx } from 'typings/store'
 
 const { Option } = Select
@@ -63,7 +63,7 @@ export const IConnectEditor: React.FC<{
   onChange?: (v: string | string[]) => void
 }> = (props) => {
   const { value = [], onChange, field } = props
-  const { projectId } = useParams<any>()
+  const projectId = getProjectId()
   const ctx = useConcent<{}, ContentCtx>('content')
   const { connectField, connectResource, connectMany } = field
   const { schemas } = ctx.state

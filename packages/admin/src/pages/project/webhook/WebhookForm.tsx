@@ -1,9 +1,10 @@
 import React from 'react'
-import { useParams, useRequest } from 'umi'
-import { Button, Space, message, Form, Input, Select, Drawer } from 'antd'
+import { useRequest } from 'umi'
+import { Button, Space, message, Form, Input, Select } from 'antd'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons'
 import { createWebhook, updateWebhook } from '@/services/webhook'
 import { getSchemas } from '@/services/schema'
+import { getProjectId } from '@/utils'
 
 const EventMap = {
   create: '创建内容',
@@ -18,7 +19,7 @@ export const WebhookForm: React.FC<{
   selectedWebhook?: Webhook
 }> = ({ onClose, onSuccess, action, selectedWebhook }) => {
   const [form] = Form.useForm()
-  const { projectId } = useParams<UrlParams>()
+  const projectId = getProjectId()
 
   const actionText = action === 'create' ? '创建' : '更新'
 

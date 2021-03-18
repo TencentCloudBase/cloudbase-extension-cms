@@ -59,24 +59,3 @@ export const getCollectionInfo = async (customId: string, collectionName: string
     },
   })
 }
-
-/**
- * 获取全局设置
- */
-export const getGlobalSetting = async () => {
-  return apiRequest({
-    service: 'setting',
-    action: 'getGlobalSetting',
-  })
-}
-
-/**
- * 更新全局设置
- * @param payload
- */
-export const updateSetting = async (payload: Record<string, string>) => {
-  return tcbRequest('/setting', {
-    method: 'PATCH',
-    data: payload,
-  })
-}
