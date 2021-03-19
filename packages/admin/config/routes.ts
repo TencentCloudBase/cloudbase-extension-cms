@@ -19,14 +19,22 @@ const routesConfig: IConfig = {
       layout: false,
       access: 'isAdmin',
       wrappers: ['../components/SecurityWrapper/index'],
-      component: './system/setting',
-    },
-    {
-      path: '/settings/role/edit',
-      layout: false,
-      access: 'isAdmin',
-      wrappers: ['../components/SecurityWrapper/index'],
-      component: './system/setting/RoleManagement/RoleEditor/index',
+      routes: [
+        {
+          path: '/settings',
+          component: './system/setting',
+        },
+        {
+          exact: true,
+          path: '/settings/role/edit',
+          component: './system/setting/RoleManagement/RoleEditor/index',
+        },
+        {
+          exact: true,
+          path: '/settings/microapp/edit',
+          component: './system/setting/MicroApp/MicroAppEditor',
+        },
+      ],
     },
     {
       path: '/',

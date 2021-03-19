@@ -4,11 +4,7 @@ import React, { useState } from 'react'
 import { history, useRequest } from 'umi'
 import { LeftCircleTwoTone } from '@ant-design/icons'
 import { createUserRole, updateUserRole } from '@/services/role'
-import { Row, Col, Space, Typography, Steps, message, Card } from 'antd'
-import RolePermission from './RolePermission'
-import RoleInfo from './RoleInfo'
-
-const { Step } = Steps
+import { Row, Col, Space, Typography, message, Card } from 'antd'
 
 export default (): React.ReactNode => {
   const ctx = useConcent<{}, RoleCtx>('role')
@@ -46,45 +42,7 @@ export default (): React.ReactNode => {
           </Space>
         </div>
         <Typography.Title level={3}>{actionText}角色</Typography.Title>
-        <Card style={{ minHeight: '480px' }}>
-          <Steps current={currentStep}>
-            <Step title="角色信息" />
-            <Step title="角色权限" />
-            {/* <Step title="审阅" /> */}
-          </Steps>
-
-          <div style={{ paddingTop: '20px' }}>
-            {currentStep === 0 && (
-              <RoleInfo
-                initialValues={roleAction === 'edit' ? selectedRole : formValue}
-                onConfrim={(v) => {
-                  setFormValue({
-                    ...formValue,
-                    ...v,
-                  })
-                  setCurrentStep(currentStep + 1)
-                }}
-              />
-            )}
-
-            {currentStep === 1 && (
-              <RolePermission
-                creating={loading}
-                actionText={actionText}
-                initialValues={roleAction === 'edit' ? selectedRole : formValue}
-                onConfirm={(v) => {
-                  run({
-                    ...formValue,
-                    ...v,
-                  })
-                }}
-                onPrevious={() => {
-                  setCurrentStep(0)
-                }}
-              />
-            )}
-          </div>
-        </Card>
+        <Card style={{ minHeight: '480px' }}>xxx</Card>
       </Col>
       <Col flex="1 1 auto" />
     </Row>
