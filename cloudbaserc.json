@@ -122,6 +122,11 @@
               "aclTag": "ADMINONLY"
             },
             {
+              "collectionName": "tcb-ext-cms-webhook-log",
+              "description": "CMS webhook 执行记录集合（请不要手动修改）",
+              "aclTag": "ADMINONLY"
+            },
+            {
               "collectionName": "tcb-ext-cms-settings",
               "description": "CMS 系统系统配置集合，存储 CMS 系统的设置（请不要手动修改）",
               "aclTag": "ADMINONLY"
