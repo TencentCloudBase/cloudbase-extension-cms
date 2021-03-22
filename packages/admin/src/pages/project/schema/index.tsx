@@ -11,6 +11,7 @@ import { SchemaExportModal, SchemaImportModal } from './SchemaShare'
 import SchemaContent from './SchmeaContent'
 import SchemaMenuList from './SchemaMenuList'
 import SchemaEditor from './SchemaEditor'
+import SchemaFieldPicker from './SchemaFieldPicker'
 import './index.less'
 
 export interface TableListItem {
@@ -70,6 +71,9 @@ export default (): React.ReactNode => {
         <Layout className="schema-layout">
           <SchemaContent />
         </Layout>
+
+        {/* 右侧字段类型列表 */}
+        <SchemaFieldPicker />
       </ProCard>
 
       {/* 编辑弹窗 */}

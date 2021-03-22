@@ -5,7 +5,6 @@ import { SchmeaCtx } from 'typings/store'
 
 import SchemaToolbar from './SchemaToolbar'
 import { SchemaFieldEditorModal, SchemaFieldDeleteModal } from '../SchemaFieldEditor'
-import SchemaFieldPicker from './SchemaFieldPicker'
 import SchemaFieldList from './SchemaFieldList'
 
 const { Content } = Layout
@@ -65,9 +64,6 @@ const SchemaContent: React.FC = () => {
           </div>
         )}
       </Content>
-
-      {/* 右侧字段类型列表 */}
-      <SchemaFieldPicker />
 
       {/* 添加字段 */}
       <SchemaFieldEditorModal
