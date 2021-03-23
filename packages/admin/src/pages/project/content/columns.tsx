@@ -1,6 +1,14 @@
+import React from 'react'
 import { ProColumns } from '@ant-design/pro-table'
 import { getFieldRender } from '@/components/Fields'
-import { calculateFieldWidth, getSchemaCustomFields, getSchemaSystemFields } from '@/utils'
+import {
+  calculateFieldWidth,
+  copyToClipboard,
+  getSchemaCustomFields,
+  getSchemaSystemFields,
+} from '@/utils'
+import ErrorBoundary from '@/components/ErrorBoundary'
+import { message, Popconfirm, Space } from 'antd'
 
 type DateTime = 'dateTime' | 'date' | 'textarea'
 
@@ -50,7 +58,33 @@ const fieldToColumn = (field: SchemaField) => {
   const valueType: DateTime =
     type === 'DateTime' ? 'dateTime' : type === 'Date' ? 'date' : 'textarea'
 
-  const render = getFieldRender(field)
+  // 处理渲染错误
+  const render = (text: React.ReactNode, record: any, index: number, action: any) => {
+    const component = getFieldRender(field)(text, record, index, action)
+
+    return (
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <Popconfirm
+            title={
+              <div>
+                异常信息（点击确认复制异常信息）：
+                <p>{error?.message}</p>
+              </div>
+            }
+            onConfirm={() => {
+              copyToClipboard(error.message)
+              message.success('复制错误信息成功')
+            }}
+          >
+            <Space className="text-red-600 font-bold">❌ 数据异常</Space>
+          </Popconfirm>
+        )}
+      >
+        {component}
+      </ErrorBoundary>
+    )
+  }
 
   // 计算列宽度，略大于计算宽度
   const width = calculateFieldWidth(field) + 10
