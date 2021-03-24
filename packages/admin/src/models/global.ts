@@ -33,6 +33,7 @@ export default {
 
       // 获取全局设置
       const { data = {} } = await getSetting()
+
       return {
         setting: data,
       }

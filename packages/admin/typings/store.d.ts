@@ -142,3 +142,4 @@ export type GlobalCtx = CtxM<{}, 'global'>
 export type SchmeaCtx = CtxM<{}, 'schema'>
 export type ContentCtx = CtxM<{}, 'content'>
 export type RoleCtx = CtxM<{}, 'role'> // 属于 role 模块的实例上下文类型
+export type MicroAppCtx = CtxM<{}, 'microApp'>

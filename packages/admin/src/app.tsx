@@ -185,7 +185,6 @@ export const qiankun = async () => {
   // 加载应用信息
   try {
     const { data } = await getSetting()
-    console.log(data)
   } catch (e) {
     console.log(e)
 

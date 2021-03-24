@@ -101,7 +101,7 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
             setUploading(true)
             setPercent(0)
             // 文件路径
-            const filePath = `data-import/${random(32)}-${file.name}`
+            const filePath = `cloudbase-cms/data-import/${random(32)}-${file.name}`
             // 上传文件
             uploadFile({
               file,

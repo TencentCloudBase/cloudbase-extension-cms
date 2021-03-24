@@ -176,7 +176,7 @@ const Login: React.FC<{}> = () => {
                   handleSubmit(values)
                 }}
               >
-                <Title level={4} className="text-center mt-10 mb-6 text-primary">
+                <Title level={4} className="text-center mt-10 mb-6">
                   账户密码登录
                 </Title>
                 {loginErrorMessage && !submitting && <LoginMessage content={loginErrorMessage} />}

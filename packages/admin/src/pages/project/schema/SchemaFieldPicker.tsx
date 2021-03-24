@@ -19,7 +19,7 @@ export interface TableListItem {
 
 const ListContainer = styled.div`
   overflow: auto;
-  padding-right: 5px;
+  padding: 0 10px 0 10px;
   height: calc(100% - 100px);
 `
 
@@ -30,8 +30,8 @@ const SchemaFieldPicker: React.FC = () => {
   } = ctx
 
   return (
-    <Sider className="schema-sider px-3" width="220">
-      <Typography.Title level={3} className="pt-5 pb-4">
+    <Sider className="schema-sider px-3" width="240">
+      <Typography.Title level={3} className="pt-5 pb-4 pl-3">
         内容类型
       </Typography.Title>
       <ListContainer>

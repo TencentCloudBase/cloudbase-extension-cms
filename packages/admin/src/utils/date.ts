@@ -8,6 +8,8 @@ export const getFullDate = (v = Date.now()) => moment(v).format('YYYY-MM-DD')
 export const getDateValue = (v?: string | number) => moment(v).valueOf()
 
 export const getYear = () => moment().year()
+export const getMonth = () => moment().format('MM')
+export const getDay = () => moment().format('DD')
 
 export const getUnixInSecond = (v: string | number) => moment(v).unix()
 
