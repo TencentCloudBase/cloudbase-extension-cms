@@ -1,3 +1,4 @@
+import { Spin } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { history, Link, useAccess } from 'umi'
 import HeaderTitle from '@/components/HeaderTitle'
@@ -11,17 +12,17 @@ import {
   RocketTwoTone,
   setTwoToneColor,
   ShoppingTwoTone,
+  AppstoreTwoTone,
 } from '@ant-design/icons'
 import { useConcent } from 'concent'
 import { ContentCtx, GlobalCtx } from 'typings/store'
 import { getCmsConfig, getProjectId } from '@/utils'
 import defaultSettings from '../../config/defaultSettings'
-import { Spin } from 'antd'
 
 // 设置图标颜色
 setTwoToneColor('#0052d9')
 
-const customMenuData: MenuDataItem[] = [
+const systemMenuData: MenuDataItem[] = [
   {
     authority: 'isLogin',
     path: '/project/home',
@@ -42,18 +43,6 @@ const customMenuData: MenuDataItem[] = [
     children: [],
   },
   {
-    name: '微应用',
-    icon: <RocketTwoTone />,
-    authority: 'isLogin',
-    path: '/project/microapp/app',
-    // children: [
-    //   {
-    //     name: '页面 1',
-    //     path: '/project/microapp/app',
-    //   },
-    // ],
-  },
-  {
     authority: 'canWebhook',
     path: '/project/webhook',
     name: 'Webhook',
@@ -70,7 +59,7 @@ const customMenuData: MenuDataItem[] = [
 
 // 微信侧才支持发送短信的功能
 if (WX_MP || window.TcbCmsConfig.isMpEnv) {
-  customMenuData.splice(3, 0, {
+  systemMenuData.splice(3, 0, {
     authority: 'canContent',
     path: '/project/operation',
     name: '营销工具',
@@ -125,14 +114,14 @@ const Layout: React.FC<any> = (props) => {
     setRefresh({
       n: refresh.n + 1,
     })
-  }, [customMenuData, loading, schemas, setting])
+  }, [systemMenuData, loading, schemas, setting])
 
   // 添加菜单
   useEffect(() => {
     // 是否开启了营销工具
     if (window.TcbCmsConfig.isMpEnv && setting?.enableOperation) {
-      if (!customMenuData[3].children?.length) {
-        customMenuData[3].children = [
+      if (!systemMenuData[3].children?.length) {
+        systemMenuData[3].children = [
           {
             name: '营销活动',
             path: '/project/operation/activity',
@@ -161,8 +150,21 @@ const Layout: React.FC<any> = (props) => {
       location={location}
       menuContentRender={(_, dom) => contentLoading({ dom, loading })}
       menuDataRender={(menuData: MenuDataItem[]) => {
-        customMenuData[2].children = contentChildMenus
-        return customMenuData.filter((_) => access[_.authority as string])
+        systemMenuData[2].children = contentChildMenus
+
+        // 将自定义菜单添加到 Webhook 菜单前
+        const { customMenus } = setting
+        // 防止重复插入菜单
+        if (customMenus?.length && !systemMenuData.find((_) => _?.key === customMenus[0].id)) {
+          const customMenuData = customMenus.map((node) => mapCustomMenuTree(node))
+
+          const insertIndex = WX_MP || window.TcbCmsConfig.isMpEnv ? 4 : 3
+          systemMenuData.splice(insertIndex, 0, ...customMenuData)
+
+          console.log(systemMenuData)
+        }
+
+        return systemMenuData.filter((_) => access[_.authority as string])
       }}
       menuItemRender={(menuItemProps, defaultDom) => {
         const projectId = getProjectId()
@@ -199,6 +201,33 @@ const Layout: React.FC<any> = (props) => {
       {children}
     </ProLayout>
   )
+}
+
+/**
+ * 遍历菜单配置树，生成菜单树
+ */
+const mapCustomMenuTree = (node: CustomMenuItem): any => {
+  if (!node.children?.length) {
+    return {
+      key: node.id,
+      authority: 'isLogin',
+      name: node.title,
+      path: node.microAppID ? `/project/microapp/${node.microAppID}` : node.link,
+      component: './project/microapp/index',
+      children: [],
+      icon: <AppstoreTwoTone />,
+    }
+  } else {
+    return {
+      key: node.id,
+      authority: 'isLogin',
+      name: node.title,
+      path: node.microAppID ? `/project/microapp/${node.microAppID}` : node.link,
+      component: './project/microapp/index',
+      children: node.children.map((_) => mapCustomMenuTree(_)),
+      icon: <AppstoreTwoTone />,
+    }
+  }
 }
 
 const contentLoading = ({

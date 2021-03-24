@@ -10,8 +10,8 @@ import MicroApp from './MicroApp'
 import CustomMenu from './CustomMenu'
 import SettingContainer from './SettingContainer'
 
-const DEFAULT_TAB = 'microapp'
-const Tabs = ['user', 'role']
+const DEFAULT_TAB = 'custommenu'
+const Tabs = ['user', 'role', 'microapp', 'custommenu']
 
 const Container = styled(SettingContainer)`
   .ant-pro-card-body {

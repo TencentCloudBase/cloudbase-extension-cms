@@ -1,5 +1,6 @@
 import React from 'react'
 import { run } from 'concent'
+import { addGlobalUncaughtErrorHandler } from 'qiankun'
 import { notification, message, Typography } from 'antd'
 import { Context, ResponseError } from 'umi-request'
 import { history, RequestConfig } from 'umi'
@@ -185,28 +186,27 @@ export const qiankun = async () => {
   // 加载应用信息
   try {
     const { data } = await getSetting()
+    const microApps = data.microApps || []
+
+    return {
+      // 注册子应用信息
+      apps: microApps.map((app) => ({
+        name: app.id,
+        entry: `//${location.host}/cloudbase-cms/apps/${app.id}/index.html`,
+      })),
+      // 完整生命周期钩子请看 https://qiankun.umijs.org/zh/api/#registermicroapps-apps-lifecycles
+      lifeCycles: {
+        afterMount: (props: any) => {
+          console.log(props)
+        },
+      },
+      // 支持更多的其他配置，详细看这里 https://qiankun.umijs.org/zh/api/#start-opts
+    }
   } catch (e) {
     console.log(e)
 
     return {
       apps: [],
     }
-  }
-
-  return {
-    // 注册子应用信息
-    apps: [
-      {
-        name: 'microApp',
-        entry: 'http://localhost:3002/',
-      },
-    ],
-    // 完整生命周期钩子请看 https://qiankun.umijs.org/zh/api/#registermicroapps-apps-lifecycles
-    lifeCycles: {
-      afterMount: (props: any) => {
-        console.log(props)
-      },
-    },
-    // 支持更多的其他配置，详细看这里 https://qiankun.umijs.org/zh/api/#start-opts
   }
 }

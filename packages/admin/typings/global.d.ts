@@ -37,9 +37,9 @@ interface CustomMenuItem {
   title: string
 
   /**
-   * 微应用名
+   * 微应用 ID
    */
-  microAppName?: string
+  microAppID?: string
 
   /**
    * 路径

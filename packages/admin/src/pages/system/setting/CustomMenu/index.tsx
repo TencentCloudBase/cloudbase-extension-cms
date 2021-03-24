@@ -4,53 +4,66 @@ import { useSetState } from 'react-use'
 import { PlusOutlined } from '@ant-design/icons'
 import { Button, Modal, message } from 'antd'
 import { GlobalCtx } from 'typings/store'
-import ProTable from '@ant-design/pro-table'
+import ProTable, { ProColumns } from '@ant-design/pro-table'
 import { BoldText } from '@/components/Typography'
 import { RefModalForm, ModalRefType } from '@/components/Modal'
 import { ProFormDependency, ProFormSelect, ProFormText } from '@ant-design/pro-form'
+import { getSetting } from '@/services/global'
 import { random } from '@/utils'
-import { updateSetting } from '@/services/global'
+import useRequest from '@umijs/use-request'
 
-const columns = [
+const columns: ProColumns[] = [
   {
     title: '菜单标题',
     dataIndex: 'title',
     key: 'title',
-    width: 250,
+    width: 150,
+    align: 'center',
   },
   {
     title: '微应用',
-    dataIndex: 'microAppName',
-    key: 'microAppName',
+    dataIndex: 'microAppID',
+    key: 'microAppID',
+    align: 'center',
   },
   {
     title: '菜单链接',
     dataIndex: 'link',
     key: 'link',
+    align: 'center',
   },
 ]
 
 export default (): React.ReactElement => {
   const ctx = useConcent<{}, GlobalCtx>('global')
-  const { setting } = ctx.state
-  const customMenus = setting?.customMenus || []
+
   const modalRef = useRef<ModalRefType>()
   const [{ configAction, parentNode }, setState] = useSetState<any>({
     configAction: 'create',
     parentNode: null,
   })
 
+  const { data: customMenus, loading, run: reloadData } = useRequest(async () => {
+    const { data: setting } = await getSetting()
+    const customMenus = setting?.customMenus || []
+    return customMenus
+  }, {})
+
   return (
     <>
       <ProTable
+        rowKey="id"
         search={false}
+        options={false}
+        loading={loading}
         dataSource={customMenus}
         columns={[
           ...columns,
           {
             title: '操作',
+            width: 200,
+            align: 'center',
             valueType: 'option',
-            width: 250,
             render: (text: any, row: any, i: number) => [
               <Button
                 size="small"
@@ -93,14 +106,16 @@ export default (): React.ReactElement => {
                     },
                     onOk: async () => {
                       try {
-                        deleteMenuItem(customMenus, row)
-                        await updateSetting({
+                        deleteMenuItem(customMenus || [], row)
+                        await ctx.mr.updateSetting({
                           customMenus,
                         })
-                        message.success('删除内容成功')
+                        message.success('删除菜单成功')
                       } catch (error) {
-                        message.error('删除内容失败')
+                        message.error('删除菜单失败')
                       }
+
+                      reloadData()
                     },
                   })
                 }}
@@ -129,7 +144,14 @@ export default (): React.ReactElement => {
         ]}
       />
 
-      <MenuConfigModal modalRef={modalRef} action={configAction} parentNode={parentNode} />
+      <MenuConfigModal
+        modalRef={modalRef}
+        action={configAction}
+        parentNode={parentNode}
+        onFinish={() => {
+          reloadData()
+        }}
+      />
     </>
   )
 }
@@ -141,7 +163,8 @@ const MenuConfigModal: React.FC<{
   action: 'create' | 'edit'
   modalRef: MutableRefObject<ModalRefType>
   parentNode: CustomMenuItem
-}> = ({ modalRef, action, parentNode }) => {
+  onFinish: () => void
+}> = ({ modalRef, action, parentNode, onFinish }) => {
   const ctx = useConcent<{}, GlobalCtx>('global')
   const { setting } = ctx.state
   const customMenus = setting?.customMenus || []
@@ -151,39 +174,54 @@ const MenuConfigModal: React.FC<{
   const initialValues: any = action === 'edit' ? parentNode : {}
   initialValues.menuType = initialValues.menuType || 'microApp'
 
+  console.log(customMenus)
+
   return (
     <RefModalForm
       title={title}
       modalRef={modalRef}
       initialValues={initialValues}
       onFinish={async (formData: any) => {
-        console.log(formData)
+        formData.id = formData.id || random(8)
         // parentNode，只可能为添加根节点
         if (!parentNode) {
-          const id = formData.id || random(8)
           customMenus.push({
             ...formData,
-            id,
-            root: id,
+            root: formData.id,
             order: customMenus.length,
           })
         } else if (action === 'edit') {
           // 添加非根节点、或者编辑节点
           updateMenuItem(customMenus, parentNode, formData)
-          // TODO
         } else if (action === 'create') {
           addMenuItem(customMenus, parentNode, formData)
         } else {
           message.error('异常行为')
         }
 
-        await updateSetting({
+        console.log(customMenus)
+
+        await ctx.mr.updateSetting({
           customMenus,
         })
+
+        onFinish()
+        modalRef.current?.hide?.()
       }}
     >
-      <ProFormText name="title" label="菜单标题" placeholder="请输入菜单标题" />
+      <ProFormText
+        name="title"
+        label="菜单标题"
+        placeholder="请输入菜单标题"
+        rules={[
+          {
+            required: true,
+            message: '请输入菜单标题',
+          },
+        ]}
+      />
       <ProFormSelect
+        required
         name="menuType"
         label="菜单类型"
         options={[
@@ -212,17 +250,33 @@ const MenuConfigModal: React.FC<{
           return menuType === 'microApp' ? (
             <ProFormSelect
               label="微应用名"
-              name="microAppName"
+              name="microAppID"
               options={microApps?.map((app) => ({
                 value: app.id,
                 label: app.title,
               }))}
+              rules={[
+                {
+                  required: true,
+                  message: '请选择微应用',
+                },
+              ]}
             />
           ) : (
             <ProFormText
               name="link"
               label="跳转链接"
               placeholder="请输入完整的跳转链接，如 https://tencent.com"
+              rules={[
+                {
+                  required: true,
+                  message: '请输入跳转链接',
+                },
+                {
+                  type: 'url',
+                  message: '请输入正确跳转链接',
+                },
+              ]}
             />
           )
         }}
@@ -276,7 +330,11 @@ const updateMenuItem = (
 
   const index = menus.findIndex((_) => _.id === targetNode.id)
   if (index > -1) {
-    menus.splice(index, 1, data)
+    const menu = menus[index]
+    menus.splice(index, 1, {
+      ...menu,
+      ...data,
+    })
     return
   }
 
@@ -288,8 +346,10 @@ const updateMenuItem = (
 
     if (node.children?.length) {
       const index = node.children.findIndex((_) => _.id === targetNode.id)
+      const menu = node.children[index]
+
       if (index > -1) {
-        node.children.splice(index, 1, data)
+        node.children.splice(index, 1, { ...menu, ...data })
         return
       } else {
         node.children.forEach((_) => queue.push(_))

@@ -67,7 +67,7 @@ const config: IConfig = {
   },
   // 微前端
   qiankun: {
-    master: {},
+    master: {} as any,
   },
   mountElementId: 'root',
 }
