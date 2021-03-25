@@ -1,4 +1,4 @@
-import { Upload } from 'antd'
+import { Upload, UploadProps } from 'antd'
 import React, { useEffect } from 'react'
 import { useSetState } from 'react-use'
 import { InboxOutlined } from '@ant-design/icons'
@@ -38,14 +38,15 @@ export interface IAppProps {
   onChange?: (uris: string | string[]) => void
 }
 
-export default function FileUpload({
+export function DraggerUpload({
   value,
   onChange,
   uploadTip,
   uploadType,
   filePathTemplate,
   resourceLinkType = 'fileId',
-}: IAppProps) {
+  ...uploadProps
+}: IAppProps & UploadProps) {
   const [{ fileList }, setState] = useSetState<{
     fileList: any[]
   }>({
@@ -132,6 +133,7 @@ export default function FileUpload({
             onError?.(e as any)
           })
       }}
+      {...uploadProps}
     >
       <p className="ant-upload-drag-icon">
         <InboxOutlined />

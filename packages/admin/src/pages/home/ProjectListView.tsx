@@ -5,6 +5,8 @@ import ProCard from '@ant-design/pro-card'
 import { Tooltip, Typography } from 'antd'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import { redirectTo } from '@/utils'
+import { useConcent } from 'concent'
+import { GlobalCtx } from 'typings/store'
 
 const { Title, Paragraph } = Typography
 
@@ -52,6 +54,7 @@ export default function ProjectListView({
   projects: Project[]
   onCreateProject: () => void
 }) {
+  const ctx = useConcent<{}, GlobalCtx>('global')
   const { isAdmin } = useAccess()
 
   return (
@@ -61,6 +64,10 @@ export default function ProjectListView({
           key={index}
           className="flex items-center py-5 px-5"
           onClick={() => {
+            ctx.setState({
+              currentProjectId: _._id,
+            })
+
             redirectTo('home', {
               projectId: _._id,
             })

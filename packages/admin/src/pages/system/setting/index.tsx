@@ -10,7 +10,7 @@ import MicroApp from './MicroApp'
 import CustomMenu from './CustomMenu'
 import SettingContainer from './SettingContainer'
 
-const DEFAULT_TAB = 'custommenu'
+const DEFAULT_TAB = 'user'
 const Tabs = ['user', 'role', 'microapp', 'custommenu']
 
 const Container = styled(SettingContainer)`
@@ -46,6 +46,7 @@ export default (): React.ReactNode => {
             mode="inline"
             onClick={({ key }) => {
               selectMenu(key as string)
+              history.push(`/settings?tab=${key}`)
             }}
             defaultSelectedKeys={[selectedMenu]}
           >

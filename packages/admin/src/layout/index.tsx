@@ -160,8 +160,6 @@ const Layout: React.FC<any> = (props) => {
 
           const insertIndex = WX_MP || window.TcbCmsConfig.isMpEnv ? 4 : 3
           systemMenuData.splice(insertIndex, 0, ...customMenuData)
-
-          console.log(systemMenuData)
         }
 
         return systemMenuData.filter((_) => access[_.authority as string])

@@ -2,16 +2,39 @@ import { getSetting, updateSetting } from '@/services/global'
 import { getCloudBaseApp } from '@/utils'
 
 interface GlobalState {
+  /**
+   * 当前项目 ID
+   */
+  currentProjectId: string
+
+  /**
+   * 设置
+   */
   setting: GlobalSetting
 }
 
 const state: GlobalState = {
+  /**
+   * 当前项目 ID
+   */
+  currentProjectId: '',
+
+  /**
+   * 全局设置
+   */
   setting: {},
 }
 
 export default {
   state,
   reducer: {
+    // 重新获取设置信息
+    async getSetting() {
+      const { data } = await getSetting()
+      return {
+        setting: data,
+      }
+    },
     // 更新设置信息
     async updateSetting(setting: GlobalSetting, state: GlobalState) {
       await updateSetting(setting)

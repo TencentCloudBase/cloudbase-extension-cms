@@ -1,11 +1,11 @@
 import { useConcent } from 'concent'
 import React, { useRef } from 'react'
 import { Typography, Card, FormInstance, message, Alert } from 'antd'
-import { MicroAppCtx } from 'typings/store'
+import { GlobalCtx, MicroAppCtx } from 'typings/store'
 import ProForm, { ProFormDependency, ProFormField, ProFormText } from '@ant-design/pro-form'
 import { random } from '@/utils'
 import { createMicroApp, updateMicroApp } from '@/services/global'
-import FileUpload from '@/components/Upload'
+import { DraggerUpload } from '@/components/Upload'
 import BackNavigator from '@/components/BackNavigator'
 import SettingContainer from '../SettingContainer'
 
@@ -14,6 +14,8 @@ const { Title, Text } = Typography
 export default (): React.ReactNode => {
   const formRef = useRef<FormInstance>()
   const ctx = useConcent<{}, MicroAppCtx>('microApp')
+  const globalCtx = useConcent<{}, GlobalCtx>('global')
+
   const { selectedApp, appAction } = ctx.state
 
   const actionText = appAction === 'edit' ? '更新' : '新建'
@@ -48,7 +50,6 @@ export default (): React.ReactNode => {
                 display: 'none',
               },
             },
-
             render: (props, doms) => {
               return <div className="text-right mt-10">{doms}</div>
             },
@@ -62,7 +63,13 @@ export default (): React.ReactNode => {
               message.success('更新微应用成功！')
             }
 
+            // 刷新信息
+            globalCtx.mr.getSetting()
+            // 返回，刷新页面，重新加载 app 信息
             history.back()
+            setTimeout(() => {
+              window.location.reload()
+            }, 200)
           }}
         >
           <ProFormText
@@ -124,14 +131,13 @@ export default (): React.ReactNode => {
                     },
                   ]}
                 >
-                  <FileUpload
-                    uploadType="hosting"
-                    resourceLinkType="https"
-                    filePathTemplate={`apps/${id}/{filename}`}
+                  <DraggerUpload
+                    maxCount={1}
+                    accept=".zip"
                     uploadTip={
                       appAction === 'create'
-                        ? '点击或拖拽文件、文件夹上传'
-                        : '点击或拖拽文件、文件夹上传文件更新微应用'
+                        ? '点击或拖拽 ZIP 文件上传'
+                        : '点击或拖拽 ZIP 文件更新微应用'
                     }
                   />
                 </ProFormField>

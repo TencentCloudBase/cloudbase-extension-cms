@@ -174,8 +174,6 @@ const MenuConfigModal: React.FC<{
   const initialValues: any = action === 'edit' ? parentNode : {}
   initialValues.menuType = initialValues.menuType || 'microApp'
 
-  console.log(customMenus)
-
   return (
     <RefModalForm
       title={title}

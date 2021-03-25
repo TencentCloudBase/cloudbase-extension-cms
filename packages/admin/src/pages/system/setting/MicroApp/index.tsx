@@ -11,7 +11,6 @@ const { Title, Link } = Typography
 
 export default (): React.ReactElement => {
   const appCtx = useConcent<{}, MicroAppCtx>('microApp')
-
   const listRef = useRef<any>()
 
   return (
