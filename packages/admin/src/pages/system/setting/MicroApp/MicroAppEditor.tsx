@@ -1,6 +1,6 @@
+import React from 'react'
 import { useConcent } from 'concent'
-import React, { useRef } from 'react'
-import { Typography, Card, FormInstance, message, Alert } from 'antd'
+import { Typography, Card, message, Alert } from 'antd'
 import { GlobalCtx, MicroAppCtx } from 'typings/store'
 import ProForm, { ProFormDependency, ProFormField, ProFormText } from '@ant-design/pro-form'
 import { random } from '@/utils'
@@ -12,7 +12,6 @@ import SettingContainer from '../SettingContainer'
 const { Title, Text } = Typography
 
 export default (): React.ReactNode => {
-  const formRef = useRef<FormInstance>()
   const ctx = useConcent<{}, MicroAppCtx>('microApp')
   const globalCtx = useConcent<{}, GlobalCtx>('global')
 
@@ -33,17 +32,7 @@ export default (): React.ReactNode => {
       <Title level={3}>{actionText}微应用</Title>
       <Card style={{ minHeight: '480px' }}>
         <ProForm
-          formRef={formRef}
           initialValues={initialValues}
-          onValuesChange={(v, values) => {
-            // ID 变更，清空文件列表
-            if (v.id) {
-              formRef.current?.setFieldsValue({
-                ...values,
-                fileList: [],
-              })
-            }
-          }}
           submitter={{
             resetButtonProps: {
               style: {
@@ -54,12 +43,18 @@ export default (): React.ReactNode => {
               return <div className="text-right mt-10">{doms}</div>
             },
           }}
-          onFinish={async (data: MicroApp) => {
+          onFinish={async (data: any) => {
+            const { id, title, fileIDList } = data
+            const app = {
+              id,
+              title,
+              fileID: fileIDList?.[0],
+            }
             if (appAction === 'create') {
-              await createMicroApp(data)
+              await createMicroApp(app)
               message.success('创建微应用成功！')
             } else {
-              await updateMicroApp(data)
+              await updateMicroApp(app)
               message.success('更新微应用成功！')
             }
 
@@ -117,7 +112,7 @@ export default (): React.ReactNode => {
               return (
                 <ProFormField
                   required
-                  name="fileList"
+                  name="fileIDList"
                   label="微应用文件"
                   rules={[
                     {

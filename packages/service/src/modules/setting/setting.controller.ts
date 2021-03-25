@@ -5,6 +5,7 @@ import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
 import { CmsException } from '@/common'
 import { getCloudBaseManager } from '@/utils'
+import { SettingService } from './setting.service'
 
 interface CustomMenuItem {
   /**
@@ -66,12 +67,15 @@ class MicroApp {
   title: string
 
   @IsNotEmpty()
-  fileList: string[]
+  fileID: string
 }
 
 @Controller('setting')
 export class SettingController {
-  constructor(private readonly cloudbaseService: CloudBaseService) {}
+  constructor(
+    private readonly cloudbaseService: CloudBaseService,
+    private readonly settingService: SettingService
+  ) {}
 
   @Get()
   async getSystemSetting(): Promise<{
@@ -122,6 +126,10 @@ export class SettingController {
       data: [setting],
     } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
+    // 解压，上传文件
+    await this.settingService.unzipAndUploadFiles(app.id, app.fileID)
+
+    // 创建微应用
     if (setting.microApps?.length) {
       await this.collection(Collection.Settings)
         .where({})

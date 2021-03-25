@@ -35,7 +35,7 @@ export interface IAppProps {
   /**
    * onChange 回调
    */
-  onChange?: (uris: string | string[]) => void
+  onChange?: (uris: string[]) => void
 }
 
 export function DraggerUpload({
@@ -69,15 +69,6 @@ export function DraggerUpload({
       fileList: fileList || [],
     })
   }, [])
-
-  // 清空数据
-  useEffect(() => {
-    if (!value?.length) {
-      setState({
-        fileList: [],
-      })
-    }
-  }, [value])
 
   return (
     <Dragger

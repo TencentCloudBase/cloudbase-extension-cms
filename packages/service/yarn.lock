@@ -315,11 +315,6 @@
   dependencies:
     "@types/node" "*"
 
-"@types/debug@^4.1.5":
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
-  integrity sha512-Q1y515GcOdTHgagaVFhHnIFQ38ygs/kmxdNpvpou+raI9UO3YZcHDngBSYKQklcKlvA7iuQlmIKbzvmxcOE9CQ==
-
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@types/eslint-visitor-keys/-/eslint-visitor-keys-1.0.0.tgz#1ee30d79544ca84d68d4b3cdb0af4f205663dd2d"
@@ -362,10 +357,10 @@
   resolved "https://registry.yarnpkg.com/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
-"@types/lodash@^4.14.158":
-  version "4.14.164"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.164.tgz#52348bcf909ac7b4c1bcbeda5c23135176e5dfa0"
-  integrity sha512-fXCEmONnrtbYUc5014avwBeMdhHHO8YJCkOBflUL9EoJBSKZ1dei+VO74fA7JkTHZ1GvZack2TyIw5U+1lT8jg==
+"@types/lodash@^4.14.168":
+  version "4.14.168"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.168.tgz#fe24632e79b7ade3f132891afff86caa5e5ce008"
+  integrity sha512-oVfRvqHV/V6D1yifJbVRU3TMp8OT6o6BG+U9MkwuJ3U8/CsDHvalRpsxBqivn71ztOFZBTfJMvETbqHiaNSj7Q==
 
 "@types/mime@*":
   version "2.0.3"
@@ -464,6 +459,13 @@
     "@types/uglify-js" "*"
     "@types/webpack-sources" "*"
     source-map "^0.6.0"
+
+"@types/yauzl@^2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@types/yauzl/-/yauzl-2.9.1.tgz#d10f69f9f522eef3cf98e30afb684a1e1ec923af"
+  integrity sha512-A1b8SU4D10uoPjwb0lnHmmu8wZhR9d+9o2PKBQT2jU5YPTKsxac6M2qGAdY7VcL+dHHhARVUDmeg0rOrcd9EjA==
+  dependencies:
+    "@types/node" "*"
 
 "@typescript-eslint/eslint-plugin@^3.6.1":
   version "3.10.1"
@@ -1202,7 +1204,7 @@ bson@^4.0.3:
   dependencies:
     buffer "^5.6.0"
 
-buffer-crc32@^0.2.1, buffer-crc32@^0.2.13:
+buffer-crc32@^0.2.1, buffer-crc32@^0.2.13, buffer-crc32@~0.2.3:
   version "0.2.13"
   resolved "https://registry.yarnpkg.com/buffer-crc32/-/buffer-crc32-0.2.13.tgz#0d333e3f00eac50aa1454abd30ef8c2a5d9a7242"
   integrity sha1-DTM+PwDqxQqhRUq9MO+MKl2ackI=
@@ -2358,6 +2360,17 @@ extglob@^2.0.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
+extract-zip@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/extract-zip/-/extract-zip-2.0.1.tgz#663dca56fe46df890d5f131ef4a06d22bb8ba13a"
+  integrity sha512-GDhU9ntwuKyGXdZBUgTIe+vXnWj0fppUEtMDL0+idd5Sta8TGpHssn/eusA9mrPr9qNDym6SxAYZjNvCn/9RBg==
+  dependencies:
+    debug "^4.1.1"
+    get-stream "^5.1.0"
+    yauzl "^2.10.0"
+  optionalDependencies:
+    "@types/yauzl" "^2.9.1"
+
 extsprintf@1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/extsprintf/-/extsprintf-1.3.0.tgz#96918440e3041a7a414f8c52e3c574eb3c3e1e05"
@@ -2411,6 +2424,13 @@ fastq@^1.6.0:
   integrity sha512-i7FVWL8HhVY+CTkwFxkN2mk3h+787ixS5S63eb78diVRc1MCssarHq3W5cj0av7YDSwmaV928RNag+U1etRQ7w==
   dependencies:
     reusify "^1.0.4"
+
+fd-slicer@~1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/fd-slicer/-/fd-slicer-1.1.0.tgz#25c7c89cb1f9077f8891bbe61d8f390eae256f1e"
+  integrity sha1-JcfInLH5B3+IkbvmHY85Dq4lbx4=
+  dependencies:
+    pend "~1.2.0"
 
 feature-policy@0.3.0:
   version "0.3.0"
@@ -2661,6 +2681,13 @@ get-stream@^4.0.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-4.1.0.tgz#c1b255575f3dc21d59bfc79cd3d2b46b1c3a54b5"
   integrity sha512-GMat4EJ5161kIy2HevLlr4luNjBgvmj413KaQA7jt4V8B4RDsfpHk7WQ9GVqfYyyx8OS/L66Kox+rJRNklLK7w==
+  dependencies:
+    pump "^3.0.0"
+
+get-stream@^5.1.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-5.2.0.tgz#4966a1795ee5ace65e706c4b7beb71257d6e22d3"
+  integrity sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==
   dependencies:
     pump "^3.0.0"
 
@@ -4260,6 +4287,11 @@ pbkdf2@^3.0.3:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+pend@~1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
+  integrity sha1-elfrVQpng/kRUzH89GY9XI4AelA=
+
 performance-now@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
@@ -5788,6 +5820,14 @@ yaml@^1.7.2:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/yaml/-/yaml-1.10.0.tgz#3b593add944876077d4d683fee01081bd9fff31e"
   integrity sha512-yr2icI4glYaNG+KWONODapy2/jDdMSDnrONSjblABjD9B4Z5LgiircSt8m8sRZFNi08kG9Sm0uSHtEmP3zaEGg==
+
+yauzl@^2.10.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/yauzl/-/yauzl-2.10.0.tgz#c7eb17c93e112cb1086fa6d8e51fb0667b79a5f9"
+  integrity sha1-x+sXyT4RLLEIb6bY5R+wZnt5pfk=
+  dependencies:
+    buffer-crc32 "~0.2.3"
+    fd-slicer "~1.1.0"
 
 yn@3.1.1:
   version "3.1.1"

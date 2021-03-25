@@ -30,20 +30,20 @@ const ToggleIcon = styled.div`
 `
 
 export default (): React.ReactNode => {
+  const { isAdmin } = useAccess()
   // 布局设置持久化到本地
   const [currentLayout, setLocalLayout] = useLocalStorageState('TCB_CMS_PROJECT_LAYOUT', 'card')
   const [{ modalVisible, reload }, setState] = useSetState({
     reload: 0,
     modalVisible: false,
   })
-  const { isAdmin } = useAccess()
 
   // 请求数据
   const { data = [], loading } = useRequest(() => getProjects(), {
     refreshDeps: [reload],
   })
 
-  const createProject = () =>
+  const showCreatingModal = () =>
     setState({
       modalVisible: true,
     })
@@ -73,9 +73,9 @@ export default (): React.ReactNode => {
       )}
 
       {currentLayout === 'card' ? (
-        <ProjectCardView projects={data} onCreateProject={createProject} />
+        <ProjectCardView projects={data} onCreateProject={showCreatingModal} />
       ) : (
-        <ProjectListView projects={data} onCreateProject={createProject} />
+        <ProjectListView projects={data} onCreateProject={showCreatingModal} />
       )}
 
       {/* 新项目创建 */}

@@ -23,6 +23,11 @@ interface MicroApp {
    * 名称
    */
   title: string
+
+  /**
+   * 文件 ID 列表
+   */
+  fileID: string
 }
 
 interface CustomMenuItem {
