@@ -61,15 +61,21 @@ export const formatPayloadDate = async (
   if (Array.isArray(payload)) {
     return payload.map((record) => {
       dateFields.forEach((field) => {
-        record[field.name] = dayjs(record[field.name]).toDate()
+        // 只有存在值时才格式化
+        if (typeof record[field.name] !== 'undefined') {
+          record[field.name] = dayjs(record[field.name]).toDate()
+        }
       })
       return record
     })
   }
 
   // payload 为 Object
+  // 只有存在值时才格式化
   dateFields.forEach((field) => {
-    payload[field.name] = dayjs(payload[field.name]).toDate()
+    if (typeof payload[field.name] !== 'undefined') {
+      payload[field.name] = dayjs(payload[field.name]).toDate()
+    }
   })
 
   return payload
