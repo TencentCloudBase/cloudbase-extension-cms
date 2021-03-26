@@ -118,11 +118,11 @@ export default (): React.ReactElement => {
           name="name"
           rules={[{ required: true, message: '请输入项目名！' }]}
         >
-          <Input placeholder="项目名，如个人博客" />
+          <Input placeholder="项目名，如官网" />
         </Form.Item>
 
         <Form.Item label="项目介绍" name="description">
-          <Input placeholder="项目介绍，如我的个人博客" />
+          <Input placeholder="项目介绍，如官网内容管理" />
         </Form.Item>
 
         <Form.Item>
