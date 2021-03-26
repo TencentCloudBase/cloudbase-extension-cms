@@ -154,12 +154,17 @@ const Layout: React.FC<any> = (props) => {
 
         // 将自定义菜单添加到 Webhook 菜单前
         const { customMenus } = setting
-        // 防止重复插入菜单
-        if (customMenus?.length && !systemMenuData.find((_) => _?.key === customMenus[0].id)) {
-          const customMenuData = customMenus.map((node) => mapCustomMenuTree(node))
-
-          const insertIndex = WX_MP || window.TcbCmsConfig.isMpEnv ? 4 : 3
-          systemMenuData.splice(insertIndex, 0, ...customMenuData)
+        if (customMenus?.length) {
+          // 循环判断菜单是否存在，不存在则插入菜单
+          // 保持菜单的原有顺序插入
+          const baseInsertIndex = WX_MP || window.TcbCmsConfig.isMpEnv ? 4 : 3
+          customMenus.forEach((menu, index) => {
+            const isCustomMenusInsert = systemMenuData.find((_) => _?.key === menu.id)
+            if (!isCustomMenusInsert) {
+              const customMenuData = mapCustomMenuTree(menu)
+              systemMenuData.splice(baseInsertIndex + index, 0, customMenuData)
+            }
+          })
         }
 
         return systemMenuData.filter((_) => access[_.authority as string])

@@ -197,8 +197,6 @@ const MenuConfigModal: React.FC<{
           message.error('异常行为')
         }
 
-        console.log(customMenus)
-
         await ctx.mr.updateSetting({
           customMenus,
         })

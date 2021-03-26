@@ -1,4 +1,5 @@
 import React from 'react'
+import { Skeleton, Spin } from 'antd'
 import { MicroApp, history } from 'umi'
 import { PageContainer } from '@ant-design/pro-layout'
 import ErrorBoundary from '@/components/ErrorBoundary'
@@ -15,6 +16,10 @@ const MicroContainer = () => {
   // 从路径中获取微应用 id
   const microAppID = history.location.pathname.replace('/project/microapp/', '').split('/').shift()
 
+  if (!microAppID) {
+    return <Skeleton active />
+  }
+
   return (
     <PageContainer>
       <ErrorBoundary
@@ -22,7 +27,23 @@ const MicroContainer = () => {
           return <div>微应用渲染异常</div>
         }}
       >
-        <MicroApp name={microAppID || ''} />
+        <MicroApp
+          name={microAppID}
+          autoSetLoading
+          loader={(loading) =>
+            loading ? (
+              <div
+                className="flex flex-col items-center justify-center"
+                style={{ minHeight: '600px' }}
+              >
+                <Spin size="large" />
+                <span className="mt-5">应用加载中</span>
+              </div>
+            ) : (
+              ''
+            )
+          }
+        />
       </ErrorBoundary>
     </PageContainer>
   )
