@@ -1,6 +1,5 @@
 import React from 'react'
 import { run } from 'concent'
-import { addGlobalUncaughtErrorHandler } from 'qiankun'
 import { notification, message, Typography } from 'antd'
 import { Context, ResponseError } from 'umi-request'
 import { history, RequestConfig } from 'umi'
