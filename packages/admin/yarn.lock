@@ -3648,10 +3648,10 @@
   dependencies:
     fast-deep-equal "3.1.1"
 
-"@umijs/plugin-qiankun@2.23.0":
-  version "2.23.0"
-  resolved "https://registry.yarnpkg.com/@umijs/plugin-qiankun/-/plugin-qiankun-2.23.0.tgz#2ed9ae7307f0b585ef3477a0eb424f1381fd220e"
-  integrity sha512-dqjFQlnuIguEuIpHg2OMO5NmbYJoSrrlwXPjyYDix1ruZVsGmIn9mKWOqlGjMg7b9k0XQxcydFU5VbyvNm+wbA==
+"@umijs/plugin-qiankun@2.24.1":
+  version "2.24.1"
+  resolved "https://registry.yarnpkg.com/@umijs/plugin-qiankun/-/plugin-qiankun-2.24.1.tgz#d938b719236fcc6c7a7cf937391939fa2da070f1"
+  integrity sha512-HDgM1b03f742jX9yuKOX/q9vXc1pdljN8SChZdYAnapPXmsD95VlMQzGzqdSilexCOkrhGOwgPuJ/vlz1P0xyA==
   dependencies:
     "@babel/runtime" "^7.4.5"
     address "^1.1.2"

@@ -172,10 +172,26 @@ const Layout: React.FC<any> = (props) => {
       menuItemRender={(menuItemProps, defaultDom) => {
         const projectId = getProjectId()
 
-        if (menuItemProps.isUrl || menuItemProps.children) {
+        if (menuItemProps.children) {
           return defaultDom
         }
 
+        // 链接菜单，外跳
+        if (menuItemProps.isUrl) {
+          return (
+            <Link
+              to={menuItemProps.itemPath}
+              target="_blank"
+              onClick={() => {
+                console.log('click')
+              }}
+            >
+              {defaultDom}
+            </Link>
+          )
+        }
+
+        // 跳转路径
         if (menuItemProps.path) {
           const menuPath = menuItemProps.path?.includes('?pid')
             ? menuItemProps.path

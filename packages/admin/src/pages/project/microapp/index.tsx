@@ -27,23 +27,7 @@ const MicroContainer = () => {
           return <div>微应用渲染异常</div>
         }}
       >
-        <MicroApp
-          name={microAppID}
-          autoSetLoading
-          loader={(loading) =>
-            loading ? (
-              <div
-                className="flex flex-col items-center justify-center"
-                style={{ minHeight: '600px' }}
-              >
-                <Spin size="large" />
-                <span className="mt-5">应用加载中</span>
-              </div>
-            ) : (
-              ''
-            )
-          }
-        />
+        <MicroApp name={microAppID} />
       </ErrorBoundary>
     </PageContainer>
   )
