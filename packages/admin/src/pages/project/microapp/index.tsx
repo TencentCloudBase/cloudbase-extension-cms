@@ -1,5 +1,5 @@
 import React from 'react'
-import { Skeleton, Spin } from 'antd'
+import { Skeleton } from 'antd'
 import { MicroApp, history } from 'umi'
 import { PageContainer } from '@ant-design/pro-layout'
 import ErrorBoundary from '@/components/ErrorBoundary'
@@ -8,6 +8,8 @@ import ErrorBoundary from '@/components/ErrorBoundary'
  * 挂载微应用
  */
 const MicroContainer = () => {
+  window.__POWERED_BY_QIANKUN__ = true
+
   // TODO 通信
   window.addEventListener('_FROM_CMS_MICRO_APP_SLAVE_', (e: Event) => {
     // console.log('收到信息', e)

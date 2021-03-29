@@ -1,6 +1,6 @@
 import React from 'react'
 import { useConcent } from 'concent'
-import { Typography, Card, message, Alert } from 'antd'
+import { Typography, Card, message } from 'antd'
 import { GlobalCtx, MicroAppCtx } from 'typings/store'
 import ProForm, { ProFormDependency, ProFormField, ProFormText } from '@ant-design/pro-form'
 import { random } from '@/utils'
@@ -9,7 +9,7 @@ import { DraggerUpload } from '@/components/Upload'
 import BackNavigator from '@/components/BackNavigator'
 import SettingContainer from '../SettingContainer'
 
-const { Title, Text } = Typography
+const { Title } = Typography
 
 export default (): React.ReactNode => {
   const ctx = useConcent<{}, MicroAppCtx>('microApp')
@@ -94,19 +94,6 @@ export default (): React.ReactNode => {
               },
             ]}
           />
-          {appAction === 'edit' && (
-            <Alert
-              showIcon
-              type="warning"
-              className="mb-5"
-              message={<Title level={4}>更新提示</Title>}
-              description={
-                <Text strong>
-                  上传文件操作，无需提交即会更新已有微应用的文件，请勿随意上传文件！
-                </Text>
-              }
-            />
-          )}
           <ProFormDependency name={['id']}>
             {({ id }) => {
               return (

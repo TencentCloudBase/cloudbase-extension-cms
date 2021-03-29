@@ -161,6 +161,9 @@ export class SettingController {
       throw new CmsException('NOT_FOUND', '微应用更新失败，应用不存在')
     }
 
+    // 解压，更新文件
+    await this.settingService.unzipAndUploadFiles(app.id, app.fileID)
+
     await this.collection(Collection.Settings)
       .where({})
       .update({
@@ -185,7 +188,7 @@ export class SettingController {
         }),
       })
 
-    // 并删除文件
+    // 删除文件
     const manager = await getCloudBaseManager()
     await manager.hosting.deleteFiles({
       isDir: true,
