@@ -15,12 +15,17 @@ export enum ErrorCode {
   InvalidParameterValue = 'InvalidParameterValue',
   // 请求超限
   RequestLimitExceeded = 'RequestLimitExceeded',
-  // 资源
-  ResourceNotFound = 'ResourceNotFound',
+
   // 不支持的操作
   UnsupportedOperation = 'UnsupportedOperation',
   // 权限不足
   UnauthorizedOperation = 'UnauthorizedOperation',
+
+  // 资源
+  ResourceNotFound = 'ResourceNotFound',
+
+  // 资源被占用
+  ResourceInUse = 'ResourceInUse',
 }
 
 export class CmsException extends HttpException {
@@ -70,7 +75,7 @@ export class RecordNotExistException extends HttpException {
     super(
       {
         error: {
-          code: 'RECORD_EXIST',
+          code: ErrorCode.ResourceNotFound,
           message: msg || '记录不存在',
         },
       },

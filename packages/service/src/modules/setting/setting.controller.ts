@@ -3,7 +3,7 @@ import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
-import { CmsException } from '@/common'
+import { CmsException, RecordExistException } from '@/common'
 import { getCloudBaseManager } from '@/utils'
 import { SettingService } from './setting.service'
 
@@ -125,6 +125,12 @@ export class SettingController {
     let {
       data: [setting],
     } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
+
+    // 存在相同 ID 的微应用
+    const existApp = setting?.microApps?.find((_) => _.id === app.id)
+    if (existApp) {
+      throw new RecordExistException('AppID 已存在')
+    }
 
     // 解压，上传文件
     await this.settingService.unzipAndUploadFiles(app.id, app.fileID)

@@ -3,7 +3,6 @@ import { useConcent } from 'concent'
 import { Typography, Card, message } from 'antd'
 import { GlobalCtx, MicroAppCtx } from 'typings/store'
 import ProForm, { ProFormDependency, ProFormField, ProFormText } from '@ant-design/pro-form'
-import { random } from '@/utils'
 import { createMicroApp, updateMicroApp } from '@/services/global'
 import { DraggerUpload } from '@/components/Upload'
 import BackNavigator from '@/components/BackNavigator'
@@ -19,13 +18,7 @@ export default (): React.ReactNode => {
 
   const actionText = appAction === 'edit' ? '更新' : '新建'
 
-  const initialValues =
-    appAction === 'edit'
-      ? selectedApp
-      : {
-          id: random(8),
-        }
-
+  const initialValues = appAction === 'edit' ? selectedApp : {}
   return (
     <SettingContainer>
       <BackNavigator />

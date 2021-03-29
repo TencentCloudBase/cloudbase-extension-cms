@@ -157,7 +157,7 @@ const Layout: React.FC<any> = (props) => {
         if (customMenus?.length) {
           // 循环判断菜单是否存在，不存在则插入菜单
           // 保持菜单的原有顺序插入
-          const baseInsertIndex = WX_MP || window.TcbCmsConfig.isMpEnv ? 4 : 3
+          const baseInsertIndex = WX_MP || window.TcbCmsConfig.isMpEnv ? 6 : 5
           customMenus.forEach((menu, index) => {
             const isCustomMenusInsert = systemMenuData.find((_) => _?.key === menu.id)
             if (!isCustomMenusInsert) {
