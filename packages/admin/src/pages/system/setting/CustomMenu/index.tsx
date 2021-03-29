@@ -149,7 +149,8 @@ export default (): React.ReactElement => {
         action={configAction}
         parentNode={parentNode}
         onFinish={() => {
-          reloadData()
+          // 刷新、重新加载菜单配置
+          window.location.reload()
         }}
       />
     </>
@@ -180,7 +181,7 @@ const MenuConfigModal: React.FC<{
       modalRef={modalRef}
       initialValues={initialValues}
       onFinish={async (formData: any) => {
-        formData.id = formData.id || random(8)
+        formData.id = initialValues.id || random(8)
         // parentNode，只可能为添加根节点
         if (!parentNode) {
           customMenus.push({
