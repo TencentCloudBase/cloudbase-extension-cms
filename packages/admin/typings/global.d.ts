@@ -132,7 +132,7 @@ interface MicroApp {
   /**
    * 文件 ID 列表
    */
-  fileID: string
+  fileIDList: string
 }
 
 interface CustomMenuItem {

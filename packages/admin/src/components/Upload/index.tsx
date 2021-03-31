@@ -73,7 +73,6 @@ export function DraggerUpload({
   return (
     <Dragger
       multiple
-      directory
       fileList={fileList}
       onRemove={(file) => {
         const newFileList: any = fileList.filter((_) => _.uid !== file.uid)

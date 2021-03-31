@@ -4,7 +4,7 @@ import { CloudBaseService } from '@/services'
 import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
 import { CmsException, RecordExistException } from '@/common'
-import { getCloudBaseManager } from '@/utils'
+import { getCloudBaseManager, randomId } from '@/utils'
 import { SettingService } from './setting.service'
 
 interface CustomMenuItem {
@@ -55,6 +55,11 @@ interface Setting {
  */
 class MicroApp {
   /**
+   * 记录 _id，唯一，更新使用
+   */
+  _id: string
+
+  /**
    * 微应用 id 全局唯一，英文字母
    */
   @IsNotEmpty()
@@ -67,7 +72,7 @@ class MicroApp {
   title: string
 
   @IsNotEmpty()
-  fileID: string
+  fileIDList: string
 }
 
 @Controller('setting')
@@ -133,20 +138,25 @@ export class SettingController {
     }
 
     // 解压，上传文件
-    await this.settingService.unzipAndUploadFiles(app.id, app.fileID)
+    await this.settingService.unzipAndUploadFiles(app.id, app.fileIDList?.[0])
+
+    const data = {
+      ...app,
+      _id: randomId(),
+    }
 
     // 创建微应用
     if (setting.microApps?.length) {
       await this.collection(Collection.Settings)
         .where({})
         .update({
-          microApps: this.cloudbaseService.db.command.push(app),
+          microApps: this.cloudbaseService.db.command.push(data),
         })
     } else {
       await this.collection(Collection.Settings)
         .where({})
         .update({
-          microApps: [app],
+          microApps: [data],
         })
     }
   }
@@ -161,16 +171,20 @@ export class SettingController {
       data: [setting],
     } = await this.collection(Collection.Settings).where({}).get()
 
-    const appIndex = setting.microApps.findIndex((_) => _.id === app.id)
+    const appIndex = setting.microApps.findIndex((_) => app._id && _._id === app._id)
+    const appRecord = appIndex !== -1 ? setting.microApps[appIndex] : null
 
-    if (appIndex === -1) {
+    if (!appRecord) {
       throw new CmsException('NOT_FOUND', '微应用更新失败，应用不存在')
     }
 
-    // 解压，更新文件
-    await this.settingService.unzipAndUploadFiles(app.id, app.fileID)
+    // 应用文件变更时才更新文件
+    if (app.fileIDList[0] !== appRecord.fileIDList[0]) {
+      // 解压，更新文件
+      await this.settingService.unzipAndUploadFiles(app.id, app.fileIDList?.[0])
+    }
 
-    await this.collection(Collection.Settings)
+    return this.collection(Collection.Settings)
       .where({})
       .update({
         [`microApps.${appIndex}`]: this.cloudbaseService.db.command.set(app),

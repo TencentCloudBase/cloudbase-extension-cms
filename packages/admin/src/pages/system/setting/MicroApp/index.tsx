@@ -51,13 +51,7 @@ export default (): React.ReactElement => {
         },
         description: {
           render: (dom, item) => {
-            const link = `https://${location.host}/cloudbase-cms/apps/${item.id}`
-
-            return (
-              <Link href={link} target="_blank" copyable>
-                {link}
-              </Link>
-            )
+            return `应用 ID：${item.id}`
           },
         },
         actions: {

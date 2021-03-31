@@ -19,6 +19,7 @@ export default (): React.ReactNode => {
   const actionText = appAction === 'edit' ? '更新' : '新建'
 
   const initialValues = appAction === 'edit' ? selectedApp : {}
+
   return (
     <SettingContainer>
       <BackNavigator />
@@ -37,12 +38,12 @@ export default (): React.ReactNode => {
             },
           }}
           onFinish={async (data: any) => {
-            const { id, title, fileIDList } = data
+            // assign _id
             const app = {
-              id,
-              title,
-              fileID: fileIDList?.[0],
+              ...initialValues,
+              ...data,
             }
+
             if (appAction === 'create') {
               await createMicroApp(app)
               message.success('创建微应用成功！')

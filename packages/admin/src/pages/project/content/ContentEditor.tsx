@@ -7,8 +7,12 @@ import { getFieldFormItem } from '@/components/Fields'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
 import { LeftCircleTwoTone } from '@ant-design/icons'
-import { getDocInitialValues, getProjectId, getSchemaCustomFields } from '@/utils'
-import { getDocChangedValues } from './tool'
+import {
+  getDocInitialValues,
+  getDocChangedValues,
+  getProjectId,
+  getSchemaCustomFields,
+} from '@/utils'
 
 const { Text } = Typography
 

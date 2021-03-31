@@ -1,5 +1,5 @@
 // 生成随机字符串
-export const random = (len: number) => {
+export const random = (len = 32) => {
   const count = Math.ceil(Number(len) / 10) + 1
   let ret = ''
   for (let i = 0; i < count; i++) {

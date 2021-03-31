@@ -30,10 +30,5 @@ export class SettingService {
       localPath: dir,
       cloudPath: `cloudbase-cms/apps/${appID}`,
     })
-
-    // 删除文件
-    await app.deleteFile({
-      fileList: [fileID],
-    })
   }
 }
