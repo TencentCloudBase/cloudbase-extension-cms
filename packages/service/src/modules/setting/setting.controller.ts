@@ -71,7 +71,6 @@ class MicroApp {
   @IsNotEmpty()
   title: string
 
-  @IsNotEmpty()
   fileIDList: string
 }
 
