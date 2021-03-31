@@ -299,6 +299,11 @@ export class ContentsService {
       const collectionName = schemas.find((schema) => schema._id === field.connectResource)
         ?.collectionName
 
+      // schema 不存在
+      if (!collectionName) {
+        throw new RecordNotExistException(`关联模型 ${field.connectResource} 不存在`)
+      }
+
       // 获取关联 id 对应的 Doc
       // 使用 getMany 获取数据，自动转换 Connect 字段
       let connectData = []
