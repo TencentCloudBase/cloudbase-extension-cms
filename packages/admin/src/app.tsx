@@ -14,7 +14,7 @@ import { getSetting } from './services/global'
 run(models)
 
 export async function getInitialState(): Promise<{
-  currentUser?: Partial<API.CurrentUser>
+  currentUser?: Partial<CurrentUser>
   settings?: LayoutSettings
   menu?: any[]
 }> {
@@ -39,7 +39,7 @@ export async function getInitialState(): Promise<{
 
   let initialState: {
     menu?: MenuDataItem[]
-    currentUser?: Partial<API.CurrentUser>
+    currentUser?: Partial<CurrentUser>
     settings?: LayoutSettings
   } = {}
   let currentUser = {} as any
@@ -76,7 +76,7 @@ export async function getInitialState(): Promise<{
 export const layout = ({
   initialState = {},
 }: {
-  initialState: { menu?: MenuDataItem[]; settings?: LayoutSettings; currentUser?: API.CurrentUser }
+  initialState: { menu?: MenuDataItem[]; settings?: LayoutSettings; currentUser?: CurrentUser }
 }): BasicLayoutProps => {
   const { currentUser } = initialState
 

@@ -1,4 +1,4 @@
-export default function access(initialState: { currentUser?: API.CurrentUser }) {
+export default function access(initialState: { currentUser?: CurrentUser }) {
   const { currentUser } = initialState || {}
 
   console.log('currentUser', currentUser)

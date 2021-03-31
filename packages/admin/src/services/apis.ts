@@ -19,7 +19,7 @@ export const apiRequest = <T>(data: ApiRequestPayload) => {
  * @param file
  */
 export async function getCurrentUser() {
-  return apiRequest<API.CurrentUser>({
+  return apiRequest<CurrentUser>({
     service: 'auth',
     action: 'getCurrentUser',
   })
