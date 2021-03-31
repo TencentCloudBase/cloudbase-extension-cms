@@ -10,6 +10,8 @@ import MicroApp from './MicroApp'
 import CustomMenu from './CustomMenu'
 import SettingContainer from './SettingContainer'
 
+const { Title, Link } = Typography
+
 const DEFAULT_TAB = 'user'
 const Tabs = ['user', 'role', 'microapp', 'custommenu']
 
@@ -39,7 +41,19 @@ export default (): React.ReactNode => {
           <h3 style={{ marginBottom: '0.2rem' }}>返回主页</h3>
         </Space>
       </div>
-      <Typography.Title level={3}>系统设置</Typography.Title>
+      <div className="flex justify-between items-center mb-3">
+        <Title level={3} className="mb-0">
+          系统设置
+        </Title>
+        <Link
+          className="text-base"
+          href="https://docs.cloudbase.net/cms/intro.html"
+          target="_blank"
+        >
+          使用文档
+        </Link>
+      </div>
+
       <ProCard split="vertical" gutter={[5, 5]} style={{ minHeight: '480px' }}>
         <ProCard colSpan="208px" className="pt-3">
           <Menu

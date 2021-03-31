@@ -106,15 +106,7 @@ export default (): React.ReactNode => {
                     },
                   ]}
                 >
-                  <DraggerUpload
-                    maxCount={1}
-                    accept=".zip"
-                    uploadTip={
-                      appAction === 'create'
-                        ? '点击或拖拽 ZIP 文件上传'
-                        : '点击或拖拽 ZIP 文件更新微应用'
-                    }
-                  />
+                  <DraggerUpload maxCount={1} accept=".zip" uploadTip="点击或拖拽 ZIP 文件上传" />
                 </ProFormField>
               )
             }}
