@@ -51,16 +51,19 @@ export type Modules = keyof RootState
 // ********************************
 
 /** 属于某个模块 CtxM<P, M, Se, RefCu> */
-export type CtxM<P = {}, M extends Modules = MODULE_DEFAULT, Se = {}, RefCu = {}> = ICtx<
+export type CtxM<P = {}, M extends Modules = MODULE_DEFAULT, Se = {}, RefCu = {}, Mp = {}> = ICtx<
   RootState,
-  RootReducer,
-  RootComputed,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
   P,
   {},
   M,
   MODULE_VOID,
   Se,
-  RefCu
+  RefCu,
+  Mp
 >
 
 /** 属于某个模块，扩展了私有状态时 CtxMS<P, M, St, Se, RefCu> */

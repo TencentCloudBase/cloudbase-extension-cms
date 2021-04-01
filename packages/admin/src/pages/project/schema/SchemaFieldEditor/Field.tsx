@@ -73,6 +73,7 @@ export function getFieldFormItem(
     case 'String':
     case 'MultiLineString':
     case 'Number':
+      if (selectedField.name === '_id') return
       return (
         <Form.Item style={{ marginBottom: 0 }}>
           <Row gutter={[24, 0]}>

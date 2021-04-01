@@ -1,7 +1,7 @@
 import React from 'react'
-import { Space, Tag, Tooltip, Typography } from 'antd'
+import { message, Space, Tag, Tooltip, Typography } from 'antd'
 import { IConnectRender, IFileRender, ImageRender } from '@/components/Fields'
-import { calculateFieldWidth, formatDisplayTimeByType } from '@/utils'
+import { calculateFieldWidth, copyToClipboard, formatDisplayTimeByType } from '@/utils'
 import { IObjectRender } from './Object'
 import { IMedia } from './Media'
 
@@ -11,7 +11,7 @@ const { Text } = Typography
  * 根据类型获取展示字段组件
  */
 export function getFieldRender(field: SchemaField) {
-  const { name, type, displayName } = field
+  const { name, type, displayName, copyable } = field
   const width = calculateFieldWidth(field)
 
   switch (type) {
@@ -23,7 +23,17 @@ export function getFieldRender(field: SchemaField) {
         action: any
       ): React.ReactNode | React.ReactNode[] => (
         <Tooltip title={text}>
-          <Text ellipsis style={{ width }}>
+          <Text
+            ellipsis
+            style={{ width }}
+            onClick={() => {
+              // 复制文本
+              if (copyable) {
+                copyToClipboard(record[name])
+                message.success(`复制 ${name} 成功！`)
+              }
+            }}
+          >
             {text}
           </Text>
         </Tooltip>

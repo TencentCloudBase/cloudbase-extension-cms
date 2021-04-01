@@ -5,8 +5,7 @@ import { SchmeaCtx } from 'typings/store'
 import { createSchema, updateSchema } from '@/services/schema'
 import { Modal, Form, message, Input, Space, Button, Typography, Tooltip } from 'antd'
 import { QuestionCircleTwoTone } from '@ant-design/icons'
-import { getCmsSystemFields } from '@/common'
-import { getProjectId } from '@/utils'
+import { getSystemConfigurableFields, getProjectId } from '@/utils'
 
 const { TextArea } = Input
 
@@ -75,7 +74,7 @@ const SchemaEditor: React.FC = () => {
           description,
           docCreateTimeField,
           docUpdateTimeField,
-          fields: getCmsSystemFields({
+          fields: getSystemConfigurableFields({
             docCreateTimeField,
             docUpdateTimeField,
           }),

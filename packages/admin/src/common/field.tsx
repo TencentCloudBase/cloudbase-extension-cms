@@ -119,10 +119,21 @@ export const FieldTypes: FieldType[] = [
   },
 ]
 
+export const DOC_ID_FIELD = {
+  displayName: '_id',
+  id: '_id',
+  name: '_id',
+  type: 'String',
+  isSystem: true,
+  copyable: true,
+  description: '系统字段，请勿随意修改',
+}
+
 /**
  * 系统默认字段
  */
 export const SYSTEM_FIELDS: any[] = [
+  DOC_ID_FIELD,
   {
     displayName: '创建时间',
     id: '_createTime',
@@ -142,34 +153,3 @@ export const SYSTEM_FIELDS: any[] = [
     description: '系统字段，请勿随意修改',
   },
 ]
-
-/**
- * CMS 系统字段
- */
-export const getCmsSystemFields = (options: {
-  docCreateTimeField?: string
-  docUpdateTimeField?: string
-}): any[] => {
-  const { docCreateTimeField = '_createTime', docUpdateTimeField = '_updateTime' } = options
-
-  return [
-    {
-      displayName: '创建时间',
-      id: '_createTime',
-      name: docCreateTimeField,
-      type: 'DateTime',
-      isSystem: true,
-      dateFormatType: 'timestamp-ms',
-      description: '系统字段，请勿随意修改',
-    },
-    {
-      displayName: '修改时间',
-      id: '_updateTime',
-      name: docUpdateTimeField,
-      type: 'DateTime',
-      isSystem: true,
-      dateFormatType: 'timestamp-ms',
-      description: '系统字段，请勿随意修改',
-    },
-  ]
-}

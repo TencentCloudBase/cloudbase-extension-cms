@@ -117,8 +117,16 @@ const ContentTableSearchForm: React.FC<{
                 <Button
                   type="primary"
                   onClick={() => {
-                    form.resetFields()
-                    onSearch({})
+                    ctx.setState(
+                      {
+                        searchParams: {},
+                      },
+                      () => {
+                        console.log('callback')
+                        form.resetFields()
+                        onSearch({})
+                      }
+                    )
                   }}
                 >
                   重置搜索

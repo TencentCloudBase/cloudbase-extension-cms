@@ -1,5 +1,5 @@
 import jsonExport from 'jsonexport'
-import { getFullDate, saveContentToFile, saveFile } from '@/utils'
+import { getSchemaAllFields, getFullDate, saveContentToFile, saveFile } from '@/utils'
 
 /**
  * 格式化搜索参数，去除非 schema 中定义的字段
@@ -7,7 +7,9 @@ import { getFullDate, saveContentToFile, saveFile } from '@/utils'
 export const formatSearchParams = (searchParams: Record<string, any>, currentSchema: Schema) =>
   searchParams
     ? Object.keys(searchParams)
-        .filter((key) => currentSchema.fields?.some((field: SchemaField) => field.name === key))
+        .filter((key) =>
+          getSchemaAllFields(currentSchema)?.some((field: SchemaField) => field.name === key)
+        )
         .reduce(
           (prev, key) => ({
             ...prev,

@@ -4185,10 +4185,10 @@ antd-mobile@^2.3.1:
     rmc-tabs "~1.2.0"
     rmc-tooltip "~1.0.0"
 
-antd@4.14.1:
-  version "4.14.1"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.14.1.tgz#f04b7323793045fd159aaf18037adc8ce4f5aaeb"
-  integrity sha512-984zBd4EtsBfCC4dUmDAZfaCphjcm7+ldKBWJHPyheUZL5S3X7ZSz+Ld75XGNFj4pLjcGMi2SwGOr/4hmByNsg==
+antd@4.15.0:
+  version "4.15.0"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.15.0.tgz#4bfcd7eba7ae7812d95bcd391bf113a32e5a2143"
+  integrity sha512-24HMixmQAhCyqb0ND5wX5DYRTbPactCT36mfVKowqgr77eT7XQ59Uu6aS513mbeiVhXcHrNlrlCKNZBSeEDgPg==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons" "^4.6.2"
@@ -5721,10 +5721,10 @@ concent-plugin-redux-devtool@^2.0.3:
   dependencies:
     redux "^4.0.4"
 
-concent@2.9.38:
-  version "2.9.38"
-  resolved "https://registry.yarnpkg.com/concent/-/concent-2.9.38.tgz#751eb15f9fe5cb09a058f16315bb1d9f988b1f50"
-  integrity sha512-Z6Hnvp+Io5LTH2GITkG1Eu+/i4YRIhIh5XuwIEQnxIoF+/pIYjam4h9mpebja8wylytNN8+190u2TIkL4FfyQw==
+concent@2.14.17:
+  version "2.14.17"
+  resolved "https://registry.yarnpkg.com/concent/-/concent-2.14.17.tgz#2a41260fb6c40f3e323a873d40d8837d5e465ae7"
+  integrity sha512-S2Up3Jd2PD6y+SjxrDVRsIO7tl2mSj0agJ7X1ofy/dyOqHFv12xTEGmOJ7NaivEA2f1/Y2G70rPXgZbDBZqS+g==
 
 confusing-browser-globals@^1.0.10:
   version "1.0.10"

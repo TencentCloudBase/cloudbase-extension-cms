@@ -23,28 +23,15 @@ export const getTableColumns = (schema: Schema): ProColumns[] => {
     (field, i, arr) => field && arr.findIndex((_) => _.name === field.name) === i
   )
 
-  // 将系统字段放到表格的末尾列
-  const columns: ProColumns[] = customFields.map(fieldToColumn)
-  const systemFieldColumns = getSchemaSystemFields(schema).map(fieldToColumn)
-  columns.push(...systemFieldColumns)
+  const systemFields = getSchemaSystemFields(schema)
+  const idFiled = systemFields.splice(0, 1)[0]
 
-  // 插入序号列
-  // columns.unshift({
-  //   title: '序号',
-  //   width: 72,
-  //   align: 'center',
-  //   valueType: 'indexBorder',
-  //   render: (
-  //     text: React.ReactNode,
-  //     record: any,
-  //     index: number,
-  //     action: any
-  //   ): React.ReactNode | React.ReactNode[] => {
-  //     const { current, pageSize } = action
-  //     const serial = Number(pageSize) * (Number(current) - 1) + index + 1
-  //     return serial
-  //   },
-  // })
+  // 将 _id 字段放到表格首列
+  customFields.unshift(idFiled)
+  // 将时间字段放到表格的末尾列
+  customFields.push(...systemFields)
+
+  const columns: ProColumns[] = customFields.map(fieldToColumn)
 
   return columns
 }

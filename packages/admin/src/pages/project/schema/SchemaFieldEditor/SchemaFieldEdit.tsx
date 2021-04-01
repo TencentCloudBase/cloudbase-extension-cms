@@ -36,7 +36,7 @@ const { Text } = Typography
 const NoDefaultValueTypes = ['File', 'Image', 'Array', 'Connect']
 
 // 保留字段名
-const ReservedFieldNames = ['_id', '_status']
+const ReservedFieldNames = ['_status']
 
 /**
  * 添加字段，字段编辑弹窗
@@ -57,7 +57,7 @@ export const SchemaFieldEditorModal: React.FC<{
 
   // 新增字段
   // 编辑字段
-  const { run: createField, loading } = useRequest(
+  const { run: editField, loading } = useRequest(
     async (fieldAttr: SchemaField) => {
       // 判断是否存在同名字段
       const schemaFields = getSchemaCustomFields(currentSchema)
@@ -110,13 +110,15 @@ export const SchemaFieldEditorModal: React.FC<{
           (_: any) => _.id === selectedField?.id || _.name === selectedField?.name
         )
 
+        const fieldData = {
+          ...selectedField,
+          ...field,
+        }
+
         if (index > -1) {
-          fields.splice(index, 1, {
-            ...selectedField,
-            ...field,
-          })
+          fields.splice(index, 1, fieldData)
         } else {
-          fields.push(field)
+          fields.push(fieldData)
         }
       }
 
@@ -227,7 +229,7 @@ export const SchemaFieldEditorModal: React.FC<{
             v.defaultValue = formatStoreTimeByType(v.defaultValue, v.dateFormatType)
           }
 
-          createField(v)
+          editField(v)
         }}
       >
         <Form.Item
@@ -346,7 +348,7 @@ export const SchemaFieldEditorModal: React.FC<{
               <Row align="middle">
                 <Col flex="1 1 auto">
                   <Form.Item noStyle name="isOrderField" valuePropName="checked">
-                    <Switch />
+                    <Switch disabled={selectedField?.name === '_id'} />
                   </Form.Item>
                 </Col>
                 <Col flex="0 0 auto">

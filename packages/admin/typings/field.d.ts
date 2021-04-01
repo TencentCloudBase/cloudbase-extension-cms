@@ -136,6 +136,9 @@ interface SchemaField {
 
   // 多媒体类型
   mediaType: 'video' | 'music'
+
+  // 是否允许复制
+  copyable: boolean
 }
 
 /**

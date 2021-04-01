@@ -70,6 +70,10 @@ export const formatSearchData = (schema: Schema, params: Record<string, any>) =>
 
 // 字段排序，数字越大，越靠后
 const SYSTEM_FIELD_ORDER = {
+  // 优先级最高
+  _id: -1,
+  // 优先级：0 -> 自定义字段
+  // 优先级最后
   _createTime: 1,
   _updateTime: 2,
 }
@@ -80,7 +84,9 @@ const fieldOrder = (field: SchemaField) => {
 
 const SchemaCustomFieldKeys = ['docCreateTimeField', 'docUpdateTimeField']
 
-// 获取 Schema 中的系统字段，并排序
+/**
+ * 获取 Schema 中的全部系统字段，并排序
+ */
 export const getSchemaSystemFields = (schema: Schema) => {
   const fields = schema?.fields
   if (!fields?.length) return SYSTEM_FIELDS
@@ -91,7 +97,9 @@ export const getSchemaSystemFields = (schema: Schema) => {
   SYSTEM_FIELDS.forEach((field) => {
     if (
       !systemFieldsInSchema.find(
-        (_) => _.name === field.name || SchemaCustomFieldKeys.some((key) => _.name === schema[key])
+        (_) =>
+          _.name === field.name ||
+          (SchemaCustomFieldKeys.some((key) => _.name === schema[key]) && _.id === field.id)
       )
     ) {
       systemFieldsInSchema.push(field)
@@ -112,7 +120,10 @@ export const getSchemaCustomFields = (schema: Schema) => {
   )
 }
 
-// 获取 Schema 中缺失的系统字段数组
+/**
+ * 获取 Schema 中缺失的系统字段数组
+ * @param schema
+ */
 export const getMissingSystemFields = (schema: Schema) => {
   const fields = schema?.fields
   if (!fields?.length) return SYSTEM_FIELDS
@@ -124,7 +135,9 @@ export const getMissingSystemFields = (schema: Schema) => {
   SYSTEM_FIELDS.forEach((field) => {
     if (
       !systemFieldsInSchema.find(
-        (_) => _.name === field.name || SchemaCustomFieldKeys.some((key) => _.name === schema[key])
+        (_) =>
+          _.name === field.name ||
+          (SchemaCustomFieldKeys.some((key) => _.name === schema[key]) && _.id === field.id)
       )
     ) {
       missingSystemFields.push(field)
@@ -132,6 +145,66 @@ export const getMissingSystemFields = (schema: Schema) => {
   })
 
   return missingSystemFields.sort((prev, next) => {
+    return fieldOrder(prev) - fieldOrder(next)
+  })
+}
+
+/**
+ * 获取可以配置的系统字段
+ * @param options
+ */
+export const getSystemConfigurableFields = (options: {
+  docCreateTimeField?: string
+  docUpdateTimeField?: string
+}): any[] => {
+  const { docCreateTimeField = '_createTime', docUpdateTimeField = '_updateTime' } = options
+
+  return [
+    {
+      displayName: '创建时间',
+      id: '_createTime',
+      name: docCreateTimeField,
+      type: 'DateTime',
+      isSystem: true,
+      dateFormatType: 'timestamp-ms',
+      description: '系统字段，请勿随意修改',
+    },
+    {
+      displayName: '修改时间',
+      id: '_updateTime',
+      name: docUpdateTimeField,
+      type: 'DateTime',
+      isSystem: true,
+      dateFormatType: 'timestamp-ms',
+      description: '系统字段，请勿随意修改',
+    },
+  ]
+}
+
+/**
+ * 获取 schema 中的全部字段，包含系统字段
+ * @param schema
+ */
+export const getSchemaAllFields = (schema: Schema) => {
+  const allFields = schema?.fields.slice()
+  if (!allFields?.length) return SYSTEM_FIELDS
+
+  // schema 已中包含的系统字段
+  const systemFieldsInSchema = allFields.filter((_) => _.isSystem)
+
+  SYSTEM_FIELDS.forEach((field) => {
+    if (
+      !systemFieldsInSchema.find(
+        (_) =>
+          _.name === field.name ||
+          (SchemaCustomFieldKeys.some((key) => _.name === schema[key]) && _.id === field.id)
+      )
+    ) {
+      allFields.push(field)
+    }
+  })
+
+  return allFields.sort((prev, next) => {
     return fieldOrder(prev) - fieldOrder(next)
   })
 }

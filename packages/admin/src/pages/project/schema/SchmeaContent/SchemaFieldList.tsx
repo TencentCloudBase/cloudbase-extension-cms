@@ -53,7 +53,6 @@ const SchemaFields: React.FC = () => {
             onClick={(e) => {
               e.stopPropagation()
               ctx.setState({
-                fieldAction: 'delete',
                 selectedField: field,
                 deleteFieldVisible: true,
               })
