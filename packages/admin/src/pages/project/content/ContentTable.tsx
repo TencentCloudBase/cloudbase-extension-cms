@@ -9,11 +9,12 @@ import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@a
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { getProjectId, redirectTo } from '@/utils'
 import { ContentCtx } from 'typings/store'
+import { SortOrder } from 'antd/lib/table/interface'
 import { getTableColumns } from './columns'
 import ContentTableSearchForm from './SearchForm'
 import DataImport from './DataImport'
 import DataExport from './DataExport'
-import { exportData, formatSearchParams } from './tool'
+import { exportData, formatFilter, formatSearchParams } from './tool'
 
 const { Option } = Select
 
@@ -40,9 +41,9 @@ export const ContentTable: React.FC<{
   // 表格数据请求
   const tableRequest = useCallback(
     async (
-      params: { pageSize: number; current: number; [key: string]: any },
-      sort: any,
-      filter: any
+      params: { pageSize: number; current: number; keyword?: string },
+      sort: Record<string, SortOrder>,
+      filter: Record<string, React.ReactText[]>
     ) => {
       const { pageSize, current } = params
       const resource = currentSchema.collectionName
@@ -53,10 +54,10 @@ export const ContentTable: React.FC<{
       try {
         const { data = [], total } = await getContents(projectId, resource, {
           sort,
-          filter,
           pageSize,
           fuzzyFilter,
           page: current,
+          filter: formatFilter(filter, currentSchema),
         })
 
         return {

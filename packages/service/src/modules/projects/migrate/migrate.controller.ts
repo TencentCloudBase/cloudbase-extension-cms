@@ -108,13 +108,12 @@ export class MigrateController {
   ) {
     const { filePath, collectionName, conflictMode } = body
     const manager = await getCloudBaseManager()
-    const fileKey = `cloudbase-cms/${filePath}`
 
     // 导入数据
     const { JobId } = await manager.database.import(
       collectionName,
       {
-        ObjectKey: fileKey,
+        ObjectKey: filePath,
       },
       {
         StopOnError: true,
@@ -127,7 +126,7 @@ export class MigrateController {
       conflictMode,
       collectionName,
       jobId: JobId,
-      filePath: fileKey,
+      filePath,
       createTime: Date.now(),
     }
 
