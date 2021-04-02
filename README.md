@@ -153,7 +153,6 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
     扫描二维码，长按识别出现的二维码，即可加群
   </div>
   <img src="https://main.qcloudimg.com/raw/764d43c1b60b513dfe341576da1dffa8.jpg" height="300px" alt=""/>
-
   <img src="https://main.qcloudimg.com/raw/602fe15e4b5b730f7510a75fc2e995c0.jpeg" height="300px" alt="" />
 </div>
 

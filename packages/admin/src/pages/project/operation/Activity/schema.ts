@@ -88,7 +88,7 @@ export const ActivitySchema: any = {
       name: 'appPathQuery',
       order: 7,
       type: 'String',
-      max: 64,
+      max: 512,
     },
   ],
   collectionName: `${RESOURCE_PREFIX}-sms-activities`,
