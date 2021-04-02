@@ -28,6 +28,7 @@ export const formatFilter = (filter: Record<string, React.ReactText[]>, currentS
   if (!filter) return {}
 
   return Object.keys(filter)
+    .filter((key) => filter[key]?.length)
     .filter((key) => currentSchema.fields?.some((field: SchemaField) => field.name === key))
     .reduce(
       (prev, key) => ({

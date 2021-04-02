@@ -120,12 +120,13 @@ export const FieldTypes: FieldType[] = [
 ]
 
 export const DOC_ID_FIELD = {
-  displayName: '_id',
+  displayName: '文档 ID',
   id: '_id',
   name: '_id',
   type: 'String',
   isSystem: true,
   copyable: true,
+  isHidden: true,
   description: '系统字段，请勿随意修改',
 }
 

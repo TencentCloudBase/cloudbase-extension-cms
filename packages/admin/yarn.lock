@@ -141,6 +141,22 @@
     react-color "2.19.3"
     swr "^0.3.6"
 
+"@ant-design/pro-field@1.14.0":
+  version "1.14.0"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.14.0.tgz#9b8b576b67f25d827d72e080a47b41bdc4954177"
+  integrity sha512-yRkaraeeTn2Xi/hKIH1TPTpFV/7KC4tzaEXAKo5Tn2vBk3BDljVA8z7G/90OX/Me1Rtn01aluhWS7weZZbQ96g==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-provider" "1.4.9"
+    "@ant-design/pro-utils" "1.15.2"
+    classnames "^2.2.6"
+    lodash.tonumber "^4.0.3"
+    moment "^2.27.0"
+    omit.js "^2.0.2"
+    rc-util "^5.4.0"
+    react-color "2.19.3"
+    swr "^0.3.6"
+
 "@ant-design/pro-field@1.9.3":
   version "1.9.3"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-field/-/pro-field-1.9.3.tgz#f83387d720a53fc715157d7f6a676e520f43227f"
@@ -172,7 +188,23 @@
     use-media-antd-query "^1.0.3"
     use-url-search-params "^2.3.13"
 
-"@ant-design/pro-form@1.18.4", "@ant-design/pro-form@^1.18.4":
+"@ant-design/pro-form@1.19.1":
+  version "1.19.1"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-form/-/pro-form-1.19.1.tgz#0631ed77c8be8b7535d3e39f4d1d2c52ab92b32f"
+  integrity sha512-tGx4VmAk3LVW3FwE00npNeHdUUfKUiHfK5vwyXrKA7cNQDcu/HR175AIX2pYTsuzwlbeLsDbvmI03PNPYiWNxg==
+  dependencies:
+    "@ant-design/icons" "^4.2.1"
+    "@ant-design/pro-field" "1.14.0"
+    "@ant-design/pro-provider" "1.4.9"
+    "@ant-design/pro-utils" "1.15.2"
+    "@umijs/use-params" "^1.0.2"
+    classnames "^2.2.6"
+    omit.js "^2.0.2"
+    rc-resize-observer "^0.2.3"
+    rc-util "^5.0.6"
+    use-media-antd-query "^1.0.6"
+
+"@ant-design/pro-form@^1.18.4":
   version "1.18.4"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-form/-/pro-form-1.18.4.tgz#641a287b8f12091ca872981be7aad06b80664aae"
   integrity sha512-Hwo6J2smDJWNMsjizC5ohhi4kqaClj0mmaXeKUeMOjgnt6Uur+kxXtgWiQ88xAZVhhOpIRSiRc1AJIkaxMFgsw==
@@ -239,6 +271,13 @@
   dependencies:
     rc-util "^5.0.1"
 
+"@ant-design/pro-provider@1.4.9":
+  version "1.4.9"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-provider/-/pro-provider-1.4.9.tgz#a9e8fa6b08965ffd7ef3d21c27836010fd97b076"
+  integrity sha512-mISOJLZ6womxQCNfr1SQpdu0DBXkKoHI23EbRSzUC3KCM6Bw/YzgZ1gxnMATErttY2amAjXtTl+PJCzglFsrvA==
+  dependencies:
+    rc-util "^5.0.1"
+
 "@ant-design/pro-table@2.28.0":
   version "2.28.0"
   resolved "https://registry.yarnpkg.com/@ant-design/pro-table/-/pro-table-2.28.0.tgz#cc62f678a4e22023eb1ff573770be0d55ded4fc0"
@@ -258,16 +297,16 @@
     use-media-antd-query "1.0.2"
     use-url-search-params "^2.3.13"
 
-"@ant-design/pro-table@^2.31.0":
-  version "2.31.0"
-  resolved "https://registry.yarnpkg.com/@ant-design/pro-table/-/pro-table-2.31.0.tgz#caf305c31b8db0a09fd6044c8e6fe4093aeba181"
-  integrity sha512-84mCvkGCWmeeAPEbAT3AjrNO2seH1gcaBfTNjU78qkaVvXz7VeCi+PbLcaHT0brgE9JAASU0hfN28OiJUsXjwg==
+"@ant-design/pro-table@2.32.2":
+  version "2.32.2"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-table/-/pro-table-2.32.2.tgz#cbd2ee97df236ccffc8c106580894e70f8646d3e"
+  integrity sha512-TxZQ9V6itBcjFzm9UzjyJNuoXbw0CuHeN1+KIVumn4/HlGdiTVUVzVsxn6PceHzJBvQE15HQePkdD6xE+n6thA==
   dependencies:
     "@ant-design/icons" "^4.1.0"
-    "@ant-design/pro-field" "1.12.0"
-    "@ant-design/pro-form" "1.18.4"
-    "@ant-design/pro-provider" "1.4.8"
-    "@ant-design/pro-utils" "1.15.0"
+    "@ant-design/pro-field" "1.14.0"
+    "@ant-design/pro-form" "1.19.1"
+    "@ant-design/pro-provider" "1.4.9"
+    "@ant-design/pro-utils" "1.15.2"
     classnames "^2.2.6"
     moment "^2.24.0"
     omit.js "^2.0.2"
@@ -295,6 +334,18 @@
   dependencies:
     "@ant-design/icons" "^4.3.0"
     "@ant-design/pro-provider" "1.4.8"
+    classnames "^2.2.6"
+    fast-deep-equal "^3.1.3"
+    moment "^2.27.0"
+    rc-util "^5.0.6"
+
+"@ant-design/pro-utils@1.15.2":
+  version "1.15.2"
+  resolved "https://registry.yarnpkg.com/@ant-design/pro-utils/-/pro-utils-1.15.2.tgz#22f2855719c1d76385c6d91f4c3ff69840119a9c"
+  integrity sha512-FQ4Qs2uF7x7Lfa1RCG4xAWZtGloixoK0c+dMYvdMUmoBI776e+OcSF0bXrdhd4z0PWMw3Rku9ybOdB0BqPmGTg==
+  dependencies:
+    "@ant-design/icons" "^4.3.0"
+    "@ant-design/pro-provider" "1.4.9"
     classnames "^2.2.6"
     fast-deep-equal "^3.1.3"
     moment "^2.27.0"
@@ -3575,13 +3626,6 @@
   integrity sha512-5fSf7IXLf+A5QlMKVbI/r3KKoUXmD+MEWAC7Z1F1sG3wRCk0xDhLcawkwDcs+kkXpmROEtqurL4O761EcnkQog==
   dependencies:
     uppercamelcase "^3.0.0"
-
-"@umijs/plugin-blocks@^2.2.1":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@umijs/plugin-blocks/-/plugin-blocks-2.2.2.tgz#d2c030732f50108bf6180f76b2873c6f1c03988d"
-  integrity sha512-56lVfx4eJzQbxt620qzXADcemzHB5XjJuYxRNKorIdqXwA8+nWXQ+PzUOdWUzJnwNkFOVJbnXsUak5n8A8xsjw==
-  dependencies:
-    "@umijs/block-sdk" "^2.2.2"
 
 "@umijs/plugin-crossorigin@1.2.0":
   version "1.2.0"

@@ -66,7 +66,8 @@ export const ContentTable: React.FC<{
           total,
           success: true,
         }
-      } catch (error) {
+      } catch (e) {
+        console.log('查询数据异常', e)
         return {
           data: [],
           total: 0,
@@ -248,7 +249,6 @@ export const ContentTable: React.FC<{
           ...pagination,
           // 翻页时，将分页数据保存在 URL 中
           onChange: (current = 1, pageSize = 10) => {
-            console.log(current, pageSize)
             setPageQuery(current, pageSize)
           },
         }}
