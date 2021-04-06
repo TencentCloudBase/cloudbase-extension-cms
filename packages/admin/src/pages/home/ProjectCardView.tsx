@@ -71,7 +71,7 @@ export default function ProjectListView({
           key={index}
           onClick={() => {
             ctx.setState({
-              currentProjectId: project._id,
+              currentProject: project,
             })
             redirectTo('home', {
               projectId: project._id,

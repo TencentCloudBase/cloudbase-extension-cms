@@ -10,6 +10,7 @@ import ProjectListView from './ProjectListView'
 import ProjectCardView from './ProjectCardView'
 import HomePageContainer from './HomePageContainer'
 import './index.less'
+import { getPageQuery } from '@/utils'
 
 // 设置图标颜色
 setTwoToneColor('#0052d9')
@@ -30,28 +31,60 @@ const ToggleIcon = styled.div`
 `
 
 export default (): React.ReactNode => {
+  // 项目分组
+  const { groups } = window.TcbCmsConfig
+  const { group } = getPageQuery()
   const { isAdmin } = useAccess()
   // 布局设置持久化到本地
   const [currentLayout, setLocalLayout] = useLocalStorageState('TCB_CMS_PROJECT_LAYOUT', 'card')
-  const [{ modalVisible, reload }, setState] = useSetState({
+  const [{ modalVisible, reload, currentGroup }, setState] = useSetState({
     reload: 0,
     modalVisible: false,
+    currentGroup: group || groups?.[0]?.key,
   })
 
   // 请求数据
-  const { data = [], loading } = useRequest(() => getProjects(), {
+  let { data = [], loading } = useRequest(() => getProjects(), {
     refreshDeps: [reload],
   })
 
+  // 展示创建项目的弹窗
   const showCreatingModal = () =>
     setState({
       modalVisible: true,
     })
 
+  // 过滤分组，group 默认为 default
+  data = groups?.length
+    ? data.filter((_) => (_.group ? _.group?.includes(currentGroup) : currentGroup === 'default'))
+    : data
+
   return (
     <HomePageContainer loading={loading}>
       <div className="flex items-center justify-between mb-10">
-        <Typography.Title level={3}>我的项目</Typography.Title>
+        <div className="flex flex-row items-center">
+          {groups?.length ? (
+            groups.map((group) => (
+              <Typography.Title
+                level={3}
+                key={group.key}
+                onClick={() =>
+                  setState({
+                    currentGroup: group.key,
+                  })
+                }
+                className="mr-5 my-0 cursor-pointer"
+                style={{
+                  color: currentGroup === group.key ? '#0052d9' : '#9CA3AF',
+                }}
+              >
+                {group.title}
+              </Typography.Title>
+            ))
+          ) : (
+            <Typography.Title level={3}>我的项目</Typography.Title>
+          )}
+        </div>
         <Tooltip title="切换布局">
           <ToggleIcon
             className="flex items-center justify-between cursor-pointer"

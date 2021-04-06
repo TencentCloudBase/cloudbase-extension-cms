@@ -3,9 +3,9 @@ import { getCloudBaseApp } from '@/utils'
 
 interface GlobalState {
   /**
-   * 当前项目 ID
+   * 当前项目信息
    */
-  currentProjectId: string
+  currentProject?: Project
 
   /**
    * 设置
@@ -14,14 +14,8 @@ interface GlobalState {
 }
 
 const state: GlobalState = {
-  /**
-   * 当前项目 ID
-   */
-  currentProjectId: '',
+  currentProject: undefined,
 
-  /**
-   * 全局设置
-   */
   setting: {},
 }
 

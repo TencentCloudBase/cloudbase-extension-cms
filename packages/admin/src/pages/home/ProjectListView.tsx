@@ -65,7 +65,7 @@ export default function ProjectListView({
           className="flex items-center py-5 px-5"
           onClick={() => {
             ctx.setState({
-              currentProjectId: _._id,
+              currentProject: _,
             })
 
             redirectTo('home', {

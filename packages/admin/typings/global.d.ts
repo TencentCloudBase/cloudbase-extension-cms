@@ -1,194 +1,64 @@
-interface User {
-  _id: string
-
-  username: string
-
-  // 创建时间
-  createTime: number
-
-  // 用户角色
-  roles: UserRole[]
-
-  // cloudbase uuid
-  uuid: string
-
-  // 是否为 root 用户
-  root?: boolean
-}
-
-interface UserRole {
-  _id: string
-
-  // 角色名
-  roleName: string
-
-  // 角色描述
-  description: string
-
-  // 角色绑定的权限描述
-  permissions: Permission[]
-
-  type: string | 'system'
-}
-
-interface CurrentUser {
-  _id: string
-
-  username: string
-
-  password: string
-
-  // 创建时间
-  createTime: number
-
-  // 用户角色
-  roles: string[]
-
-  avatar?: string
-
-  // 是否项目管理员
-  isAdmin: boolean
-
-  // 项目管理员
-  isProjectAdmin: boolean
-
-  // 所有可访问的服务
-  accessibleService?: '*' | string[]
-}
-
-interface Project {
-  _id: string
-
-  name: string
-
-  customId: string
-
-  description: string
-
-  // 项目封面图
-  cover?: string
-
-  // 是否开启 Api 访问
-  enableApiAccess: boolean
-
-  // api 访问路径
-  apiAccessPath: string
-
-  // 可读集合
-  readableCollections: string[]
-
-  // 可修改的集合
-  modifiableCollections: string[]
-
-  // 可删除的集合
-  deletableCollections: string[]
-}
-
-interface Project {
-  _id: string
-
-  name: string
-
-  customId: string
-
-  description: string
-
-  // 项目封面图
-  cover?: string
-
-  // 是否开启 Api 访问
-  enableApiAccess: boolean
-
-  // Api 访问路径
-  apiAccessPath: string
-}
-
 /**
- *  URL 参数
+ * CMS 动态配置
  */
-interface UrlParams {
-  schemaId: string
+interface ITcbCmsConfing {
+  // 可用区
+  region: string
+  // 路由模式
+  history: 'hash' | 'browser'
+  // 环境 Id
+  envId: string
+  // 云接入域名
+  cloudAccessPath: string
+  // 容器模式时的路径
+  containerAccessPath: string
+  // 禁用帮助按钮
+  disableHelpButton: boolean
+  // 禁用通知提示
+  disableNotice: boolean
+  // 微信小程序 AppId
+  mpAppID: string
+  // CMS 文案配置
+  cmsTitle: string
+  // Logo 图片
+  cmsLogo: string
+  // 文档链接
+  cmsDocLink: string
+  // 帮助链接
+  cmsHelpLink: string
+  // 产品官网链接
+  officialSiteLink: string
+
+  /**
+   * 产品名
+   */
+  appName: string
+
+  /**
+   * 是否为小程序环境
+   */
+  isMpEnv: boolean
+
+  /**
+   * 是否为低码创建的 CMS
+   */
+  fromLowCode: boolean
+
+  /**
+   * 分组信息
+   * default: '我的应用'
+   * datasource: '我的数据源'
+   */
+  groups: {
+    key: string
+    title: string
+  }[]
 }
 
-/**
- * 短信互动渠道
- */
-interface ActivityChannel {
-  value: string
-  label: string
-}
-
-interface MicroApp {
-  /**
-   * 微应用 id 全局唯一，英文字母
-   */
-  id: string
-
-  /**
-   * 名称
-   */
-  title: string
-
-  /**
-   * 文件 ID 列表
-   */
-  fileIDList: string
-}
-
-interface CustomMenuItem {
-  /**
-   * 随机 id
-   */
-  id: string
-
-  /**
-   * 菜单标题
-   */
-  title: string
-
-  /**
-   * 微应用 ID
-   */
-  microAppID?: string
-
-  /**
-   * 路径
-   */
-  link?: string
-
-  /**
-   * 根节点
-   */
-  root: string
-
-  /**
-   * 序列号
-   */
-  order: number
-
-  /**
-   * 子菜单
-   */
-  children: CustomMenuItem[]
-}
-
-/**
- * 全局配置
- */
-interface GlobalSetting {
-  miniappID?: string
-  miniappName?: string
-  miniappOriginalID?: string
-  enableOperation?: boolean
-  activityChannels?: ActivityChannel[]
-
-  /**
-   * 微应用列表
-   */
-  microApps?: MicroApp[]
-
-  /**
-   * 微应用菜单信息
-   */
-  customMenus?: CustomMenuItem[]
+interface Window {
+  reloadAuthorized: () => void
+  cloudbase: any
+  TcbCmsConfig: ITcbCmsConfing
+  tinymce: any
+  cloud: any
 }

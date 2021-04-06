@@ -34,7 +34,7 @@ export const getProjectId = () => {
   // page query
   const query = getPageQuery()
 
-  return query?.pid || state?.global?.currentProjectId || ''
+  return query?.pid || state?.global?.currentProject?._id || ''
 }
 
 /**

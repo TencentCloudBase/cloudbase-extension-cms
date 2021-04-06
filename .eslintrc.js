@@ -8,7 +8,6 @@ module.exports = {
     WX_MP: true,
     SERVER_MODE: true,
     REACT_APP_ENV: true,
-    ANT_DESIGN_PRO_ONLY_DO_NOT_USE_IN_YOUR_PRODUCTION: true,
   },
   rules: {
     complexity: 'off',

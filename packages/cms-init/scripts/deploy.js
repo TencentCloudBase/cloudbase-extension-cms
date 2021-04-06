@@ -251,9 +251,19 @@ async function writeConfigJS(manager, dir, context) {
     isMpEnv: true,`
   }
 
-  // 低码
+  // 低码配置
   if (process.env.FROM_LOWCODE) {
-    configFileContent += `fromLowCode: true,`
+    configFileContent += `fromLowCode: true,
+    groups: [
+      {
+        key: 'default',
+        title: '我的应用',
+      },
+      {
+        key: 'datasource',
+        title: '我的数据源',
+      },
+    ]`
   }
 
   configFileContent += `}`
