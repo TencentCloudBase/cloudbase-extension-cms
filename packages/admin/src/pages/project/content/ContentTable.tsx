@@ -245,6 +245,8 @@ export const ContentTable: React.FC<{
         columns={memoTableColumns}
         toolBarRender={() => toolBarRender}
         tableAlertRender={tableAlerRender}
+        // 禁用树特性
+        childrenColumnName="__cms_children__"
         pagination={{
           ...pagination,
           // 翻页时，将分页数据保存在 URL 中
