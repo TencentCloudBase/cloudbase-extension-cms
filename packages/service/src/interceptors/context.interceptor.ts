@@ -22,7 +22,7 @@ export class ContextInterceptor implements NestInterceptor {
 
     /**
      * 至此，已经校验过服务和相关的操作，剩下的只需要校验具体的 projectId 和 resource 即可
-     * 按项目 Id 聚合，用户可访问的资源
+     * 按项目 ID 聚合，用户可访问的资源
      * Permission 对象
      * {
      *    projectId: '*' | string
@@ -36,7 +36,7 @@ export class ContextInterceptor implements NestInterceptor {
      * }
      * 1. 从用户绑定的角色列表中取出所有 permission 规则
      * 2. 过滤出对当前路由（服务）起作用的 permissions 规则，并展开数组
-     * 3. 按照项目 Id，聚合为一个 projectId: [resource] 映射对象
+     * 3. 按照项目 ID，聚合为一个 projectId: [resource] 映射对象
      *    {
      *       projectId: [resourceId]
      *    }

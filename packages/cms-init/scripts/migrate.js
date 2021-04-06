@@ -144,7 +144,7 @@ async function migrateWebhooks(context, projectId) {
 
   const $ = db.command
 
-  // 添加项目 Id
+  // 添加项目 ID
   await db.collection(webhookCollection).where({}).update({
     projectId,
   })

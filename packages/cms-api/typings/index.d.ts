@@ -39,7 +39,7 @@ interface UserRole {
 
 /**
  * 限制
- * 项目 Id 为 * 时，资源必然为 *
+ * 项目 ID 为 * 时，资源必然为 *
  * 服务未 * 时，资源必然为 *
  */
 interface Permission {

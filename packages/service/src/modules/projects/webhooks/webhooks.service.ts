@@ -9,7 +9,7 @@ import { callFunction, logger } from '@/utils'
 import { Webhook } from './type'
 
 export interface WebhookCallOptions {
-  // 项目 Id
+  // 项目 ID
   projectId: string
 
   // 内容集合名

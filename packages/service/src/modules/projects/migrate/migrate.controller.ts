@@ -29,7 +29,7 @@ class MigrateBody {
 }
 
 interface MigrateJobDto {
-  // 项目 Id
+  // 项目 ID
   projectId: string
 
   // 任务 Id
