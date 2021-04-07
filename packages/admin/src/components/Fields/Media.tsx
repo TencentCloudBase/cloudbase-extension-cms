@@ -4,7 +4,7 @@ import { useSetState } from 'react-use'
 import React, { useEffect } from 'react'
 import { message, Modal, Spin, Tooltip, Typography } from 'antd'
 import { CloseCircleFilled, CloseCircleOutlined, PlayCircleTwoTone } from '@ant-design/icons'
-import { batchGetTempFileURL, getFileNameFromUrl, isFileId } from '@/utils'
+import { batchGetTempFileURL, getFileNameFromUrl, hashCode, isFileId } from '@/utils'
 import styled from 'styled-components'
 
 const { Text, Title } = Typography
@@ -111,14 +111,16 @@ const MediaPlayer: React.FC<{
     setState({ currentUrl: url })
   }
 
+  // 不能直接复用一个元素，会出现样式丢失的问题
+  const id = hashCode(currentUrl)
+
   // 渲染媒体组件样式
   useEffect(() => {
     if (!visible) return
     // player 不存在，初始化一个 player
     if (!player) {
-      // 不能直接复用一个元素，同时作为 video 和 audio 播放器，会出现样式丢失的问题
-      // 需要分别使用一个 video 元素和一个 audio 元素分别播放视频和音频
-      const target = mediaType === 'video' ? '#cms-video-player' : '#cms-audio-player'
+      // 不能直接复用一个元素，会出现样式丢失的问题
+      const target = mediaType === 'video' ? `#v-${id}` : `#a-${id}`
       const player = new Plyr(target)
 
       setState({
@@ -163,7 +165,7 @@ const MediaPlayer: React.FC<{
             <div>
               <div className="w-full flex">
                 <div className="flex-auto">
-                  <audio id="cms-audio-player" controls>
+                  <audio id={`a-${id}`} controls>
                     <source src={currentUrl} />
                   </audio>
                 </div>
@@ -181,7 +183,7 @@ const MediaPlayer: React.FC<{
           ) : (
             // 视频播放
             <div className="relative">
-              <video id="cms-video-player" controls style={{ width: '680px' }}>
+              <video id={`v-${id}`} controls style={{ width: '680px' }}>
                 <source src={currentUrl} />
               </video>
 
