@@ -6,6 +6,7 @@ import { redirectTo } from '@/utils'
 
 /**
  * 重定向来自低码的访问，到对应的集合
+ * from=lowcode&customId=xxx
  */
 export default () => {
   const { collectionName, from, customId } = history.location.query || {}

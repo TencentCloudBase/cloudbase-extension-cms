@@ -1,103 +1,61 @@
 import Plyr from 'plyr'
 import 'plyr/dist/plyr.css'
 import { useSetState } from 'react-use'
-import React, { useCallback, useEffect, useMemo } from 'react'
-import { Button, message, Modal, Spin, Tooltip } from 'antd'
-import { CloseCircleOutlined, PlayCircleTwoTone } from '@ant-design/icons'
-import { batchGetTempFileURL, hashCode, isFileId } from '@/utils'
+import React, { useEffect } from 'react'
+import { message, Modal, Spin, Tooltip, Typography } from 'antd'
+import { CloseCircleFilled, CloseCircleOutlined, PlayCircleTwoTone } from '@ant-design/icons'
+import { batchGetTempFileURL, getFileNameFromUrl, isFileId } from '@/utils'
+import styled from 'styled-components'
 
-const AudioPlayer: React.FC<{ onClose: () => void; src: string; id: string }> = ({
-  onClose,
-  src,
-  id,
-}) => {
-  return (
-    <div className="w-full flex">
-      <div className="flex-auto">
-        <audio id={id} controls>
-          <source src={src} />
-        </audio>
-      </div>
-      <div className="flex items-center pr-5">
-        <Tooltip title="关闭">
-          <CloseCircleOutlined className="text-xl" onClick={onClose} />
-        </Tooltip>
-      </div>
-    </div>
-  )
-}
+const { Text, Title } = Typography
 
-const VideoPlayer: React.FC<{ onClose: () => void; src: string; id: string }> = ({
-  onClose,
-  src,
-  id,
-}) => {
-  return (
-    <div className="p-5">
-      <video id={id} controls style={{ width: '680px' }}>
-        <source src={src} />
-      </video>
-      <div className="text-right mt-2">
-        <Button type="primary" onClick={onClose}>
-          关闭
-        </Button>
-      </div>
-    </div>
-  )
-}
+const PlaylistContent = styled.div`
+  max-height: 300px;
+  overflow: auto;
+  padding-right: 10px;
+`
+
+const PlayerCloseIcon = styled.div`
+  display: flex;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  color: #fff;
+`
 
 export const IMedia: React.FC<{ field: SchemaField; uri: string }> = ({ field, uri }) => {
   const { mediaType } = field
-  const [{ visible, player, source, loading }, setState] = useSetState<{
-    player: any
-    source: string
+
+  const [{ loading, playlist }, setState] = useSetState<{
     loading: boolean
-    visible: boolean
+    playlist: string[]
   }>({
-    source: '',
-    player: null,
     loading: true,
-    visible: false,
+    playlist: [],
   })
 
-  // 关闭媒体，弹窗
-  const onClose = useCallback(() => {
-    player?.stop()
-    setState({ visible: false })
-  }, [player])
-
-  // 计算资源的 id
-  const select = useMemo(() => {
-    const code = hashCode(source)
-    return mediaType === 'video' ? `v-${code}` : `a-${code}`
-  }, [source])
-
-  // 渲染媒体组件样式
+  // 获取临时链接
   useEffect(() => {
-    if (visible && !player) {
-      const player = new Plyr(`#${select}`)
-      setState({
-        player,
-      })
-    }
-  }, [visible, select, source])
-
-  // 加载临时链接
-  useEffect(() => {
+    // uri 为空
     if (!uri?.length) {
       setState({ loading: false })
       return
     }
 
-    if (!isFileId(uri)) {
-      setState({ source: uri })
+    // 资源数组
+    const uris = Array.isArray(uri) ? uri : [uri]
+
+    if (!isFileId(uris[0])) {
+      setState({ playlist: uris, loading: false })
+      return
     }
 
     // 获取临时访问链接
-    batchGetTempFileURL([uri])
+    batchGetTempFileURL(uris)
       .then((results) => {
         setState({
-          source: results[0].tempFileURL,
+          playlist: results.map((_) => _.tempFileURL),
         })
       })
       .catch((e) => {
@@ -121,25 +79,161 @@ export const IMedia: React.FC<{ field: SchemaField; uri: string }> = ({ field, u
 
   return (
     <div className="relative">
+      <MediaPlayer playlist={playlist} mediaType={mediaType} />
+    </div>
+  )
+}
+
+/**
+ * 应用播放器，支持多个
+ */
+const MediaPlayer: React.FC<{
+  playlist: string[]
+  mediaType?: string
+}> = ({ playlist, mediaType = 'video' }) => {
+  // 多个资源
+  const isMultiple = playlist?.length > 1
+
+  const [{ currentUrl, player, visible }, setState] = useSetState<any>({
+    player: null,
+    visible: false,
+    currentUrl: playlist[0],
+  })
+
+  // 关闭弹窗
+  const closeModal = () => {
+    player?.stop()
+    setState({ visible: false })
+  }
+
+  // 切换视频/音频
+  const togglePlay = (url: string) => {
+    setState({ currentUrl: url })
+  }
+
+  // 渲染媒体组件样式
+  useEffect(() => {
+    if (!visible) return
+    // player 不存在，初始化一个 player
+    if (!player) {
+      // 不能直接复用一个元素，同时作为 video 和 audio 播放器，会出现样式丢失的问题
+      // 需要分别使用一个 video 元素和一个 audio 元素分别播放视频和音频
+      const target = mediaType === 'video' ? '#cms-video-player' : '#cms-audio-player'
+      const player = new Plyr(target)
+
+      setState({
+        player,
+      })
+    } else {
+      // player 存在时，直接切换播放源
+      player.source = {
+        type: mediaType === 'video' ? 'video' : 'audio',
+        sources: [
+          {
+            src: currentUrl,
+          },
+        ],
+      }
+      // 自动播放
+      player.on('ready', () => {
+        player?.play()
+      })
+    }
+  }, [visible, currentUrl])
+
+  // 视频播放
+  return (
+    <>
       <Tooltip title="播放">
         <PlayCircleTwoTone className="text-3xl" onClick={() => setState({ visible: true })} />
       </Tooltip>
       <Modal
-        footer={null}
         width={720}
+        footer={null}
         closable={false}
         visible={visible}
         bodyStyle={{
           padding: 0,
         }}
-        onCancel={onClose}
+        onCancel={closeModal}
       >
-        {mediaType === 'video' ? (
-          <VideoPlayer onClose={onClose} src={source} id={select} />
-        ) : (
-          <AudioPlayer onClose={onClose} src={source} id={select} />
-        )}
+        {
+          // 音乐播放
+          mediaType === 'music' ? (
+            <div>
+              <div className="w-full flex">
+                <div className="flex-auto">
+                  <audio id="cms-audio-player" controls>
+                    <source src={currentUrl} />
+                  </audio>
+                </div>
+                <div className="flex items-center pr-5">
+                  <Tooltip title="关闭">
+                    <CloseCircleOutlined className="text-xl" onClick={closeModal} />
+                  </Tooltip>
+                </div>
+              </div>
+              {/* 播放列表 */}
+              {isMultiple && (
+                <Playlist playlist={playlist} current={currentUrl} onChange={togglePlay} />
+              )}
+            </div>
+          ) : (
+            // 视频播放
+            <div className="relative">
+              <video id="cms-video-player" controls style={{ width: '680px' }}>
+                <source src={currentUrl} />
+              </video>
+
+              {/* 播放列表 */}
+              {isMultiple && (
+                <Playlist playlist={playlist} current={currentUrl} onChange={togglePlay} />
+              )}
+
+              <PlayerCloseIcon>
+                <Tooltip title="关闭">
+                  <CloseCircleFilled className="text-3xl" onClick={closeModal} />
+                </Tooltip>
+              </PlayerCloseIcon>
+            </div>
+          )
+        }
       </Modal>
+    </>
+  )
+}
+
+/**
+ * 可选播放列表
+ */
+const Playlist: React.FC<{
+  playlist: string[]
+  current: string
+  onChange: (url: string) => void
+}> = ({ playlist, current, onChange }) => {
+  return (
+    <div className="p-5">
+      <Title level={4}>播放列表</Title>
+      <PlaylistContent>
+        {playlist.map((_, i) => (
+          <div className="flex justify-between my-2" key={i}>
+            <Text
+              ellipsis
+              style={{
+                maxWidth: '500px',
+                color: current === _ ? '#0052d9' : '',
+              }}
+            >
+              {getFileNameFromUrl(_)}
+            </Text>
+            <div>
+              <Tooltip title="播放">
+                <PlayCircleTwoTone className="text-2xl" onClick={() => onChange(_)} />
+              </Tooltip>
+            </div>
+          </div>
+        ))}
+      </PlaylistContent>
     </div>
   )
 }
