@@ -350,10 +350,10 @@ export async function uploadFile(options: {
 }
 
 // 获取文件的临时访问链接
-export async function getTempFileURL(fileId: string): Promise<string> {
+export async function getTempFileURL(fileID: string): Promise<string> {
   const app = await getCloudBaseApp()
   const result = await app.getTempFileURL({
-    fileList: [fileId],
+    fileList: [fileID],
   })
 
   if (result.fileList[0].code !== 'SUCCESS') {
@@ -390,8 +390,8 @@ export async function batchGetTempFileURL(
 }
 
 // 下载文件
-export async function downloadFile(fileId: string) {
-  const tmpUrl = await getTempFileURL(fileId)
+export async function downloadFile(fileID: string) {
+  const tmpUrl = await getTempFileURL(fileID)
   const fileUrl =
     tmpUrl + `${tmpUrl.includes('?') ? '&' : '?'}response-content-disposition=attachment`
   const fileName = decodeURIComponent(new URL(fileUrl).pathname.split('/').pop() || '')
@@ -410,22 +410,23 @@ export const getFileNameFromUrl = (url: string) => {
     const pathname = urlObj.pathname || ''
     return pathname.split('/').pop()
   } catch (error) {
-    return ''
+    // 直接 split
+    return url.split('/').pop() || ''
   }
 }
 
-export function fileIdToUrl(fileId: string) {
-  if (!fileId) {
+export function fileIdToUrl(fileID: string) {
+  if (!fileID) {
     return ''
   }
 
   // 非 fileId
-  if (!/^cloud:\/\//.test(fileId)) {
-    return fileId
+  if (!/^cloud:\/\//.test(fileID)) {
+    return fileID
   }
 
   // cloudId: cloud://cms-demo.636d-cms-demo-1252710547/cloudbase-cms/upload/2020-09-15/Psa3R3NA4rubCd_R-favicon-wx.svg
-  let link = fileId.replace('cloud://', '')
+  let link = fileID.replace('cloud://', '')
   // 文件路径
   const index = link.indexOf('/')
   // envId.bucket

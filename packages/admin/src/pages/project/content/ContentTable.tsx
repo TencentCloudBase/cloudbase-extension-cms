@@ -9,7 +9,6 @@ import { PlusOutlined, DeleteOutlined, FilterOutlined, ExportOutlined } from '@a
 import { getContents, deleteContent, batchDeleteContent } from '@/services/content'
 import { getProjectId, getSchemaAllFields, redirectTo } from '@/utils'
 import { ContentCtx } from 'typings/store'
-import { DOC_ID_FIELD } from '@/common'
 import { SortOrder } from 'antd/lib/table/interface'
 import { exportData, formatFilter, formatSearchParams } from './tool'
 import ContentTableSearchForm from './SearchForm'

@@ -20,3 +20,14 @@ export const isNotEmpty = (ele: any | any[]) => {
 
   return !_.isEmpty(ele)
 }
+
+/**
+ * 休眠 tick 时间
+ */
+export const sleep = (tick: number) => {
+  return new Promise<void>((resolve) => {
+    setTimeout(() => {
+      resolve()
+    }, tick)
+  })
+}

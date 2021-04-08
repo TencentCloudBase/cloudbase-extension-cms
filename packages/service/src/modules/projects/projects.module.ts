@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { HttpModule, Module } from '@nestjs/common'
 import { ProjectsController } from './projects.controller'
 import { SchemasService } from './schemas/schema.service'
 import { WebhooksService } from './webhooks/webhooks.service'
@@ -12,6 +12,7 @@ import { OperationController } from './operation/operation.controller'
 import { OperationService } from './operation/operation.service'
 
 @Module({
+  imports: [HttpModule],
   controllers: [
     SchemasController,
     WebhooksController,

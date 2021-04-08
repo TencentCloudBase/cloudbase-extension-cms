@@ -12,7 +12,7 @@ import {
   Typography,
 } from 'antd'
 import { InboxOutlined } from '@ant-design/icons'
-import { createMigrateJobs } from '@/services/content'
+import { createImportMigrateJob } from '@/services/content'
 import { getProjectId, random, redirectTo, uploadFile } from '@/utils'
 
 const { Dragger } = Upload
@@ -42,7 +42,7 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
         overlay={
           <Menu
             onClick={({ key }) => {
-              // 查看导出记录
+              // 查看导入记录
               if (key === 'record') {
                 redirectTo('content/migrate')
                 return
@@ -55,6 +55,7 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
           >
             <Menu.Item key="csv">通过 CSV 导入</Menu.Item>
             <Menu.Item key="json">通过 JSON 导入</Menu.Item>
+            <Menu.Item key="jsonlines">通过 JSON Lines 导入</Menu.Item>
             <Menu.Item key="record">查看导入记录</Menu.Item>
           </Menu>
         }
@@ -72,17 +73,13 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
         visible={visible}
         onCancel={() => setVisible(false)}
       >
-        <Title level={4}>注意事项</Title>
-        {dataType === 'json' && (
-          <Alert
-            message="JSON 数据不是数组，而是类似 JSON Lines，即各个记录对象之间使用 \n 分隔，而非逗号"
-            style={{ marginBottom: '10px' }}
-          />
-        )}
         {dataType === 'csv' && (
-          <Alert message="CSV 格式的数据默认以第一行作为导入后的所有键名，余下的每一行则是与首行键名一一对应的键值记录" />
+          <>
+            <Title level={4}>注意事项</Title>
+            <Alert message="CSV 格式的数据默认以第一行作为导入后的所有键名，余下的每一行则是与首行键名一一对应的键值记录" />
+            <br />
+          </>
         )}
-        <br />
         <Title level={4}>冲突处理模式</Title>
         <Select
           defaultValue="insert"
@@ -110,10 +107,18 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
                 setPercent(percent)
               },
             })
-              .then(() => createMigrateJobs(projectId, collectionName, filePath, conflictMode))
+              .then((fileID: string) =>
+                createImportMigrateJob(projectId, {
+                  fileID,
+                  filePath,
+                  conflictMode,
+                  collectionName,
+                  fileType: dataType,
+                })
+              )
               .then(() => {
                 setVisible(false)
-                message.success('上传文件成功，数据导入中')
+                message.success('上传文件成功，数据导入处理中')
               })
               .catch((e) => {
                 message.error(`导入文件失败：${e.message}`)

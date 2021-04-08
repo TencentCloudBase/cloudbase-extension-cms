@@ -128,19 +128,49 @@ export async function getMigrateJobs(projectId: string, page = 1, pageSize = 10)
   })
 }
 
-export async function createMigrateJobs(
+/**
+ * 创建导入任务
+ */
+export async function createImportMigrateJob(
   projectId: string,
-  collectionName: string,
-  filePath: string,
-  conflictMode: string
+  data: {
+    fileID: string
+    filePath: string
+    fileType: string
+    collectionName: string
+    conflictMode: string
+  }
 ) {
   return tcbRequest(`/projects/${projectId}/migrate`, {
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+ * 创建导出任务
+ */
+export async function createExportMigrateJob(
+  projectId: string,
+  data: {
+    fileType: string
+    collectionName: string
+  }
+) {
+  return tcbRequest(`/projects/${projectId}/migrate/export`, {
+    data,
+    method: 'POST',
+  })
+}
+
+/**
+ * 请求解析 JSON Lines 文件
+ */
+export async function parseJsonLinesFile(projectId: string, fileUrl: string) {
+  return tcbRequest(`/projects/${projectId}/migrate/parseJsonLinesFile`, {
     method: 'POST',
     data: {
-      filePath,
-      projectId,
-      conflictMode,
-      collectionName,
+      fileUrl,
     },
   })
 }
