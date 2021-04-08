@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-sms",
-  "version": "2.10.2",
+  "version": "2.11.0",
   "description": "短信下发模块",
   "main": "index.js",
   "private": true,

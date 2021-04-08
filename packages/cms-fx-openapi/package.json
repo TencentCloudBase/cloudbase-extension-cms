@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-fx-openapi",
-  "version": "2.10.2",
+  "version": "2.11.0",
   "description": "CloudBase CMS open api service",
   "author": "cwuyiqing@gmail.com",
   "private": true,
