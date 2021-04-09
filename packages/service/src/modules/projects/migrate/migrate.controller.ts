@@ -158,7 +158,7 @@ export class MigrateController {
       const tmpJsonFilePath = `/tmp/${randomId()}-import-format.json`
 
       // TODO 等待 fd 关闭
-      await sleep(200)
+      await sleep(1000)
 
       const data: any[] = JSON.parse(fs.readFileSync(tempFilePath).toString())
       data.forEach((item) => {

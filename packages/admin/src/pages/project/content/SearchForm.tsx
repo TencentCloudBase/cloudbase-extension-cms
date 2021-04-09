@@ -122,7 +122,6 @@ const ContentTableSearchForm: React.FC<{
                         searchParams: {},
                       },
                       () => {
-                        console.log('callback')
                         form.resetFields()
                         onSearch({})
                       }

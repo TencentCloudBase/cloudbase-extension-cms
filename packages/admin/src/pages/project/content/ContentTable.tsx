@@ -228,7 +228,7 @@ export const ContentTable: React.FC<{
             searchParams: params,
           })
           setPageQuery(1, 10)
-          tableRef?.current?.reload(true)
+          tableRef?.current?.reloadAndRest?.()
         }}
       />
 
