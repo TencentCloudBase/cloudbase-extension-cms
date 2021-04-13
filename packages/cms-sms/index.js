@@ -3,9 +3,6 @@ const cloud = require('wx-server-sdk')
 
 const { getUrlScheme } = require('./url')
 
-/**
- * 下发短信 https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/cloudbase/cloudbase.sendSms.html
- */
 exports.main = async (event = {}, context) => {
   const { taskId, action } = event
   const { ENV } = cloud.getWXContext()

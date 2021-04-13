@@ -27,7 +27,7 @@ const base64 = (v) => Buffer.from(v).toString('base64')
  */
 async function reportUserView(event = {}) {
   const { ENV } = cloud.getWXContext()
-  let { activityId, channelId, sessionId } = event
+  let { activityId, channelId, sessionId, referer } = event
   const clientIP = process.env.WX_CLIENTIP || process.env.WX_CLIENTIPV6 || '127.0.0.1'
 
   if (!sessionId) {
@@ -39,11 +39,12 @@ async function reportUserView(event = {}) {
   console.log('IP 地址', clientIP, sessionId)
 
   const result = await cloud.openapi({ convertCase: false }).cloudbase.report({
-    reportAction: 'openH5', // 开发 H5 上报
+    referer, // 访问 referer
     activityId, // 活动 ID
     channelId, // 渠道 ID
     sessionId, // 用户访问ID
     envId: ENV, // 环境 ID
+    reportAction: 'openH5', // 开发 H5 上报
   })
 
   console.log(result)

@@ -202,6 +202,7 @@ export default {
             channelId,
             sessionId,
             activityId,
+            referer: document.referrer,
             action: 'getUrlScheme',
           },
         })
