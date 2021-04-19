@@ -16,7 +16,7 @@
     "@cloudbase/cloud-api": "^0.4.0",
     "@cloudbase/manager-node": "^3.8.0",
     "@cloudbase/node-sdk": "^2.4.6-beta",
-    "@nestjs/common": "^7.3.2",
+    "@nestjs/common": "^7.6.15",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.3.2",
     "@nestjs/platform-express": "^7.3.2",
@@ -37,7 +37,7 @@
     "signale": "^1.4.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^7.4.1",
+    "@nestjs/cli": "^7.6.0",
     "@nestjs/schematics": "^7.0.1",
     "@types/express": "^4.17.7",
     "@types/lodash": "^4.14.168",
