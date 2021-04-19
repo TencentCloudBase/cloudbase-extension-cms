@@ -87,10 +87,10 @@ npm install
 npm run setup
 ```
 
-### 创建数据库表
+### 部署
 
 ```bash
-tcb framework deploy db
+npm run deploy
 ```
 
 ### 启动开发
