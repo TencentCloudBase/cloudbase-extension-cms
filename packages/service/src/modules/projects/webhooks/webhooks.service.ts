@@ -5,7 +5,7 @@ import util from 'util'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { Collection } from '@/constants'
-import { callFunction, logger } from '@/utils'
+import { callFunction } from '@/utils'
 import { Webhook } from './type'
 
 export interface WebhookCallOptions {
@@ -81,11 +81,11 @@ export class WebhooksService {
     webhooks = webhooks.filter((_) => _.event?.includes('*') || _.event?.includes(webhookEvent))
 
     if (!webhooks?.length) {
-      logger.info('没有符合条件的 Webhook')
+      console.info('没有符合条件的 Webhook')
       return
     }
 
-    logger.info(webhooks, 'Webhook 获取成功')
+    console.info('Webhook 获取成功', webhooks)
 
     /**
      * 批量执行
@@ -166,7 +166,7 @@ export class WebhooksService {
         }
       } catch (error) {
         // 触发错误
-        logger.info(error, 'webhook 调用错误')
+        console.info('webhook 调用错误', error)
 
         // 添加 webhook 执行 log
         await this.collection(Collection.WebhookLog).add({
@@ -183,7 +183,7 @@ export class WebhooksService {
     // TODO: 隔离处理，不影响请求
     await Promise.all(executions)
 
-    logger.info('Webhook 触发成功！')
+    console.info('Webhook 触发成功！')
   }
 
   // 简写

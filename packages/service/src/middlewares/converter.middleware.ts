@@ -1,4 +1,4 @@
-import { logger, randomId } from '@/utils'
+import { randomId } from '@/utils'
 import { Request, Response } from 'express'
 import { Injectable, NestMiddleware } from '@nestjs/common'
 
@@ -22,8 +22,8 @@ export class BodySerialize implements NestMiddleware {
     }
 
     // 打印请求信息
-    logger.info(`${req.method} ${req.originalUrl}`)
-    logger.info(req.body, '请求 Body')
+    console.info(`${req.method} ${req.originalUrl}`)
+    console.info('请求 Body', req.body)
 
     next()
   }

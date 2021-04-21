@@ -29,12 +29,10 @@
     "helmet": "^3.23.3",
     "lodash": "^4.17.19",
     "nanoid": "^3.1.10",
-    "pino": "^6.8.0",
     "ramda": "^0.27.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.0",
-    "serverless-http": "^2.5.0",
-    "signale": "^1.4.0"
+    "serverless-http": "^2.5.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",

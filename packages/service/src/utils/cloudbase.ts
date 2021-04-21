@@ -7,7 +7,6 @@ import { Collection } from '@/constants'
 import { isDevEnv } from './tools'
 import { MemoryCache } from './cache'
 import { getUnixTimestamp } from './date'
-import { logger } from './log'
 
 let nodeApp: CloudBase
 let managerApp
@@ -132,7 +131,7 @@ export const getUserFromCredential = async (credential: string, origin: string) 
   })
 
   if (res.data?.code || !res.data?.uuid) {
-    logger.error(res.data, '获取用户信息失败')
+    console.error('获取用户信息失败', res.data)
     return null
   }
 

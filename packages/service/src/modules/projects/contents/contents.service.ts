@@ -3,13 +3,7 @@ import R from 'ramda'
 import { Collection } from '@/constants'
 import { Injectable } from '@nestjs/common'
 import { CloudBaseService, LocalCacheService, SchemaCacheService } from '@/services'
-import {
-  logger,
-  isNotEmpty,
-  formatPayloadDate,
-  getCollectionSchema,
-  formatTimeByType,
-} from '@/utils'
+import { isNotEmpty, formatPayloadDate, getCollectionSchema, formatTimeByType } from '@/utils'
 import { BadRequestException, RecordNotExistException, getSchemaSystemFields } from '@/common'
 
 /**
@@ -90,7 +84,7 @@ export class ContentsService {
         })
     }
 
-    logger.info(where, 'where')
+    console.info('where 查询', where)
 
     let query = collection.where(where)
 

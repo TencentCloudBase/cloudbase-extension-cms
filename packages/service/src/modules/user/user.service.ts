@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { getCloudBaseManager, logger } from '@/utils'
+import { getCloudBaseManager } from '@/utils'
 import { EndUserInfo } from '@cloudbase/manager-node/types/interfaces'
 
 @Injectable()
@@ -8,14 +8,14 @@ export class UserService {
   async createUser(username: string, password: string): Promise<EndUserInfo> {
     const manager = await getCloudBaseManager()
 
-    logger.info(username, '注册用户信息')
+    console.info('注册用户信息', username)
 
     const { User } = await manager.user.createEndUser({
       username,
       password,
     })
 
-    logger.info(User)
+    console.info(User)
 
     return User
   }

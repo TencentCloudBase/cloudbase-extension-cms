@@ -14,7 +14,7 @@ import { ContextInterceptor } from './interceptors/context.interceptor'
 
 import { AllExceptionsFilter } from './exceptions.filter'
 import config from './config'
-import { isRunInServerMode, logger } from './utils'
+import { isRunInServerMode } from './utils'
 
 const expressApp = express()
 const adapter = new ExpressAdapter(expressApp)
@@ -74,6 +74,6 @@ export async function bootstrap() {
 
 if (isRunInServerMode()) {
   bootstrap().then(() => {
-    logger.info(` 🚀 App listen on http://localhost:${port}`)
+    console.info(` 🚀 App listen on http://localhost:${port}`)
   })
 }

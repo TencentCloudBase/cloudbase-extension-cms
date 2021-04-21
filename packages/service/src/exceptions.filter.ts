@@ -1,6 +1,5 @@
 import { Response } from 'express'
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common'
-import { logger } from './utils'
 
 interface NestResponse {
   statusCode: number
@@ -22,7 +21,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>()
     const request = ctx.getRequest<Request>()
 
-    logger.error(exception)
+    console.error(exception)
 
     try {
       const httpRes = exception?.getResponse?.() as NestResponse & SystemResponse
@@ -43,7 +42,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       } else if (httpRes?.error) {
         error = httpRes.error
       } else {
-        logger.error(httpRes || {}, '服务异常，响应：')
+        console.error('服务异常，响应：', httpRes || {})
 
         error = {
           code: 'SYS_ERR',
@@ -60,7 +59,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       })
     } catch (e) {
       // 解析错误异常
-      logger.error(e || {}, '系统错误')
+      console.error('系统错误', e || {})
 
       response.status(500).json({
         error: {
