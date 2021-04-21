@@ -4229,10 +4229,10 @@ antd-mobile@^2.3.1:
     rmc-tabs "~1.2.0"
     rmc-tooltip "~1.0.0"
 
-antd@4.15.0:
-  version "4.15.0"
-  resolved "https://registry.yarnpkg.com/antd/-/antd-4.15.0.tgz#4bfcd7eba7ae7812d95bcd391bf113a32e5a2143"
-  integrity sha512-24HMixmQAhCyqb0ND5wX5DYRTbPactCT36mfVKowqgr77eT7XQ59Uu6aS513mbeiVhXcHrNlrlCKNZBSeEDgPg==
+antd@4.15.2:
+  version "4.15.2"
+  resolved "https://registry.yarnpkg.com/antd/-/antd-4.15.2.tgz#f955bcbdd1f577c7ac93a00ad17d1719d1b90818"
+  integrity sha512-9IwlR022xSQrG+iJG8d7adSo9gy4n7AuS5x0/OxDi/V3CYSTTfaE24jp1wnmgmXOVAT/77Llg9OEbKcSyFim2g==
   dependencies:
     "@ant-design/colors" "^6.0.0"
     "@ant-design/icons" "^4.6.2"
@@ -4241,7 +4241,7 @@ antd@4.15.0:
     array-tree-filter "^2.1.0"
     classnames "^2.2.6"
     copy-to-clipboard "^3.2.0"
-    lodash "^4.17.20"
+    lodash "^4.17.21"
     moment "^2.25.3"
     rc-cascader "~1.4.0"
     rc-checkbox "~2.3.0"
@@ -10350,7 +10350,7 @@ lodash@4.17.20, lodash@^4.15.0, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.1
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
 
-lodash@^4.0.1:
+lodash@^4.0.1, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==

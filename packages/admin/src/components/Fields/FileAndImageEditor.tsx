@@ -10,6 +10,9 @@ import {
   batchGetTempFileURL,
 } from '@/utils'
 import { InboxOutlined } from '@ant-design/icons'
+import { DraggerUpload } from '@/components/Upload'
+import { ContentLoading } from '@/components/Loading'
+import { useSetState } from 'react-use'
 
 const { Dragger } = Upload
 
@@ -31,7 +34,7 @@ export const IFileAndImageEditor: React.FC<{
   // 数组模式，多文件
   if (isMultiple || Array.isArray(links)) {
     return (
-      <IMultipleEditor
+      <IMultipleEditorNext
         type={type}
         onChange={onChange}
         fileUris={links as string[]}
@@ -168,22 +171,27 @@ export const ISingleFileUploader: React.FC<{
 /**
  * 多文件、图片上传
  */
-const IMultipleEditor: React.FC<{
+const IMultipleEditorNext: React.FC<{
   fileUris: string[]
   type: 'file' | 'image'
   resourceLinkType: 'fileId' | 'https'
   onChange: (v: string[]) => void
 }> = (props) => {
   let { fileUris = [], type, onChange = () => {}, resourceLinkType = 'fileId' } = props
-  const [percent, setPercent] = useState(0)
-  const [fileList, setFileList] = useState<any[]>([])
-  const [uploading, setUploading] = useState(false)
-  const tipText = type === 'file' ? '文件' : '图片'
 
   // 如果为 multiple 模式，但是 fileUris 为字符串，则转为数组
   if (!Array.isArray(fileUris) && typeof fileUris === 'string') {
     fileUris = [fileUris]
   }
+
+  // 全部为 http 链接
+  const isAllHttp = fileUris.every((link) => !isFileId(link))
+  // 初始 state
+  const [{ transformLoading, transformedFileUrls }, setState] = useSetState({
+    transformLoading: !fileUris?.length || isAllHttp || type === 'file' ? false : true,
+    transformedFileUrls: fileUris,
+  })
+  const tipText = type === 'file' ? '文件' : '图片'
 
   // 加载图片预览
   useEffect(() => {
@@ -191,32 +199,9 @@ const IMultipleEditor: React.FC<{
       return
     }
 
-    // 当全部 fileId 已经转换成临时访问链接时，不重新获取
-    if (fileUris.length <= fileList.length) {
-      const isGotAllUrls = fileUris.every((fileUri) =>
-        fileList.find((file) => file.uid === fileUri && file.url !== file.uid)
-      )
-      if (isGotAllUrls) {
-        return
-      }
-    }
-
-    // 全部为 http 链接
-    const isAllHttp = fileUris.every((link) => !isFileId(link))
-
     // 文件不加载预览
     // 全部为 http 链接，不用转换
     if (isAllHttp || type === 'file') {
-      const fileList = fileUris.map((fileUri: string) => {
-        const fileName = getFileNameFromUrl(fileUri)
-        return {
-          url: fileUri,
-          uid: fileUri,
-          name: fileName,
-          status: 'done',
-        }
-      })
-      setFileList(fileList)
       return
     }
 
@@ -227,8 +212,7 @@ const IMultipleEditor: React.FC<{
     batchGetTempFileURL(fileIds)
       .then((results) => {
         // 拼接结果和 http 链接
-        const fileList = fileUris.map((fileUri: string) => {
-          const fileName = getFileNameFromUrl(fileUri)
+        const fileUrlList = fileUris.map((fileUri: string) => {
           let fileUrl: string = fileUri
           if (isFileId(fileUri)) {
             // eslint-disable-next-line
@@ -236,65 +220,31 @@ const IMultipleEditor: React.FC<{
             fileUrl = ret?.tempFileURL || ''
           }
 
-          return {
-            url: fileUrl,
-            uid: fileUri,
-            name: fileName || `已上传${tipText}`,
-            status: 'done',
-          }
+          return fileUrl
         })
 
-        setFileList(fileList)
+        setState({
+          transformLoading: false,
+          transformedFileUrls: fileUrlList,
+        })
       })
       .catch((e) => {
+        setState({
+          transformLoading: false,
+        })
         message.error(`获取图片链接失败 ${e.message}`)
       })
   }, [fileUris])
 
-  return (
-    <>
-      <Dragger
-        fileList={fileList}
-        listType={type === 'image' ? 'picture' : 'text'}
-        onRemove={(file) => {
-          const newFileList = fileList.filter((_) => _.uid !== file.uid)
-          const urls = newFileList.map((file) => file.uid)
-          onChange(urls)
-          setFileList(newFileList)
-        }}
-        beforeUpload={(file) => {
-          setUploading(true)
-          setPercent(0)
-          // 上传文件
-          uploadFile({
-            file,
-            onProgress: (percent) => {
-              setPercent(percent)
-            },
-          }).then((fileId: string) => {
-            // 返回值
-            const resourceLink = resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId)
-            onChange([...fileUris, resourceLink])
-            // 添加图片
-            setFileList([
-              ...fileList,
-              {
-                uid: fileId,
-                name: file.name,
-                status: 'done',
-              },
-            ])
-            message.success(`上传${tipText}成功`)
-          })
-          return false
-        }}
-      >
-        <p className="ant-upload-drag-icon">
-          <InboxOutlined />
-        </p>
-        <p className="ant-upload-text">点击或拖拽{tipText}上传</p>
-      </Dragger>
-      {uploading && <Progress style={{ paddingTop: '10px' }} percent={percent} />}
-    </>
+  return transformLoading ? (
+    <ContentLoading size="default" tip="图片加载中" />
+  ) : (
+    <DraggerUpload
+      onChange={onChange}
+      value={transformedFileUrls}
+      resourceLinkType={resourceLinkType}
+      uploadTip={`点击或拖拽${tipText}上传`}
+      listType={type === 'image' ? 'picture' : 'text'}
+    />
   )
 }
