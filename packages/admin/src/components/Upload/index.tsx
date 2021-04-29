@@ -117,9 +117,9 @@ export function DraggerUpload({
             } as any)
           },
         })
-          .then((fileId: string) => {
+          .then(({ fileId, url }) => {
             // 返回值
-            const resourceLink = resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId)
+            const resourceLink = resourceLinkType === 'fileId' ? fileId : url
             onSuccess?.(resourceLink, file as any)
           })
           .catch((e) => {

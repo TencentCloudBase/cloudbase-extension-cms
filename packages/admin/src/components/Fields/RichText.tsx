@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Upload, Progress, message, Modal, Input, Button } from 'antd'
 import { InboxOutlined, FileImageTwoTone } from '@ant-design/icons'
 import BraftEditor, { ExtendControlType } from 'braft-editor'
-import { uploadFile, getTempFileURL } from '@/utils'
+import { uploadFile } from '@/utils'
 import 'braft-editor/dist/index.css'
 import { useSetState } from 'react-use'
 
@@ -116,8 +116,11 @@ export const CustomUploader: React.FC<{
           beforeUpload={(file) => {
             setState({ uploading: true, percent: 0 })
 
-            uploadFileAndGetUrl(file, (percent) => {
-              setState({ percent })
+            uploadFile({
+              file,
+              onProgress: (percent) => {
+                setState({ percent })
+              },
             })
               .then(({ url, fileId }) => {
                 onChange(url)
@@ -150,21 +153,6 @@ export const CustomUploader: React.FC<{
       </Modal>
     </>
   )
-}
-
-const uploadFileAndGetUrl = async (file: File, setPercent: (percent: number) => void) => {
-  const fileId = await uploadFile({
-    file,
-    onProgress: (percent) => {
-      setPercent(percent)
-    },
-  })
-
-  const url = await getTempFileURL(fileId)
-  return {
-    url,
-    fileId,
-  }
 }
 
 export default RichText

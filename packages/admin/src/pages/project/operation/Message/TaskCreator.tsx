@@ -417,7 +417,7 @@ const SmsFileTaskModal: React.FC<{
       setState({ uploadPercent: 0 })
 
       // 上传文件到云存储
-      const fileId = await uploadFile({
+      const { fileId } = await uploadFile({
         file: phoneNumberFile,
         // 生成较长的文件名
         filenameLength: 24,

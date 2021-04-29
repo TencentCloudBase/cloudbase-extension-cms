@@ -3,7 +3,6 @@ import { Upload, message, Progress } from 'antd'
 import {
   isFileId,
   uploadFile,
-  fileIdToUrl,
   getPageQuery,
   getTempFileURL,
   getFileNameFromUrl,
@@ -141,13 +140,13 @@ export const ISingleFileUploader: React.FC<{
             onProgress: (percent) => {
               setPercent(percent)
             },
-          }).then((fileId: string) => {
+          }).then(({ fileId, url }) => {
             // 保存链接
-            onChange(resourceLinkType === 'fileId' ? fileId : fileIdToUrl(fileId))
+            onChange(resourceLinkType === 'fileId' ? fileId : url)
             // 添加图片
             setFileList([
               {
-                url: fileIdToUrl(fileId),
+                url,
                 uid: fileId,
                 name: file.name,
                 status: 'done',

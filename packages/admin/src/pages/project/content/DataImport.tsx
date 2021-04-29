@@ -107,9 +107,9 @@ const DataImport: React.FC<{ collectionName: string }> = ({ collectionName }) =>
                 setPercent(percent)
               },
             })
-              .then((fileID: string) =>
+              .then(({ fileId }) =>
                 createImportMigrateJob(projectId, {
-                  fileID,
+                  fileID: fileId,
                   filePath,
                   conflictMode,
                   collectionName,

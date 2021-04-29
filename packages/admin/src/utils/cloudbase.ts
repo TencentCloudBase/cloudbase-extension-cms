@@ -275,7 +275,10 @@ export async function uploadFile(options: {
    * 以 cloudbase-cms 为基础路径
    */
   filePathTemplate?: string
-}): Promise<string> {
+}): Promise<{
+  fileId: string
+  url: string
+}> {
   const {
     file,
     onProgress,
@@ -345,8 +348,13 @@ export async function uploadFile(options: {
     },
   })
 
+  const meta = {
+    fileId: result.fileID,
+    url: result.download_url,
+  }
+
   // 文件 id
-  return result.fileID
+  return meta
 }
 
 // 获取文件的临时访问链接
