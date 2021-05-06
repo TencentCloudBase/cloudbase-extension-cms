@@ -106,7 +106,7 @@ CloudBase CMS 是云开发推出的，基于 Node.js 的 Headless 内容管理�
       <br /><sub><b>嘻哈F</b></sub>
     </td>
     <td align="center">
-      <a href="livewallpaper.giantapp.cn">
+      <a href="https://livewallpaper.giantapp.cn">
         <img src="./docs/examples/livewallpaper.png" width="100px;" alt="巨应壁纸"/>
         <br /><sub><b>巨应壁纸</b></sub>
       </a>
