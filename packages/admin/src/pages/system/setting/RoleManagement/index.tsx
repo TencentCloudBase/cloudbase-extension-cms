@@ -13,6 +13,7 @@ export default (): React.ReactElement => {
 
   return (
     <ProList<any>
+      actionRef={listRef}
       pagination={{
         pageSize: 10,
       }}
@@ -75,7 +76,7 @@ export default (): React.ReactElement => {
                   title: `确认删除角色【${item.roleName}】？`,
                   onOk: async () => {
                     await deleteUserRole(item._id)
-                    listRef?.current?.reload()
+                    listRef?.current?.reloadAndRest()
                     message.success('删除角色成功')
                   },
                 })

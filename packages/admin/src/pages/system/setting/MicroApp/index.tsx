@@ -7,7 +7,7 @@ import { useConcent } from 'concent'
 import { MicroAppCtx } from 'typings/store'
 import { deleteMicroApp, getSetting } from '@/services/global'
 
-const { Title, Link } = Typography
+const { Title } = Typography
 
 export default (): React.ReactElement => {
   const appCtx = useConcent<{}, MicroAppCtx>('microApp')
