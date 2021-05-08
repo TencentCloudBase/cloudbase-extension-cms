@@ -208,3 +208,15 @@ export const getSchemaAllFields = (schema: Schema) => {
     return fieldOrder(prev) - fieldOrder(next)
   })
 }
+
+/**
+ * 当 v 为空时，返回 - 占位符
+ */
+export const getValueOrSlug = (v: any) => {
+  // null、undefined、空字符串 返回 -
+  if (typeof v === 'undefined' || v === null || (typeof v === 'string' && v?.length === 0)) {
+    return '-'
+  }
+
+  return v
+}

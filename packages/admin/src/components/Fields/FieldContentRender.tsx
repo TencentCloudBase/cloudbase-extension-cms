@@ -1,7 +1,12 @@
 import React from 'react'
 import { message, Space, Tag, Tooltip, Typography } from 'antd'
 import { IConnectRender, IFileRender, ImageRender } from '@/components/Fields'
-import { calculateFieldWidth, copyToClipboard, formatDisplayTimeByType } from '@/utils'
+import {
+  calculateFieldWidth,
+  copyToClipboard,
+  formatDisplayTimeByType,
+  getValueOrSlug,
+} from '@/utils'
 import { IObjectRender } from './Object'
 import { IMedia } from './Media'
 
@@ -68,7 +73,7 @@ export function getFieldRender(field: SchemaField) {
         index: number,
         action: any
       ): React.ReactNode | React.ReactNode[] => {
-        const num = typeof record[name] === 'undefined' ? '-' : record[name]
+        const num = getValueOrSlug(record[name])
         return <Text>{num} </Text>
       }
     case 'Url':

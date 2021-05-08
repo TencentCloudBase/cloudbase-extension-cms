@@ -52,7 +52,7 @@ const MigrateJobColumns: ProColumns<MigrateJobDto>[] = [
     title: '任务类型',
     dataIndex: 'jobType',
     render: (_, row) => {
-      return row.jobType === 'export' ? '导入数据' : '导出数据'
+      return row.jobType === 'export' ? '导出数据' : '导入数据'
     },
   },
   {

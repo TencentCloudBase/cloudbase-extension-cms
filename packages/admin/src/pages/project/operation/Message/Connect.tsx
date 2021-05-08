@@ -3,7 +3,7 @@ import { Typography, message, Tag, Select, Spin } from 'antd'
 import { useRequest } from 'umi'
 import { useConcent } from 'concent'
 import { getContents, Options } from '@/services/content'
-import { calculateFieldWidth, getProjectId } from '@/utils'
+import { calculateFieldWidth, getProjectId, getValueOrSlug } from '@/utils'
 import { ContentCtx } from 'typings/store'
 import { ActivitySchema } from '../Activity/schema'
 
@@ -161,9 +161,9 @@ const getConnectFieldDisplayText = (doc: any, schemas: Schema[], field: SchemaFi
 
   // 关联的字段，又是一个关联类型，则展示关联字段关联的字段
   if (connectedFieldInfo?.connectResource) {
-    return doc[connectField]?.[connectedFieldInfo.connectField] || '-'
+    return getValueOrSlug(doc[connectField]?.[connectedFieldInfo.connectField])
   } else {
-    return doc[connectField]
+    return getValueOrSlug(doc[connectField])
   }
 }
 
