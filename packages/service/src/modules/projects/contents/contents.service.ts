@@ -151,6 +151,7 @@ export class ContentsService {
 
   /**
    * 替换更新一条 doc
+   * @deprecated
    */
   async setOne(
     resource: string,
