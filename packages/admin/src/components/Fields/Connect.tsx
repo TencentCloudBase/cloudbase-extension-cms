@@ -71,12 +71,13 @@ export const IConnectEditor: React.FC<{
   // 加载关联的文档列表
   const [docs, setDocs] = useState<Doc[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchKey, setSearchKey] = useState('')
+  const [searchKey, setSearchKey] = useState<any>()
 
   useRequest(
     async () => {
       setLoading(true)
       let connectSchema = schemas.find((_: Schema) => _._id === connectResource)
+
       console.log('关联', connectSchema)
       // 后台获取 Schema
       if (!connectSchema) {
@@ -120,7 +121,11 @@ export const IConnectEditor: React.FC<{
       loading={loading}
       value={connectIds}
       onChange={onChange}
-      onSearch={setSearchKey}
+      onSearch={(v: string) => {
+        const connectField = getConnectField(schemas, field)
+        const isNumber = connectField?.type === 'Number'
+        setSearchKey(isNumber ? Number(v) : v)
+      }}
       filterOption={false}
       placeholder="关联字段"
       style={{ width: '240px' }}
@@ -164,11 +169,37 @@ const getConnectFieldDisplayText = (doc: any, schemas: Schema[], field: SchemaFi
   const connectedFieldInfo = connectedSchema?.fields.find((_) => _.name === connectField)
 
   // 关联的字段，又是一个关联类型，则展示关联字段关联的字段
+  // A -> B -> C
   if (connectedFieldInfo?.connectResource) {
     return doc[connectField]?.[connectedFieldInfo.connectField] || '-'
   } else {
-    return doc[connectField]
+    return doc[connectField] || '-'
   }
+}
+
+/**
+ * 处理关联字段的展示信息，可能为多层嵌套
+ */
+const getConnectField = (schemas: Schema[], field: SchemaField) => {
+  // 当前关联字段的信息
+  const { connectField, connectResource } = field
+
+  // 当前关联字段 => 关联 schema 的信息
+  const connectedSchema = schemas.find((_) => _._id === connectResource)
+
+  // 关联字段的信息
+  let connectedFieldInfo = connectedSchema?.fields.find((_) => _.name === connectField)
+
+  // 关联的字段，又是一个关联类型，则展示关联字段关联的字段
+  // A -> B -> C
+  if (connectedFieldInfo?.connectResource) {
+    const nestConnectSchema = schemas.find((_) => _._id === connectedFieldInfo?.connectResource)
+    connectedFieldInfo = nestConnectSchema?.fields.find(
+      (_) => _.name === connectedFieldInfo?.connectField
+    )
+  }
+
+  return connectedFieldInfo
 }
 
 // 将关联的数据转换成关联数据对应的 _id 数据
