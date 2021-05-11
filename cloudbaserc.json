@@ -196,7 +196,7 @@
         "deployPath": {
           "description": "部署路径",
           "required": true,
-          "default": "/tcb-cms/"
+          "default": "/"
         },
         "accessDomain": {
           "description": "HTTP 访问服务域名（选填）"
