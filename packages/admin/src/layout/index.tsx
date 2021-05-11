@@ -91,7 +91,7 @@ const layoutProps: BasicLayoutProps = {
   navTheme: 'light',
   headerHeight: 64,
   disableContentMargin: true,
-  logo: getCmsConfig('cmsLogo'),
+  logo: <HeaderTitle collapsed={true} />,
   rightContentRender: () => <RightContent />,
   headerTitleRender: (logo, title, { collapsed }) => <HeaderTitle collapsed={Boolean(collapsed)} />,
   // 面包屑渲染
@@ -103,6 +103,9 @@ const layoutProps: BasicLayoutProps = {
  * layout 渲染
  */
 const Layout: React.FC<any> = (props) => {
+  // 当前的项目 ID
+  const projectId = getProjectId()
+
   const access = useAccess()
   const { children, location } = props
   const [refresh, setRefresh] = useState({ n: 1 })
@@ -125,7 +128,7 @@ const Layout: React.FC<any> = (props) => {
     }
 
     ctx.mr.getContentSchemas(projectId)
-  }, [])
+  }, [projectId])
 
   // 内容集合菜单
   const contentChildMenus = schemas?.map((schema: Schema) => ({
@@ -138,7 +141,7 @@ const Layout: React.FC<any> = (props) => {
     setRefresh({
       n: refresh.n + 1,
     })
-  }, [loading, schemas, setting])
+  }, [projectId, loading, schemas, setting])
 
   // 添加菜单
   useEffect(() => {

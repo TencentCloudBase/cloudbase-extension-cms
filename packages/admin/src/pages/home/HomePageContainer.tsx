@@ -5,8 +5,8 @@ import { Layout, Space, Button, Skeleton, Tooltip, Popover } from 'antd'
 import AvatarDropdown from '@/components/AvatarDropdown'
 import { getCmsConfig } from '@/utils'
 import Notice from './Notice'
-import './index.less'
 import pkg from '../../../package.json'
+import './index.less'
 
 const { Header, Content, Footer } = Layout
 
@@ -22,7 +22,11 @@ const IconStyle: React.CSSProperties = {
   color: '#fff',
 }
 
-const HomePageContainer: React.FC<{ loading: boolean }> = ({ children, loading }) => {
+const HomePageContainer: React.FC<{ loading: boolean; isMobile?: boolean }> = ({
+  children,
+  loading,
+  isMobile,
+}) => {
   return (
     <Layout className="home">
       <Header className="header">
@@ -31,7 +35,7 @@ const HomePageContainer: React.FC<{ loading: boolean }> = ({ children, loading }
           <h1 className="title">{getCmsConfig('cmsTitle')}</h1>
         </div>
         <div className="right">
-          {SERVER_MODE && (
+          {SERVER_MODE && !isMobile && (
             <Tooltip title="当前 CMS 以容器服务模式运行">
               <CodeSandboxOutlined
                 style={{

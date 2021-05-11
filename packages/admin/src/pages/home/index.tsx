@@ -11,6 +11,7 @@ import ProjectListView from './ProjectListView'
 import ProjectCardView from './ProjectCardView'
 import HomePageContainer from './HomePageContainer'
 import './index.less'
+import { RouteContext, RouteContextType } from '@ant-design/pro-layout'
 
 // 设置图标颜色
 setTwoToneColor('#0052d9')
@@ -30,7 +31,19 @@ const ToggleIcon = styled.div`
   }
 `
 
-export default (): React.ReactNode => {
+export default function () {
+  return (
+    <RouteContext.Consumer>
+      {(value) => {
+        return <Home {...value} />
+      }}
+    </RouteContext.Consumer>
+  )
+}
+
+const Home: React.FC<RouteContextType> = (props) => {
+  const { isMobile } = props
+
   // 项目分组
   const { groups } = window.TcbCmsConfig
   const { group } = getPageQuery()
@@ -60,7 +73,7 @@ export default (): React.ReactNode => {
     : data
 
   return (
-    <HomePageContainer loading={loading}>
+    <HomePageContainer isMobile={isMobile} loading={loading}>
       <div className="flex items-center justify-between mb-10">
         <div className="flex flex-row items-center">
           {groups?.length ? (

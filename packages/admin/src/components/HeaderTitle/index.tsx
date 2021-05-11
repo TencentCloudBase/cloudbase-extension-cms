@@ -1,41 +1,59 @@
 import React from 'react'
-import { history } from 'umi'
-import { getCmsConfig, getPageQuery } from '@/utils'
+import { Link } from 'umi'
+import { getCmsConfig, getPageQuery, redirectTo } from '@/utils'
 import { useConcent } from 'concent'
 import { GlobalCtx } from 'typings/store'
-import { getProject } from '@/services/project'
+import { getProjects } from '@/services/project'
 import useRequest from '@umijs/use-request'
-import { Spin } from 'antd'
+import { Dropdown, Menu, Spin } from 'antd'
+import { CaretDownOutlined } from '@ant-design/icons'
 
 const HeaderTitle: React.FC<{ collapsed: boolean }> = (props) => {
   const { pid } = getPageQuery()
   const ctx = useConcent<{}, GlobalCtx>('global')
   const { currentProject } = ctx.state
 
-  const { data, loading } = useRequest(async () => {
-    if (currentProject) return
-
-    const { data } = await getProject(pid)
+  // 获取全部项目
+  const { data: projects = [], loading } = useRequest(async () => {
+    const { data } = await getProjects()
     return data
   })
 
-  const title = currentProject?.name || data?.name || getCmsConfig('cmsTitle')
+  const title =
+    currentProject?.name || projects.find((_) => _._id === pid)?.name || getCmsConfig('cmsTitle')
 
-  return (
-    <a
-      onClick={(e) => {
-        e.stopPropagation()
-        e.preventDefault()
-        history.push('/home')
+  const menu = (
+    <Menu
+      onClick={({ key }) => {
+        redirectTo('home', {
+          projectId: key as string,
+        })
       }}
     >
-      <img src={getCmsConfig('cmsLogo')} alt="logo" style={{ height: '35px', width: '35px' }} />
-      {loading && !currentProject ? (
+      {projects.map((_) => (
+        <Menu.Item key={_._id}>{_.name}</Menu.Item>
+      ))}
+    </Menu>
+  )
+
+  return (
+    <div className="h-full flex items-center">
+      <Link to="/home">
+        <img src={getCmsConfig('cmsLogo')} alt="logo" style={{ height: '35px', width: '35px' }} />
+      </Link>
+
+      {props.collapsed ? null : loading && !currentProject ? (
         <Spin className="ml-5" />
       ) : (
-        <h1>{props.collapsed ? null : title}</h1>
+        <Dropdown overlay={menu} trigger={['click']}>
+          <h2 className="text-white m-0 ml-5 cursor-pointer">
+            {title}
+            &nbsp;
+            <CaretDownOutlined className="text-bold text-lg" />
+          </h2>
+        </Dropdown>
       )}
-    </a>
+    </div>
   )
 }
 
