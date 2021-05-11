@@ -191,7 +191,9 @@ export const qiankun = async () => {
       // 注册子应用信息
       apps: microApps.map((app) => ({
         name: app.id,
-        entry: `https://${location.host}/cloudbase-cms/apps/${app.id}/index.html`,
+        entry: app?.deployUrl
+          ? app.deployUrl
+          : `https://${location.host}/cloudbase-cms/apps/${app.id}/index.html`,
       })),
       // 完整生命周期钩子请看 https://qiankun.umijs.org/zh/api/#registermicroapps-apps-lifecycles
       lifeCycles: {

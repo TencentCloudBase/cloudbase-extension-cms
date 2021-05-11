@@ -16,7 +16,7 @@ import {
 } from '@ant-design/icons'
 import { useConcent } from 'concent'
 import { ContentCtx, GlobalCtx } from 'typings/store'
-import { getCmsConfig, getProjectId } from '@/utils'
+import { getProjectId } from '@/utils'
 import defaultSettings from '../../config/defaultSettings'
 
 // 设置图标颜色

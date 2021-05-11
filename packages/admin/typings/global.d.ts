@@ -74,7 +74,7 @@ interface MicroApp {
   /**
    * 自定义微应用的部署地址
    */
-  microAppUrl?: string
+  deployUrl?: string
 }
 
 interface CustomMenuItem {
