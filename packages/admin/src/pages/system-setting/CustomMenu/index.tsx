@@ -1,4 +1,5 @@
 import { useConcent } from 'concent'
+import { useRequest } from 'umi'
 import React, { MutableRefObject, useRef } from 'react'
 import { useSetState } from 'react-use'
 import { PlusOutlined } from '@ant-design/icons'
@@ -10,7 +11,7 @@ import { RefModalForm, ModalRefType } from '@/components/Modal'
 import { ProFormDependency, ProFormSelect, ProFormText } from '@ant-design/pro-form'
 import { getSetting } from '@/services/global'
 import { random } from '@/utils'
-import useRequest from '@umijs/use-request'
+import { getProjects } from '@/services/project'
 
 const columns: ProColumns[] = [
   {
@@ -46,7 +47,9 @@ export default (): React.ReactElement => {
   const { data: customMenus, loading, run: reloadData } = useRequest(async () => {
     const { data: setting } = await getSetting()
     const customMenus = setting?.customMenus || []
-    return customMenus
+    return {
+      data: customMenus,
+    }
   }, {})
 
   return (
@@ -175,6 +178,9 @@ const MenuConfigModal: React.FC<{
   const initialValues: any = action === 'edit' ? parentNode : {}
   initialValues.menuType = initialValues.menuType || 'microApp'
 
+  // 请求数据
+  let { data: projects = [] } = useRequest(() => getProjects())
+
   return (
     <RefModalForm
       title={title}
@@ -232,15 +238,38 @@ const MenuConfigModal: React.FC<{
             ),
           },
           {
+            value: 'routePath',
+            label: (
+              <>
+                <h4>路由菜单</h4>
+                <p>跳转到指定路径</p>
+              </>
+            ),
+          },
+          {
             value: 'link',
             label: (
               <>
                 <h4>外链菜单</h4>
-                <p>跳转到外链的菜单</p>
+                <p>跳转到外部网址</p>
               </>
             ),
           },
         ]}
+      />
+      <ProFormSelect
+        mode="multiple"
+        name="applyProjects"
+        label="应用项目（仅在选择的项目中展示此项菜单，默认为全部项目中展示）"
+        options={projects?.map((project) => ({
+          value: project._id,
+          label: (
+            <>
+              <h4>{project.name}</h4>
+              <p>{project.description}</p>
+            </>
+          ),
+        }))}
       />
       <ProFormDependency name={['menuType']}>
         {({ menuType }) => {
@@ -262,18 +291,35 @@ const MenuConfigModal: React.FC<{
           ) : (
             <ProFormText
               name="link"
-              label="跳转链接"
-              placeholder="请输入完整的跳转链接，如 https://tencent.com"
-              rules={[
-                {
-                  required: true,
-                  message: '请输入跳转链接',
-                },
-                {
-                  type: 'url',
-                  message: '请输入正确跳转链接',
-                },
-              ]}
+              label={menuType === 'routePath' ? '跳转路由' : '跳转链接'}
+              placeholder={
+                menuType === 'routePath'
+                  ? '请输入跳转路由，如 /project/app'
+                  : '请输入完整的跳转链接，如 https://tencent.com'
+              }
+              rules={
+                menuType === 'routePath'
+                  ? [
+                      {
+                        required: true,
+                        message: '请输入跳转路由',
+                      },
+                      {
+                        pattern: /^\/.+/,
+                        message: '跳转路由必需以 / 开头',
+                      },
+                    ]
+                  : [
+                      {
+                        required: true,
+                        message: '请输入跳转链接',
+                      },
+                      {
+                        type: 'url',
+                        message: '请输入正确的 URL 链接',
+                      },
+                    ]
+              }
             />
           )
         }}

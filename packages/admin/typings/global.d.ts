@@ -70,6 +70,11 @@ interface MicroApp {
    * 文件 ID 列表
    */
   fileIDList: string
+
+  /**
+   * 自定义微应用的部署地址
+   */
+  microAppUrl?: string
 }
 
 interface CustomMenuItem {
@@ -87,11 +92,6 @@ interface CustomMenuItem {
    * 微应用 ID
    */
   microAppID?: string
-
-  /**
-   * 微应用在静态网站中的部署路径
-   */
-  microAppPath?: string
 
   /**
    * 路径
@@ -112,6 +112,12 @@ interface CustomMenuItem {
    * 子菜单
    */
   children: CustomMenuItem[]
+
+  /**
+   * 限定某些项目展示，默认为全部项目
+   * [id]
+   */
+  applyProjects: string[]
 }
 
 /**
