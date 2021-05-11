@@ -1,12 +1,13 @@
 {
   "compilerOptions": {
+    "target": "es2015",
     "module": "commonjs",
-    "declaration": true,
+    "moduleResolution": "node",
+    "declaration": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es2017",
-    "sourceMap": true,
+    "sourceMap": false,
     "esModuleInterop": true,
     "outDir": "dist",
     "baseUrl": ".",
@@ -17,6 +18,6 @@
       "@utils": ["src/utils"]
     }
   },
-  "include": ["src/**/*", "typings"],
+  "include": ["src/**/*", "typings/**/*"],
   "exclude": ["node_modules", "dist"]
 }

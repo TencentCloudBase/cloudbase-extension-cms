@@ -1,7 +1,7 @@
 export default function access(initialState: { currentUser?: CurrentUser }) {
   const { currentUser } = initialState || {}
 
-  console.log('currentUser', currentUser)
+  console.log('当前用户', currentUser)
 
   const { username, isAdmin = false, isProjectAdmin = false, accessibleService, _id } =
     currentUser || {}

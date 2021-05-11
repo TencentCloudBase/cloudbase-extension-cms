@@ -22,17 +22,17 @@ const routesConfig: IConfig = {
       routes: [
         {
           path: '/settings',
-          component: './system/setting',
+          component: './system-setting',
         },
         {
           exact: true,
           path: '/settings/role/edit',
-          component: './system/setting/RoleManagement/RoleEditor/index',
+          component: './system-setting/RoleManagement/RoleEditor/index',
         },
         {
           exact: true,
           path: '/settings/microapp/edit',
-          component: './system/setting/MicroApp/MicroAppEditor',
+          component: './system-setting/MicroApp/MicroAppEditor',
         },
       ],
     },
