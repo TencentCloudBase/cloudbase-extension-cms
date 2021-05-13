@@ -146,7 +146,6 @@ const MessageTask: React.FC = () => {
             </Radio.Group>
             <Form
               form={form}
-              name="basic"
               layout="vertical"
               onFinish={(
                 v: Task = {

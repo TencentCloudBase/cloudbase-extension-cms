@@ -75,12 +75,7 @@ const ContentEditor: React.FC = () => {
             </Space>
           </div>
           <ProCard>
-            <Form
-              name="basic"
-              layout="vertical"
-              initialValues={initialValues}
-              onFinish={(v = {}) => run(v)}
-            >
+            <Form layout="vertical" initialValues={initialValues} onFinish={(v = {}) => run(v)}>
               {contentAction === 'edit' && (
                 <Form.Item label={<Text strong>文档 Id</Text>} name="_id">
                   <Input type="text" disabled />

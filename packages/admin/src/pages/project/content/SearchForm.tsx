@@ -65,7 +65,6 @@ const ContentTableSearchForm: React.FC<{
     <div>
       {searchFields.length ? (
         <Form
-          name="basic"
           form={form}
           layout="inline"
           initialValues={searchParams}

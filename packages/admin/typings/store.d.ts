@@ -1,57 +1,57 @@
 import {
   ICtx,
-  IAnyFnInObj,
-  StateType,
-  ComputedValType,
-  ReducerType,
+  IActionCtx,
+  IAnyObj,
   MODULE_VOID,
   MODULE_DEFAULT,
-  cst,
+  MODULE_GLOBAL,
+  GetRootState,
+  GetRootReducer,
+  GetRootComputed,
+  GetRootReducerCaller,
+  GetRootReducerGhost,
 } from 'concent'
+import React from 'react'
 import * as models from '@/models'
 
 type Models = typeof models
 
-/** 构造RootState类型 */
-export type RootState = {
-  [cst.MODULE_VOID]: {}
-  [cst.MODULE_GLOBAL]: {}
-  [cst.MODULE_DEFAULT]: {}
-} & { [key in keyof Models]: StateType<Models[key]['state']> }
+export type RootState = GetRootState<Models>
 
-const a = { bb: {} }
-type A = typeof a
+export type RootRd = GetRootReducer<Models>
 
-/** 构造RootReducer类型 */
-export type RootReducer = {
-  [cst.MODULE_VOID]: {}
-  [cst.MODULE_GLOBAL]: {}
-  [cst.MODULE_DEFAULT]: {}
-} & {
-  [key in keyof Models]: Models[key]['reducer'] extends IAnyFnInObj
-    ? ReducerType<Models[key]['reducer']>
-    : {}
-}
+export type RootRdCaller = GetRootReducerCaller<Models>
 
-/** 构造RootComputed类型 */
-export type RootComputed = {
-  [cst.MODULE_VOID]: {}
-  [cst.MODULE_GLOBAL]: {}
-  [cst.MODULE_DEFAULT]: {}
-} & {
-  [key in keyof Models]: Models[key]['computed'] extends IAnyFnInObj
-    ? ComputedValType<Models[key]['computed']>
-    : {}
-}
+export type RootRdGhost = GetRootReducerGhost<Models, RootRd>
 
+export type RootCu = GetRootComputed<Models>
+
+export type TGlobalSt = RootState[MODULE_GLOBAL]
 export type Modules = keyof RootState
 
+/** ultil type based on actionCtx */
+export type AC<M extends Modules, FullState extends IAnyObj = RootState[M]> = IActionCtx<
+  RootState,
+  RootCu,
+  M,
+  CtxM<{}, M>,
+  FullState
+>
 // ********************************
-// 一些常用的基于Ctx封装的辅助类型
+// ultil types based on Ctx
 // ********************************
 
-/** 属于某个模块 CtxM<P, M, Se, RefCu> */
-export type CtxM<P = {}, M extends Modules = MODULE_DEFAULT, Se = {}, RefCu = {}, Mp = {}> = ICtx<
+// 从左到右: Extra, StaticExtra, Mapped
+type OtherTypes = [any] | [any, any] | [any, any, any]
+
+/** belong one module.  CtxM<P, M, Se, RefCu> */
+export type CtxM<
+  P = {},
+  M extends Modules = MODULE_DEFAULT,
+  Se = {},
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = ICtx<
   RootState,
   RootRd,
   RootRdCaller,
@@ -63,83 +63,184 @@ export type CtxM<P = {}, M extends Modules = MODULE_DEFAULT, Se = {}, RefCu = {}
   MODULE_VOID,
   Se,
   RefCu,
-  Mp
+  Ot[2],
+  [Ot[0], Ot[1]]
 >
 
-/** 属于某个模块，扩展了私有状态时 CtxMS<P, M, St, Se, RefCu> */
-export type CtxMS<P = {}, M extends Modules = MODULE_DEFAULT, St = {}, Se = {}, RefCu = {}> = ICtx<
+/** belong one module，expand private state.  CtxMS<P, M, St, Se, RefCu> */
+export type CtxMS<
+  P = {},
+  M extends Modules = MODULE_DEFAULT,
+  St = {},
+  Se = {},
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = ICtx<
   RootState,
-  RootReducer,
-  RootComputed,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
   P,
   St,
   M,
   MODULE_VOID,
   Se,
-  RefCu
+  RefCu,
+  Ot[2],
+  [Ot[0], Ot[1]]
 >
 
-/** 属于某个模块，连接了其他模块 CtxMConn<P, M, Conn, Se, RefCu> */
+/** belong one module, connect other modules.  CtxMConn<P, M, Conn, Se, RefCu> */
 export type CtxMConn<
   P = {},
   M extends Modules = MODULE_DEFAULT,
   Conn extends Modules = MODULE_VOID,
   Se = {},
-  RefCu = {}
-> = ICtx<RootState, RootReducer, RootComputed, P, {}, M, Conn, Se, RefCu>
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = ICtx<
+  RootState,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
+  P,
+  {},
+  M,
+  Conn,
+  Se,
+  RefCu,
+  Ot[2],
+  [Ot[0], Ot[1]]
+>
 
-/** 属于某个模块，扩展了私有状态，连接了其他模块 CtxMSConn<P, M, St, Conn, Se, RefCu>  */
+/** belong one module，expand private state, connect other modules.  CtxMSConn<P, M, St, Conn, Se, RefCu>  */
 export type CtxMSConn<
   P = {},
   M extends Modules = MODULE_DEFAULT,
   St = {},
   Conn extends Modules = MODULE_VOID,
   Se = {},
-  RefCu = {}
-> = ICtx<RootState, RootReducer, RootComputed, P, St, M, Conn, Se, RefCu>
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = ICtx<
+  RootState,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
+  P,
+  St,
+  M,
+  Conn,
+  Se,
+  RefCu,
+  Ot[2],
+  [Ot[0], Ot[1]]
+>
 
-/** 扩展了私有状态，连接了其他模块 CtxMSConn<P, St, Conn, Se, RefCu>  */
+/** expand private state, connect other modules.  CtxMSConn<P, St, Conn, Se, RefCu>  */
 export type CtxSConn<
   P = {},
   St = {},
   Conn extends Modules = MODULE_VOID,
   Se = {},
-  RefCu = {}
-> = ICtx<RootState, RootReducer, RootComputed, P, St, MODULE_DEFAULT, Conn, Se, RefCu>
-
-/** 连接了其他模块 CtxConn<P, Conn, Se, RefCu> */
-export type CtxConn<P = {}, Conn extends Modules = MODULE_VOID, Se = {}, RefCu = {}> = ICtx<
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = ICtx<
   RootState,
-  RootReducer,
-  RootComputed,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
   P,
-  {},
+  St,
   MODULE_DEFAULT,
   Conn,
   Se,
-  RefCu
+  RefCu,
+  Ot[2],
+  [Ot[0], Ot[1]]
 >
 
-// default系列，没有指定连接模块的组件默认属于$$default模块
-export type CtxDe<P = {}, Se = {}, RefCu = {}> = CtxM<P, MODULE_DEFAULT, Se, RefCu>
-export type CtxDeS<P = {}, St = {}, Se = {}, RefCu = {}> = CtxMS<P, MODULE_DEFAULT, St, Se, RefCu>
+/** expand private state.  CtxMSConn<P, St, Conn, Se, RefCu>  */
+export type CtxS<P = {}, St = {}, Se = {}, RefCu = {}, Ot extends OtherTypes = OtherTypes> = ICtx<
+  RootState,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
+  P,
+  St,
+  MODULE_DEFAULT,
+  MODULE_VOID,
+  Se,
+  RefCu,
+  Ot[2],
+  [Ot[0], Ot[1]]
+>
+
+/** connect other modules.  CtxConn<P, Conn, Se, RefCu> */
+export type CtxConn<
+  P = {},
+  Conn extends Modules = MODULE_VOID,
+  Se = {},
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = ICtx<
+  RootState,
+  RootRd,
+  RootRdCaller,
+  RootRdGhost,
+  RootCu,
+  P,
+  IAnyObj,
+  MODULE_DEFAULT,
+  Conn,
+  Se,
+  RefCu,
+  Ot[2],
+  [Ot[0], Ot[1]]
+>
+
+/** default series, when no module specified, the component belong to $$default module by default */
+export type CtxDe<P = {}, Se = {}, RefCu = {}, Ot extends OtherTypes = OtherTypes> = CtxM<
+  P,
+  MODULE_DEFAULT,
+  Se,
+  RefCu,
+  Ot
+>
+export type CtxDeS<
+  P = {},
+  St = {},
+  Se = {},
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = CtxMS<P, MODULE_DEFAULT, St, Se, RefCu, Ot>
 export type CtxDeSConn<
   P = {},
   St = {},
   Conn extends Modules = MODULE_VOID,
   Se = {},
-  RefCu = {}
-> = CtxMSConn<P, MODULE_DEFAULT, St, Conn, Se, RefCu>
-export type CtxDeConn<P = {}, Conn extends Modules = MODULE_VOID, Se = {}, RefCu = {}> = CtxSConn<
-  P,
-  MODULE_DEFAULT,
-  Conn,
-  Se,
-  RefCu
->
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = CtxMSConn<P, MODULE_DEFAULT, St, Conn, Se, RefCu, Ot>
+export type CtxDeConn<
+  P = {},
+  Conn extends Modules = MODULE_VOID,
+  Se = {},
+  RefCu = {},
+  Ot extends OtherTypes = OtherTypes
+> = CtxSConn<P, MODULE_DEFAULT, Conn, Se, RefCu, Ot>
 
-// ArrItemType
 export type ItemsType<Arr> = Arr extends ReadonlyArray<infer E> ? E : never
+
+export type Empty = null | undefined
+export type MouseEv = React.MouseEvent<HTMLElement>
+export type ChangeEv = React.ChangeEvent<HTMLElement>
+export type VoidPayload = Empty | MouseEv
 
 export type GlobalCtx = CtxM<{}, 'global'>
 export type SchmeaCtx = CtxM<{}, 'schema'>

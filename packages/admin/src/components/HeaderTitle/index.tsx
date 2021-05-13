@@ -46,10 +46,10 @@ const HeaderTitle: React.FC<{ collapsed: boolean }> = (props) => {
         <Spin className="ml-5" />
       ) : (
         <Dropdown overlay={menu} trigger={['click']}>
-          <h2 className="text-white m-0 ml-5 cursor-pointer">
+          <h2 className="text-white m-0 ml-5 cursor-pointer text-lg">
             {title}
             &nbsp;
-            <CaretDownOutlined className="text-bold text-lg" />
+            <CaretDownOutlined className="text-bold text-base" />
           </h2>
         </Dropdown>
       )}

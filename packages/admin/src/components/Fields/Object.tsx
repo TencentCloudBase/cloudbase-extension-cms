@@ -68,7 +68,6 @@ export const IObjectEditor: React.FC<{
         <Alert message="输入的字符串将被格式化后，替换当前值" />
         <br />
         <Form
-          name="basic"
           onFinish={({ json }) => {
             setVisible(false)
             onChange(JSON.parse(json))

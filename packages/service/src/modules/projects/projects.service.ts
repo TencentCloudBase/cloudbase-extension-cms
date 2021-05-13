@@ -34,7 +34,7 @@ export class ProjectsService {
     })
 
     if (accessPath && accessPath.Name !== Functions.API) {
-      throw new RecordExistException('此路径已被其他云函数绑定，请更换路径后重试')
+      throw new RecordExistException('此路径已被其他服务绑定，请更换路径后重试')
     }
 
     // 路径未被占用

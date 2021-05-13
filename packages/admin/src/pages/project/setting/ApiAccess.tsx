@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { useRequest } from 'umi'
+import { Link, useRequest, history } from 'umi'
 import { useSetState } from 'react-use'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { getProject, updateProject } from '@/services/project'
@@ -18,7 +18,7 @@ import {
   Typography,
 } from 'antd'
 import { useConcent } from 'concent'
-import { ContentCtx } from 'typings/store'
+import { ContentCtx, GlobalCtx } from 'typings/store'
 import { copyToClipboard, getProjectId } from '@/utils'
 import { CopyOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
@@ -66,7 +66,6 @@ const ApiAccessPath: React.FC<{ project: Project; onReload: Function }> = ({
     <>
       <Typography.Title level={3}>访问路径</Typography.Title>
       <Form
-        name="basic"
         layout="vertical"
         labelAlign="left"
         initialValues={initialValues}
@@ -162,6 +161,8 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
   project,
   onReload,
 }) => {
+  const ctx = useConcent<{}, GlobalCtx>('global')
+  const { setting } = ctx.state
   const accessDomain = window.TcbCmsConfig.cloudAccessPath.replace(/(tcb|wx)-ext-cms-service/, '')
 
   const projectId = getProjectId()
@@ -169,7 +170,6 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
   const {
     state: { schemas },
   } = useConcent<{}, ContentCtx>('content')
-  console.log(schemas)
 
   const [readableCollections, setReadableCollections] = useState<string[]>([])
   const [modifiableCollections, setModifiableCollections] = useState<string[]>([])
@@ -202,7 +202,7 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
 
   const initialValues = useMemo(
     () => ({
-      path: project.apiAccessPath,
+      path: project.apiAccessPath || setting.apiAccessPath,
     }),
     [project]
   )
@@ -248,10 +248,13 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
               <Button
                 type="link"
                 onClick={() => {
-                  copyToClipboard(
-                    `https://${accessDomain}${initialValues.path}/v1.0/${schema.collectionName}`
-                  )
-                  message.success('复制成功')
+                  const path = initialValues.path || setting.apiAccessPath
+                  if (!path) {
+                    message.error('未设置 API 访问路径')
+                  } else {
+                    copyToClipboard(`https://${accessDomain}${path}/v1.0/${schema.collectionName}`)
+                    message.success('复制成功')
+                  }
                 }}
               >
                 复制访问链接
@@ -270,6 +273,9 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
 }
 
 export default (): React.ReactElement => {
+  const ctx = useConcent<{}, GlobalCtx>('global')
+  const { setting } = ctx.state
+
   const projectId = getProjectId()
   const [reloadFlag, setReloadFlag] = useState(0)
   // 重新加载 project 信息
@@ -281,7 +287,7 @@ export default (): React.ReactElement => {
   })
 
   // 开启/关闭 API 访问
-  const { loading: changeLoading, run: changeApiAccess } = useRequest(
+  const { loading: toggleLoading, run: toggleApiAccess } = useRequest(
     async (v: boolean) => {
       try {
         await updateProject(projectId, {
@@ -303,38 +309,58 @@ export default (): React.ReactElement => {
     return <Skeleton active />
   }
 
-  if (!project?.enableApiAccess) {
+  if (!project?.enableApiAccess && !setting.enableApiAccess) {
     return (
       <>
-        <Typography.Title level={3}>API 访问</Typography.Title>
-        <Alert type="info" message="此项目未开启 API 访问" style={{ marginBottom: '10px' }} />
-        <Space>
-          <Switch
-            loading={changeLoading}
-            checked={project?.enableApiAccess}
-            onChange={changeApiAccess}
-          />
-          <span>启用 API 访问</span>
-        </Space>
+        <Alert
+          type="info"
+          message="未开启 API 访问，请前往系统设置开启 API 访问"
+          style={{ marginBottom: '10px' }}
+        />
+
+        <Button
+          type="primary"
+          onClick={() => {
+            history.push('/settings?tab=api')
+          }}
+        >
+          开启 API 访问
+        </Button>
       </>
     )
   }
 
   return (
     <>
-      <Typography.Title level={3}>API 访问</Typography.Title>
-      <Space>
-        <Switch
-          loading={changeLoading}
-          checked={project?.enableApiAccess}
-          onChange={changeApiAccess}
-        />
-        <span>API 访问已{project.enableApiAccess ? '开启' : '关闭'}</span>
-      </Space>
-      <Divider />
-      <ApiAccessPath project={project} onReload={reload} />
-      <Divider />
-      <ApiPermission project={project} onReload={reload} />
+      {project?.enableApiAccess && (
+        <>
+          <Typography.Title level={3}>API 访问</Typography.Title>
+          <Divider />
+          <Alert
+            type="error"
+            message={
+              <>
+                项目 API 访问设置已迁移到
+                <Link to="/settings?tab=api">系统设置</Link>
+                中统一管理，你可以请前往
+                <Link to="/settings?tab=api">系统设置</Link>进行 API 访问配置，并关闭当前项目的 API
+                访问开关
+              </>
+            }
+            style={{ marginBottom: '10px' }}
+          />
+          <Space>
+            <Switch
+              loading={toggleLoading}
+              checked={project?.enableApiAccess}
+              onChange={toggleApiAccess}
+            />
+            <span>API 访问已开启</span>
+          </Space>
+          <Divider />
+        </>
+      )}
+      <ApiPermission project={project!} onReload={reload} />
     </>
   )
 }

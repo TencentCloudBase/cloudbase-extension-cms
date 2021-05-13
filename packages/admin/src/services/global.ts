@@ -50,3 +50,27 @@ export const deleteMicroApp = async (data: MicroApp) => {
     method: 'POST',
   })
 }
+
+/**
+ * 创建 API Auth Token
+ */
+export const createApiAuthToken = async (name: string) => {
+  return tcbRequest('/setting/createApiAuthToken', {
+    method: 'POST',
+    data: {
+      name,
+    },
+  })
+}
+
+/**
+ * 删除 API Auth Token
+ */
+export const deleteApiAuthToken = async (id: string) => {
+  return tcbRequest('/setting/deleteApiAuthToken', {
+    method: 'POST',
+    data: {
+      id,
+    },
+  })
+}

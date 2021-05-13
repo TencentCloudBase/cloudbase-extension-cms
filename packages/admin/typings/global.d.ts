@@ -124,10 +124,21 @@ interface CustomMenuItem {
  * 全局配置
  */
 interface GlobalSetting {
+  /**
+   * 小程序信息
+   */
   miniappID?: string
   miniappName?: string
   miniappOriginalID?: string
+
+  /**
+   * 是否启用短信营销工具
+   */
   enableOperation?: boolean
+
+  /**
+   * 短信活动渠道
+   */
   activityChannels?: ActivityChannel[]
 
   /**
@@ -139,6 +150,30 @@ interface GlobalSetting {
    * 微应用菜单信息
    */
   customMenus?: CustomMenuItem[]
+
+  /**
+   * 是否开启 restful api 访问
+   */
+  enableApiAccess?: boolean
+
+  /**
+   * restful api 访问路径
+   */
+  apiAccessPath?: string
+
+  /**
+   * 是否开启 API 鉴权
+   */
+  enableApiAuth?: boolean
+
+  /**
+   * API 访问 token
+   */
+  apiAuthTokens?: {
+    id: string
+    name: string
+    token: string
+  }[]
 }
 
 /**

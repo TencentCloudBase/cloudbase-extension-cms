@@ -89,7 +89,6 @@ const MessageTask: React.FC = () => {
           <ProCard>
             <Form
               form={form}
-              name="basic"
               layout="vertical"
               onFinish={(v) => run(v)}
               initialValues={initialValues}

@@ -137,7 +137,6 @@ const SchemaEditor: React.FC = () => {
       title={`${actionTip}模型`}
     >
       <Form
-        name="basic"
         layout="vertical"
         labelAlign="left"
         initialValues={getInitialValues(schemaEditAction, currentSchema)}

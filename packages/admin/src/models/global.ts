@@ -1,4 +1,4 @@
-import { getSetting, updateSetting } from '@/services/global'
+import { createApiAuthToken, getSetting, updateSetting } from '@/services/global'
 import { getCloudBaseApp } from '@/utils'
 
 interface GlobalState {
@@ -30,7 +30,7 @@ export default {
       }
     },
     // 更新设置信息
-    async updateSetting(setting: GlobalSetting, state: GlobalState) {
+    async updateSetting(setting: GlobalSetting & { keepApiPath?: boolean }, state: GlobalState) {
       await updateSetting(setting)
 
       return {
@@ -40,6 +40,18 @@ export default {
         },
       }
     },
+    // 创建 API Token
+    // async createApiAuthToken(_: undefined, state: GlobalState) {
+    //   console.log(state)
+    //   const res = await createApiAuthToken()
+    //   console.log(res)
+
+    //   return {
+    //     setting: {
+    //       ...state.setting,
+    //     },
+    //   }
+    // },
   },
   init: async () => {
     try {

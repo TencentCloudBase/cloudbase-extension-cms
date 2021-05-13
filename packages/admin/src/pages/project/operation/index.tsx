@@ -189,7 +189,6 @@ const AppForm: React.FC<{ hasAppId?: boolean; onSubmit: (app: any) => Promise<vo
       <p />
 
       <Form
-        name="basic"
         layout="vertical"
         onFinish={(v: MiniApp) => {
           toggle(true)

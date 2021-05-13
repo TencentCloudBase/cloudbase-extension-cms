@@ -79,7 +79,6 @@ export const WebhookForm: React.FC<{
   return (
     <Form
       form={form}
-      name="basic"
       layout="vertical"
       labelAlign="left"
       labelCol={{ span: 6 }}

@@ -168,7 +168,6 @@ export const ProjectCreateModal: React.FC<{
       onCancel={() => onClose()}
     >
       <Form
-        name="basic"
         layout="vertical"
         labelCol={{ span: 6 }}
         labelAlign="left"

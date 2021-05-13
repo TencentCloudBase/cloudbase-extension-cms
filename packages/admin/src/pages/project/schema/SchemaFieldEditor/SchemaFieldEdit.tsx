@@ -202,7 +202,6 @@ export const SchemaFieldEditorModal: React.FC<{
       )}
       <br />
       <Form
-        name="basic"
         layout="vertical"
         labelCol={{ span: 6 }}
         initialValues={InitailValues}

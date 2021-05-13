@@ -1,22 +1,33 @@
 import _ from 'lodash'
-import { Get, Post, Body, Controller } from '@nestjs/common'
+import { Reflector } from '@nestjs/core'
+import { Get, Post, Body, Controller, Req } from '@nestjs/common'
 import { IsNotEmpty } from 'class-validator'
+import { API_METADATA_KEY } from '@/decorators'
+import { CmsException, UnauthorizedOperation } from '@/common'
 import { UtilService } from './util.service'
 import { AuthService } from './auth.service'
-import { CmsException } from '@/common'
+import { checkRole } from '@/utils'
+
+type Service = 'util' | 'auth'
+
+type Action = keyof UtilService | keyof AuthService
 
 class RequestBody {
   // 合法的 service
-  service: string
+  service: Service
 
   // 操作
   @IsNotEmpty()
-  action: string
+  action: Action
 }
 
 @Controller()
 export class ApisController {
-  constructor(private readonly util: UtilService, private readonly auth: AuthService) {}
+  constructor(
+    private reflector: Reflector,
+    private readonly util: UtilService,
+    private readonly auth: AuthService
+  ) {}
 
   @Get()
   async getHello(): Promise<string> {
@@ -24,7 +35,7 @@ export class ApisController {
   }
 
   @Post()
-  async handleServiceActions(@Body() body: RequestBody) {
+  async handleServiceActions(@Req() request: IRequest, @Body() body: RequestBody) {
     const { service, action } = body
 
     console.log('Service 处理', service, action)
@@ -38,6 +49,14 @@ export class ApisController {
     const data = _.omit(body, 'service', 'action')
 
     // 通过 service 和 action 调用方法
+    const needRoles = this.reflector.get(API_METADATA_KEY, this[service][action])
+
+    const allow = checkRole(request, needRoles)
+
+    if (!allow) {
+      throw new UnauthorizedOperation()
+    }
+
     return this[service][action](data)
   }
 }

@@ -95,7 +95,6 @@ export default (): React.ReactElement => {
       <Typography.Title level={3}>项目信息</Typography.Title>
       <Divider />
       <Form
-        name="basic"
         layout="vertical"
         labelAlign="left"
         initialValues={project}

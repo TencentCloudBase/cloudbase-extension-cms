@@ -120,7 +120,7 @@ export const ContentTable: React.FC<{
         valueType: 'option',
         render: (text, row: any) => [
           <Button
-            size="small"
+            // size="small"
             type="primary"
             key="edit"
             onClick={() => {
@@ -135,7 +135,7 @@ export const ContentTable: React.FC<{
           </Button>,
           <Button
             danger
-            size="small"
+            // size="small"
             key="delete"
             type="primary"
             onClick={() => {

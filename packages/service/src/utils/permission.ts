@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { UnauthorizedOperation } from '@/common'
+import { SystemUserRoles, SYSTEM_ROLE_IDS } from '@/constants'
 
 // 校验项目访问权限
 // 返回可访问的资源
@@ -76,4 +77,34 @@ export const checkAccessAndGetResource = (context: {
   }
 
   return validResource.includes('*') ? '*' : validResource
+}
+
+/**
+ *
+ * @returns
+ */
+export const checkRole = (request: IRequest, needRoles: string[]) => {
+  const {
+    cmsUser: { isAdmin, isProjectAdmin, userRoles },
+  } = request
+
+  // 访问路由需要管理员权限
+  const needAdmin = needRoles?.find((roleId) => roleId === SYSTEM_ROLE_IDS.ADMIN)
+
+  if (isAdmin || (isProjectAdmin && !needAdmin)) {
+    return true
+  }
+
+  if (!isAdmin && needAdmin) {
+    return false
+  }
+
+  // 用户绑定的角色，对应的权限
+  const allow = needRoles.find((role) => userRoles.find((userRole) => userRole._id === role))
+
+  if (!allow) {
+    return false
+  }
+
+  return true
 }

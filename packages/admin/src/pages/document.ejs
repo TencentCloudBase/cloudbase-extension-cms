@@ -26,6 +26,45 @@
   <noscript>Out-of-the-box mid-stage front/design solution!</noscript>
   <div id="root">
   </div>
+  <!-- 
+  <div id="loading" style="
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;">
+    <div class="boxes">
+      <div class="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <div class="box">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+  </div> -->
+
   <div id="loading" style="
       position: fixed;
       left: 0;
@@ -189,8 +228,8 @@
         }
       }
     </style>
-    <img src="<%= context.config.publicPath + context.config.define.ICON_PATH%>"
-      alt="logo" width="196" />
+    <!-- <img src="<%= context.config.publicPath + context.config.define.ICON_PATH%>"
+      alt="logo" width="196" /> -->
     <div class="page-loading-warp">
       <div class="ant-spin ant-spin-lg ant-spin-spinning">
         <span class="ant-spin-dot ant-spin-dot-spin"><i
@@ -202,12 +241,13 @@
     <div style="display: flex; justify-content: center; align-items: center;">
       <img
         src="<%= context.config.publicPath + context.config.define.ICON_PATH%>"
-        width="32" style="margin-right: 8px;" />
+        width="36" style="margin-right: 8px;" />
       <h1 style="margin-bottom: 0;">
         <%= context.config.define.CMS_TITLE %>
       </h1>
     </div>
   </div>
+
   <script>
     var _mtac = {};
     (function () {

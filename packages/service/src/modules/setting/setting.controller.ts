@@ -1,10 +1,12 @@
+import _ from 'lodash'
 import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common'
 import { PermissionGuard } from '@/guards'
 import { CloudBaseService } from '@/services'
 import { Collection, SYSTEM_ROLE_IDS } from '@/constants'
 import { IsNotEmpty } from 'class-validator'
-import { CmsException, RecordExistException } from '@/common'
+import { CmsException, RecordExistException, UnsupportedOperation } from '@/common'
 import { getCloudBaseManager, randomId } from '@/utils'
+import { GlobalSetting } from 'typings/global'
 import { SettingService } from './setting.service'
 
 interface CustomMenuItem {
@@ -107,17 +109,15 @@ export class SettingController {
    */
   @UseGuards(PermissionGuard('setting', [SYSTEM_ROLE_IDS.ADMIN]))
   @Patch()
-  async updateSystemSetting(@Body() payload: any) {
+  async updateSystemSetting(@Body() payload: Partial<GlobalSetting>) {
     let {
       data: [setting],
     } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
 
-    // 添加配置
-    if (!setting) {
-      return this.cloudbaseService.collection(Collection.Settings).add(payload)
-    } else {
-      return this.cloudbaseService.collection(Collection.Settings).where({}).update(payload)
-    }
+    // 处理 api 访问路径
+    await this.handleApiAccess(setting, payload)
+
+    return this.upsertSetting(payload, setting)
   }
 
   /**
@@ -215,7 +215,122 @@ export class SettingController {
     })
   }
 
-  private collection(coll: string) {
+  /**
+   * 处理 restful api 的设置变更
+   */
+  async handleApiAccess(
+    setting: GlobalSetting = {},
+    payload: Partial<GlobalSetting> & { keepApiPath?: string }
+  ) {
+    const { enableApiAccess, apiAccessPath, keepApiPath } = payload
+
+    // 开启、关闭 API 访问
+    if (typeof enableApiAccess === 'boolean') {
+      // 开启 API 访问，且已存在 API 访问路径，则恢复 API 访问路径
+      if (enableApiAccess && setting.apiAccessPath) {
+        await this.settingService.createApiAccessPath(`/${setting.apiAccessPath}`)
+      }
+
+      if (enableApiAccess === false && setting.apiAccessPath) {
+        await this.settingService.deleteApiAccessPath(`/${setting.apiAccessPath}`)
+      }
+    }
+
+    // API 访问路径
+    if (typeof apiAccessPath !== 'undefined' && apiAccessPath !== setting.apiAccessPath) {
+      // 创建新的路径
+      await this.settingService.createApiAccessPath(`/${apiAccessPath}`)
+
+      // 删除已有路径
+      if (apiAccessPath !== setting.apiAccessPath && !keepApiPath) {
+        await this.settingService.deleteApiAccessPath(`/${setting.apiAccessPath}`)
+      }
+    }
+  }
+
+  /**
+   * 创建 API token
+   */
+  @UseGuards(PermissionGuard('setting', [SYSTEM_ROLE_IDS.ADMIN]))
+  @Post('createApiAuthToken')
+  async createApiAuthToken(@Body() body: { name: string }) {
+    const { name } = body
+    const {
+      data: [setting = {}],
+    }: { data: GlobalSetting[] } = await this.cloudbaseService
+      .collection(Collection.Settings)
+      .where({})
+      .get()
+
+    if (!setting?.enableApiAuth) {
+      throw new UnsupportedOperation('API 鉴权未开启，无法生成 API Token')
+    }
+
+    const $ = this.cloudbaseService.db.command
+
+    // 生成 128 位的 token
+    const id = randomId(16)
+    const token = randomId(128)
+
+    await this.upsertSetting({
+      apiAuthTokens: $.push({
+        id,
+        name,
+        token,
+      }),
+    })
+  }
+
+  /**
+   * 删除 API Token
+   */
+  @UseGuards(PermissionGuard('setting', [SYSTEM_ROLE_IDS.ADMIN]))
+  @Post('deleteApiAuthToken')
+  async deleteApiAuthToken(@Body() body: { id: string }) {
+    const { id } = body
+
+    const {
+      data: [setting = {}],
+    }: { data: GlobalSetting[] } = await this.cloudbaseService
+      .collection(Collection.Settings)
+      .where({})
+      .get()
+
+    if (!setting?.enableApiAuth) {
+      throw new UnsupportedOperation('API 鉴权未开启')
+    }
+
+    const $ = this.cloudbaseService.db.command
+
+    await this.upsertSetting({
+      apiAuthTokens: $.pull({
+        id,
+      }),
+    })
+  }
+
+  /**
+   * upsert 配置
+   */
+  private async upsertSetting(payload: any, inSetting?: GlobalSetting) {
+    let setting = inSetting
+    if (!setting) {
+      const { data } = await this.cloudbaseService.collection(Collection.Settings).where({}).get()
+      setting = data[0]
+    }
+
+    // omit
+    const data = _.omit(payload, '')
+
+    // 添加配置
+    if (!setting) {
+      return this.cloudbaseService.collection(Collection.Settings).add(data)
+    } else {
+      return this.cloudbaseService.collection(Collection.Settings).where({}).update(data)
+    }
+  }
+
+  private collection(coll = Collection.Settings) {
     return this.cloudbaseService.collection(coll)
   }
 }
