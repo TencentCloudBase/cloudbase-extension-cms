@@ -253,8 +253,8 @@ export class SettingController {
    */
   @UseGuards(PermissionGuard('setting', [SYSTEM_ROLE_IDS.ADMIN]))
   @Post('createApiAuthToken')
-  async createApiAuthToken(@Body() body: { name: string }) {
-    const { name } = body
+  async createApiAuthToken(@Body() body: { name: string; permissions: string[] }) {
+    const { name, permissions } = body
     const {
       data: [setting = {}],
     }: { data: GlobalSetting[] } = await this.cloudbaseService
@@ -277,6 +277,7 @@ export class SettingController {
         id,
         name,
         token,
+        permissions,
       }),
     })
   }

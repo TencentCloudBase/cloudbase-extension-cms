@@ -173,6 +173,7 @@ interface GlobalSetting {
     id: string
     name: string
     token: string
+    permissions: ('read' | 'modify' | 'delete')[]
   }[]
 }
 

@@ -286,14 +286,18 @@ export default (): React.ReactElement => {
     refreshDeps: [reloadFlag],
   })
 
-  // 开启/关闭 API 访问
+  /**
+   * @deprecated
+   * 开启/关闭 API 访问
+   * TODO 废弃，仅支持关闭，不支持开启
+   */
   const { loading: toggleLoading, run: toggleApiAccess } = useRequest(
-    async (v: boolean) => {
+    async () => {
       try {
         await updateProject(projectId, {
-          enableApiAccess: v,
+          enableApiAccess: false,
         })
-        message.success(`${v ? '启用' : '关闭'} API 访问成功！`)
+        message.success(`已清理项目 API 访问`)
         reload()
       } catch (e) {
         message.error(`更新失败 ${e.message}`)

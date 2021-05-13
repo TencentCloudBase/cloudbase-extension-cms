@@ -1,3 +1,4 @@
+import { UnauthorizedOperation, UnsupportedOperation } from '@/common'
 import { Collection } from '@/constants'
 import { LocalCacheService } from '@/services'
 import { getCloudBaseApp, getCollectionSchema } from '@/utils'
@@ -21,6 +22,7 @@ export class RequestAuthGuard implements CanActivate {
     const collectionName = req.params?.collectionName
     const app = getCloudBaseApp()
     const db = app.database()
+
     // 获取全部模型数据
     const schemas = await getCollectionSchema()
     const schema = schemas.find((_) => _.collectionName === collectionName)
@@ -41,10 +43,18 @@ export class RequestAuthGuard implements CanActivate {
       )
     }
 
-    // 查询项目
-    const {
-      data: [project],
-    }: { data: Project[] } = await db.collection(Collection.Projects).doc(schema.projectId).get()
+    const [
+      {
+        data: [project],
+      },
+      {
+        data: [setting],
+      },
+    ]: [{ data: Project[] }, { data: GlobalSetting[] }] = await Promise.all([
+      // 查询项目
+      db.collection(Collection.Projects).doc(schema.projectId).get(),
+      db.collection(Collection.Settings).where({}).get(),
+    ])
 
     if (!project) {
       throw new HttpException(
@@ -62,7 +72,7 @@ export class RequestAuthGuard implements CanActivate {
     this.cacheService.set('project', project)
 
     // 是否开启 API 访问
-    if (!project.enableApiAccess) {
+    if (!project.enableApiAccess && !setting?.enableApiAccess) {
       throw new HttpException(
         {
           error: {
@@ -75,13 +85,34 @@ export class RequestAuthGuard implements CanActivate {
     }
 
     // 是否开启 API 访问
-    if (!project.apiAccessPath) {
+    if (!project.apiAccessPath && !setting.apiAccessPath) {
       throw new HttpException(
         {
           error: { code: 'NOT_FOUND', message: 'API 访问路径未设置' },
         },
         HttpStatus.FORBIDDEN
       )
+    }
+
+    // 校验 API Token
+    if (setting?.enableApiAuth) {
+      const bearerToken = req.headers['authorization']
+
+      if (!bearerToken) {
+        throw new UnauthorizedOperation('非法访问')
+      }
+
+      if (!/^Bearer\s/.test(bearerToken)) {
+        throw new UnauthorizedOperation('Token 格式不正确')
+      }
+
+      const token = bearerToken.replace('Bearer ', '')
+
+      const accessToken = setting.apiAuthTokens?.find((_) => _.token === token)
+      if (!accessToken || !accessToken.permissions?.length) {
+        throw new UnauthorizedOperation('非法访问')
+      }
+      req.accessToken = accessToken
     }
 
     // 校验关联查询的关系

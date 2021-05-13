@@ -24,6 +24,12 @@ const { Text } = Typography
 
 const ReachableContext = createContext(false)
 
+const ActionMap = {
+  read: '访问',
+  modify: '修改',
+  delete: '删除',
+}
+
 /**
  * restful api 访问路径
  */
@@ -175,8 +181,8 @@ const ApiPermission = () => {
 
   // 创建 API Token
   const { run: createApiToken, loading: createLoading } = useRequest(
-    async (name: string) => {
-      await createApiAuthToken(name)
+    async (data: { name: string; permissions: string[] }) => {
+      await createApiAuthToken(data)
       // 重载配置
       await ctx.mr.getSetting()
     },
@@ -199,7 +205,10 @@ const ApiPermission = () => {
         labelAlign="left"
         initialValues={setting}
         onFinish={(v = {}) => {
-          createApiToken(v.name)
+          createApiToken({
+            name: v.name,
+            permissions: v.permissions,
+          })
         }}
       >
         <Form.Item
@@ -214,6 +223,29 @@ const ApiPermission = () => {
           ]}
         >
           <Input placeholder="API 访问 Token 名称" />
+        </Form.Item>
+
+        <Form.Item
+          label="API Token 权限"
+          name="permissions"
+          rules={[{ required: true, message: '请选择 API Token 权限！' }]}
+        >
+          <Checkbox.Group
+            options={[
+              {
+                label: '允许访问',
+                value: 'read',
+              },
+              {
+                label: '允许修改',
+                value: 'modify',
+              },
+              {
+                label: '允许删除',
+                value: 'delete',
+              },
+            ]}
+          />
         </Form.Item>
 
         <Form.Item>
@@ -231,6 +263,11 @@ const ApiPermission = () => {
           {setting.apiAuthTokens.map((token, i) => (
             <div key={i} className="flex justify-between my-2">
               <div>{token.name}</div>
+              <div>
+                {token.permissions?.length
+                  ? token.permissions.map((_) => ActionMap[_]).join('/')
+                  : '无权限'}
+              </div>
               <div>
                 <Button
                   type="text"

@@ -18,7 +18,7 @@ export class MixinActionGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<IRequest>()
-    const res = context.switchToHttp().getResponse<IResponse>()
+    // const res = context.switchToHttp().getResponse<IResponse>()
 
     // 数据库集合名
     const collectionName = req.params?.collectionName
@@ -31,7 +31,11 @@ export class MixinActionGuard implements CanActivate {
     }
 
     // 校验 action 是否允许
-    if (!project?.[ACTION_MAP[this.action]]?.includes(collectionName)) {
+    // 兼容原项目中的设置，2.12.0+
+    if (
+      !project?.[ACTION_MAP[this.action]]?.includes(collectionName) ||
+      !req.accessToken.permissions.includes(this.action)
+    ) {
       throw new UnauthorizedOperation()
     }
 

@@ -12,5 +12,7 @@ declare global {
     handleService: string
 
     cmsUser: RequestUser
+
+    accessToken: ApiAccessToken
   }
 }
