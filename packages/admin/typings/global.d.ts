@@ -201,4 +201,6 @@ interface Window {
   TcbCmsConfig: ITcbCmsConfing
   tinymce: any
   cloud: any
+  // 提供 CMS 方法给微应用使用
+  TcbCmsInsRef: any
 }

@@ -271,7 +271,9 @@ const mapCustomMenuTree = (node: CustomMenuItem): any => {
 
   if (node.children?.length) {
     menuData.children = node.children
-      .filter((menu) => (menu.applyProjects ? menu.applyProjects.includes(projectId) : true))
+      .filter((menu) =>
+        menu.applyProjects?.length ? menu.applyProjects.includes(projectId) : true
+      )
       .map((_) => mapCustomMenuTree(_))
   }
 
