@@ -108,9 +108,9 @@ export class RequestAuthGuard implements CanActivate {
 
       const token = bearerToken.replace('Bearer ', '')
 
-      const accessToken = setting.apiAuthTokens?.find((_) => _.token === token)
+      const accessToken = setting?.apiAuthTokens?.find((_) => _.token === token)
       if (!accessToken || !accessToken.permissions?.length) {
-        throw new UnauthorizedOperation('非法访问')
+        throw new UnauthorizedOperation('非法访问：权限异常')
       }
       req.accessToken = accessToken
     }
