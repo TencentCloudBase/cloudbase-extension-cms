@@ -4,9 +4,9 @@ import { Get, Post, Body, Controller, Req } from '@nestjs/common'
 import { IsNotEmpty } from 'class-validator'
 import { API_METADATA_KEY } from '@/decorators'
 import { CmsException, UnauthorizedOperation } from '@/common'
+import { checkRole } from '@/utils'
 import { UtilService } from './util.service'
 import { AuthService } from './auth.service'
-import { checkRole } from '@/utils'
 
 type Service = 'util' | 'auth'
 
@@ -51,7 +51,7 @@ export class ApisController {
     // 通过 service 和 action 调用方法
     const needRoles = this.reflector.get(API_METADATA_KEY, this[service][action])
 
-    const allow = checkRole(request, needRoles)
+    const allow = checkRole(request, needRoles || [])
 
     if (!allow) {
       throw new UnauthorizedOperation()

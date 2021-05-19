@@ -84,6 +84,11 @@ export const checkAccessAndGetResource = (context: {
  * @returns
  */
 export const checkRole = (request: IRequest, needRoles: string[]) => {
+  // 不需要任何权限
+  if (!needRoles?.length) {
+    return true
+  }
+
   const {
     cmsUser: { isAdmin, isProjectAdmin, userRoles },
   } = request
@@ -100,7 +105,7 @@ export const checkRole = (request: IRequest, needRoles: string[]) => {
   }
 
   // 用户绑定的角色，对应的权限
-  const allow = needRoles.find((role) => userRoles.find((userRole) => userRole._id === role))
+  const allow = needRoles?.every((role) => userRoles?.find((userRole) => userRole._id === role))
 
   if (!allow) {
     return false
