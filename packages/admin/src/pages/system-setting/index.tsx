@@ -13,9 +13,7 @@ import ApiAccess from './ApiAccess'
 
 const { Title, Link } = Typography
 
-// const DEFAULT_TAB = 'user'
-const DEFAULT_TAB = 'api'
-const Tabs = ['user', 'role', 'microapp', 'custommenu']
+const DEFAULT_TAB = 'user'
 
 const Container = styled(SettingContainer)`
   .ant-pro-card-body {
@@ -33,7 +31,7 @@ const TabMap = {
 
 export default (): React.ReactNode => {
   const tab = (history.location.query?.tab || '') as string
-  const targetTab = Tabs.includes(tab as string) ? tab : DEFAULT_TAB
+  const targetTab = Object.keys(TabMap).includes(tab as string) ? tab : DEFAULT_TAB
   const [selectedMenu, selectMenu] = useState<string>(targetTab)
 
   return (

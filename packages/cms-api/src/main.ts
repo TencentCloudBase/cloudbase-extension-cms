@@ -16,7 +16,7 @@ const port = process.env.SERVER_PORT || 5001
 
 export async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, adapter, {
-    logger: ['log', 'error', 'warn'],
+    logger: ['error'],
   })
 
   const config = app.get(ConfigService)

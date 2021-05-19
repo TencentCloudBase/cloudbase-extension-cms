@@ -202,7 +202,7 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
 
   const initialValues = useMemo(
     () => ({
-      path: project.apiAccessPath || setting.apiAccessPath,
+      path: setting.apiAccessPath || project.apiAccessPath,
     }),
     [project]
   )
@@ -248,7 +248,8 @@ const ApiPermission: React.FC<{ project: Project; onReload: Function }> = ({
               <Button
                 type="link"
                 onClick={() => {
-                  const path = initialValues.path || setting.apiAccessPath
+                  const path = setting.apiAccessPath || initialValues.path
+
                   if (!path) {
                     message.error('未设置 API 访问路径')
                   } else {

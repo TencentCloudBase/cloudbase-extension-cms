@@ -62,13 +62,16 @@ const defaultSystemMenuData: MenuDataItem[] = [
 
 /**
  * 生成系统菜单配置
+ * 每次返回全新的数据，避免菜单对象之间互相影响
  */
 const getSystemMenuInstance = () => {
+  // 复制原始数据
+  const systemMenuData = [...defaultSystemMenuData]
   /**
    * 微信侧才支持发送短信的功能
    */
   if (WX_MP || window.TcbCmsConfig.isMpEnv) {
-    defaultSystemMenuData.splice(3, 0, {
+    systemMenuData.splice(3, 0, {
       authority: 'canContent',
       path: '/project/operation',
       name: '营销工具',
@@ -78,7 +81,7 @@ const getSystemMenuInstance = () => {
   }
 
   // 浅拷贝
-  return defaultSystemMenuData.map((_) => ({
+  return systemMenuData.map((_) => ({
     ..._,
   }))
 }

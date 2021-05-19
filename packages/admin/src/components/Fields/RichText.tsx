@@ -49,7 +49,7 @@ const RichText: React.FC<{ value?: any; id: number; onChange?: (...args: any) =>
           setEditorState(s)
           onChange(s.toHTML())
         }}
-        excludeControls={['media']}
+        excludeControls={['media', 'fullscreen']}
         extendControls={extendControls}
       />
     </div>
