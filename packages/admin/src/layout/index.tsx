@@ -67,6 +67,7 @@ const defaultSystemMenuData: MenuDataItem[] = [
 const getSystemMenuInstance = () => {
   // 复制原始数据
   const systemMenuData = [...defaultSystemMenuData]
+
   /**
    * 微信侧才支持发送短信的功能
    */
@@ -120,6 +121,30 @@ const Layout: React.FC<any> = (props) => {
   // 生成新的菜单对象，防止不同项目间的数据污染
   const systemMenuData = getSystemMenuInstance()
 
+  // 添加菜单
+  // 是否开启了营销工具
+  if (window.TcbCmsConfig.isMpEnv && setting?.enableOperation) {
+    if (!systemMenuData[3].children?.length) {
+      systemMenuData[3].children = [
+        {
+          name: '营销活动',
+          path: '/project/operation/activity',
+          component: './project/operation/Activity/index',
+        },
+        {
+          name: '发送短信',
+          path: '/project/operation/message',
+          component: './project/operation/Message/index',
+        },
+        {
+          name: '统计分析',
+          path: '/project/operation/analytics',
+          component: './project/operation/Analytics/index',
+        },
+      ]
+    }
+  }
+
   // 加载 schema 集合
   useEffect(() => {
     // projectId 无效时，重定向到首页
@@ -145,32 +170,6 @@ const Layout: React.FC<any> = (props) => {
       n: refresh.n + 1,
     })
   }, [projectId, loading, schemas, setting])
-
-  // 添加菜单
-  useEffect(() => {
-    // 是否开启了营销工具
-    if (window.TcbCmsConfig.isMpEnv && setting?.enableOperation) {
-      if (!systemMenuData[3].children?.length) {
-        systemMenuData[3].children = [
-          {
-            name: '营销活动',
-            path: '/project/operation/activity',
-            component: './project/operation/Activity/index',
-          },
-          {
-            name: '发送短信',
-            path: '/project/operation/message',
-            component: './project/operation/Message/index',
-          },
-          {
-            name: '统计分析',
-            path: '/project/operation/analytics',
-            component: './project/operation/Analytics/index',
-          },
-        ]
-      }
-    }
-  }, [setting])
 
   return (
     <ProLayout
