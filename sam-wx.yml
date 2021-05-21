@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.12.0
+Version: 2.12.1
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -19,7 +19,7 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.12.0
+  - Title: 2.12.1
     Content:
       - RESTful API 支持 Token 鉴权访问
       - 支持快捷项目切换
@@ -62,7 +62,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-init
-      CodeUri: extension://607be921812b41489c7bdc97eaca95e9.zip
+      CodeUri: extension://c2980b45e49248e6a1a043908bbd4771.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256

@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.12.0
+Version: 2.12.1
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -19,7 +19,7 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.12.0
+  - Title: 2.12.1
     Content:
       - RESTful API 支持 Token 鉴权访问
       - 支持快捷项目切换
