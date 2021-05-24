@@ -261,7 +261,15 @@ export class MigrateController {
         responseType: 'stream',
       })
       .toPromise()
-    res.data.pipe(fs.createWriteStream(tempFilePath))
+
+    await new Promise<void>((resolve) => {
+      res.data.pipe(fs.createWriteStream(tempFilePath))
+
+      res.data.on('close', () => {
+        console.log('finished')
+        resolve()
+      })
+    })
 
     // 检查文件大小
     const info = fs.statSync(tempFilePath)
