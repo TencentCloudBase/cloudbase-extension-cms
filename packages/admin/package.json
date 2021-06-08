@@ -6,6 +6,7 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=1 umi build",
     "build": "umi build",
+    "build:wx": "cross-env WX_MP=true umi build",
     "build:server": "cross-env SERVER_MODE=true npm run build",
     "deploy": "npm run site && npm run gh-pages",
     "dev": "cross-env SERVER_MODE=true npm run start:dev",

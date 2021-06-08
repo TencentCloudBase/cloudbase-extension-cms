@@ -1,9 +1,10 @@
 import React, { MutableRefObject, useEffect } from 'react'
-import { Space, Modal, Image, Typography, Alert } from 'antd'
+import { Space, Modal, Image, Typography, Alert, Button, message } from 'antd'
 import { useSetState } from 'react-use'
-import { generateQRCode } from '@/utils'
+import { callWxOpenAPI, copyToClipboard, generateQRCode } from '@/utils'
 import ChannelSelector from '@/components/ChannelSelector'
 import { DefaultChannels } from '@/common'
+import useRequest from '@umijs/use-request'
 
 const { Paragraph } = Typography
 
@@ -44,6 +45,7 @@ export default (props: {
     return () => {}
   }, [activityId, channel])
 
+  // modal ref
   useEffect(() => {
     const show = () =>
       setState({
@@ -57,6 +59,23 @@ export default (props: {
       }
     }
   }, [])
+
+  // 生成短链
+  const { run: generateUrlLink, loading } = useRequest(
+    async () => {
+      const result = await callWxOpenAPI('generateUrlLink', {
+        path: `/${activityPage}/index.html`,
+        query: `activityId=${activityId}&source=${source}`,
+      })
+
+      copyToClipboard(result.urlLink)
+      message.success('生成短链成功，已复制到剪切板')
+    },
+    {
+      manual: true,
+      onError: (e) => message.error(`生成短链失败：${e.message}`),
+    }
+  )
 
   return (
     <Modal
@@ -91,6 +110,12 @@ export default (props: {
           <Paragraph copyable style={{ maxWidth: '280px' }} ellipsis={{ rows: 4, symbol: '展开' }}>
             {smsPageUrl}
           </Paragraph>
+
+          {!disableChannel && (
+            <Button type="primary" size="small" loading={loading} onClick={() => generateUrlLink()}>
+              短链生成
+            </Button>
+          )}
         </div>
       </Space>
     </Modal>

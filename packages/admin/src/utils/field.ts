@@ -82,8 +82,6 @@ const fieldOrder = (field: SchemaField) => {
   return SYSTEM_FIELD_ORDER[field.name] || 0
 }
 
-const SchemaCustomFieldKeys = ['docCreateTimeField', 'docUpdateTimeField']
-
 /**
  * 获取 Schema 中的全部系统字段，并排序
  */
@@ -95,13 +93,21 @@ export const getSchemaSystemFields = (schema: Schema) => {
   const systemFieldsInSchema = fields.filter((_) => _.isSystem)
 
   SYSTEM_FIELDS.forEach((field) => {
-    if (
-      !systemFieldsInSchema.find(
-        (_) =>
-          _.name === field.name ||
-          (SchemaCustomFieldKeys.some((key) => _.name === schema[key]) && _.id === field.id)
-      )
-    ) {
+    const systemFiledExist = systemFieldsInSchema.find((schemaField) => {
+      if (schemaField.name === field.name) {
+        return true
+      }
+      if (
+        (field.id === '_createTime' && schemaField.name === schema.docCreateTimeField) ||
+        (field.id === '_updateTime' && schemaField.name === schema.docUpdateTimeField)
+      ) {
+        return true
+      }
+
+      return false
+    })
+
+    if (!systemFiledExist) {
       systemFieldsInSchema.push(field)
     }
   })
@@ -133,13 +139,21 @@ export const getMissingSystemFields = (schema: Schema) => {
   const systemFieldsInSchema = fields.filter((_) => _.isSystem)
 
   SYSTEM_FIELDS.forEach((field) => {
-    if (
-      !systemFieldsInSchema.find(
-        (_) =>
-          _.name === field.name ||
-          (SchemaCustomFieldKeys.some((key) => _.name === schema[key]) && _.id === field.id)
-      )
-    ) {
+    const systemFiledExist = systemFieldsInSchema.find((schemaField) => {
+      if (schemaField.name === field.name) {
+        return true
+      }
+      if (
+        (field.id === '_createTime' && schemaField.name === schema.docCreateTimeField) ||
+        (field.id === '_updateTime' && schemaField.name === schema.docUpdateTimeField)
+      ) {
+        return true
+      }
+
+      return false
+    })
+
+    if (!systemFiledExist) {
       missingSystemFields.push(field)
     }
   })
@@ -193,13 +207,21 @@ export const getSchemaAllFields = (schema: Schema) => {
   const systemFieldsInSchema = allFields.filter((_) => _.isSystem)
 
   SYSTEM_FIELDS.forEach((field) => {
-    if (
-      !systemFieldsInSchema.find(
-        (_) =>
-          _.name === field.name ||
-          (SchemaCustomFieldKeys.some((key) => _.name === schema[key]) && _.id === field.id)
-      )
-    ) {
+    const systemFiledExist = systemFieldsInSchema.find((schemaField) => {
+      if (schemaField.name === field.name) {
+        return true
+      }
+      if (
+        (field.id === '_createTime' && schemaField.name === schema.docCreateTimeField) ||
+        (field.id === '_updateTime' && schemaField.name === schema.docUpdateTimeField)
+      ) {
+        return true
+      }
+
+      return false
+    })
+
+    if (!systemFiledExist) {
       allFields.push(field)
     }
   })

@@ -42,7 +42,7 @@ interface Task {
 // 短信模板
 const getMessageTemplate = (miniappName = '', content = '') => `【${
   miniappName || '小程序名称'
-}】${content}，跳转小程序 https://tcbe.cn/xxxxxxxx
+}】${content}，跳转小程序 https://wxaurl.cn/xxxxxxxxxxx
 回T退订`
 
 // 号码包文件最大值：30M

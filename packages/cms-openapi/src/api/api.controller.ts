@@ -3,9 +3,9 @@ import { IsNotEmpty } from 'class-validator'
 import { Post, Body, UseGuards, Controller, Request } from '@nestjs/common'
 import { CloudBaseService } from '@/services'
 import { PermissionGuard } from '@/guards'
-import { getCloudBaseApp, getWxCloudApp } from '@/utils'
-import { ApiService } from './api.service'
 import { Collection } from '@/constants'
+import { getCloudBaseApp, getEnvIdString, getWxCloudApp } from '@/utils'
+import { ApiService } from './api.service'
 
 class SmsFileBody {
   @IsNotEmpty()
@@ -73,7 +73,7 @@ export class ApiController {
   }
 
   /**
-   * 获取访问数据
+   * 获取实时访问数据
    */
   @UseGuards(PermissionGuard('operation'))
   @Post('getRealtimeAnalyticsData')
@@ -140,6 +140,32 @@ export class ApiController {
     const { fileUri, taskId } = body
 
     return this.apiService.sendSmsByFile(fileUri, taskId)
+  }
+
+  /**
+   * 获取小程序 URL Link，适用于短信、邮件、网页、微信内等拉起小程序的业务场景
+   */
+  @UseGuards(PermissionGuard('operation'))
+  @Post('generateUrlLink')
+  async generateUrlLink(@Body() body: { path: string; query: string }) {
+    const { path, query } = body
+
+    const envId = getEnvIdString()
+    const wxCloudApp = getWxCloudApp()
+
+    return wxCloudApp.openapi.urllink.generate({
+      path: '',
+      query: '',
+      isExpire: true,
+      expireType: 1,
+      expireInterval: 1,
+      cloudBase: {
+        path,
+        query,
+        env: envId,
+        domain: '',
+      },
+    })
   }
 
   private collection(name: string) {
