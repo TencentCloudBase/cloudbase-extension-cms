@@ -537,6 +537,8 @@ export class ApiService {
     // 填充跳转路径
     const supplementData = data.map((line: string[], index) => {
       if (isFirstLineTitle && index === 0) return line
+      // 补充 +86
+      line[0] = /^\+86/.test(line[0]) ? line[0] : `+86${line[0]}`
       line[2] = jumpPath
       return line
     })

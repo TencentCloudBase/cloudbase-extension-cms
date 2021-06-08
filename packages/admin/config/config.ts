@@ -45,6 +45,7 @@ const config: IConfig = {
     // ...darkTheme,
     'primary-color': defaultSettings.primaryColor,
     'border-radius-base': '3px',
+    'typography-title-font-weight': '500',
   },
   // @ts-ignore
   title: false,

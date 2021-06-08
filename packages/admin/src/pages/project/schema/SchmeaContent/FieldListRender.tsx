@@ -170,7 +170,13 @@ export const SchemaSystemField: React.FC<{ onFiledClick: Function; schema: Schem
                         </Title>
                       </Tooltip>
                       <Text strong># {field.name}</Text>
-                      <Tooltip title="系统字段，请勿随意修改">
+                      <Tooltip
+                        title={
+                          field.description === '系统字段，请勿随意修改'
+                            ? 'CMS 系统字段，请勿随意修改。通过 CMS 系统录入的数据会默认添加该字段'
+                            : field.description || 'CMS 系统字段，请勿随意修改'
+                        }
+                      >
                         <ExclamationCircleTwoTone style={{ fontSize: '16px' }} />
                       </Tooltip>
                     </Space>

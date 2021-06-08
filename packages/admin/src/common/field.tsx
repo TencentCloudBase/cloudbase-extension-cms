@@ -127,7 +127,7 @@ export const DOC_ID_FIELD = {
   isSystem: true,
   copyable: true,
   isHidden: true,
-  description: '系统字段，请勿随意修改',
+  description: 'CMS 系统字段，请勿随意修改',
 }
 
 /**
@@ -142,7 +142,7 @@ export const SYSTEM_FIELDS: any[] = [
     type: 'DateTime',
     isSystem: true,
     dateFormatType: 'timestamp-ms',
-    description: '系统字段，请勿随意修改',
+    description: 'CMS 系统字段，请勿随意修改。通过 CMS 系统录入的数据会默认添加该字段',
   },
   {
     displayName: '修改时间',
@@ -151,6 +151,6 @@ export const SYSTEM_FIELDS: any[] = [
     type: 'DateTime',
     isSystem: true,
     dateFormatType: 'timestamp-ms',
-    description: '系统字段，请勿随意修改',
+    description: 'CMS 系统字段，请勿随意修改。通过 CMS 系统录入的数据会默认添加该字段',
   },
 ]
