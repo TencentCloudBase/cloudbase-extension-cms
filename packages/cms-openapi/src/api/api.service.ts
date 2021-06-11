@@ -93,12 +93,36 @@ export class ApiService {
 
       const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
 
+      // 查询活动信息，获取小程序 path 和 query
+      const {
+        data: [activity],
+      } = await this.collection(Collection.MessageActivity).doc(task.activityId).get()
+
+      // 生成短链
+
+      const { urlLink } = await wxCloudApp.openapi.urllink.generate({
+        // 小程序 query path
+        path: activity?.appPath || '',
+        query: activity?.appPathQuery || '',
+        isExpire: true,
+        expireType: 1,
+        expireInterval: 1,
+        cloudBase: {
+          path: `/${activityPath}/index.html`,
+          query: `source=_cms_sms_&activityId=${task.activityId}`,
+          env: ENV,
+          domain: '',
+        },
+      })
+
       // 下发短信
-      const result = await wxCloudApp.openapi.cloudbase.sendSms({
+      const result = await wxCloudApp.openapi.cloudbase.sendSmsV2({
         env: ENV,
         phoneNumberList,
-        content: task.content,
-        path: `/${activityPath}/index.html?source=_cms_sms_&activityId=${task.activityId}`,
+        // https 的链接才有效
+        urlLink: urlLink,
+        templateId: '844110',
+        templateParamList: [task.content],
       })
 
       // 上报短信下发任务
@@ -498,6 +522,8 @@ export class ApiService {
   async analysisAndUploadCSV(fileId: string, activityId: string, amount: number) {
     // 下载文件
     const app = getCloudBaseApp()
+    const envId = getEnvIdString()
+    const wxCloudApp = getWxCloudApp()
 
     let { fileContent } = await app.downloadFile({
       fileID: fileId,
@@ -532,14 +558,36 @@ export class ApiService {
       return { total }
     }
 
-    const jumpPath = this.getSmsPagePath(activityId)
+    // 生成跳转路径
+    const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
 
-    // 填充跳转路径
+    // 查询活动信息，获取小程序 path 和 query
+    const {
+      data: [activity],
+    } = await this.collection(Collection.MessageActivity).doc(activityId).get()
+
+    // 生成短链
+    const { urlLink } = await wxCloudApp.openapi.urllink.generate({
+      // 小程序 query path
+      path: activity?.appPath || '',
+      query: activity?.appPathQuery || '',
+      isExpire: true,
+      expireType: 1,
+      expireInterval: 1,
+      cloudBase: {
+        path: `/${activityPath}/index.html`,
+        query: `source=_cms_sms_&activityId=${activityId}`,
+        env: envId,
+        domain: '',
+      },
+    })
+
     const supplementData = data.map((line: string[], index) => {
       if (isFirstLineTitle && index === 0) return line
       // 补充 +86
       line[0] = /^\+86/.test(line[0]) ? line[0] : `+86${line[0]}`
-      line[2] = jumpPath
+      // 替换为新的链接
+      line[2] = line[2] ? line[2] : urlLink
       return line
     })
 

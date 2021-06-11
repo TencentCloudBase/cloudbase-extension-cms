@@ -114,7 +114,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-openapi
-      CodeUri: extension://7523e4ab7753451fb335f076ec6fe97f.zip
+      CodeUri: extension://07a9baa0e4964aa2a838f60b85a43202.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
       MemorySize: 2048
