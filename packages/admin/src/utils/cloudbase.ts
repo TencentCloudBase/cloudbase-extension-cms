@@ -335,7 +335,10 @@ export async function uploadFile(options: {
     // 返回 URL 信息数组
     const ret = await uploadFilesToHosting(file, uploadFilePath)
     onProgress?.(100)
-    return ret[0].url
+    return {
+      fileId: ret[0].url,
+      url: ret[0].url,
+    }
   }
 
   // 上传文件到云存储
