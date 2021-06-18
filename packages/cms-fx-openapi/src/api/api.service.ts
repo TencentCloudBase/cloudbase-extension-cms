@@ -89,10 +89,12 @@ export class ApiService {
       console.log('下发短信失败', err)
 
       // 更新任务记录
-      await this.collection(Collection.MessageTasks).doc(taskId).update({
-        status: 'send_fail',
-        error: err.message,
-      })
+      await this.collection(Collection.MessageTasks)
+        .doc(taskId)
+        .update({
+          status: 'send_fail',
+          error: err.message || err.errMsg,
+        })
 
       let message
 
@@ -122,7 +124,7 @@ export class ApiService {
           message = '仅支持非个人主体小程序'
           break
         default:
-          message = err.message
+          message = err.message || err.errMsg
       }
 
       return {
