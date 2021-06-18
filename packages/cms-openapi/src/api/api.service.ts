@@ -121,8 +121,8 @@ export class ApiService {
         phoneNumberList,
         // https 的链接才有效
         urlLink: urlLink,
-        templateId: '844110',
         templateParamList: [task.content],
+        templateId: process.env.SMS_TEMPLATE_ID || '844110',
       })
 
       // 上报短信下发任务
@@ -221,6 +221,7 @@ export class ApiService {
     // 创建发送任务
     const result = await wxCloudApp.openapi.cloudbase.createSendSmsTask({
       env: envId,
+      is_url_link: true,
       file_url: fileUri,
     })
 

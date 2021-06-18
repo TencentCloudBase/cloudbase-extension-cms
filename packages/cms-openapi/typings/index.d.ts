@@ -4,6 +4,7 @@ declare namespace NodeJS {
     TCB_ENVID: string
     SECRETID: string
     SECRETKEY: string
+    SMS_TEMPLATE_ID: string
   }
 }
 
