@@ -1,4 +1,4 @@
-import { createApiAuthToken, getSetting, updateSetting } from '@/services/global'
+import { getSetting, updateSetting } from '@/services/global'
 import { getCloudBaseApp } from '@/utils'
 
 interface GlobalState {

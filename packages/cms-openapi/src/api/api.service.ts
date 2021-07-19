@@ -99,14 +99,13 @@ export class ApiService {
       } = await this.collection(Collection.MessageActivity).doc(task.activityId).get()
 
       // 生成短链
-
       const { urlLink } = await wxCloudApp.openapi.urllink.generate({
         // 小程序 query path
         path: activity?.appPath || '',
         query: activity?.appPathQuery || '',
         isExpire: true,
         expireType: 1,
-        expireInterval: 1,
+        expireInterval: 30,
         cloudBase: {
           path: `/${activityPath}/index.html`,
           query: `source=_cms_sms_&activityId=${task.activityId}`,
@@ -574,7 +573,7 @@ export class ApiService {
       query: activity?.appPathQuery || '',
       isExpire: true,
       expireType: 1,
-      expireInterval: 1,
+      expireInterval: 30,
       cloudBase: {
         path: `/${activityPath}/index.html`,
         query: `source=_cms_sms_&activityId=${activityId}`,

@@ -215,7 +215,7 @@ const ApiPermission = () => {
           label="API Token 名称"
           name="name"
           rules={[
-            { required: true, message: '请输入 API 访问的路径！' },
+            { required: true, message: '请输入 API Token 名称！' },
             {
               pattern: /^(?!\/).*$/,
               message: '路径无需以 / 开头',

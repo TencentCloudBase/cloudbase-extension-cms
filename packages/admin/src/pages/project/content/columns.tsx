@@ -92,7 +92,7 @@ const fieldToColumn = (field: SchemaField) => {
   }
 
   if (type === 'Enum') {
-    column.valueEnum = field.enumElements.reduce(
+    column.valueEnum = field.enumElements?.reduce(
       (ret, current) => ({
         [current.value]: current.label,
         ...ret,

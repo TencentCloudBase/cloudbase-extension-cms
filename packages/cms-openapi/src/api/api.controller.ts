@@ -158,7 +158,7 @@ export class ApiController {
       query: '',
       isExpire: true,
       expireType: 1,
-      expireInterval: 1,
+      expireInterval: 30,
       cloudBase: {
         path,
         query,

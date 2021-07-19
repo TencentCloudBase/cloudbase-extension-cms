@@ -7,7 +7,8 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "start": "nest start",
+    "start": "node dist/main.js",
+    "nest:start": "nest start",
     "dev": "cross-env NODE_ENV=development DEBUG=cms:* nest start --watch",
     "dev:wx": "cross-env WX=true CMS_RESOURCE_PREFIX=wx-ext-cms NODE_ENV=development nest start --watch",
     "debug": "nest start --debug --watch"

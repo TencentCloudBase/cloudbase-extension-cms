@@ -25,6 +25,10 @@ const HeaderTitle: React.FC<{ collapsed: boolean }> = (props) => {
   const menu = (
     <Menu
       onClick={({ key }) => {
+        const project = projects.find((_) => _._id === key)
+        ctx.setState({
+          currentProject: project,
+        })
         redirectTo('home', {
           projectId: key as string,
         })

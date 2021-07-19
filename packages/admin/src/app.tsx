@@ -97,22 +97,37 @@ export const layout = ({
 const errorHandler = async (error: ResponseError) => {
   const { response, data } = error
 
+  // console.log(response)
+
   if (response?.status) {
     const errorText = codeMessage[response.status] || response.statusText
     const { status, url } = response
 
-    const data = await response.clone().json()
-    const message = data?.error?.message || data?.error?.code
+    try {
+      const data = await response.clone().json()
+      const message = data?.error?.message || data?.error?.code
 
-    notification.error({
-      message: `请求错误 ${status}`,
-      description: (
-        <>
-          <Typography.Text>{`${errorText} ${message || ''}`}</Typography.Text>
-          <Typography.Text copyable>请求 URL：{url}</Typography.Text>
-        </>
-      ),
-    })
+      notification.error({
+        message: `请求错误 ${status}`,
+        description: (
+          <>
+            <Typography.Text>{`${errorText} ${message || ''}`}</Typography.Text>
+            <Typography.Text copyable>请求 URL：{url}</Typography.Text>
+          </>
+        ),
+      })
+    } catch (error) {
+      // 解析 json 错误
+      notification.error({
+        message: `请求错误 ${status}`,
+        description: (
+          <>
+            <Typography.Text>{`${errorText}`}</Typography.Text>
+            <Typography.Text copyable>请求 URL：{url}</Typography.Text>
+          </>
+        ),
+      })
+    }
   }
 
   if (data?.error) {
@@ -124,7 +139,7 @@ const errorHandler = async (error: ResponseError) => {
     })
   }
 
-  if (!response?.status && !data?.error) {
+  if (!response?.status && data && !data.error) {
     notification.error({
       description: '您的网络发生异常，无法连接服务器',
       message: '网络异常',
