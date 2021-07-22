@@ -58,7 +58,11 @@ export const exportData = async (data: any, fileType: ExportFileType) => {
   if (fileType === 'json') {
     await saveContentToFile(JSON.stringify(data), `cms-data-export-${getFullDate()}.json`)
   } else {
-    const csv: any = await jsonExport(data)
-    await saveFile(new Blob([csv], { type: 'text/csv' }), `cms-data-export-${getFullDate()}.csv`)
+    let csv: any = await jsonExport(data)
+    csv = `\ufeff${csv}`
+    await saveFile(
+      new Blob([csv], { type: 'text/csv,charset=utf-8' }),
+      `cms-data-export-${getFullDate()}.csv`
+    )
   }
 }
