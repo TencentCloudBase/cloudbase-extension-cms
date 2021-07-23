@@ -41,7 +41,7 @@ export class ProjectsController {
     @Query() query: { page?: number; pageSize?: number } = {},
     @Request() req: IRequest
   ) {
-    const { page = 1, pageSize = 100 } = query
+    const { page = 1, pageSize = 1000 } = query
     const filter: any = {}
     const allProjects = this.checkAccessAndGetProjects(req)
 

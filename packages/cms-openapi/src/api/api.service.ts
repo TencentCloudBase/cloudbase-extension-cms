@@ -99,7 +99,7 @@ export class ApiService {
       } = await this.collection(Collection.MessageActivity).doc(task.activityId).get()
 
       // 生成短链
-      const { urlLink } = await wxCloudApp.openapi.urllink.generate({
+      let { urlLink } = await wxCloudApp.openapi.urllink.generate({
         // 小程序 query path
         path: activity?.appPath || '',
         query: activity?.appPathQuery || '',
@@ -113,6 +113,8 @@ export class ApiService {
           domain: '',
         },
       })
+
+      urlLink = urlLink.replace(/https:\/\/|http:\/\//, '')
 
       // 下发短信
       const result = await wxCloudApp.openapi.cloudbase.sendSmsV2({
@@ -222,6 +224,7 @@ export class ApiService {
       env: envId,
       is_url_link: true,
       file_url: fileUri,
+      template_id: process.env.SMS_TEMPLATE_ID || '844110',
     })
 
     console.log('发送结果', result)
@@ -567,7 +570,7 @@ export class ApiService {
     } = await this.collection(Collection.MessageActivity).doc(activityId).get()
 
     // 生成短链
-    const { urlLink } = await wxCloudApp.openapi.urllink.generate({
+    let { urlLink } = await wxCloudApp.openapi.urllink.generate({
       // 小程序 query path
       path: activity?.appPath || '',
       query: activity?.appPathQuery || '',
@@ -581,6 +584,8 @@ export class ApiService {
         domain: '',
       },
     })
+
+    urlLink = urlLink.replace(/https:\/\/|http:\/\//, '')
 
     const supplementData = data.map((line: string[], index) => {
       if (isFirstLineTitle && index === 0) return line

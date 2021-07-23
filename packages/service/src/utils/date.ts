@@ -1,10 +1,15 @@
 import R from 'ramda'
 import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
 import 'dayjs/locale/zh-cn'
 import { getCollectionSchema } from './cloudbase'
 import { isDateType } from './field'
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
 dayjs.locale('zh-cn')
+dayjs.tz.setDefault('Asia/Shanghai')
 
 export const dayJS = dayjs
 
@@ -26,14 +31,6 @@ export const dateToUnixTimestampInMs = (date?: string) => {
  * 获取当前时间的 unix timestamp 形式
  */
 export const getUnixTimestamp = () => dayjs().unix()
-
-/**
- * 获取 2020-08-08 格式型的时间
- */
-export const getFullDate = (date?: string) => {
-  // 毫秒
-  return dayjs(date).format('YYYY-MM-DD')
-}
 
 /**
  * 格式化 data 中的时间类型，转换成 Native Date 类型
@@ -105,7 +102,7 @@ export const formatTimeByType = (
 
   // 字符串
   if (dateType === 'string') {
-    formatDate = dayjs(v).format('YYYY-MM-DD HH:mm:ss')
+    formatDate = dayjs(v).tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss')
   }
 
   return formatDate
