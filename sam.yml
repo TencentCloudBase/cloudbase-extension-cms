@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: "2020-10-20"
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.12.3
+Version: 2.13.0
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -19,9 +19,12 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.12.3
+  - Title: 2.13.0
     Content:
-      - 修复营销工具图片上传异常
+      - 修复项目切换标题未切换的问题
+      - 修复创建、修改时间的时区问题
+      - 优化容器部署启动时间
+      - 修复文案错误
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -39,7 +42,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-service
-      CodeUri: extension://164d4e149df24a47b1cfe0663f68d24c.zip
+      CodeUri: extension://d55d3651c69d432fb0a522539664abad.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -58,7 +61,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-init
-      CodeUri: extension://09c7d52446d64d9c91971ffa6d2e1a79.zip
+      CodeUri: extension://065a9849406e43f5bbbca51626dc3bcc.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -81,7 +84,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-api
-      CodeUri: extension://0dcb1053886d4079a9da274d90baa0ec.zip
+      CodeUri: extension://c415c5df4f3f4f6390ed090e047c386e.zip
       InstallDependency: true
       Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
       MemorySize: 256
@@ -97,7 +100,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-sms
-      CodeUri: extension://d4a19da6adfd43e18125063540f1158a.zip
+      CodeUri: extension://e1ad62b12e2640598de309124e04659c.zip
       InstallDependency: true
       Description: 提供短信发送、生成 url schema 功能
       MemorySize: 256
@@ -114,7 +117,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-openapi
-      CodeUri: extension://5e393e95ea634249975826b6bce1b98a.zip
+      CodeUri: extension://0ccbb6a30235435e8f24f979cd8337da.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
       MemorySize: 2048
@@ -132,7 +135,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: tcb-ext-cms-fx-openapi
-      CodeUri: extension://26f1daa1d2804631a4dbd23b8fb13559.zip
+      CodeUri: extension://d100c5802a3a47ae9d50d8b315aed4c7.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
       MemorySize: 1024
