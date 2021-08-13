@@ -190,13 +190,16 @@ const MessageTask: React.FC = () => {
                     extra={
                       <Form.Item shouldUpdate className="mb-0">
                         {() => (
-                          <Text type="secondary">
-                            短信预览：
-                            {getMessageTemplate(
-                              setting?.miniappName,
-                              form.getFieldValue('content')
-                            )}
-                          </Text>
+                          <>
+                            <Text type="secondary">
+                              短信预览：
+                              {getMessageTemplate(
+                                setting?.miniappName,
+                                form.getFieldValue('content')
+                              )}
+                            </Text>
+                            <Text type="secondary">短信内调整的短链自发送后 30 天有效</Text>
+                          </>
                         )}
                       </Form.Item>
                     }

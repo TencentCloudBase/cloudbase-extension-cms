@@ -23,7 +23,7 @@ export const ActivitySchema: any = {
     },
     {
       dateFormatType: 'timestamp-ms',
-      description: '开始时间后，才允许跳转',
+      description: '跳转中间页在开始时间后，才允许跳转到小程序',
       displayName: '活动开始时间',
       id: 'fmpx6prjehenfvl0v0amzo58ckwf7kqb',
       isRequired: true,
@@ -33,7 +33,7 @@ export const ActivitySchema: any = {
     },
     {
       dateFormatType: 'timestamp-ms',
-      description: '活动结束后，不允许跳转',
+      description: '跳转中间页在活动结束后，用户将只能跳转到小程序首页',
       displayName: '活动结束时间',
       id: 'dzapdx6alta68er1j4ptxnaoe6ols6fl',
       isRequired: true,

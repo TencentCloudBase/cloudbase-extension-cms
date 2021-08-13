@@ -84,7 +84,7 @@ interface MigrateJobDto {
   status?: 'waiting' | 'reading' | 'writing' | 'migrating' | 'success' | 'fail'
 }
 
-@UseGuards(PermissionGuard('content', [SYSTEM_ROLE_IDS.ADMIN]))
+@UseGuards(PermissionGuard('content'))
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('projects/:projectId/migrate')
 export class MigrateController {
@@ -202,7 +202,7 @@ export class MigrateController {
    * 创建导出任务
    */
   @Post('export')
-  async createExportMigrateJob(@Param('projectId') projectId, @Body() body: ExportBody) {
+  async getDataByCreateExportMigrateJob(@Param('projectId') projectId, @Body() body: ExportBody) {
     const { collectionName, fileType } = body
     const manager = await getCloudBaseManager()
 
