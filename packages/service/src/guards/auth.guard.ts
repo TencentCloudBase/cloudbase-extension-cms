@@ -45,6 +45,14 @@ export class GlobalAuthGuard implements CanActivate {
       //   uuid: 'xxx',
       // }
 
+      // request.cmsUser = {
+      //   _id: '2d44d6c261137bec046f3f4f4356cbdc',
+      //   roles: ['2d44d6c261137bd7046f3d934cfbac64'],
+      //   username: 'blogUser',
+      //   createTime: 1628584045891,
+      //   uuid: 'a40d84f659d440edb3417b55c38f9767',
+      // }
+
       return true
     }
 
