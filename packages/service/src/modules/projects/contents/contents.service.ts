@@ -341,7 +341,8 @@ export class ContentsService {
           }
           return nStr;
         })
-        return `(${numStrs.join("|")})`;
+        // return `(${numStrs.join("|")})`;
+        return `${numStrs.length > 1 ? "(" : ""}${numStrs.join("|")}${numStrs.length > 1 ? ")" : ""}`;
       })
 
       // 3维数组的中间项，可能并不完整，不完整的地方，用“\d+”之类的关键字补齐
