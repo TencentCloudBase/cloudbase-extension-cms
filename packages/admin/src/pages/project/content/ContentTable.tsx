@@ -239,7 +239,7 @@ export const ContentTable: React.FC<{
         rowSelection={{}}
         actionRef={tableRef}
         dateFormatter="string"
-        scroll={{ x: 'max-content' }}
+        scroll={{ x: 'max-content', y: 500 }}
         request={tableRequest}
         columns={memoTableColumns}
         toolBarRender={() => toolBarRender}
