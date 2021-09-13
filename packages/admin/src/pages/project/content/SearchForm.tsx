@@ -14,7 +14,7 @@ import {
   message,
   InputNumber,
 } from 'antd'
-import { IDatePicker, IConnectEditor } from '@/components/Fields'
+import { IDatePicker, IConnectEditor, IDateRangePicker } from '@/components/Fields'
 import { useConcent } from 'concent'
 import { ContentCtx } from 'typings/store'
 import { calculateFieldWidth, getProjectId } from '@/utils'
@@ -192,11 +192,25 @@ const getSearchFieldItem = (field: SchemaField, key: number) => {
     case 'Date':
     case 'Time':
     case 'DateTime':
+      // FormItem = (
+      //   <Form.Item key={key} name={name} label={displayName}>
+      //     <IDatePicker type={type} dateFormatType={field.dateFormatType} />
+      //   </Form.Item>
+      // )
       FormItem = (
         <Form.Item key={key} name={name} label={displayName}>
-          <IDatePicker type={type} dateFormatType={field.dateFormatType} />
+          <IDateRangePicker type={type} dateFormatType={field.dateFormatType} />
         </Form.Item>
       )
+      // FormItem = (
+      //   <Form.Item key={key} name={name} label={displayName}>
+      //     {
+      //       field.dateFormatType === "string"
+      //         ? <IDatePicker type={type} dateFormatType={field.dateFormatType} />
+      //         : <IDateRangePicker type={type} dateFormatType={field.dateFormatType} />
+      //     }
+      //   </Form.Item>
+      // )
       break
     case 'Enum':
       FormItem = (
