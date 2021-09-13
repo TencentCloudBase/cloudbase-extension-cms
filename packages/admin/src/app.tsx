@@ -29,7 +29,7 @@ export async function getInitialState(): Promise<{
   }
 
   // 没有登录，重新登录
-  if (!isDevEnv() && !loginState) {
+  if (!isDevEnv() && !loginState && history.location.pathname !== '/login') {
     history.push('/login')
     message.error('您还没有登录或登录已过期，请登录后再操作！')
     // 移除 loading 元素
@@ -91,11 +91,20 @@ export const layout = ({
   }
 }
 
+/** 是否需要跳转到登陆界面 */
+async function needJumpLogin(): Promise<boolean> {
+  const loginState = await getLoginState().catch((e) => null) // 获取登录态
+  const isInPageLogin = history.location.pathname === '/login'
+  return Promise.resolve(!loginState && !isInPageLogin)
+}
+
 /**
  * 请求异常处理
  */
 const errorHandler = async (error: ResponseError) => {
   const { response, data } = error
+  const hideErrMsg = await needJumpLogin()
+  hideErrMsg && console.error('api.errorHandler::', error) // 不显示错误的时候，给个标记方便核对
 
   // console.log(response)
 
@@ -107,36 +116,39 @@ const errorHandler = async (error: ResponseError) => {
       const data = await response.clone().json()
       const message = data?.error?.message || data?.error?.code
 
-      notification.error({
-        message: `请求错误 ${status}`,
-        description: (
-          <>
-            <Typography.Text>{`${errorText} ${message || ''}`}</Typography.Text>
-            <Typography.Text copyable>请求 URL：{url}</Typography.Text>
-          </>
-        ),
-      })
+      hideErrMsg ||
+        notification.error({
+          message: `请求错误 ${status}`,
+          description: (
+            <>
+              <Typography.Text>{`${errorText} ${message || ''}`}</Typography.Text>
+              <Typography.Text copyable>请求 URL：{url}</Typography.Text>
+            </>
+          ),
+        })
     } catch (error) {
       // 解析 json 错误
-      notification.error({
-        message: `请求错误 ${status}`,
-        description: (
-          <>
-            <Typography.Text>{`${errorText}`}</Typography.Text>
-            <Typography.Text copyable>请求 URL：{url}</Typography.Text>
-          </>
-        ),
-      })
+      hideErrMsg ||
+        notification.error({
+          message: `请求错误 ${status}`,
+          description: (
+            <>
+              <Typography.Text>{`${errorText}`}</Typography.Text>
+              <Typography.Text copyable>请求 URL：{url}</Typography.Text>
+            </>
+          ),
+        })
     }
   }
 
   if (data?.error) {
     const message = data?.error?.message || data?.error?.code
 
-    notification.error({
-      message: data.error.code,
-      description: <Typography.Text>{`${message}`}</Typography.Text>,
-    })
+    hideErrMsg ||
+      notification.error({
+        message: data.error.code,
+        description: <Typography.Text>{`${message}`}</Typography.Text>,
+      })
   }
 
   if (!response?.status && data && !data.error) {

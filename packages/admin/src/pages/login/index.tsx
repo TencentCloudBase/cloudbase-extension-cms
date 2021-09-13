@@ -148,8 +148,18 @@ const Login: React.FC<{}> = () => {
         )
       }
     }
-
     window.addEventListener('message', messageListener, false)
+
+    // 进来登陆界面，直接向外部发送cms已经初始化的消息，驱动外层注入登陆账号和密码
+    window?.parent?.postMessage(
+      JSON.stringify({
+        from: 'cms',
+        status: 'waitlogin',
+        message: 'waiting for login',
+      }),
+      '*'
+    )
+
     return () => {
       window.removeEventListener('message', messageListener)
     }
