@@ -57,8 +57,8 @@ export async function getInitialState(): Promise<{
   }
 
   // 已经登录成功，响应低码平台
-  if (currentUser?._id && window.parent !== window.self) {
-    window.parent.postMessage(
+  if (currentUser?._id /* && window.parent !== window.self */) {
+    window?.opener?.postMessage(
       JSON.stringify({
         from: 'cms',
         status: 'success',

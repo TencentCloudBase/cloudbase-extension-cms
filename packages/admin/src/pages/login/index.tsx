@@ -114,7 +114,7 @@ const Login: React.FC<{}> = () => {
       try {
         const data = event?.data ? JSON.parse(event.data) : {}
         if (data?.from !== 'lowcode') return
-        window?.parent.postMessage(
+        window?.opener?.postMessage(
           JSON.stringify({
             from: 'cms',
             message: 'received message',
@@ -128,7 +128,7 @@ const Login: React.FC<{}> = () => {
           username,
         })
         // 响应低码平台
-        window?.parent.postMessage(
+        window?.opener?.postMessage(
           JSON.stringify({
             from: 'cms',
             status: 'success',
@@ -138,7 +138,7 @@ const Login: React.FC<{}> = () => {
       } catch (error) {
         if (window.parent === window.self) return
         // 响应低码平台
-        window?.parent.postMessage(
+        window?.opener?.postMessage(
           JSON.stringify({
             from: 'cms',
             status: 'fail',
@@ -151,7 +151,7 @@ const Login: React.FC<{}> = () => {
     window.addEventListener('message', messageListener, false)
 
     // 进来登陆界面，直接向外部发送cms已经初始化的消息，驱动外层注入登陆账号和密码
-    window?.parent?.postMessage(
+    window?.opener?.postMessage(
       JSON.stringify({
         from: 'cms',
         status: 'waitlogin',
