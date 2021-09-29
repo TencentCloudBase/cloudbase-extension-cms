@@ -14,8 +14,8 @@
     "lint:fix": "eslint --fix --cache --ext .ts,.tsx --format=pretty ./packages",
     "lint:prettier": "prettier --check \"**/*.{ts,tsx,js,jsx,json}\" --end-of-line auto",
     "deploy": "tcb framework deploy",
-    "preext:zip": "rm -rf build && mkdir build && npm run build",
-    "preext:zip-wx": "rm -rf build && mkdir build && npm run build:wx",
+    "preext:zip": "rm -rf build && mkdir build && yarn run build",
+    "preext:zip-wx": "rm -rf build && mkdir build && yarn run build:wx",
     "ext:zip": "bash ./scripts/zip.sh",
     "ext:zip-wx": "bash ./scripts/zip.sh"
   },

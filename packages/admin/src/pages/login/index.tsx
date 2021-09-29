@@ -72,10 +72,12 @@ const Login: React.FC<{}> = () => {
 
     const { username, password } = values
 
+    let loginSuccess = false
     try {
       // 用户名密码登录
       await loginWithPassword(username.trim(), password.trim())
       message.success('登录成功')
+      loginSuccess = true
       replaceGoto()
       setTimeout(() => {
         refresh()
@@ -101,6 +103,7 @@ const Login: React.FC<{}> = () => {
     }
 
     setSubmitting(false)
+    return Promise.resolve(loginSuccess)
   }
 
   // 从低码平台登录
@@ -111,9 +114,16 @@ const Login: React.FC<{}> = () => {
 
       console.log('CMS 收到信息', event.data, event.origin)
 
+      const loginData: {
+        username?: string
+        password?: string
+        fromLowcode?: boolean
+        isSuccess?: boolean
+      } = {}
       try {
         const data = event?.data ? JSON.parse(event.data) : {}
         if (data?.from !== 'lowcode') return
+        loginData.fromLowcode = true
         window?.opener?.postMessage(
           JSON.stringify({
             from: 'cms',
@@ -123,29 +133,48 @@ const Login: React.FC<{}> = () => {
         )
 
         const { password, username } = data
-        await handleSubmit({
+        loginData.password = password || undefined
+        loginData.username = username || undefined
+        const loginSuccess = await handleSubmit({
           password,
           username,
         })
+        loginData.isSuccess = !!loginSuccess
+
         // 响应低码平台
         window?.opener?.postMessage(
           JSON.stringify({
             from: 'cms',
-            status: 'success',
+            status: loginSuccess ? 'success' : 'fail',
           }),
           '*'
         )
       } catch (error) {
-        if (window.parent === window.self) return
+        // if (window.parent === window.self) return
         // 响应低码平台
         window?.opener?.postMessage(
           JSON.stringify({
             from: 'cms',
             status: 'fail',
-            message: error.message,
+            message: error?.message,
           }),
           '*'
         )
+      }
+
+      // 上报cms日志
+      if (loginData?.fromLowcode && window['Aegis']) {
+        try {
+          new window['Aegis']({
+            id: 'lXHFsBpTyYTEVwaNUr',
+          }).infoAll({
+            msg: `lowcode-login::${loginData?.isSuccess || false}`,
+            ext1: window?.TcbCmsConfig?.envId || '',
+            ext2: loginData?.username || '',
+            // password: loginData.password || "",
+            ext3: loginData?.isSuccess || false,
+          })
+        } catch (e) {}
       }
     }
     window.addEventListener('message', messageListener, false)
