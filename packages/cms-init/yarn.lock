@@ -22,14 +22,14 @@
     node-cache "^4.2.0"
     ws "^7.0.0"
 
-"@cloudbase/manager-node@^3.8.0":
-  version "3.8.0"
-  resolved "https://registry.yarnpkg.com/@cloudbase/manager-node/-/manager-node-3.8.0.tgz#677768ffbfa871b7746ae55113564e7340ecf979"
-  integrity sha512-3tm7+PrH4xrA6ZqYsISZdT+H2gQIUZRugI3EIiS3tJVwNk+ukam74W6IREOKkzrmq+ib1081upoAXHF1bCufMQ==
+"@cloudbase/manager-node@3.11.0":
+  version "3.11.0"
+  resolved "https://registry.npmjs.org/@cloudbase/manager-node/-/manager-node-3.11.0.tgz#2add06f881b7d6239d2e19d9a9040488c62e83af"
+  integrity sha512-CZgpOGx3LMjf6Q29YlVvw6au/UDLc2a76hRUElYV0sbQX8lTKsOybG7J+iHoli0mVryhhzuez+affBmF+TTo8A==
   dependencies:
     "@cloudbase/database" "^0.6.2"
     archiver "^3.1.1"
-    cos-nodejs-sdk-v5 "^2.5.20"
+    cos-nodejs-sdk-v5 "2.9.0"
     del "^5.1.0"
     https-proxy-agent "^2.2.4"
     make-dir "^3.0.0"
@@ -108,6 +108,11 @@
   version "14.11.8"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-14.11.8.tgz#fe2012f2355e4ce08bca44aeb3abbb21cf88d33f"
   integrity sha512-KPcKqKm5UKDkaYPTuXSx8wEP7vE9GnuaXIZKijwRYcePpZFDVuy2a57LarFKiORbHOuTOOwYzxVxcUzsh2P2Pw==
+
+"@types/node@^14.14.20":
+  version "14.17.32"
+  resolved "https://registry.npmjs.org/@types/node/-/node-14.17.32.tgz#2ca61c9ef8c77f6fa1733be9e623ceb0d372ad96"
+  integrity sha512-JcII3D5/OapPGx+eJ+Ik1SQGyt6WvuqdRfh9jUwL6/iHGjmyOriBDciBUu7lEIBTL2ijxwrR70WUnw5AEDmFvQ==
 
 "@types/retry@^0.12.0":
   version "0.12.0"
@@ -352,14 +357,15 @@ core-util-is@1.0.2, core-util-is@~1.0.0:
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
   integrity sha1-tf1UIgqivFq1eqtxQMlAdUUDwac=
 
-cos-nodejs-sdk-v5@^2.5.20:
-  version "2.8.2"
-  resolved "https://registry.yarnpkg.com/cos-nodejs-sdk-v5/-/cos-nodejs-sdk-v5-2.8.2.tgz#3ccb5bc872fe22b1952e600e2879fb5ef513e209"
-  integrity sha512-IsLqzWnusTQSWg3gJqy6HukQkiZpKDtsm0gXPvBEbPzGRAUDVQAAefpahySsA65ySD9FuKCkUXOOrJn08P6GRA==
+cos-nodejs-sdk-v5@2.9.0:
+  version "2.9.0"
+  resolved "https://registry.npmjs.org/cos-nodejs-sdk-v5/-/cos-nodejs-sdk-v5-2.9.0.tgz#658887f6fd7ad34c6fc894304c74b9b8e54ae9cd"
+  integrity sha512-sCTZ34HwferXy+rrI7/w1lzmiMT7pxD/qv6ynMXSh+mvacbdn9l+I/rSqaAJFMEm/Tw42QSY+fkVZsjthF1U9w==
   dependencies:
+    "@types/node" "^14.14.20"
     conf "^7.1.2"
     mime-types "^2.1.24"
-    request "^2.88.0"
+    request "^2.88.2"
     xml2js "^0.4.19"
 
 crc32-stream@^3.0.1:
@@ -1134,7 +1140,7 @@ request-promise@^4.2.5:
     stealthy-require "^1.1.1"
     tough-cookie "^2.3.3"
 
-request@^2.87.0, request@^2.88.0:
+request@^2.87.0, request@^2.88.2:
   version "2.88.2"
   resolved "https://registry.yarnpkg.com/request/-/request-2.88.2.tgz#d73c918731cb5a87da047e207234146f664d12b3"
   integrity sha512-MsvtOrfG9ZcrOwAW+Qi+F6HbD0CWXEh9ou77uOb7FM2WPhwT7smM833PzanhJLsgXjN89Ir6V2PczXNnMpwKhw==
