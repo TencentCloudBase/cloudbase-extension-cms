@@ -279,5 +279,6 @@ async function deployHostingFile(manager, srcPath, cloudPath) {
     localPath: srcPath,
     cloudPath: cloudPath,
     ignore: ['.DS_Store'],
+    retryCount: 5
   })
 }
