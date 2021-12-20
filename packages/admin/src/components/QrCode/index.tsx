@@ -13,10 +13,12 @@ export default (props: {
   actionRef: MutableRefObject<{
     show: Function
   }>
+  appPath?: string
+  appPathQuery?: string
   // 不显示渠道选择器
   disableChannel?: boolean
 }) => {
-  const { activityId, actionRef, disableChannel } = props
+  const { activityId, actionRef, disableChannel, appPath, appPathQuery } = props
 
   const [{ dataUri, isModalVisible, channel }, setState] = useSetState({
     channel: '',
@@ -66,6 +68,8 @@ export default (props: {
       const result = await callWxOpenAPI('generateUrlLink', {
         path: `/${activityPage}/index.html`,
         query: `activityId=${activityId}&source=${source}`,
+        appPath,
+        appPathQuery,
       })
 
       copyToClipboard(result.urlLink)

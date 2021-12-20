@@ -147,15 +147,17 @@ export class ApiController {
    */
   @UseGuards(PermissionGuard('operation'))
   @Post('generateUrlLink')
-  async generateUrlLink(@Body() body: { path: string; query: string }) {
-    const { path, query } = body
+  async generateUrlLink(
+    @Body() body: { path: string; query: string; appPath: string; appPathQuery: string }
+  ) {
+    const { path, query, appPath, appPathQuery } = body
 
     const envId = getEnvIdString()
     const wxCloudApp = getWxCloudApp()
 
     return wxCloudApp.openapi.urllink.generate({
-      path: '',
-      query: '',
+      path: appPath,
+      query: appPathQuery,
       isExpire: true,
       expireType: 1,
       expireInterval: 30,
