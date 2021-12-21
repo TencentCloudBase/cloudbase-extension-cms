@@ -29,9 +29,12 @@ export const ActivityTable: React.FC<{
   const { currentSchema } = props
   const qrCodeRef = useRef<any>()
   const ctx = useConcent<{}, ContentCtx>('content')
-  const [{ activityId }, setState] = useSetState({
+  const [{ activityId, appPath, appPathQuery }, setState] = useSetState({
     activityId: '',
+    appPath: '',
+    appPathQuery: '',
   })
+
   const projectId = getProjectId()
 
   // 检索的字段
@@ -143,6 +146,8 @@ export const ActivityTable: React.FC<{
             onClick={async () => {
               setState({
                 activityId: row._id,
+                appPath: row.appPath,
+                appPathQuery: row.appPathQuery,
               })
               qrCodeRef.current?.show()
             }}
@@ -269,7 +274,12 @@ export const ActivityTable: React.FC<{
         }}
       />
 
-      <QrCode activityId={activityId} actionRef={qrCodeRef} />
+      <QrCode
+        activityId={activityId}
+        actionRef={qrCodeRef}
+        appPath={appPath}
+        appPathQuery={appPathQuery}
+      />
     </>
   )
 }

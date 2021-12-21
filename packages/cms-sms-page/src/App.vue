@@ -258,7 +258,7 @@ export default {
         }
 
         if (activity.appPathQuery) {
-          jumpPath += activity.appPathQuery
+          jumpPath += `&${activity.appPathQuery}`
         }
 
         console.log('跳转链接', jumpPath)
