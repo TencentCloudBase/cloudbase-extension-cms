@@ -29,7 +29,7 @@ zipFunction() {
   DEST_FILE="$__ABS_PATH__/build/$1.zip"
 
   rm -rf $DEST_FILE
-  zip -r $DEST_FILE . -x 'node_modules/*' -x '.DS_Store' -x 'src/*' -x yarn.lock -x .env.local
+  zip -r $DEST_FILE . -x 'node_modules/*' -x '.DS_Store' -x 'src/*' -x yarn.lock -x .env.local -x .env.wx.local
   cd -
 }
 
