@@ -51,10 +51,10 @@ export class ApiController {
    */
   @UseGuards(PermissionGuard('operation'))
   @Post('sendSms')
-  async createSendSmsTask(@Body() body: { taskId: string }) {
+  async createSendSmsTask(@Body() body: { taskId: string; useShortname: boolean }) {
     console.log('使用 OpenAPI 发送短信')
-    const { taskId } = body
-    return this.apiService.sendSmsByNumbers(taskId)
+    const { taskId, useShortname = false } = body
+    return this.apiService.sendSmsByNumbers(taskId, useShortname)
   }
 
   /**
@@ -136,10 +136,12 @@ export class ApiController {
    */
   @UseGuards(PermissionGuard('operation'))
   @Post('createSendSmsTaskByFile')
-  async createSendSmsTaskByFile(@Body() body: { fileUri: string; taskId: string }) {
-    const { fileUri, taskId } = body
+  async createSendSmsTaskByFile(
+    @Body() body: { fileUri: string; taskId: string; useShortname: boolean }
+  ) {
+    const { fileUri, taskId, useShortname = false } = body
 
-    return this.apiService.sendSmsByFile(fileUri, taskId)
+    return this.apiService.sendSmsByFile(fileUri, taskId, useShortname)
   }
 
   /**

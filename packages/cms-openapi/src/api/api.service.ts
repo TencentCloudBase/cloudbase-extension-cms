@@ -65,7 +65,7 @@ export class ApiService {
    * 通过号码列表，发送短信
    * @param taskId
    */
-  async sendSmsByNumbers(taskId: string) {
+  async sendSmsByNumbers(taskId: string, useShortname: boolean) {
     const wxCloudApp = getWxCloudApp()
     const { ENV } = wxCloudApp.getWXContext()
 
@@ -124,6 +124,7 @@ export class ApiService {
         urlLink: urlLink,
         templateParamList: [task.content],
         templateId: process.env.SMS_TEMPLATE_ID || '844110',
+        use_short_name: !!useShortname,
       })
 
       // 上报短信下发任务
@@ -203,7 +204,7 @@ export class ApiService {
   /**
    * 通过号码包文件创建发送短信的任务
    */
-  async sendSmsByFile(fileUri: string, taskId: string) {
+  async sendSmsByFile(fileUri: string, taskId: string, useShortname: boolean) {
     const wxCloudApp = getWxCloudApp()
     const envId = getEnvIdString()
 
@@ -225,6 +226,7 @@ export class ApiService {
       is_url_link: true,
       file_url: fileUri,
       template_id: process.env.SMS_TEMPLATE_ID || '844110',
+      use_short_name: useShortname,
     })
 
     console.log('发送结果', result)
