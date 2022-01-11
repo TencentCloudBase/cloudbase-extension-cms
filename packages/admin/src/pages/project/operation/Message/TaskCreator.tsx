@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useEffect, useRef } from 'react'
+import React, { MutableRefObject, useEffect, useState, useRef } from 'react'
 import { useRequest, history } from 'umi'
 import ProCard from '@ant-design/pro-card'
 import { PageContainer } from '@ant-design/pro-layout'
@@ -40,10 +40,18 @@ interface Task {
 }
 
 // 短信模板
-const getMessageTemplate = (miniappName = '', content = '') => `【${
-  miniappName || '小程序名称'
-}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
-回T退订`
+const getMessageTemplate = (miniappName = '', content = '', miniappShortname = '') => {
+  let finalTempStr = `【${miniappName || '小程序名称'}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
+  回T退订`
+  if (miniappName.length > 12) {
+    if (miniappShortname) {
+      finalTempStr = `【${miniappShortname}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
+      回T退订`
+    }
+  }
+
+  return finalTempStr
+}
 
 // 号码包文件最大值：30M
 const MAX_FILE_SIZE = 30 * 1024 * 1024
@@ -55,6 +63,7 @@ const MessageTask: React.FC = () => {
   const projectId = getProjectId()
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
+  const [shortname, setShortname] = useState('')
 
   const [{ visible, task, activityId, sendMessageType }, setState] = useSetState<any>({
     task: {},
@@ -69,6 +78,23 @@ const MessageTask: React.FC = () => {
     return <span />
   }
 
+  let { data } = useRequest(async () => {
+    let shortname = ''
+    try {
+      const data = await callWxOpenAPI('getAppBasicInfo')
+      shortname = data.shortname
+      setShortname(shortname)
+    } catch (e) {
+      console.log('获取小程序简称异常', e.message)
+    }
+
+    return shortname
+  })
+
+  console.log('shortname', shortname)
+
+  const useShortname = setting?.miniappName && setting?.miniappName.length > 12 && shortname
+
   // 创建发送任务
   const { run, loading } = useRequest(
     async (payload: any) => {
@@ -77,6 +103,7 @@ const MessageTask: React.FC = () => {
       try {
         const result = await callWxOpenAPI('sendSms', {
           taskId,
+          useShortname: !!useShortname,
         })
 
         console.log(result)
@@ -191,13 +218,24 @@ const MessageTask: React.FC = () => {
                       <Form.Item shouldUpdate className="mb-0">
                         {() => (
                           <>
+                            {useShortname && (
+                              <>
+                                <Text type="secondary">
+                                  {`短信签名最大支持12个字，小程序名称${setting.miniappName}超过12个字，将通过小程序简称${shortname}发送`}
+                                </Text>
+                                <br />
+                              </>
+                            )}
+
                             <Text type="secondary">
                               短信预览：
                               {getMessageTemplate(
                                 setting?.miniappName,
-                                form.getFieldValue('content')
+                                form.getFieldValue('content'),
+                                shortname
                               )}
                             </Text>
+                            <br />
                             <Text type="secondary">短信内调整的短链自发送后 30 天有效</Text>
                           </>
                         )}
@@ -211,6 +249,15 @@ const MessageTask: React.FC = () => {
                       {
                         validator: (_, value) => {
                           const template = getMessageTemplate(setting.miniappName)
+
+                          // 检查小程序名称是否超过12个字符，超过则检测是否设置过简称
+                          if (setting.miniappName && setting.miniappName.length > 12) {
+                            if (!shortname) {
+                              return Promise.reject(
+                                `短信签名最大支持12个字，小程序名称${setting.miniappName}超过12个字，请前往设置“小程序简称”以发送短信`
+                              )
+                            }
+                          }
 
                           if (template.length + (value?.length || 0) > 70) {
                             return Promise.reject('短信超出 70 个字符，无法发送，请精简短信内容')
@@ -369,7 +416,7 @@ const MessageTask: React.FC = () => {
               共计 {task?.phoneNumberList?.length || 0} 个号码，是否创建发送任务？
             </Modal>
           ) : (
-            <SmsFileTaskModal actionRef={modalRef} task={task} />
+            <SmsFileTaskModal actionRef={modalRef} task={task} useShortname={!!useShortname} />
           )}
         </Col>
       </Row>
@@ -389,7 +436,8 @@ const SmsFileTaskModal: React.FC<{
     phoneNumberFile: any
     activityId: string
   }
-}> = ({ actionRef, task = {} }) => {
+  useShortname: boolean
+}> = ({ actionRef, task = {}, useShortname = false }) => {
   const projectId = getProjectId()
   const { phoneNumberFile, activityId } = task
   const [{ visible, uploadPercent }, setState] = useSetState({
@@ -469,6 +517,7 @@ const SmsFileTaskModal: React.FC<{
       await callWxOpenAPI('createSendSmsTaskByFile', {
         fileUri,
         taskId,
+        useShortname: useShortname,
       })
     },
     {
