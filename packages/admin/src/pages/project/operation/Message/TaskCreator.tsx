@@ -40,7 +40,19 @@ interface Task {
 }
 
 // 短信模板
-const getMessageTemplate = (miniappName = '', content = '', miniappShortname = '') => {
+const getMessageTemplate = (params: {
+  miniappName?: string
+  content?: string
+  miniappShortname?: string
+  templateSignValue?: string
+}) => {
+  const { miniappName = '', content = '', miniappShortname = '', templateSignValue = '' } = params
+  // 存在环境变量，优先使用
+  if (templateSignValue) {
+    return `【${templateSignValue}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
+    回T退订`
+  }
+
   let finalTempStr = `【${miniappName || '小程序名称'}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
   回T退订`
   if (miniappName.length > 12) {
@@ -64,6 +76,7 @@ const MessageTask: React.FC = () => {
   const globalCtx = useConcent<{}, GlobalCtx>('global')
   const { setting } = globalCtx.state || {}
   const [shortname, setShortname] = useState('')
+  const [smsSignEnvValue, setSmsSignEnvValue] = useState('')
 
   const [{ visible, task, activityId, sendMessageType }, setState] = useSetState<any>({
     task: {},
@@ -92,6 +105,16 @@ const MessageTask: React.FC = () => {
   })
 
   console.log('shortname', shortname)
+
+  useRequest(async () => {
+    try {
+      const data = await callWxOpenAPI('getTemplateSign')
+      console.log('getTemplateSign data', data)
+      setSmsSignEnvValue(data.templateSign)
+    } catch (e) {
+      console.log('获取短信签名环境变量值异常', e.message)
+    }
+  })
 
   const useShortname = setting?.miniappName && setting?.miniappName.length > 12 && shortname
 
@@ -229,11 +252,12 @@ const MessageTask: React.FC = () => {
 
                             <Text type="secondary">
                               短信预览：
-                              {getMessageTemplate(
-                                setting?.miniappName,
-                                form.getFieldValue('content'),
-                                shortname
-                              )}
+                              {getMessageTemplate({
+                                miniappName: setting?.miniappName,
+                                content: form.getFieldValue('content'),
+                                miniappShortname: shortname,
+                                templateSignValue: smsSignEnvValue,
+                              })}
                             </Text>
                             <br />
                             <Text type="secondary">短信内调整的短链自发送后 30 天有效</Text>
@@ -248,7 +272,10 @@ const MessageTask: React.FC = () => {
                       },
                       {
                         validator: (_, value) => {
-                          const template = getMessageTemplate(setting.miniappName)
+                          const template = getMessageTemplate({
+                            miniappName: setting.miniappName,
+                            templateSignValue: smsSignEnvValue,
+                          })
 
                           // 检查小程序名称是否超过12个字符，超过则检测是否设置过简称
                           if (setting.miniappName && setting.miniappName.length > 12) {

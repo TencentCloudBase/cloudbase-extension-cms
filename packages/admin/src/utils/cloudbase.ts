@@ -211,7 +211,6 @@ export async function callWxOpenAPI(action: string, data?: Record<string, any>) 
       path: `/api/${action}`,
     },
   })
-
   return parseIntegrationRes(result)
 }
 

@@ -172,6 +172,12 @@ export class ApiController {
     })
   }
 
+  @UseGuards(PermissionGuard('operation'))
+  @Post('getTemplateSign')
+  async getTemplateSign() {
+    return this.apiService.getCustomTemplateSign()
+  }
+
   private collection(name: string) {
     return this.cloudbaseService.collection(name)
   }
