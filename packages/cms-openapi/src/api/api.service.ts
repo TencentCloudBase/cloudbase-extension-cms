@@ -615,6 +615,15 @@ export class ApiService {
     }
   }
 
+  /**
+   * 临时接口，为支持配置用户自定义短信签名（需后台配合设置），目的是帮助绕过短信签名12字限制且小程序简称不能超过6字限制
+   * @returns
+   */
+  async getCustomTemplateSign() {
+    const templateSign = process.env.SMS_TEMPLATE_SIGN || ''
+    return { templateSign }
+  }
+
   // 获取上传链接
   private async uploadFile(file: Buffer, fileName: string) {
     // 获取上传链接
