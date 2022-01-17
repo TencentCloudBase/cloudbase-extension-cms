@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: '2020-10-20'
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.13.5
+Version: 2.13.6
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -19,9 +19,9 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.13.5
+  - Title: 2.13.6
     Content:
-      - 短信内容支持使用小程序简称（小程序名称大于12且存在简称场景）
+      - 短信签名（小程序名称）支持使用云函数环境变量注入指定
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -58,7 +58,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-init
-      CodeUri: extension://4a752079637a413ba97f7fcb27eb2f8d.zip
+      CodeUri: extension://76db5a16ec1947cfbc5f74ca0972b4fa.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -114,7 +114,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-openapi
-      CodeUri: extension://04031b6d3a164757a21b1af279abbfdc.zip
+      CodeUri: extension://208b697e638943338c863f540f6b8636.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
       MemorySize: 2048
