@@ -277,12 +277,14 @@ const MessageTask: React.FC = () => {
                             templateSignValue: smsSignEnvValue,
                           })
 
-                          // 检查小程序名称是否超过12个字符，超过则检测是否设置过简称
-                          if (setting.miniappName && setting.miniappName.length > 12) {
-                            if (!shortname) {
-                              return Promise.reject(
-                                `短信签名最大支持12个字，小程序名称${setting.miniappName}超过12个字，请前往设置“小程序简称”以发送短信`
-                              )
+                          if (!smsSignEnvValue) {
+                            // 检查小程序名称是否超过12个字符，超过则检测是否设置过简称
+                            if (setting.miniappName && setting.miniappName.length > 12) {
+                              if (!shortname) {
+                                return Promise.reject(
+                                  `短信签名最大支持12个字，小程序名称${setting.miniappName}超过12个字，请前往设置“小程序简称”以发送短信`
+                                )
+                              }
                             }
                           }
 
