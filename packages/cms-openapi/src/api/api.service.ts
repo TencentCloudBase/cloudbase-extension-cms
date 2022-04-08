@@ -91,7 +91,7 @@ export class ApiService {
 
       console.log(phoneNumberList)
 
-      const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
+      // const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
 
       // 查询活动信息，获取小程序 path 和 query
       const {
@@ -99,32 +99,37 @@ export class ApiService {
       } = await this.collection(Collection.MessageActivity).doc(task.activityId).get()
 
       // 生成短链
-      let { urlLink } = await wxCloudApp.openapi.urllink.generate({
-        // 小程序 query path
-        path: activity?.appPath || '',
-        query: activity?.appPathQuery || '',
-        isExpire: true,
-        expireType: 1,
-        expireInterval: 30,
-        cloudBase: {
-          path: `/${activityPath}/index.html`,
-          query: `source=_cms_sms_&activityId=${task.activityId}`,
-          env: ENV,
-          domain: '',
-        },
-      })
+      // let { urlLink } = await wxCloudApp.openapi.urllink.generate({
+      //   // 小程序 query path
+      //   path: activity?.appPath || '',
+      //   query: activity?.appPathQuery || '',
+      //   isExpire: true,
+      //   expireType: 1,
+      //   expireInterval: 30,
+      //   cloudBase: {
+      //     path: `/${activityPath}/index.html`,
+      //     query: `source=_cms_sms_&activityId=${task.activityId}`,
+      //     env: ENV,
+      //     domain: '',
+      //   },
+      // })
+      // urlLink = urlLink.replace(/https:\/\/|http:\/\//, '')
 
-      urlLink = urlLink.replace(/https:\/\/|http:\/\//, '')
+      const jumpPath = this.getSmsPagePath(task.activityId)
 
       // 下发短信
-      const result = await wxCloudApp.openapi.cloudbase.sendSmsV2({
+      const result = await wxCloudApp.openapi.cloudbase.sendSms({
         env: ENV,
         phoneNumberList,
+
+        content: task.content,
+        path: jumpPath,
+
         // https 的链接才有效
-        urlLink: urlLink,
-        templateParamList: [task.content],
-        templateId: process.env.SMS_TEMPLATE_ID || '844110',
-        use_short_name: !!useShortname,
+        // urlLink: urlLink,
+        // templateParamList: [task.content],
+        // templateId: process.env.SMS_TEMPLATE_ID || '844110',
+        // use_short_name: !!useShortname,
       })
 
       // 上报短信下发任务
@@ -221,12 +226,19 @@ export class ApiService {
     }
 
     // 创建发送任务
+    // const result = await wxCloudApp.openapi.cloudbase.createSendSmsTask({
+    //   env: envId,
+    //   is_url_link: true,
+    //   file_url: fileUri,
+    //   template_id: process.env.SMS_TEMPLATE_ID || '844110',
+    //   use_short_name: useShortname,
+    // })
     const result = await wxCloudApp.openapi.cloudbase.createSendSmsTask({
       env: envId,
-      is_url_link: true,
-      file_url: fileUri,
-      template_id: process.env.SMS_TEMPLATE_ID || '844110',
-      use_short_name: useShortname,
+      // is_url_link: true,
+      fileUrl: fileUri,
+      templateId: process.env.SMS_TEMPLATE_ID || '844110',
+      useShortName: useShortname,
     })
 
     console.log('发送结果', result)
@@ -564,7 +576,7 @@ export class ApiService {
     }
 
     // 生成跳转路径
-    const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
+    // const activityPath = process.env.TCB_CMS ? 'tcb-cms-activities' : 'cms-activities'
 
     // 查询活动信息，获取小程序 path 和 query
     const {
@@ -572,29 +584,31 @@ export class ApiService {
     } = await this.collection(Collection.MessageActivity).doc(activityId).get()
 
     // 生成短链
-    let { urlLink } = await wxCloudApp.openapi.urllink.generate({
-      // 小程序 query path
-      path: activity?.appPath || '',
-      query: activity?.appPathQuery || '',
-      isExpire: true,
-      expireType: 1,
-      expireInterval: 30,
-      cloudBase: {
-        path: `/${activityPath}/index.html`,
-        query: `source=_cms_sms_&activityId=${activityId}`,
-        env: envId,
-        domain: '',
-      },
-    })
+    // let { urlLink } = await wxCloudApp.openapi.urllink.generate({
+    //   // 小程序 query path
+    //   path: activity?.appPath || '',
+    //   query: activity?.appPathQuery || '',
+    //   isExpire: true,
+    //   expireType: 1,
+    //   expireInterval: 30,
+    //   cloudBase: {
+    //     path: `/${activityPath}/index.html`,
+    //     query: `source=_cms_sms_&activityId=${activityId}`,
+    //     env: envId,
+    //     domain: '',
+    //   },
+    // })
+    // urlLink = urlLink.replace(/https:\/\/|http:\/\//, '')
 
-    urlLink = urlLink.replace(/https:\/\/|http:\/\//, '')
+    const jumpPath = this.getSmsPagePath(activityId)
 
     const supplementData = data.map((line: string[], index) => {
       if (isFirstLineTitle && index === 0) return line
       // 补充 +86
       line[0] = /^\+86/.test(line[0]) ? line[0] : `+86${line[0]}`
       // 替换为新的链接
-      line[2] = line[2] ? line[2] : urlLink
+      // line[2] = line[2] ? line[2] : urlLink
+      line[2] = jumpPath
       return line
     })
 

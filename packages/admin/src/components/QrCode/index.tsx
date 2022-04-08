@@ -115,11 +115,12 @@ export default (props: {
             {smsPageUrl}
           </Paragraph>
 
-          {!disableChannel && (
+          {/* 说明：这里需要从url link方式转为url schema，并在预览链接页面做schema本地缓存，为了将缓存缩减到统一地方，这里的预览按钮屏蔽掉。（屏蔽前该按钮逻辑为url link跳转方式） */}
+          {/* {!disableChannel && (
             <Button type="primary" size="small" loading={loading} onClick={() => generateUrlLink()}>
               短链生成
             </Button>
-          )}
+          )} */}
         </div>
       </Space>
     </Modal>

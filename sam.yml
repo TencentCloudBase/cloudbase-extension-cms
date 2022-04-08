@@ -19,10 +19,9 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.13.6
+  - Title: 2.13.10
     Content:
-      - 修复生成短链缺appPath问题
-      - 修复营销活动中间页跳转拼接参数缺&问题
+      - 优化运营活动短信策略
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com

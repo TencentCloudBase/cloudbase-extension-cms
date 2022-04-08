@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: '2020-10-20'
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.13.7
+Version: 2.13.10
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -19,9 +19,9 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.13.7
+  - Title: 2.13.10
     Content:
-      - 修复短信签名环境注入bug
+      - 优化运营活动短信策略
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
@@ -39,7 +39,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-service
-      CodeUri: extension://99f837b4a53a460590ec32440cc00d96.zip
+      CodeUri: extension://1f9f05f5541641eab68b6f7dd2ed7870.zip
       InstallDependency: true
       Description: 提供 CMS 管理服务，所有对内容的操作和管理都会经过此函数调用，内容操作会根据用户权限来进行数据库操作
       MemorySize: 256
@@ -58,7 +58,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-init
-      CodeUri: extension://ad4719221db948c1b72fc7366b47e717.zip
+      CodeUri: extension://8d709e3a52f749b7900802ed8b47c319.zip
       InstallDependency: true
       Description: 提供初始化应用功能，安装扩展后，会通过该函数来进行静态资源的部署和密码的生成和设置，修改账号密码或者部署路径等扩展参数都会再次执行该函数来进行更新
       MemorySize: 256
@@ -80,7 +80,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-api
-      CodeUri: extension://a6b0abcf28034d76a5b4b98dd63edaa8.zip
+      CodeUri: extension://4f58d4c613114d628378722c8f65a4b1.zip
       InstallDependency: true
       Description: 提供 CMS RESTful API 访问能力，所有 RESTful API 请求都会经过此函数调用
       MemorySize: 256
@@ -97,7 +97,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-sms
-      CodeUri: extension://bd3c016d21984738ac8a545143a8f20d.zip
+      CodeUri: extension://6b902674646d44688eb49c700c3e1a6d.zip
       InstallDependency: true
       Description: 提供短信发送、生成 url schema 功能
       MemorySize: 256
@@ -114,7 +114,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-openapi
-      CodeUri: extension://208b697e638943338c863f540f6b8636.zip
+      CodeUri: extension://b52048d8c3ea4d048e06e49f44d63084.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
       MemorySize: 2048
@@ -132,7 +132,7 @@ Resources:
     Type: CloudBase::Function
     Properties:
       FunctionName: wx-ext-cms-fx-openapi
-      CodeUri: extension://a7e62b09d3bc4e51967515346c69b58f.zip
+      CodeUri: extension://c80f6c7623b94a6da03db15968655428.zip
       InstallDependency: true
       Description: 提供调用微信 Openapi 接口的能力
       MemorySize: 1024

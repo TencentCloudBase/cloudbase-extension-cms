@@ -49,15 +49,17 @@ const getMessageTemplate = (params: {
   const { miniappName = '', content = '', miniappShortname = '', templateSignValue = '' } = params
   // 存在环境变量，优先使用
   if (templateSignValue) {
-    return `【${templateSignValue}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
+    return `【${templateSignValue}】${content}，跳转小程序 https://tcbe/xxxxxxxxxxx
     回T退订`
   }
 
-  let finalTempStr = `【${miniappName || '小程序名称'}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
+  let finalTempStr = `【${
+    miniappName || '小程序名称'
+  }】${content}，跳转小程序 https://tcbe/xxxxxxxxxxx
   回T退订`
   if (miniappName.length > 12) {
     if (miniappShortname) {
-      finalTempStr = `【${miniappShortname}】${content}，跳转小程序 wxaurl.cn/xxxxxxxxxxx
+      finalTempStr = `【${miniappShortname}】${content}，跳转小程序 https://tcbe/xxxxxxxxxxx
       回T退订`
     }
   }

@@ -195,26 +195,40 @@ export default {
         // 触发云函数的名称
         const functionName = WX_MP ? 'wx-ext-cms-sms' : 'tcb-ext-cms-sms'
 
-        // 查询活动信息
-        const res = await this.cloudApp.callFunction({
-          name: functionName,
-          data: {
-            channelId,
-            sessionId,
-            activityId,
-            referer: document.referrer,
-            action: 'getUrlScheme',
-          },
-        })
+        // 查询本地缓存数据，如果有就不用重复发包了，微信有效scheme数量有上限
+        const schemeKey = `ext_cms_sms_url_scheme_key_${channelId}_${sessionId}_${activityId}`
+        const localResStr = sessionStorage.getItem(schemeKey)
+        let res
+        if (!!localResStr) {
+          try {
+            res = JSON.parse(localResStr)
+          } catch (e) {}
+        }
+        if (!res || !res?.result) {
+          // 查询活动信息
+          res = await this.cloudApp.callFunction({
+            name: functionName,
+            data: {
+              channelId,
+              sessionId,
+              activityId,
+              referer: document.referrer,
+              action: 'getUrlScheme',
+            },
+          })
+        }
 
-        const { result } = res
+        const { result } = res || {}
 
         // 函数执行错误
-        if (result.error) {
+        if (!result || !!result?.error) {
           this.generateSchemaError = true
-          this.showDialog(result.error.message)
+          this.showDialog(result?.error?.message || '未知错误')
           return
         }
+
+        //缓存scheme数据，方便下次直接获取
+        sessionStorage.setItem(schemeKey, JSON.stringify(res))
 
         this.openlink = res.result.openlink
 
