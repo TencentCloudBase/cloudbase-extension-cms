@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: '2020-10-20'
 Name: wx-ext-cms
 SpecVersion: v1beta
-Version: 2.13.10
+Version: 2.13.11
 License: Apache-2.0
 Category: CloudApp
 DisplayName: 内容管理（CMS）
@@ -12,16 +12,16 @@ Tags:
   - 内容管理
   - 免开发
 # 后付费环境才可以开通
-EnvType: PostPay
+# EnvType: PostPay
 SourceUrl: https://github.com/TencentCloudBase/cloudbase-extension-cms
 ReleaseNotesUrl: https://github.com/TencentCloudBase/cloudbase-extension-cms/releases
 IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_world.svg
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.13.10
+  - Title: 2.13.11
     Content:
-      - 优化运营活动短信策略
+      - 取消后付费环境才可以开通的限制
 Author:
   AuthorName: TCB
   Email: cloudbase@tencent.com
