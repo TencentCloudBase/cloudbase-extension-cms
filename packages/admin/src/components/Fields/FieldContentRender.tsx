@@ -152,11 +152,22 @@ export function getFieldRender(field: SchemaField) {
           return text
         }
 
+        const f = field as SchemaField & { [key: string]: any };
+
+        const renderItem = (val: string, index: number) => {
+          switch (f.elementType) {
+            case 'Enum':
+              const enumOptions = f.enumElements || [];
+              const displayVal = enumOptions.find(e => e.value === val)?.label;
+              return <Tag key={index}>{displayVal || val}</Tag>; 
+            default:
+              return <Tag key={index}>{val}</Tag>;
+          }
+        }
+
         return (
           <Space direction="vertical">
-            {record[name]?.map((val: string, index: number) => (
-              <Tag key={index}>{val}</Tag>
-            ))}
+            {record[name]?.map(renderItem)}
           </Space>
         )
       }

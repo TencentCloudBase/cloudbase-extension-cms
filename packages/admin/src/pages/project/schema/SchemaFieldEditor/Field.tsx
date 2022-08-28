@@ -260,6 +260,32 @@ export function getFieldFormItem(
           </Form.Item>
         </>
       )
+    case 'Array':
+      const renderElement = (fieldType: string,) => {
+        switch (fieldType) {
+          case 'Enum':
+            return getFieldFormItem(fieldType, { ...options });
+          default:
+            return null;
+        }
+      }
+
+      return (
+        <>
+          <Form.Item label="数组元素类型" name="elementType" validateTrigger={['onChange']}>
+            <Select placeholder="元素值类型">
+              <Option value="Enum">枚举</Option>
+              <Option value="any">任意类型</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item label="数组元素配置" dependencies={['elementType']}>
+            {(ele) => {
+              const filed = ele.getFieldValue('elementType');
+              return renderElement(filed);
+            }}
+          </Form.Item>
+        </> 
+      )
     default:
       return ''
   }
