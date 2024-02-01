@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-sms",
-  "version": "2.13.0",
+  "version": "2.13.19",
   "description": "短信下发模块",
   "main": "index.js",
   "private": true,
@@ -9,6 +9,6 @@
   },
   "author": "",
   "dependencies": {
-    "wx-server-sdk": "^2.3.2"
+    "wx-server-sdk": "^2.7.2"
   }
 }

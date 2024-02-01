@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-openapi",
-  "version": "2.13.10",
+  "version": "2.13.19",
   "description": "CloudBase content manager system service restful api",
   "author": "cwuyiqing@gmail.com",
   "private": true,
@@ -30,7 +30,7 @@
     "reflect-metadata": "^0.1.13",
     "rxjs": "^6.6.3",
     "serverless-http": "^2.7.0",
-    "wx-server-sdk": "^2.3.3"
+    "wx-server-sdk": "^2.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.4",

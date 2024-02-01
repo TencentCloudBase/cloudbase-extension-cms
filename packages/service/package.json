@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms-service",
-  "version": "2.13.2",
+  "version": "2.13.19",
   "description": "CloudBase content manager system service",
   "author": "cwuyiqing@gmail.com",
   "private": true,
@@ -24,7 +24,7 @@
     "axios": "^0.21.1",
     "class-transformer": "^0.3.1",
     "class-validator": "^0.12.2",
-    "cos-nodejs-sdk-v5": "^2.8.6",
+    "cos-nodejs-sdk-v5": "2.8.6",
     "dayjs": "^1.8.31",
     "extract-zip": "^2.0.1",
     "helmet": "^3.23.3",

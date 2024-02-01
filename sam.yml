@@ -1,7 +1,7 @@
 TCBSAMFormatVersion: '2020-10-20'
 Name: tcb-ext-cms
 SpecVersion: v1beta
-Version: 2.13.11
+Version: 2.13.19
 License: Apache-2.0
 Category: CloudApp
 DisplayName: CMS内容管理系统
@@ -19,7 +19,7 @@ IconUrl: https://main.qcloudimg.com/raw/f87b49914efe502722f9aa128f5d8865/hello_w
 IntroUrl: https://docs.cloudbase.net/cms/intro.html
 # 更新日志
 ChangeLog:
-  - Title: 2.13.11
+  - Title: 2.13.19
     Content:
       - 取消后付费环境才可以开通的限制
 Author:

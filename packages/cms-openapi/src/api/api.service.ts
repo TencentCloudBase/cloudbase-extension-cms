@@ -57,6 +57,8 @@ const DefaultChannels = [
   },
 ]
 
+const DEFAULT_SMS_TEMPLATE_ID = '2053122' // 旧版本为844110
+
 @Injectable()
 export class ApiService {
   constructor(private readonly cloudbaseService: CloudBaseService) {}
@@ -128,7 +130,7 @@ export class ApiService {
         // https 的链接才有效
         // urlLink: urlLink,
         // templateParamList: [task.content],
-        // templateId: process.env.SMS_TEMPLATE_ID || '844110',
+        // templateId: process.env.SMS_TEMPLATE_ID || DEFAULT_SMS_TEMPLATE_ID, // 发送营销短信时，该值微信侧写死了
         // use_short_name: !!useShortname,
       })
 
@@ -230,14 +232,14 @@ export class ApiService {
     //   env: envId,
     //   is_url_link: true,
     //   file_url: fileUri,
-    //   template_id: process.env.SMS_TEMPLATE_ID || '844110',
+    //   template_id: process.env.SMS_TEMPLATE_ID || DEFAULT_SMS_TEMPLATE_ID,
     //   use_short_name: useShortname,
     // })
     const result = await wxCloudApp.openapi.cloudbase.createSendSmsTask({
       env: envId,
       // is_url_link: true,
       fileUrl: fileUri,
-      templateId: process.env.SMS_TEMPLATE_ID || '844110',
+      templateId: process.env.SMS_TEMPLATE_ID || DEFAULT_SMS_TEMPLATE_ID,
       useShortName: useShortname,
     })
 

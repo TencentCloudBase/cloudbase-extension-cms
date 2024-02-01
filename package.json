@@ -1,6 +1,6 @@
 {
   "name": "cloudbase-cms",
-  "version": "2.13.10",
+  "version": "2.13.19",
   "private": true,
   "scripts": {
     "dev": "lerna run dev --stream",
