@@ -4,6 +4,7 @@ import { Rule } from 'antd/es/form'
 import { IConnectEditor, IDatePicker, IFileAndImageEditor } from '@/components/Fields'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
 import { IObjectEditor } from './Object'
+import { FormListFieldData } from 'antd/es/form/FormList'
 
 const MarkdownEditor = React.lazy(() => import('@/components/Fields/Markdown'))
 const RichTextEditor = React.lazy(() => import('@/components/Fields/RichText'))
@@ -154,6 +155,36 @@ export function getFieldEditor(field: SchemaField, key: number) {
       )
       break
     case 'Array':
+      const schemaField = field as SchemaField & { [key: string]: any };
+      const renderItem = (formField: FormListFieldData) => {
+        switch (schemaField.elementType) {
+          case 'Enum':
+            return (
+              <Form.Item {...formField} noStyle validateTrigger={['onChange', 'onBlur']}>
+                <Select style={{ width: '40%' }} >
+                  {enumElements?.length ? (
+                    enumElements?.map((ele, index) => (
+                      <Option value={ele.value} key={index}>
+                        {ele.label}
+                      </Option>
+                    ))
+                  ) : (
+                    <Option value="" disabled>
+                      空
+                    </Option>
+                  )}
+                </Select>
+              </Form.Item>
+            );
+          default:
+            return (
+              <Form.Item {...formField} noStyle validateTrigger={['onChange', 'onBlur']}>
+                <Input style={{ width: '60%' }} />
+              </Form.Item>
+            );
+        }
+      }
+      
       FieldEditor = (
         <Form.List name={name}>
           {(fields, { add, remove }) => {
@@ -162,9 +193,7 @@ export function getFieldEditor(field: SchemaField, key: number) {
                 {fields?.map((field, index) => {
                   return (
                     <Form.Item key={index}>
-                      <Form.Item {...field} noStyle validateTrigger={['onChange', 'onBlur']}>
-                        <Input style={{ width: '60%' }} />
-                      </Form.Item>
+                      {renderItem(field)}
                       <MinusCircleOutlined
                         className="dynamic-delete-button"
                         style={{ margin: '0 8px' }}
