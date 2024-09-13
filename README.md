@@ -17,7 +17,7 @@
 - 🛠️ [提供 SDK](https://docs.cloudbase.net/cms/features#%E6%8F%90%E4%BE%9B-sdk)
 - 🌐 [提供 HTTP API](https://docs.cloudbase.net/cms/features#%E6%8F%90%E4%BE%9B-http-api)
 
-[从旧版迁移到新版本内容管理](https://docs.cloudbase.net/cms/migrating/from-legacy-cms.md)
+[从旧版迁移到新版本内容管理](https://docs.cloudbase.net/cms/migrating/from-legacy-cms)
   
 新版反馈和交流
 
