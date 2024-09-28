@@ -215,7 +215,7 @@ const Layout: React.FC<any> = (props) => {
         // 链接菜单，外跳
         if (menuItemProps.isUrl) {
           return (
-            <a target="_blank" href={decodeURIComponent(menuItemProps.itemPath)}>
+            <a target="_blank" href={menuItemProps.itemPath}>
               {defaultDom}
             </a>
           )
@@ -262,7 +262,7 @@ const mapCustomMenuTree = (node: CustomMenuItem): any => {
     key: node.id,
     authority: 'isLogin',
     name: node.title,
-    path: node.microAppID ? `/project/microapp/${node.microAppID}` : encodeURIComponent(node.link!),
+    path: node.microAppID ? `/project/microapp/${node.microAppID}` : node.link,
     component: './project/microapp/index',
     children: [],
     icon: <AppstoreTwoTone />,
