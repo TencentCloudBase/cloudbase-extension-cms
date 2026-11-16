@@ -1,23 +1,33 @@
 # CloudBase CMS
+
+> ⚠️ **本仓库已归档，只读，不再维护**
+>
+> 开源版 CloudBase CMS（CMS 扩展）已停止维护：不再支持新部署，不再修复问题，不再合并 PR。仓库保留给存量用户查阅源码与 Apache License 2.0 授权。
+>
+> - 存量数据迁移：[旧版 CMS 数据迁移到云开发平台](https://docs.cloudbase.net/lowcode/practices/platform-guide/cms-migrat)
+> - 旧版功能与部署文档已下线，本页只留历史说明，请勿照下方内容做新部署。
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
 ## 🚀 内容管理全新升级 ✨
 
-- 🌐 [支持对接外部 MySQL 数据库](https://docs.cloudbase.net/cms/features#%E6%94%AF%E6%8C%81%E5%AF%B9%E6%8E%A5%E5%A4%96%E9%83%A8-mysql-%E6%95%B0%E6%8D%AE%E5%BA%93)
-- 🚀 [一键生成应用](https://docs.cloudbase.net/cms/features#%E4%B8%80%E9%94%AE%E7%94%9F%E6%88%90%E5%BA%94%E7%94%A8)
-- 🛠️ [无需部署](https://docs.cloudbase.net/cms/features#%E6%97%A0%E9%9C%80%E9%83%A8%E7%BD%B2)
-- 📱 [移动端支持](https://docs.cloudbase.net/cms/features#%E7%A7%BB%E5%8A%A8%E7%AB%AF%E6%94%AF%E6%8C%81)
-- 🔐 [权限管理](https://docs.cloudbase.net/cms/features#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86)
-- 💰 [计费调整，无单独的文档数量限制](https://docs.cloudbase.net/cms/features#%E8%AE%A1%E8%B4%B9%E8%B0%83%E6%95%B4%E6%97%A0%E5%8D%95%E7%8B%AC%E7%9A%84%E6%96%87%E6%A1%A3%E6%95%B0%E9%87%8F%E9%99%90%E5%88%B6)
-- 📤 [数据导出能力提升](https://docs.cloudbase.net/cms/features#%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%87%BA%E8%83%BD%E5%8A%9B%E6%8F%90%E5%8D%87)
-- 📥 [数据导入增强](https://docs.cloudbase.net/features#%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5%E5%A2%9E%E5%BC%BA)
-- ☁️ [数据支持存储在云开发数据集合](https://docs.cloudbase.net/cms/features#%E6%95%B0%E6%8D%AE%E6%94%AF%E6%8C%81%E5%AD%98%E5%82%A8%E5%9C%A8%E4%BA%91%E5%BC%80%E5%8F%91%E6%95%B0%E6%8D%AE%E9%9B%86%E5%90%88)
-- 🔍 [数据校验和类型检查](https://docs.cloudbase.net/cms/features#%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C%E5%92%8C%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5)
-- 🧠 [一键 AI 智能分析数据](https://docs.cloudbase.net/cms/features#%E4%B8%80%E9%94%AE-ai-%E6%99%BA%E8%83%BD%E5%88%86%E6%9E%90%E6%95%B0%E6%8D%AE)
-- 🛠️ [提供 SDK](https://docs.cloudbase.net/cms/features#%E6%8F%90%E4%BE%9B-sdk)
-- 🌐 [提供 HTTP API](https://docs.cloudbase.net/cms/features#%E6%8F%90%E4%BE%9B-http-api)
+> 以下为历史版本（v2.x）能力清单，对应文档已下线，仅作存档。
 
-[从旧版迁移到新版本内容管理](https://docs.cloudbase.net/cms/migrating/from-legacy-cms)
+- 🌐 支持对接外部 MySQL 数据库
+- 🚀 一键生成应用
+- 🛠️ 无需部署
+- 📱 移动端支持
+- 🔐 权限管理
+- 💰 计费调整，无单独的文档数量限制
+- 📤 数据导出能力提升
+- 📥 数据导入增强
+- ☁️ 数据支持存储在云开发数据集合
+- 🔍 数据校验和类型检查
+- 🧠 一键 AI 智能分析数据
+- 🛠️ 提供 SDK
+- 🌐 提供 HTTP API
+
+[从旧版迁移到新版本内容管理](https://docs.cloudbase.net/lowcode/practices/platform-guide/cms-migrat)
   
 新版反馈和交流
 
@@ -29,11 +39,9 @@
 
 ---
 
-### 注意：⚠️此开源版本CMS已停止维护，欢迎使用[云开发新版本内容管理](https://docs.cloudbase.net/cms/intro)
-
 ## 部署流程
 
-参考 CMS 使用说明[文档](https://docs.cloudbase.net/cms/install/source.html)
+不再提供源码部署。存量用户请按[旧版 CMS 数据迁移到云开发平台](https://docs.cloudbase.net/lowcode/practices/platform-guide/cms-migrat)迁移。
 
 ## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
 
