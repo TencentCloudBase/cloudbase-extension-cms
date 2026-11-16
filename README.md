@@ -4,14 +4,14 @@
 >
 > 开源版 CloudBase CMS（CMS 扩展）已停止维护：不再支持新部署，不再修复问题，不再合并 PR。仓库保留给存量用户查阅源码与 Apache License 2.0 授权。
 >
-> - 存量数据迁移：[旧版 CMS 数据迁移到云开发平台](https://docs.cloudbase.net/lowcode/practices/platform-guide/cms-migrat)
+> - 存量数据：请在旧版 CMS 内导出并自行留存。本仓库不再提供到新版平台的迁移指引。
 > - 旧版功能与部署文档已下线，本页只留历史说明，请勿照下方内容做新部署。
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-## 🚀 内容管理全新升级 ✨
+## 历史版本能力清单
 
-> 以下为历史版本（v2.x）能力清单，对应文档已下线，仅作存档。
+> 以下能力说明仅作存档，对应文档已下线。
 
 - 🌐 支持对接外部 MySQL 数据库
 - 🚀 一键生成应用
@@ -27,23 +27,13 @@
 - 🛠️ 提供 SDK
 - 🌐 提供 HTTP API
 
-[从旧版迁移到新版本内容管理](https://docs.cloudbase.net/lowcode/practices/platform-guide/cms-migrat)
-  
-新版反馈和交流
-
-<img
-  style="width: 200px"
-  src="https://cloudcache.tencent-cloud.com/qcloud/ui/static/static_source_business/f571df86-4bbd-410e-8801-9fa36a8c9c6b.jpg"
-/>
-
-
 ---
 
 ## 部署流程
 
-不再提供源码部署。存量用户请按[旧版 CMS 数据迁移到云开发平台](https://docs.cloudbase.net/lowcode/practices/platform-guide/cms-migrat)迁移。
+不再提供源码部署，也不再提供到新版平台的迁移指引。存量数据请在旧版 CMS 内导出并自行留存。
 
-## [示例](https://cms-demo-1252710547.tcloudbaseapp.com)
+## 示例（在线地址已下线）
 
 ![](https://main.qcloudimg.com/raw/9fde303ac81a3d3028552f73337726ee.png)
 
